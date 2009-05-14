@@ -1,1 +1,0 @@
-appcfg update  target/webclient-1.0-SNAPSHOT
