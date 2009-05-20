@@ -8,7 +8,7 @@ import javax.jdo.Query;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.nideasystems.webtools.zwitrng.client.TwitterPersonaService;
+import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
@@ -41,6 +41,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public String createPersona(String personaAsString) {
 
+		PersonaDAO personaDao = new PersonaDAO();
 		// Check if is logged in
 		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
 
@@ -74,7 +75,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 
 			// Check if account exists/credentials ok
 			try {
-				twitterUser = TwitterService.get().getExtendedUser(twitterUseName, twitterPassword);
+				twitterUser = TwitterService.get().getExtendedUser(twitterUseName, twitterPassword, true);
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -86,7 +87,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 				// Try to create, throws exception if exists
 				PersonaDO personaDo = null;
 				try {
-					personaDo = PersonaDAO.createPersona(personaName, twitterUseName,
+					personaDo = personaDao.createPersona(personaName, twitterUseName,
 							twitterPassword, currentUser.getEmail());
 					returnValue = PersonaDAO.createPersonaJson(personaDo, twitterUser).toString();
 				} catch (Exception e) {
@@ -104,128 +105,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		return returnValue;
 	}
 
-	/*private String createPersonaJson(PersonaDO personaDo,
-			ExtendedUser twitterUser) {
-
-		// Create JSOn Object for personaInfo
-		JSONObject persona = new JSONObject();
-		try {
-			persona = new JSONObject();
-			persona.accumulate("personaName", personaDo.getName());
-			persona.accumulate("personaCreationDate", personaDo
-					.getCreationDate());
-
-			JSONObject twitterAccount = new JSONObject();
-			twitterAccount.accumulate("twitterUserName", twitterUser.getName());
-			twitterAccount.accumulate("twitterDescription", twitterUser
-					.getDescription());
-			twitterAccount.accumulate("twitterScreenName", twitterUser
-					.getScreenName());
-			twitterAccount.accumulate("twitterImageUrl", twitterUser
-					.getProfileImageURL());
-
-			persona.accumulate("twitterAccount", twitterAccount);
-		} catch (JSONException e) {
-			return JSONUtils.createError(e.getMessage()).toString();
-		}
-
-		return persona.toString();
-	}
-*/
-	/*@SuppressWarnings("unchecked")
-	public PersonaDO createPersona(String personaName, String twitterName,
-			String password, String userEmail) throws Exception {
-
-		Query queryPersona = PMF.get().getPersistenceManager().newQuery(
-				PersonaDO.class);
-		queryPersona
-				.setFilter("name==paramPersonaName && userEmail==paramUserEmail");
-		queryPersona
-				.declareParameters("String paramPersonaName, String paramUserEmail");
-		queryPersona.setUnique(true);
-
-		PersonaDO persona = (PersonaDO) queryPersona.execute(personaName,
-				userEmail);
-
-		// If could not found, cool, we'll create it
-		if (persona == null) {
-			persona = new PersonaDO();
-			persona.setCreationDate(new Date());
-			persona.setName(personaName);
-			persona.setUserEmail(userEmail);
-			
-
-			// Create the twitterAccount
-			TwitterAccountDO twitterAccount = new TwitterAccountDO();
-			twitterAccount.setTwitterName(twitterName);
-			twitterAccount.setTwitterPass(password);
-			//PMF.get().getPersistenceManager().makePersistent(twitterAccount);
-			persona.setTwitterAccount(twitterAccount);
-			PMF.get().getPersistenceManager().makePersistent(persona);
-			System.out.println("Twitter Accounted created: "
-					+ twitterAccount.getKey().toString());
-
-			
-		} else {
-			throw new Exception("Persona " + personaName + " already exixts");
-		}
-
-		System.out.println("Persona created: " + persona.getId());
-		return persona;
-
-	}
-
-	private ExtendedUser accountExists(String twitterUseName,
-			String twitterPassword) {
-		this.twitter = new Twitter(twitterUseName, twitterPassword);
-
-		// Try an operation to login
-		try {
-			List<DirectMessage> msgs = this.twitter.getDirectMessages();
-		} catch (TwitterException e1) {
-			e1.printStackTrace();
-			return null;
-		}
-
-		ExtendedUser userDetails = null;
-		if (twitter != null) {
-			String userId = twitter.getUserId();
-			if (userId != null && !userId.isEmpty()) {
-				try {
-					userDetails = twitter.getUserDetail(userId);
-					System.out.println(userDetails.getCreatedAt());
-					System.out.println(userDetails.getDescription());
-					System.out.println(userDetails.getFavouritesCount());
-					System.out.println(userDetails.getFollowersCount());
-					System.out.println(userDetails.getFriendsCount());
-					System.out.println(userDetails.getLocation());
-					System.out.println(userDetails.getScreenName());
-					System.out.println(userDetails.getStatusesCount());
-					System.out.println(userDetails.getProfileImageURL());
-
-				} catch (TwitterException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-
-			}
-		}
-		return userDetails;
-
-	}
-
-	private String createError(String string) {
-		String retValue = null;
-		try {
-			JSONObject jsonObject = new JSONObject();
-			jsonObject.accumulate("errorMsg", string);
-			jsonObject.accumulate("serverTime", new Date());
-			retValue = jsonObject.toString();
-		} catch (JSONException e) {
-
-		}
-		return retValue;
-	}*/
+	
 
 	/**
 	 * Return a String representing a JSONArray with all personas for the current user
@@ -249,8 +129,8 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	public String deletePersona(String persona) {
 		// TODO Auto-generated method stub
 		User user = UserServiceFactory.getUserService().getCurrentUser();
-		
-		PersonaDAO.deletePersona(persona,user.getEmail());
+		PersonaDAO personDao = new PersonaDAO();
+		personDao.deletePersona(persona,user.getEmail());
 		return "ok";
 	}
 

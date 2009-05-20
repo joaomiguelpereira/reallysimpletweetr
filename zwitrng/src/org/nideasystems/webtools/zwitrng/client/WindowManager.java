@@ -4,12 +4,18 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.nideasystems.webtools.zwitrng.client.objects.PersonaObj;
+import org.nideasystems.webtools.zwitrng.client.services.RPCService;
 import org.nideasystems.webtools.zwitrng.client.utils.JSONUtils;
+import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaObj;
+import org.nideasystems.webtools.zwitrng.shared.model.TwittUpdate;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
+import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
 import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -60,16 +66,7 @@ public class WindowManager {
 		tabPanel.setWidth("750px");
 		tabPanel.setAnimationEnabled(true);
 
-		/*
-		 * String[] personaNames = personas.keySet().toArray(new
-		 * String[personas.size()]);
-		 * 
-		 * for (String personaName : personaNames) {
-		 * 
-		 * tabPanel.add(getPanelForPersona(personas.get(personaName)),
-		 * personaName); }
-		 */
-
+		//Add the default AddPersonaPanel
 		tabPanel.add(getDefaultTabPanel(), "+");
 		// Return the content
 		tabPanel.selectTab(0);
@@ -122,7 +119,7 @@ public class WindowManager {
 						twPersonaName.getValue(), twUserName.getValue(),
 						twPassword.getValue());
 
-				PersonaService.getInstance().createPersona(
+				RPCService.getInstance().createPersona(
 						jsonObject.toString());
 			}
 
@@ -139,8 +136,16 @@ public class WindowManager {
 
 	}
 
+	/*
+	 * Create a panel fo 
+	 */
 	private Widget getPanelForPersona(final PersonaObj personaObj) {
 		// Create the main Panel
+		
+		if (true) {
+			return new PersonaView(personaObj);
+		}
+		
 		VerticalPanel mainPanel = new VerticalPanel();
 
 		// Create the panel with user Info
@@ -169,7 +174,7 @@ public class WindowManager {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				PersonaService.getInstance()
+				RPCService.getInstance()
 						.deletePersona(personaObj.getName());
 
 			}
@@ -185,6 +190,32 @@ public class WindowManager {
 	public void addPersonaTab(PersonaObj persona) {
 		Widget wid = getPanelForPersona(persona);
 		this.tabs.put(persona.getName(), wid);
+		
+		
+		this.tabPanel.addBeforeSelectionHandler(new BeforeSelectionHandler<Integer>() {
+
+			@Override
+			public void onBeforeSelection(BeforeSelectionEvent<Integer> event) {
+				//Window.alert("-- "+event.getItem());
+				
+				try {
+					PersonaView selectedtab = (PersonaView)tabPanel.getWidget(event.getItem());
+					TwittUpdate twit = new TwittUpdate();
+					twit.setTimeUpdate("Time");
+					twit.setUpdate("Update");
+					//selectedtab.addUpdate(twit);
+				} catch (Exception e) {
+					//Ignore because is the add tab
+					
+				}
+				
+				//Window.alert("-- "+selectedtab.getPersonaObj().getName());
+				
+				
+			}
+			
+		});
+		
 		this.tabPanel.add(wid, persona.getName());
 
 	}

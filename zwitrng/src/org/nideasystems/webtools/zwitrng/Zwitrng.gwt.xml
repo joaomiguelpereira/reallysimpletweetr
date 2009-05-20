@@ -11,6 +11,12 @@
  <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> 
   <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
 
+  <!-- Specify where our GWT client code lives                    -->
+  <source path="client" />
+
+  <!-- We can also have source shared amongst client and server   -->
+  <source path="shared" />  
+
   <!-- Other module inherits                                      -->
 	  <inherits name='com.google.gwt.json.JSON'/>
   <!-- Specify the app entry point class.                         -->

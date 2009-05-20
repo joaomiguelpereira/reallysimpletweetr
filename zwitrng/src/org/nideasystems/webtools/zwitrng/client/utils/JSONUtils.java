@@ -2,8 +2,8 @@ package org.nideasystems.webtools.zwitrng.client.utils;
 
 import java.util.Date;
 
-import org.nideasystems.webtools.zwitrng.client.objects.PersonaObj;
-import org.nideasystems.webtools.zwitrng.client.objects.TwitterAccountObj;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaObj;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountObj;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
