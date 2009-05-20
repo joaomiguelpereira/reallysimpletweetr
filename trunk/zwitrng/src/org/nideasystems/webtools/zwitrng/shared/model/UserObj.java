@@ -1,4 +1,4 @@
-package org.nideasystems.webtools.zwitrng.client.objects;
+package org.nideasystems.webtools.zwitrng.shared.model;
 
 import java.util.List;
 

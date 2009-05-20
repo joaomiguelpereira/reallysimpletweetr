@@ -1,6 +1,9 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 
 
@@ -10,13 +13,15 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Key;
+
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
 public class PersonaDO {
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Long id;
+	private Key key;
 	
 	@Persistent
 	private String userEmail ;
@@ -29,18 +34,16 @@ public class PersonaDO {
 	private Date creationDate;
 	
 
-	
 	@Persistent
 	private TwitterAccountDO twitterAccount;
 	
-
-
+	@Persistent(mappedBy="persona",defaultFetchGroup="true")
+	private List<FilterDO> filters;
 
 	public void setName(String name) {
 		this.name = name;
 	}
-
-
+	
 	public String getName() {
 		return name;
 	}
@@ -82,15 +85,32 @@ public class PersonaDO {
 	}
 
 
-	public void setId(Long id) {
-		this.id = id;
+	
+
+
+	public void setFilters(List<FilterDO> filters) {
+		this.filters = filters;
 	}
 
 
-	public Long getId() {
-		return id;
+	public List<FilterDO> getFilters() {
+		return filters;
 	}
 
+	public void addFilter(FilterDO filter) {
+		if (this.filters == null )
+			this.filters = new ArrayList<FilterDO>();
+		this.filters.add(filter);
+	}
+
+	public void setKey(Key key) {
+		this.key = key;
+	}
+
+	public Key getKey() {
+		return key;
+	}
+	
 
 	
 

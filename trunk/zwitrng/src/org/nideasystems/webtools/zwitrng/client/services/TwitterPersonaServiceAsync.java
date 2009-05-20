@@ -1,4 +1,4 @@
-package org.nideasystems.webtools.zwitrng.client;
+package org.nideasystems.webtools.zwitrng.client.services;
 
 
 import com.google.gwt.user.client.rpc.AsyncCallback;

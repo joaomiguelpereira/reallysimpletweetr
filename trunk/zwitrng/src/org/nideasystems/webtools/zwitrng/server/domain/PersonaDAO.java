@@ -1,5 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -17,34 +19,48 @@ import twitter4j.ExtendedUser;
 
 public class PersonaDAO {
 
+	private PersistenceManager pm = PMF.get().getPersistenceManager();
 
-	public static void deletePersona(String personaName, String email) {
-		PersistenceManager pM = PMF.get().getPersistenceManager();
-		Query queryPersona = pM.newQuery(
-				PersonaDO.class);
+	/**
+	 * delete a Persona
+	 * 
+	 * @param personaName
+	 * @param email
+	 */
+	public void deletePersona(String personaName, String email) {
+		// PersistenceManager pM = PMF.get().getPersistenceManager();
+		Query queryPersona = pm.newQuery(PersonaDO.class);
 		queryPersona
 				.setFilter("name==paramPersonaName && userEmail==paramUserEmail");
 		queryPersona
 				.declareParameters("String paramPersonaName, String paramUserEmail");
 		queryPersona.setUnique(true);
 
-		PersonaDO persona = (PersonaDO) queryPersona.execute(personaName,
-				email);
-		
-		if (persona!= null) {
-			pM.deletePersistent(persona);
-			pM.close();
+		PersonaDO persona = (PersonaDO) queryPersona
+				.execute(personaName, email);
+
+		if (persona != null) {
+			pm.deletePersistent(persona);
+			pm.close();
 		}
-		
 
 	}
 
-	public static PersonaDO createPersona(String personaName,
-			String twitterName, String password, String userEmail)
-			throws Exception {
+	/**
+	 * Create a persona
+	 * 
+	 * @param personaName
+	 * @param twitterName
+	 * @param password
+	 * @param userEmail
+	 * @return
+	 * @throws Exception
+	 */
+	public PersonaDO createPersona(String personaName, String twitterName,
+			String password, String userEmail) throws Exception {
 
-		Query queryPersona = PMF.get().getPersistenceManager().newQuery(
-				PersonaDO.class);
+		Query queryPersona = pm.newQuery(PersonaDO.class);// PMF.get().getPersistenceManager().newQuery(
+		// PersonaDO.class);
 		queryPersona
 				.setFilter("name==paramPersonaName && userEmail==paramUserEmail");
 		queryPersona
@@ -67,24 +83,31 @@ public class PersonaDAO {
 			twitterAccount.setTwitterPass(password);
 			// PMF.get().getPersistenceManager().makePersistent(twitterAccount);
 			persona.setTwitterAccount(twitterAccount);
-			PMF.get().getPersistenceManager().makePersistent(persona);
+			pm.makePersistent(persona);
+			// PMF.get().getPersistenceManager().makePersistent(persona);
 			System.out.println("Twitter Accounted created: "
 					+ twitterAccount.getKey().toString());
-			PMF.get().getPersistenceManager().close();
+			pm.close();
+			// PMF.get().getPersistenceManager().close();
 
 		} else {
 			throw new Exception("Persona " + personaName + " already exixts");
 		}
 
-		System.out.println("Persona created: " + persona.getId());
+		System.out.println("Persona created: " + persona.getKey().toString());
 		return persona;
 	}
 
+	/**
+	 * Get all personas
+	 * 
+	 * @param email
+	 * @return
+	 */
 	public JSONArray findAllPersonas(String email) {
 
 		JSONArray jsonArray = new JSONArray();
-		Query queryPersona = PMF.get().getPersistenceManager().newQuery(
-				PersonaDO.class);
+		Query queryPersona = pm.newQuery(PersonaDO.class);
 		queryPersona.setFilter("userEmail==paramUserEmail");
 		queryPersona.declareParameters("String paramUserEmail");
 
@@ -103,7 +126,8 @@ public class PersonaDAO {
 					try {
 						twitterUser = TwitterService.get().getExtendedUser(
 								persona.getTwitterAccount().getTwitterName(),
-								persona.getTwitterAccount().getTwitterPass());
+								persona.getTwitterAccount().getTwitterPass(),
+								false);
 					} catch (Exception e) {
 
 						// Could not get the twitter account
@@ -111,15 +135,54 @@ public class PersonaDAO {
 
 				}
 
+				// fix the filters
+				List<FilterDO> filters = persona.getFilters();
+				if ( filters != null ) {
+					for (FilterDO filter: filters) {
+						System.out.println(""+filters.getClass());
+						System.out.println("fil "+filter.getName());
+					}	
+				}
+				
+				// if (filters == null) {
+				// filters = new ArrayList<FilterDO>();
+				// }
+				//
+				// //if
+				// if (filters.size() == 0) {
+				// Create Default Filter
+				FilterDO filter = new FilterDO();
+				filter.setName("teste");
+				persona.addFilter(filter);
+			
+				pm.makePersistent(persona);
+			
+				// persona.addFilter(filter);
+				// }
+
 				jsonArray.put(PersonaDAO
 						.createPersonaJson(persona, twitterUser));
 
 			}
 		}
-		PMF.get().getPersistenceManager().close();
+		pm.close();
+		// PMF.get().getPersistenceManager().close();
 		return jsonArray;
 	}
 
+	/*
+	 * public JSONArray findAllFilters(String email, String personaName) {
+	 * 
+	 * 
+	 * }
+	 */
+	/**
+	 * Utility method to tranform a persona to JSON
+	 * 
+	 * @param personaDo
+	 * @param twitterUser
+	 * @return
+	 */
 	public static JSONObject createPersonaJson(PersonaDO personaDo,
 			ExtendedUser twitterUser) {
 
