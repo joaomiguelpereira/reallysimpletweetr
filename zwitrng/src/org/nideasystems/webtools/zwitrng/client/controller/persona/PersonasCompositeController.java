@@ -5,9 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.IDataLoadedHandler;
+import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
 import org.nideasystems.webtools.zwitrng.client.services.RPCService;
 
+import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.PersonasCompositeView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import com.google.gwt.event.logical.shared.SelectionEvent;
@@ -23,6 +26,8 @@ public class PersonasCompositeController extends AbstractCompositeController
 	private PersonasCompositeView personasCompositeView = null;
 	private Map<String, PersonaDTO> personas = null;
 	private Map<String, Widget> personaTabs = new HashMap<String, Widget>();
+	private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
+	
 
 	
 	public PersonasCompositeController() {
@@ -116,17 +121,46 @@ public class PersonasCompositeController extends AbstractCompositeController
 
 	
 
+	/**
+	 * When a Tab is selected
+	 * @author jpereira
+	 *
+	 */
 	private class PersonaTabSelectionHandler implements
 			SelectionHandler<Integer> {
 
 		// When a tab is selected what should I do?
-		// Initialize the tabs of updates, if not already initialized
 		@Override
 		public void onSelection(SelectionEvent<Integer> event) {
-			Window.alert("Tab Selected");
+			initializeSearchsController(event.getSelectedItem());
+			
+			
 
 		}
 
+
+	}
+
+	private void initializeSearchsController(int selectedTab) {
+		//TODO:Huum!!
+		PersonaView personaViewSelected = (PersonaView )this.personasCompositeView.getWidget(selectedTab);
+		
+		//Try to get the controller
+		SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers.get(personaViewSelected.getPersonaObj().getName());
+		if ( searchesCompositeController == null ) {
+			
+			searchesCompositeController = new SearchesCompositeController();
+			searchesCompositeController.setErrorHandler(getErrorHandler());
+			searchesCompositeController.setName(AbstractController.generateDefaultName());
+			searchesCompositeController.setParentController(this);
+			searchesCompositeController.setTwitterAccount(personaViewSelected.getPersonaObj().getTwitterAccount());
+			searchesCompositeController.setServiceManager(getServiceManager());
+			searchesCompositeController.init();
+			//Add the created view of the controller to this view
+			personaViewSelected.add(searchesCompositeController.getView().getAsWidget());
+			this.searchesCompositeControllers.put(personaViewSelected.getPersonaObj().getName(), searchesCompositeController);
+				
+		}
 	}
 
 	@Override
