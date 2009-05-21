@@ -18,15 +18,8 @@ public class SearchTabView extends AbstractVerticalPanelView{
 	private final Button seachCriteriaBt = new Button("Search");
 	private final TextBox seachCriteriaTb = new TextBox();
 	
-	public SearchTabView(SearchesCompositeController controller){
+	public SearchTabView(){
 		super();
-		this.controller = controller;
-		topPanel.setSpacing(5);
-		topPanel.add(seachCriteriaTb);
-		topPanel.add(seachCriteriaBt);
-		
-		seachCriteriaBt.addClickHandler(new SearchClickHandler());
-		super.add(topPanel);
 		
 	}
 	
@@ -38,7 +31,7 @@ public class SearchTabView extends AbstractVerticalPanelView{
 		public void onClick(ClickEvent event) {
 			FilterCriteriaDTO filter = new FilterCriteriaDTO();
 			filter.setName("general");
-			controller.search(filter);
+			//controller.search(filter);
 			
 		}
 		
@@ -47,7 +40,13 @@ public class SearchTabView extends AbstractVerticalPanelView{
 
 	@Override
 	public void init() {
-		// TODO Auto-generated method stub
+		topPanel.setSpacing(5);
+		topPanel.add(seachCriteriaTb);
+		topPanel.add(seachCriteriaBt);
+		
+		seachCriteriaBt.addClickHandler(new SearchClickHandler());
+		super.add(topPanel);
+
 		
 	}
 

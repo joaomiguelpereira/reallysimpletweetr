@@ -1,15 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.controller.search;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
-import org.nideasystems.webtools.zwitrng.client.view.SearchTabbedView;
 import org.nideasystems.webtools.zwitrng.client.view.PersonaUpdatesTabView;
-import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.client.view.SearchesCompositeView;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
@@ -18,21 +14,21 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class SearchesCompositeController extends AbstractCompositeController {
 
 	// This update controller belong to one persona
-	private PersonaDTO personaObj = null;
+	private TwitterAccountDTO twitterAccount;
 
+
+	//Controls if it's initialized
 	private boolean initialized = false;
 
-	private SearchTabbedView userUpdatetabPanel = null;
+	private SearchesCompositeView searchesCompositeView = null;
+	
 	private Map<String, PersonaUpdatesTabView> updatesViews = null;
 
-	public SearchesCompositeController(PersonaDTO personaObj,
-			SearchTabbedView tabbedView) {
-		this.personaObj = personaObj;
-		this.userUpdatetabPanel = tabbedView;
-		updatesViews = new HashMap<String, PersonaUpdatesTabView>();
+	public SearchesCompositeController() {
+		super();
 	}
 
-	public void addFilterTab(FilterCriteriaDTO filter) {
+	/*public void addFilterTab(FilterCriteriaDTO filter) {
 
 		if (!updatesViews.containsKey(filter.getName())) {
 			PersonaUpdatesTabView view = new PersonaUpdatesTabView(filter);
@@ -41,10 +37,19 @@ public class SearchesCompositeController extends AbstractCompositeController {
 		}
 
 	}
-
+*/
 	public void init() {
-		/*if (!this.initialized) {
-			String name = personaObj.getName();
+		if (!this.initialized) {
+			searchesCompositeView = new SearchesCompositeView();
+			searchesCompositeView.setController(this);
+			searchesCompositeView.init();
+			this.view = searchesCompositeView;
+			
+			
+			
+			
+			
+			/*
 			// Get from Service all Tabs;
 			RPCService.getInstance().getPersonaFilters(name,
 					new FiltersLoadedCallBack());
@@ -62,15 +67,15 @@ public class SearchesCompositeController extends AbstractCompositeController {
 			
 
 			this.userUpdatetabPanel.add(defaultSearch, defaultSearch.getName());
-			this.userUpdatetabPanel.selectTab(0);
+			this.userUpdatetabPanel.selectTab(0);*/
 
-		}*/
+		}
 
 	}
 
-	public void search(FilterCriteriaDTO filter) {
+	/*public void search(FilterCriteriaDTO filter) {
 		
-	/*	RPCService.getInstance().search(filter, personaObj.getTwitterAccount(),new AsyncCallback<List<StatusDTO>>() {
+		RPCService.getInstance().search(filter, personaObj.getTwitterAccount(),new AsyncCallback<List<StatusDTO>>() {
 
 			@Override
 			public void onFailure(Throwable caught) {
@@ -84,7 +89,7 @@ public class SearchesCompositeController extends AbstractCompositeController {
 				
 			}
 			
-		});*/
+		});
 	}
 
 	private class FiltersLoadedCallBack implements
@@ -112,7 +117,7 @@ public class SearchesCompositeController extends AbstractCompositeController {
 		}
 
 	}
-
+*/
 	@Override
 	public SelectionHandler<Integer> getSelectionHandler() {
 		Window.alert("SelectionHandler<Integer> getSelectionHandler() Searches");
@@ -135,6 +140,14 @@ public class SearchesCompositeController extends AbstractCompositeController {
 	public AsyncCallback<String> getDataRemovedCallBack() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
+		this.twitterAccount = twitterAccount;
+	}
+
+	public TwitterAccountDTO getTwitterAccount() {
+		return twitterAccount;
 	}
 
 	

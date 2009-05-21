@@ -15,7 +15,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 public class PersonaView extends AbstractVerticalPanelView{
 
 	private PersonaDTO personaObj = null;
-	private SearchTabbedView userUpdatetabPanel = new SearchTabbedView();
+	private SearchesCompositeView userUpdatetabPanel = new SearchesCompositeView();
 
 	private PersonaInfoWidget userInfoWidget = null;
 	private PersonaToolsWidget personaToolsWidget = null;
