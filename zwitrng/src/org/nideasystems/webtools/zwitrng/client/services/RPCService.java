@@ -1,18 +1,13 @@
 package org.nideasystems.webtools.zwitrng.client.services;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.nideasystems.webtools.zwitrng.client.controller.DataLoadedCallBack;
-import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasCompositeController;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.StatusDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class RPCService implements IService {
@@ -20,10 +15,10 @@ public class RPCService implements IService {
 	
 	private TwitterPersonaServiceAsync personaService = null;
 	private TwitterServiceAsync twitterService = null;
-	private Map<String, PersonaDTO> personas = null;
+	//private Map<String, PersonaDTO> personas = null;
 
 	public RPCService() {
-		personas = new HashMap<String, PersonaDTO>();
+		//personas = new HashMap<String, PersonaDTO>();
 		personaService = GWT.create(TwitterPersonaService.class);
 		twitterService = GWT.create(TwitterService.class);
 	}
@@ -55,7 +50,7 @@ public class RPCService implements IService {
 */
 	}
 
-	private void handleRPCServiceError(Throwable caught) {
+	/*private void handleRPCServiceError(Throwable caught) {
 		//PersonasCompositeController.getInstance().addError(caught.getMessage());
 
 	}
@@ -68,7 +63,7 @@ public class RPCService implements IService {
 //		PersonasCompositeController.getInstance().addPersonaTab(persona);
 //		// WindowManager.getInstance().addPersonaTab(persona);
 
-	}
+	}*/
 
 	public void loadPersonas(final AsyncCallback<List<PersonaDTO>> callback) {
 		this.personaService.getPersonas(callback);
@@ -109,7 +104,7 @@ public class RPCService implements IService {
 	 * Craete a copy of the Actual personas
 	 * 
 	 * @return
-	 */
+	 *//*
 	public Map<String, PersonaDTO> getPersonas() {
 		return new HashMap<String, PersonaDTO>(this.personas);
 
@@ -120,6 +115,6 @@ public class RPCService implements IService {
 		this.personaService.getPersonaFilters(key,callBack);
 		
 		
-	}
+	}*/
 
 }

@@ -1,7 +1,8 @@
-package org.nideasystems.webtools.zwitrng.client.view;
+package org.nideasystems.webtools.zwitrng.client.view.search;
 
 
 import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
+import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -10,7 +11,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SearchTabView extends AbstractVerticalPanelView{
+public class SearchView extends AbstractVerticalPanelView{
 	
 	private final VerticalPanel topPanel = new VerticalPanel();
 	SearchesCompositeController controller = null;
@@ -18,7 +19,7 @@ public class SearchTabView extends AbstractVerticalPanelView{
 	private final Button seachCriteriaBt = new Button("Search");
 	private final TextBox seachCriteriaTb = new TextBox();
 	
-	public SearchTabView(){
+	public SearchView(){
 		super();
 		
 	}

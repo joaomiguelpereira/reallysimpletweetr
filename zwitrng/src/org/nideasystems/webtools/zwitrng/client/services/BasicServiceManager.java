@@ -1,7 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.services;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 public class BasicServiceManager implements IServiceManager {
 

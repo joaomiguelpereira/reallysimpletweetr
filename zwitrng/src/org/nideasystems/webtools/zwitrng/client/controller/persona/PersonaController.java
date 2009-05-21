@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
-import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
+import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;

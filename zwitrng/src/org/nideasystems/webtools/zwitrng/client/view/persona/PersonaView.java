@@ -1,8 +1,8 @@
-package org.nideasystems.webtools.zwitrng.client.view;
+package org.nideasystems.webtools.zwitrng.client.view.persona;
 
+import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaToolsWidget;
-
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
 
@@ -15,7 +15,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 public class PersonaView extends AbstractVerticalPanelView{
 
 	private PersonaDTO personaObj = null;
-	private SearchesCompositeView userUpdatetabPanel = new SearchesCompositeView();
+	//private SearchesCompositeView userUpdatetabPanel = new SearchesCompositeView();
 
 	private PersonaInfoWidget userInfoWidget = null;
 	private PersonaToolsWidget personaToolsWidget = null;
