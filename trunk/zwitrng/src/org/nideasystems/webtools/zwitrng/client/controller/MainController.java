@@ -1,136 +1,95 @@
 package org.nideasystems.webtools.zwitrng.client.controller;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 
-import org.nideasystems.webtools.zwitrng.client.services.RPCService;
-import org.nideasystems.webtools.zwitrng.client.view.PersonaTabView;
-import org.nideasystems.webtools.zwitrng.client.view.PersonaUpdatesTabbedView;
-import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
-import org.nideasystems.webtools.zwitrng.shared.model.PersonaObj;
-import org.nideasystems.webtools.zwitrng.shared.model.TwittUpdate;
 
-import com.google.gwt.event.logical.shared.BeforeSelectionEvent;
-import com.google.gwt.event.logical.shared.BeforeSelectionHandler;
+import org.nideasystems.webtools.zwitrng.client.services.BasicServiceManager;
+import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
+
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 
-public class MainController {
-
-	
-	/**
-	 * The MainController has a PersonaTabView. The personatabview has tabs with the personas 
-	 */
-	private PersonaTabView tabPanel = null;
+public class MainController extends AbstractCompositeController implements IErrorHandler{
+	private Panel mainPanel = RootPanel.get();
 	private static MainController instance = null;
+	private IServiceManager serviceManager = new BasicServiceManager();
+	PersonasCompositeController personasCompositeController = null;
 	
-	private Map<String, UpdatesController> updatesControllers = new HashMap<String, UpdatesController>();
-	private Map<String, Widget> personaTabs = new HashMap<String, Widget>();
 	
 	
-	/**
-	 * Static method to get the singletons instance
-	 * @return
-	 */
+	private MainController() {
+		
+	}
+	
 	public static MainController getInstance() {
 		if ( instance == null ) {
 			instance = new MainController();
 		}
 		return instance;
-		
 	}
-	/**
-	 * Private Constructor. Singleton.
-	 */
-	private MainController() {
-		
-	}
-	
-	/**
-	 * Initialize the view where all tabs are places
-	 */
+
 	public void init() {
-		this.tabPanel = new PersonaTabView();
-		RootPanel.get("main").add(this.tabPanel);
+		//This will be the default error handle for this controller
+		setErrorHandler(this);
+		
+		//Create the PesonasCompisiteController
+		//This controller will control the Personas loaded for the logged user
+		//Another reponsabilit, is to handle the renderization of the tabs for the personas
+		personasCompositeController = new PersonasCompositeController();
+		//The name of the controller will be assigned by the systems
+		personasCompositeController.setName(AbstractController.generateDefaultName());
+		//The controller will have this MainController and parent controleer
+		personasCompositeController.setParentController(this);
+		//The service manager used to get instance of remote services(In this case gRPC)
+		personasCompositeController.setServiceManager(serviceManager);
+		//The error handler of the controller will be this instance
+		personasCompositeController.setErrorHandler(this);
+		//Initialize
+		personasCompositeController.init();
+		//Get the corresponding view and add it as a widget to the main Root Panel
+		mainPanel.add(personasCompositeController.getView().getAsWidget());
+		
+		
+		
+		
 	}
 
-	public void loadPersonas() {
-		//Call the service to update the list of personas
-		//add an hendler for update 
-		RPCService.getInstance().loadPersonas(new LoadPersonasCallBack());
+	@Override
+	public void addError(String errorMsg) {
+		Window.alert(errorMsg);
+		
+	}
+
+	@Override
+	public void addException(Throwable tr) {
+		Window.alert(tr.getLocalizedMessage());
+		
+	}
+
+	@Override
+	public SelectionHandler<Integer> getSelectionHandler() {
 		// TODO Auto-generated method stub
+		return null;
 	}
-	
-	public class LoadPersonasCallBack implements DataLoadedCallBack{
 
-		@Override
-		public void onError(String error) {
-			Window.alert(error);
-			
-		}
-
-		@Override
-		public void onSuccess() {
-			//Get the actual personas from the PersonaService
-			Map<String, PersonaObj> personas = RPCService.getInstance().getPersonas();
-			
-			Iterator<String> it = personas.keySet().iterator();
-
-			while (it.hasNext()) {
-				String name = it.next();
-				PersonaObj persona = personas.get(name);
-				PersonaView wid = new PersonaView(persona);
-				PersonaUpdatesTabbedView updatestab = new PersonaUpdatesTabbedView(); 
-				wid.add(updatestab);
-				
-				personaTabs.put(persona.getName(), wid);
-				//Now render the tab
-				tabPanel.add(wid,persona.getName());
-				//Create a Updatecontroller for this persona
-				
-				
-				UpdatesController personaUpdatesController = new UpdatesController(persona.getName(),updatestab);
-				updatesControllers.put(persona.getName(), personaUpdatesController);
-			}
-			
-			
-		}
+	@Override
+	public void getDataLoadedHandler(Object result) {
+		// TODO Auto-generated method stub
 		
 	}
 
-	/**
-	 * Return the 
-	 * @param selectedItem
-	 */
-	public Widget getTabPanel(Integer selectedItem) {
-		return this.tabPanel.getWidget(selectedItem);
+	@Override
+	public void getToolActionHandler(String string) {
+		Window.alert("MainCOntroller ActionEvent Handler"+string);
 		
 	}
-	public UpdatesController getUpdatesController(String name) {
-		return this.updatesControllers.get(name);
-		
+
+	@Override
+	public AsyncCallback<String> getDataRemovedCallBack() {
+		// TODO Auto-generated method stub
+		return null;
 	}
-	public void addPersonaTab(PersonaObj persona) {
-		Widget wid = new PersonaView(persona);
-		this.personaTabs.put(persona.getName(), wid);
-		this.tabPanel.add(wid, persona.getName());
-		
-	}
-	public void removePersonaTab(String name) {
-		
-		Widget wid = this.personaTabs.get(name);
-		if ( wid != null ) {
-			this.tabPanel.remove(wid);
-			this.tabPanel.selectTab(0);
-			this.updatesControllers.remove(name);
-		}
-		
-		
-	}
-	
-	
-	
 
 }

@@ -1,15 +1,35 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-public class TwitterAccountObj {
+
+
+public class TwitterAccountDTO implements IModel {
 
 	private String twitterScreenName;
 	private String twitterPassword;
 	private String twitterUserName;	
 	private String twitterDescription;
 	private String twitterImageUrl;
-	private String twitterFollowers;
-	private String twitterFollowing;
-	private String twitterUpdates;
+	private Integer twitterFollowers;
+	public Integer getTwitterFollowers() {
+		return twitterFollowers;
+	}
+	public void setTwitterFollowers(Integer twitterFollowers) {
+		this.twitterFollowers = twitterFollowers;
+	}
+	public Integer getTwitterFollowing() {
+		return twitterFollowing;
+	}
+	public void setTwitterFollowing(Integer twitterFollowing) {
+		this.twitterFollowing = twitterFollowing;
+	}
+	public Integer getTwitterUpdates() {
+		return twitterUpdates;
+	}
+	public void setTwitterUpdates(Integer twitterUpdates) {
+		this.twitterUpdates = twitterUpdates;
+	}
+	private Integer twitterFollowing;
+	private Integer twitterUpdates;
 	
 	
 	public void setTwitterPassword(String twitterPassword) {
@@ -42,23 +62,5 @@ public class TwitterAccountObj {
 	public String getTwitterImageUrl() {
 		return twitterImageUrl;
 	}
-	public void setTwitterFollowers(String twitterFollowers) {
-		this.twitterFollowers = twitterFollowers;
-	}
-	public String getTwitterFollowers() {
-		return twitterFollowers;
-	}
-	public void setTwitterFollowing(String twitterFollowing) {
-		this.twitterFollowing = twitterFollowing;
-	}
-	public String getTwitterFollowing() {
-		return twitterFollowing;
-	}
 	
-	public void setTwitterUpdates(String twitterUpdates) {
-		this.twitterUpdates = twitterUpdates;
-	}
-	public String getTwitterUpdates() {
-		return twitterUpdates;
-	}
 }

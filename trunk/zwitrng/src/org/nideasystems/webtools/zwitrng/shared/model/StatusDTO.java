@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-public class TwittUpdate {
+
+public class StatusDTO implements IModel{
 
 	private String update = "";
 	private String timeUpdate ="";

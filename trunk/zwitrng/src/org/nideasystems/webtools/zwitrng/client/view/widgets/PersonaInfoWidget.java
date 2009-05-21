@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountObj;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -29,7 +29,7 @@ public class PersonaInfoWidget extends HorizontalPanel {
 	HTML userFollowers = null;
 	HTML userUpdates = null;
 	
-	public PersonaInfoWidget(TwitterAccountObj twitterAccount) {
+	public PersonaInfoWidget(TwitterAccountDTO twitterAccount) {
 		super();
 		
 		HorizontalPanel topPannel= new HorizontalPanel();

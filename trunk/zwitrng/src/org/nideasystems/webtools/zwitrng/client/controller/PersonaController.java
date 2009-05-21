@@ -1,0 +1,74 @@
+package org.nideasystems.webtools.zwitrng.client.controller;
+
+import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+
+import com.google.gwt.event.logical.shared.SelectionHandler;
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
+
+public class PersonaController extends AbstractController {
+
+	private PersonaView personaView = null;
+	private PersonaDTO persona = null;
+	
+	@Override
+	public void init() {
+		//Let's create the persona View
+		personaView = new PersonaView(persona);
+		//The the controller for the view
+		personaView.setController(this);
+		//Initialize the view
+		personaView.init();
+		//Now, tell the controller what view to use
+		this.view = personaView;
+		
+	}
+	
+	/**
+	 * Set the Persona DTO
+	 * @param persona
+	 */
+	public void setPersona(PersonaDTO persona) {
+		this.persona = persona;
+	}
+
+	/**
+	 * Get the Persona DTO
+	 * @return
+	 */
+	public PersonaDTO getPersona() {
+		return persona;
+	}
+
+	@Override
+	public SelectionHandler<Integer> getSelectionHandler() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void getDataLoadedHandler(Object result) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void getToolActionHandler(String string) {
+		if (string.equals("DELETE")) {
+			try {
+				getServiceManager().getRPCService().deletePersona(this.persona.getName(), getParentController().getDataRemovedCallBack());
+			} catch (Exception e) {
+				getErrorHandler().addException(e);
+			}
+		}
+			
+	}
+
+	@Override
+	public AsyncCallback<String> getDataRemovedCallBack() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

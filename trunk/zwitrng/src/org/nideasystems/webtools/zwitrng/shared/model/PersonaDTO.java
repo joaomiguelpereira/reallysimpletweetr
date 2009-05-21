@@ -1,14 +1,17 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-import java.io.Serializable;
+
 import java.util.Date;
+import java.util.List;
+
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONString;
 import com.google.gwt.json.client.JSONValue;
 
 
-public class PersonaObj implements Serializable{
+
+public class PersonaDTO implements IModel{
 	
 	/**
 	 * 
@@ -16,14 +19,17 @@ public class PersonaObj implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private String name = null;
 	private Date creationDate =null;
-	
-
-	private TwitterAccountObj twitterAccount = null;
-	
+	private String userEmail = null;
+	private List<FilterCriteriaDTO> filters;
 
 	
+
+	private TwitterAccountDTO twitterAccount = null;
 	
-	public PersonaObj() {
+
+	
+	
+	public PersonaDTO() {
 	
 	}
 
@@ -44,11 +50,11 @@ public class PersonaObj implements Serializable{
 		return creationDate;
 	}
 
-	public void setTwitterAccount(TwitterAccountObj twitterAccount) {
+	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 	}
 
-	public TwitterAccountObj getTwitterAccount() {
+	public TwitterAccountDTO getTwitterAccount() {
 		return twitterAccount;
 	}
 
@@ -66,8 +72,8 @@ public class PersonaObj implements Serializable{
 		return personaObj;
 	}
 
-	public static PersonaObj fromJson(JSONValue jsonObj) {
-		PersonaObj persona = new PersonaObj();
+	public static PersonaDTO fromJson(JSONValue jsonObj) {
+		PersonaDTO persona = new PersonaDTO();
 		
 		String personaName = jsonObj.isObject().get("personaName").isString().stringValue();
 		
@@ -76,7 +82,7 @@ public class PersonaObj implements Serializable{
 		JSONObject jsonTwitterAccount = jsonObj.isObject().get("twitterAccount").isObject();
 		
 		
-		TwitterAccountObj twitterAccount = new TwitterAccountObj();
+		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
 		
 		
 		twitterAccount.setTwitterScreenName(jsonTwitterAccount.get("twitterScreenName").isString().stringValue());
@@ -86,5 +92,25 @@ public class PersonaObj implements Serializable{
 		persona.setTwitterAccount(twitterAccount);
 		return persona;
 	}
+
+	public void setUserEmail(String userEmail) {
+		this.userEmail = userEmail;
+	}
+
+	public String getUserEmail() {
+		return userEmail;
+	}
+
+	public void setFilters(List<FilterCriteriaDTO> filters) {
+		this.filters = filters;
+	}
+
+	public List<FilterCriteriaDTO> getFilters() {
+		return filters;
+	}
+
+
+
+	
 	
 }
