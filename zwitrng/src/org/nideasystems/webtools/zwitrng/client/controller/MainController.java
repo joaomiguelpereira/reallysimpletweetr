@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 
 
 
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasCompositeController;
 import org.nideasystems.webtools.zwitrng.client.services.BasicServiceManager;
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
 

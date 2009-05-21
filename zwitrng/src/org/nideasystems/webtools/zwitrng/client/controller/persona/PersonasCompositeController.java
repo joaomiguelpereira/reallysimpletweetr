@@ -1,9 +1,11 @@
-package org.nideasystems.webtools.zwitrng.client.controller;
+package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.IDataLoadedHandler;
 import org.nideasystems.webtools.zwitrng.client.services.RPCService;
 
 import org.nideasystems.webtools.zwitrng.client.view.PersonasCompositeView;

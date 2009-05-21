@@ -1,5 +1,6 @@
-package org.nideasystems.webtools.zwitrng.client.controller;
+package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
+import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
