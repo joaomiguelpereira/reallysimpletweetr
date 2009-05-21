@@ -1,24 +1,19 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
-import javax.jdo.Query;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterService;
-import org.nideasystems.webtools.zwitrng.server.utils.JSONUtils;
+import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
-import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
+
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -28,110 +23,143 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		TwitterPersonaService {
 
-	private Twitter twitter = null;
+	public UserService getUserService() {
+		return userService;
+	}
+
+	public void setUserService(UserService userService) {
+		this.userService = userService;
+	}
+
+	public PersonaDAO getPersonaDao() {
+		return personaDao;
+	}
+
+	public void setPersonaDao(PersonaDAO personaDao) {
+		this.personaDao = personaDao;
+	}
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3805847312414045223L;
+	private UserService userService;
+	private PersonaDAO personaDao;
+	private static final Logger log = Logger
+			.getLogger(TwitterPersonaServiceImpl.class.getName());
+
+	public TwitterPersonaServiceImpl() {
+		log.fine("Instantiating TwitterPersonaServiceImpl..");
+		this.userService = UserServiceFactory.getUserService();
+		this.personaDao = new PersonaDAO();
+
+	}
 
 	/**
 	 * Create a new Persona and return the representation
 	 */
 	@Override
-	public String createPersona(String personaAsString) {
+	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
 
-		PersonaDAO personaDao = new PersonaDAO();
 		// Check if is logged in
-		User currentUser = UserServiceFactory.getUserService().getCurrentUser();
+		User currentUser = userService.getCurrentUser();
 
+		// do some validations...
 		if (currentUser == null) {
-			return JSONUtils.createError("You must be logged in").toString();
+			throw new Exception("You must be logged in");
+
+		}
+		if (persona.getTwitterAccount() == null) {
+			throw new Exception("Please provide your twitter information");
 		}
 
-		// Try to Authenticate the
-		String returnValue = null;
-		JSONObject jsonObject = null;
+		if (persona.getName().isEmpty()
+				|| persona.getTwitterAccount().getTwitterScreenName().isEmpty()
+				|| persona.getTwitterAccount().getTwitterPassword().isEmpty()) {
+			throw new Exception("Not all data provided. All field are required");
+		}
+
 		ExtendedUser twitterUser = null;
 
+		// Check if account exists/credentials ok
 		try {
-			jsonObject = new JSONObject(personaAsString);
-
-			JSONObject twitterAccount = jsonObject
-					.getJSONObject("twitterAccount");
-
-			String personaName = jsonObject.getString("personaName");
-			
-			String twitterUseName = twitterAccount
-					.getString("twitterScreenName");
-
-			String twitterPassword = twitterAccount
-					.getString("twitterPassword");
-
-			if (personaName.isEmpty() || twitterUseName.isEmpty()
-					|| twitterPassword.isEmpty()) {
-				return JSONUtils.createError("Not all data provided. All field are required").toString();
-			}
-
-			// Check if account exists/credentials ok
-			try {
-				twitterUser = TwitterService.get().getExtendedUser(twitterUseName, twitterPassword, true);
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			// Login ok?
-			if (twitterUser != null) {
-				// cool, it exists
-				// Try to create, throws exception if exists
-				PersonaDO personaDo = null;
-				try {
-					personaDo = personaDao.createPersona(personaName, twitterUseName,
-							twitterPassword, currentUser.getEmail());
-					returnValue = PersonaDAO.createPersonaJson(personaDo, twitterUser).toString();
-				} catch (Exception e) {
-					returnValue = JSONUtils.createError(e.getMessage()).toString();
-
-				}
-
-			} else {
-				returnValue = JSONUtils.createError("Twitter Account not found or Authentication failed").toString();
-			}
-		} catch (JSONException e) {
-			returnValue = JSONUtils.createError("ERROR " + e.getMessage()).toString();
+			twitterUser = TwitterService.get().getExtendedUser(
+					persona.getTwitterAccount().getTwitterScreenName(),
+					persona.getTwitterAccount().getTwitterPassword(), true);
+		} catch (Exception e1) {
+			e1.printStackTrace();
+			throw new Exception(e1);
 		}
 
-		return returnValue;
-	}
+		PersonaDO personaDo = null;
+		try {
+			personaDo = personaDao.createPersona(persona, currentUser
+					.getEmail());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
 
-	
+		}
+
+		return DataUtils.createPersonaDto(personaDo, twitterUser);
+	}
 
 	/**
-	 * Return a String representing a JSONArray with all personas for the current user
+	 * Return a String representing a JSONArray with all personas for the
+	 * current user
 	 */
-	@Override
-	public String getPesonas() {
-		User user = UserServiceFactory.getUserService().getCurrentUser();
-		
-		JSONArray jsonArray = new JSONArray();
-		if (user != null) {
-			PersonaDAO dao = new PersonaDAO();
-			jsonArray =  dao.findAllPersonas(user.getEmail());
-			// Get all Personas for email: email
-		}
-
-		String returnval = jsonArray.toString();
-		return returnval;
-	}
+	/*
+	 * @Override public String getPesonas() {
+	 * 
+	 * User user = UserServiceFactory.getUserService().getCurrentUser();
+	 * 
+	 * JSONArray jsonArray = new JSONArray(); if (user != null) {
+	 * 
+	 * jsonArray = personaDao.findAllPersonas(user.getEmail()); // Get all
+	 * Personas for email: email }
+	 * 
+	 * String returnval = jsonArray.toString(); return returnval; }
+	 */
 
 	@Override
 	public String deletePersona(String persona) {
 		// TODO Auto-generated method stub
 		User user = UserServiceFactory.getUserService().getCurrentUser();
-		PersonaDAO personDao = new PersonaDAO();
-		personDao.deletePersona(persona,user.getEmail());
-		return "ok";
+
+		personaDao.deletePersona(persona, user.getEmail());
+		return persona;
+	}
+
+	@Override
+	public List<PersonaDTO> getPersonas() {
+		User user = UserServiceFactory.getUserService().getCurrentUser();
+		List<PersonaDTO> returnPersonas = null;
+		if (user != null) {
+
+			returnPersonas = personaDao.findAllPersonas(user.getEmail());
+			// Get all Personas for email: email
+		}
+
+		return returnPersonas;
+	}
+
+	@Override
+	public List<FilterCriteriaDTO> getPersonaFilters(String personaName) {
+		
+		//get the DAO
+		//Key personaKey = ;
+		User user = UserServiceFactory.getUserService().getCurrentUser();
+		List<FilterCriteriaDTO> returnFilters = null;
+		if (user != null) {
+
+			returnFilters = personaDao.findAllPersonaFilters(personaName,user.getEmail());
+			// Get all Personas for email: email
+		}
+
+		return returnFilters;
+		
+		
+		
 	}
 
 }

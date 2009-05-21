@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.Date;
 import java.util.List;
 
@@ -110,6 +110,8 @@ public class PersonaDO {
 	public Key getKey() {
 		return key;
 	}
+
+
 	
 
 	

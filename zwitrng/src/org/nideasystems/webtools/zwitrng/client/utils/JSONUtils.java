@@ -2,8 +2,8 @@ package org.nideasystems.webtools.zwitrng.client.utils;
 
 import java.util.Date;
 
-import org.nideasystems.webtools.zwitrng.shared.model.PersonaObj;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountObj;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.json.client.JSONParser;
@@ -14,11 +14,11 @@ public class JSONUtils {
 	public static JSONObject createNewPersonaJSonRequest(String personaName,
 			String twUserName, String twPassword) {
 		
-		PersonaObj personaObj = new PersonaObj();
+		PersonaDTO personaObj = new PersonaDTO();
 		personaObj.setCreationDate(new Date());
 		personaObj.setName(personaName);
 		
-		TwitterAccountObj twitterAccount = new TwitterAccountObj();
+		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
 		twitterAccount.setTwitterPassword(twPassword);
 		twitterAccount.setTwitterScreenName(twUserName);
 		personaObj.setTwitterAccount(twitterAccount);

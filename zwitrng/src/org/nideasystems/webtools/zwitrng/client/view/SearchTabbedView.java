@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.user.client.ui.DecoratedTabPanel;
+
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -12,12 +12,18 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author jpereira
  *
  */
-public class PersonaUpdatesTabbedView extends DecoratedTabPanel {
+public class SearchTabbedView extends AbstractTabbedPanel {
 	Map<String, VerticalPanel> tabs = new HashMap<String, VerticalPanel>();
 
-	public PersonaUpdatesTabbedView() {
+	public SearchTabbedView() {
 		super();
 		super.setWidth("700px");
 		super.setAnimationEnabled(true);
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

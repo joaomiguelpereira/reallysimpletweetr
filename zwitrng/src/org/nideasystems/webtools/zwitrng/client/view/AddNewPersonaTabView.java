@@ -1,11 +1,13 @@
 package org.nideasystems.webtools.zwitrng.client.view;
 
-import org.nideasystems.webtools.zwitrng.client.services.RPCService;
-import org.nideasystems.webtools.zwitrng.client.utils.JSONUtils;
+
+
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.json.client.JSONObject;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
@@ -13,7 +15,7 @@ import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class AddNewPersonaView extends VerticalPanel {
+public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 	private final VerticalPanel formPPanel = new VerticalPanel();
 	private final Label twPersonaNameLabel = new Label("Persona Name");
 	private final Label twUserNameLabel = new Label("Twitter User Name");
@@ -22,9 +24,12 @@ public class AddNewPersonaView extends VerticalPanel {
 	private final TextBox twUserName = new TextBox();
 	private final PasswordTextBox twPassword = new PasswordTextBox();
 	
-	public AddNewPersonaView() {
+	public AddNewPersonaTabView() {
 		super();
-		
+	}
+
+	@Override
+	public void init() {
 		formPPanel.setSpacing(5);	
 		formPPanel.add(twPersonaNameLabel);
 		formPPanel.add(twPersonaName);
@@ -47,13 +52,32 @@ public class AddNewPersonaView extends VerticalPanel {
 			@Override
 			public void onClick(ClickEvent event) {
 				// Create a new Object to send to the Server
+				PersonaDTO persona = new PersonaDTO();
+				persona.setName(twPersonaName.getValue());
+				TwitterAccountDTO twitterAccountObj = new TwitterAccountDTO();
+				twitterAccountObj.setTwitterScreenName(twUserName.getValue());
+				twitterAccountObj.setTwitterPassword(twPassword.getValue());
+				persona.setTwitterAccount(twitterAccountObj);
 
-				JSONObject jsonObject = JSONUtils.createNewPersonaJSonRequest(
-						twPersonaName.getValue(), twUserName.getValue(),
-						twPassword.getValue());
+				try {
+					getController().getServiceManager().getRPCService().createPersona(persona, new AsyncCallback<PersonaDTO>(){
 
-				RPCService.getInstance().createPersona(
-						jsonObject.toString());
+						@Override
+						public void onFailure(Throwable caught) {
+							getController().getErrorHandler().addException(caught);
+							
+						}
+
+						@Override
+						public void onSuccess(PersonaDTO result) {
+							getController().getDataLoadedHandler(result);
+							
+						}
+						
+					});
+				} catch (Exception e) {
+					getController().getErrorHandler().addException(e);
+				}
 			}
 
 		});
@@ -62,6 +86,6 @@ public class AddNewPersonaView extends VerticalPanel {
 
 		this.add(toolPanel);
 		this.ensureDebugId("cwVerticalPanel");
-
+		
 	}
 }

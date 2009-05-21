@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
-import org.nideasystems.webtools.zwitrng.shared.model.TwittUpdate;
+import org.nideasystems.webtools.zwitrng.shared.model.StatusDTO;
 
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,7 +17,7 @@ public class TwitterUpdateWidget extends HorizontalPanel {
 	private HorizontalPanel leftPanel = new HorizontalPanel();
 	private HorizontalPanel rightPanel = new HorizontalPanel();
 
-	public TwitterUpdateWidget(TwittUpdate twittUpdate) {
+	public TwitterUpdateWidget(StatusDTO twittUpdate) {
 		super();
 		VerticalPanel topPanel = new VerticalPanel();
 

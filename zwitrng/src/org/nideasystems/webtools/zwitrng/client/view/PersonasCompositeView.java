@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view;
 
-import org.nideasystems.webtools.zwitrng.client.controller.PersonaTabSelectCallBack;
+
 
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
 
@@ -10,25 +10,34 @@ import com.google.gwt.user.client.ui.DecoratedTabPanel;
  * @author jpereira
  *
  */
-public class PersonaTabView extends DecoratedTabPanel{
+public class PersonasCompositeView extends AbstractTabbedPanel{
 
 	/**
 	 * Constructor
 	 */
-	public PersonaTabView() {
+	public PersonasCompositeView() {
 		super();
+		
+		
+	}
+
+	@Override
+	public void init() {
 		this.setWidth("750px");
 		super.setAnimationEnabled(true);
-
 		//Add the default AddPersonaPanel
-		AddNewPersonaView addNewPersonaView = new AddNewPersonaView();
+		AddNewPersonaTabView addNewPersonaView = new AddNewPersonaTabView();
+		addNewPersonaView.setController(getController());
+		
+		addNewPersonaView.init();
+		
 		super.add(addNewPersonaView, "+");
 		// Return the content
 		super.selectTab(0);
 		super.ensureDebugId("cwTabPanel");
-		
 		//Add a selection listener to the tab
-		super.addSelectionHandler(new PersonaTabSelectCallBack());
+		
+		super.addSelectionHandler(getController().getSelectionHandler());
 		
 	}
 }
