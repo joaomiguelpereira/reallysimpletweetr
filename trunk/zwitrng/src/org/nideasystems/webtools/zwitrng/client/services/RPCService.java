@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.DataLoadedCallBack;
-import org.nideasystems.webtools.zwitrng.client.controller.PersonasCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasCompositeController;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.StatusDTO;

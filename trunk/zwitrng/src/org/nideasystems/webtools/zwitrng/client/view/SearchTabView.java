@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view;
 
 
-import org.nideasystems.webtools.zwitrng.client.controller.SearchesCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;

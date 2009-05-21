@@ -1,6 +1,7 @@
-package org.nideasystems.webtools.zwitrng.client.controller;
+package org.nideasystems.webtools.zwitrng.client.controller.search;
 
 
+import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
