@@ -1,7 +1,8 @@
-package org.nideasystems.webtools.zwitrng.client.view;
+package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
+import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 

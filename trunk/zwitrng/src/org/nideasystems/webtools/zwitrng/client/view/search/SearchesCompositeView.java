@@ -1,7 +1,9 @@
-package org.nideasystems.webtools.zwitrng.client.view;
+package org.nideasystems.webtools.zwitrng.client.view.search;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
 
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -25,7 +27,7 @@ public class SearchesCompositeView extends AbstractTabbedPanel {
 		super.setWidth("700px");
 		super.setAnimationEnabled(true);
 		//add the default tab
-		SearchTabView defaultSearchView = new SearchTabView();
+		SearchView defaultSearchView = new SearchView();
 		defaultSearchView.setController(getController());
 		defaultSearchView.setName("Default");
 		defaultSearchView.init();

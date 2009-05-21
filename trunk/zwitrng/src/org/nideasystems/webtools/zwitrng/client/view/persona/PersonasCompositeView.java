@@ -1,8 +1,8 @@
-package org.nideasystems.webtools.zwitrng.client.view;
+package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import com.google.gwt.user.client.ui.DecoratedTabPanel;
+import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
 
 /**

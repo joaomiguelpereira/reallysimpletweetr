@@ -10,8 +10,8 @@ import org.nideasystems.webtools.zwitrng.client.controller.IDataLoadedHandler;
 import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
 import org.nideasystems.webtools.zwitrng.client.services.RPCService;
 
-import org.nideasystems.webtools.zwitrng.client.view.PersonaView;
-import org.nideasystems.webtools.zwitrng.client.view.PersonasCompositeView;
+import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
+import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasCompositeView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
