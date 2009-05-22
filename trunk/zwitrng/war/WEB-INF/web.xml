@@ -7,18 +7,32 @@
 
   <!-- Default page to serve -->
   <welcome-file-list>
-    <welcome-file>Zwitrng.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
   </welcome-file-list>
   
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>org.nideasystems.webtools.zwitrng.server.GreetingServiceImpl</servlet-class>
+    <servlet-name>twitterService</servlet-name>
+    <servlet-class>org.nideasystems.webtools.zwitrng.server.TwitterServiceImpl</servlet-class>
+  </servlet>
+
+
+  <servlet-mapping>
+    <servlet-name>twitterService</servlet-name>
+    <url-pattern>/zwitrng/twitterService</url-pattern>
+  </servlet-mapping>
+
+
+
+  <servlet>
+    <servlet-name>personaService</servlet-name>
+    <servlet-class>org.nideasystems.webtools.zwitrng.server.TwitterPersonaServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/zwitrng/greet</url-pattern>
+    <servlet-name>personaService</servlet-name>
+    <url-pattern>/zwitrng/personaService</url-pattern>
   </servlet-mapping>
+
 
 </web-app>
