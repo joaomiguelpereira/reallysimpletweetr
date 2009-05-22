@@ -1,4 +1,4 @@
-package org.nideasystems.webtools.zwitrng.client.view.search;
+package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,10 +14,10 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author jpereira
  *
  */
-public class SearchesCompositeView extends AbstractTabbedPanel {
+public class TwitterUpdatesCompositeView extends AbstractTabbedPanel {
 	Map<String, VerticalPanel> tabs = new HashMap<String, VerticalPanel>();
 
-	public SearchesCompositeView() {
+	public TwitterUpdatesCompositeView() {
 		super();
 		
 	}
@@ -26,13 +26,13 @@ public class SearchesCompositeView extends AbstractTabbedPanel {
 	public void init() {
 		super.setWidth("700px");
 		super.setAnimationEnabled(true);
-		//add the default tab
-		SearchView defaultSearchView = new SearchView();
-		defaultSearchView.setController(getController());
-		defaultSearchView.setName("Default");
-		defaultSearchView.init();
-		this.add(defaultSearchView,defaultSearchView.getName());
-		this.selectTab(0);
+//		//add the default tab
+//		SearchView defaultSearchView = new SearchView();
+//		defaultSearchView.setController(getController());
+//		defaultSearchView.setName("Default");
+//		defaultSearchView.init();
+//		this.add(defaultSearchView,defaultSearchView.getName());
+//		this.selectTab(0);
 		
 		
 		

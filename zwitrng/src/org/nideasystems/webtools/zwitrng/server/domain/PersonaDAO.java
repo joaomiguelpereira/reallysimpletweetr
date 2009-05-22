@@ -7,18 +7,11 @@ import java.util.List;
 import javax.jdo.PersistenceManager;
 import javax.jdo.Query;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.nideasystems.webtools.zwitrng.server.PMF;
-import org.nideasystems.webtools.zwitrng.server.twitter.TwitterService;
+import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
-import org.nideasystems.webtools.zwitrng.server.utils.JSONUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
-
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
 
 import twitter4j.ExtendedUser;
 
@@ -133,7 +126,7 @@ public class PersonaDAO extends BaseDAO {
 				if (persona.getTwitterAccount() != null) {
 
 					try {
-						twitterUser = TwitterService.get().getExtendedUser(
+						twitterUser = TwitterServiceAdapter.get().getExtendedUser(
 								persona.getTwitterAccount().getTwitterName(),
 								persona.getTwitterAccount().getTwitterPass(),
 								false);

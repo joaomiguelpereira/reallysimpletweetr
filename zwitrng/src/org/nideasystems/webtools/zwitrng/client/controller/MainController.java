@@ -76,14 +76,8 @@ public class MainController extends AbstractCompositeController implements IErro
 	}
 
 	@Override
-	public void getDataLoadedHandler(Object result) {
+	public void handleDataLoaded(Object result) {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void getToolActionHandler(String string) {
-		Window.alert("MainCOntroller ActionEvent Handler"+string);
 		
 	}
 
@@ -91,6 +85,12 @@ public class MainController extends AbstractCompositeController implements IErro
 	public AsyncCallback<String> getDataRemovedCallBack() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void handleAction(String action, Object... args) {
+		Window.alert("MainCOntroller ActionEvent Handler"+action);
+		
 	}
 
 }

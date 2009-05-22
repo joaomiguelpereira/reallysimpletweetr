@@ -216,20 +216,13 @@ public class PersonasCompositeController extends AbstractCompositeController
 	}
 	
 	@Override
-	public void getDataLoadedHandler(Object result) {
+	public void handleDataLoaded(Object result) {
 		//Hopefully, this is a PersonaDTO
 		createPersona((PersonaDTO)result);
 		
 		
 		
 	}
-
-	@Override
-	public void getToolActionHandler(String string) {
-		Window.alert("PersonaaCompositeController ActionEvent Handler"+string);
-		
-	}
-
 	@Override
 	public AsyncCallback<String> getDataRemovedCallBack() {
 		return this.new PersonaRemovedCallBack();
@@ -249,6 +242,12 @@ public class PersonasCompositeController extends AbstractCompositeController
 			removePersona(result);
 			
 		}
+		
+	}
+
+	@Override
+	public void handleAction(String action, Object... args) {
+		Window.alert("PersonaaCompositeController ActionEvent Handler"+action);
 		
 	}
 

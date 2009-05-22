@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
-import org.nideasystems.webtools.zwitrng.server.twitter.TwitterService;
+import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -83,7 +83,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 
 		// Check if account exists/credentials ok
 		try {
-			twitterUser = TwitterService.get().getExtendedUser(
+			twitterUser = TwitterServiceAdapter.get().getExtendedUser(
 					persona.getTwitterAccount().getTwitterScreenName(),
 					persona.getTwitterAccount().getTwitterPassword(), true);
 		} catch (Exception e1) {
@@ -104,23 +104,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		return DataUtils.createPersonaDto(personaDo, twitterUser);
 	}
 
-	/**
-	 * Return a String representing a JSONArray with all personas for the
-	 * current user
-	 */
-	/*
-	 * @Override public String getPesonas() {
-	 * 
-	 * User user = UserServiceFactory.getUserService().getCurrentUser();
-	 * 
-	 * JSONArray jsonArray = new JSONArray(); if (user != null) {
-	 * 
-	 * jsonArray = personaDao.findAllPersonas(user.getEmail()); // Get all
-	 * Personas for email: email }
-	 * 
-	 * String returnval = jsonArray.toString(); return returnval; }
-	 */
-
+	
 	@Override
 	public String deletePersona(String persona) {
 		// TODO Auto-generated method stub

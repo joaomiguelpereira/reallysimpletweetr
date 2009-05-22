@@ -49,14 +49,14 @@ public class PersonaController extends AbstractController {
 	}
 
 	@Override
-	public void getDataLoadedHandler(Object result) {
+	public void handleDataLoaded(Object result) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void getToolActionHandler(String string) {
-		if (string.equals("DELETE")) {
+	public void handleAction(String action, Object...args) {
+		if (action.equals("DELETE")) {
 			try {
 				getServiceManager().getRPCService().deletePersona(this.persona.getName(), getParentController().getDataRemovedCallBack());
 			} catch (Exception e) {

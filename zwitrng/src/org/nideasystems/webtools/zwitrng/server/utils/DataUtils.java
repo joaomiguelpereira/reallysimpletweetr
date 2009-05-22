@@ -8,8 +8,11 @@ import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import twitter4j.ExtendedUser;
+import twitter4j.Status;
+import twitter4j.User;
 
 public class DataUtils {
 
@@ -21,18 +24,54 @@ public class DataUtils {
 		returnPersona.setName(personaDo.getName());
 		returnPersona.setUserEmail(personaDo.getUserEmail());
 		
-		//WORKE HERE
-/*		Long id = personaDo.getKey().getId();
-		String kind = personaDo.getKey().getKind();
 		
-		String name= personaDo.getKey().getName();
+		TwitterAccountDTO twitterAcount = createTwitterAccountDto(twitterUser);
 		
+		/*twitterAcount.setTwitterDescription(twitterUser.getDescription());
+		twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
+		twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
+		twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL().toExternalForm());
+		twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
+		twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
+		twitterAcount.setTwitterUserName(twitterUser.getName());*/
 		
+
+		//Handle correcly the pass
+		twitterAcount.setTwitterPassword(personaDo.getTwitterAccount().getTwitterPass());
+
 		
-		String keyAsAsString = personaDo.getKey().toString();
-*/		
+		returnPersona.setTwitterAccount(twitterAcount);
 		
-		//returnPersona.setKey(keyAsAsString);
+		return returnPersona;
+		
+	}
+
+	/**
+	 * 
+	 * @param twitterUser
+	 * @return
+	 */
+	public static TwitterAccountDTO createTwitterAccountDto(User twitterUser) {
+		
+		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
+		twitterAcount.setTwitterDescription(twitterUser.getDescription());
+		
+		twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
+		//twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
+		twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL().toExternalForm());
+		twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
+		//twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
+		twitterAcount.setTwitterUserName(twitterUser.getName());
+		
+		return twitterAcount;
+	}
+
+	/**
+	 * 
+	 * @param twitterUser
+	 * @return
+	 */
+	public static TwitterAccountDTO createTwitterAccountDto(ExtendedUser twitterUser) {
 		
 		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
 		twitterAcount.setTwitterDescription(twitterUser.getDescription());
@@ -43,10 +82,7 @@ public class DataUtils {
 		twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
 		twitterAcount.setTwitterUserName(twitterUser.getName());
 		
-		returnPersona.setTwitterAccount(twitterAcount);
-		
-		return returnPersona;
-		
+		return twitterAcount;
 	}
 	
 	public static PersonaDO fromDto(PersonaDTO personaDto, String email) {
@@ -83,6 +119,31 @@ public class DataUtils {
 		
 		return returnObj;
 		
+		
+	}
+
+	public static TwitterUpdateDTO createTwitterUpdateDto(Status status) {
+		TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
+		
+		
+		twitterUpdate.setCreatedAt(status.getCreatedAt());
+		twitterUpdate.setId(status.getId());
+		twitterUpdate.setInReplyToStatusId(status.getInReplyToStatusId());
+		twitterUpdate.setInReplyToUserId(status.getInReplyToUserId());
+		
+		twitterUpdate.setRateLimitLimit(status.getRateLimitLimit());
+		twitterUpdate.setRateLimitRemaining(status.getRateLimitRemaining());
+		twitterUpdate.setRateLimitReset(status.getRateLimitReset());
+		twitterUpdate.setSource(status.getSource());
+		twitterUpdate.setText(status.getText());
+		
+		//Create a twitter Account
+		TwitterAccountDTO twitterAccount =  DataUtils.createTwitterAccountDto(status.getUser());
+		
+		twitterUpdate.setTwitterAccount(twitterAccount);
+		
+		
+		return twitterUpdate;
 		
 	}
 
