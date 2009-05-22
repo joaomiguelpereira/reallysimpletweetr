@@ -41,11 +41,14 @@ public class TwitterUpdatesController extends AbstractController {
 		List<TwitterUpdateDTO> twitterUpdates = (List<TwitterUpdateDTO>)result;
 		//Now start building the TwitterUpdateWidget
 		assert(result!=null);
+		
 		for ( TwitterUpdateDTO update: twitterUpdates) {
 			TwitterUpdateWidget updateWidget = new TwitterUpdateWidget();
 			updateWidget.setController(this);
 			updateWidget.setTwitterUpdate(update);
+			updateWidget.setStyleName("twitterUpdate");			
 			updateWidget.init();
+			
 			updatesView.add(updateWidget);
 			updates.put(update.getId(), update);
 			
