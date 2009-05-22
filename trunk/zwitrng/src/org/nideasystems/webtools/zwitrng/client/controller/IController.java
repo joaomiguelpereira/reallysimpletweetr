@@ -68,17 +68,17 @@ public interface IController {
 	 */
 	public SelectionHandler<Integer> getSelectionHandler();
 	/**
-	 * Get the handler when there is data loaded for this controller
+	 * Handel the data loaded
 	 * @param result
 	 */
-	public void getDataLoadedHandler(Object result);
+	public void handleDataLoaded(Object result);
 	
 	
 	/**
 	 * If this controller has tools (action associated)
 	 * @param string
 	 */
-	public void getToolActionHandler(String string);
+	public void handleAction(String action, Object...args);
 	
 	/**
 	 * When data is removed 
@@ -87,4 +87,10 @@ public interface IController {
 	public AsyncCallback<String> getDataRemovedCallBack();
 	
 
+	
+	public interface IActions {
+		public final String DELETE="DELETE";
+		public final String SEARCH="SEARCH";
+		
+	}
 }

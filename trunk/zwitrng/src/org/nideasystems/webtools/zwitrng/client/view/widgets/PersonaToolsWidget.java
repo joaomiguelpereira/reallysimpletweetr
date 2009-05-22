@@ -38,7 +38,7 @@ public class PersonaToolsWidget extends AbstractVerticalPanelView{
 
 			@Override
 			public void onClick(ClickEvent event) {
-				getController().getToolActionHandler("DELETE");
+				getController().handleAction("DELETE");
 				
 /*				RPCService.getInstance()
 				.deletePersona(persona.getName());*/

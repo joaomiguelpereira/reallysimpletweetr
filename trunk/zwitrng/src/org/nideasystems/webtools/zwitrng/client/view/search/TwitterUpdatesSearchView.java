@@ -11,7 +11,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SearchView extends AbstractVerticalPanelView{
+public class TwitterUpdatesSearchView extends AbstractVerticalPanelView{
 	
 	private final VerticalPanel topPanel = new VerticalPanel();
 	SearchesCompositeController controller = null;
@@ -19,7 +19,7 @@ public class SearchView extends AbstractVerticalPanelView{
 	private final Button seachCriteriaBt = new Button("Search");
 	private final TextBox seachCriteriaTb = new TextBox();
 	
-	public SearchView(){
+	public TwitterUpdatesSearchView(){
 		super();
 		
 	}
@@ -32,6 +32,7 @@ public class SearchView extends AbstractVerticalPanelView{
 		public void onClick(ClickEvent event) {
 			FilterCriteriaDTO filter = new FilterCriteriaDTO();
 			filter.setName("general");
+			getController().handleAction("SEARCH",filter);
 			//controller.search(filter);
 			
 		}

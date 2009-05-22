@@ -71,7 +71,7 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 
 						@Override
 						public void onSuccess(PersonaDTO result) {
-							getController().getDataLoadedHandler(result);
+							getController().handleDataLoaded(result);
 							
 						}
 						
