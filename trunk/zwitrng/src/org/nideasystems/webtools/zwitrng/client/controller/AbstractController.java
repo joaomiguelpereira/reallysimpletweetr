@@ -12,7 +12,7 @@ public abstract class AbstractController implements IController {
 	protected IView view;
 	private String name;
 	private IServiceManager serviceManager;
-	private IErrorHandler errorHandler;
+	private IMainController errorHandler;
 	
 	
 	@Override
@@ -59,14 +59,14 @@ public abstract class AbstractController implements IController {
 	}
 
 	@Override
-	public IErrorHandler getErrorHandler() {
+	public IMainController getErrorHandler() {
 		return this.errorHandler;
 	}
 
 	
 
 	@Override
-	public void setErrorHandler(IErrorHandler errorHandler) {
+	public void setErrorHandler(IMainController errorHandler) {
 		this.errorHandler = errorHandler;
 		
 	}

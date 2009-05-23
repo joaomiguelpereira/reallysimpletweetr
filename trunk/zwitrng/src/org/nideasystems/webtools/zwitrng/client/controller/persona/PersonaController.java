@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
@@ -58,19 +59,30 @@ public class PersonaController extends AbstractController {
 	public void handleAction(String action, Object...args) {
 		if (action.equals("DELETE")) {
 			try {
-				getServiceManager().getRPCService().deletePersona(this.persona.getName(), getParentController().getDataRemovedCallBack());
+				
+				getParentController().handleAction(IController.IActions.DELETE, this.persona.getName());
+				//getServiceManager().getRPCService().deletePersona(this.persona.getName(), getParentController().getDataRemovedCallBack());
 			} catch (Exception e) {
+				
 				getErrorHandler().addException(e);
 			}
 		}
 			
 	}
 
+	
 	@Override
-	public AsyncCallback<String> getDataRemovedCallBack() {
-		// TODO Auto-generated method stub
-		return null;
+	public void endProcessing() {
+		getErrorHandler().isProcessing(false);
+		super.endProcessing();
 	}
+
+	@Override
+	public void startProcessing() {
+		getErrorHandler().isProcessing(true);
+		super.startProcessing();
+	}
+	
 
 	
 

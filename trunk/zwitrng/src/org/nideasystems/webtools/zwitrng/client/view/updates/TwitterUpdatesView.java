@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.updates;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -8,7 +9,7 @@ import com.google.gwt.user.client.ui.Image;
 public class TwitterUpdatesView extends AbstractVerticalPanelView {
 	private final TwitterUpdatesToolWidget toolBar = new TwitterUpdatesToolWidget();
 	private final HorizontalPanel toolContainer = new HorizontalPanel();
-	private Image waitingImage = new Image("/images/ajax-loader.gif");
+	private Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	@Override
 	public void init() {
 		

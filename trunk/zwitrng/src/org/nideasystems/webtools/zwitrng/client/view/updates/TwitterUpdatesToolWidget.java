@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.updates;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
@@ -19,8 +20,9 @@ import com.google.gwt.user.client.ui.PushButton;
 public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView {
 	
 	private final CheckBox autoUpdate = new CheckBox("Auto Update?");
-	private final Image refreshImg = new Image("/images/refresh_bt_3.gif");
+	private final Image refreshImg = new Image(Constants.REFRESH_IMAGE_LOCATION);
 	private final ListBox updatesPerPage = new ListBox();
+	
 	@Override
 	public void init() {
 		HorizontalPanel container = new HorizontalPanel();

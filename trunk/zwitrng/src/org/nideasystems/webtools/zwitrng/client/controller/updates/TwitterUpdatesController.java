@@ -83,11 +83,7 @@ public class TwitterUpdatesController extends AbstractController {
 		endProcessing();
 	}
 
-	@Override
-	public AsyncCallback<String> getDataRemovedCallBack() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	@Override
 	public SelectionHandler<Integer> getSelectionHandler() {

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.GlobalToolsWidget;
+import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.IDataLoadedHandler;
 import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
 import org.nideasystems.webtools.zwitrng.client.services.RPCService;
@@ -15,7 +17,6 @@ import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasCompositeVi
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -24,18 +25,21 @@ public class PersonasCompositeController extends AbstractCompositeController
 
 	// The controller view
 	private PersonasCompositeView personasCompositeView = null;
+	GlobalToolsWidget toolsWidget = null;
 	private Map<String, PersonaDTO> personas = null;
 	private Map<String, Widget> personaTabs = new HashMap<String, Widget>();
 	private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
 	
 
-	
+	/**
+	 * Constructor
+	 */
 	public PersonasCompositeController() {
 
 	}
 
 	/**
-	 * Initialize the view where all tabs are places
+	 * Initialize the view where all tabs are placed
 	 */
 	public void init() {
 
@@ -47,8 +51,7 @@ public class PersonasCompositeController extends AbstractCompositeController
 		// Initialize the view
 		this.personasCompositeView.init();
 		// Tell this controller what the view is
-		this.view = this.personasCompositeView;
-
+		this.view = this.personasCompositeView;		
 		// Initialize data structures
 		this.personas = new HashMap<String, PersonaDTO>();
 
@@ -72,10 +75,12 @@ public class PersonasCompositeController extends AbstractCompositeController
 			// Call the service and give it a callback to handle service async
 			// call
 			try {
+				startProcessing(); 
 				service.loadPersonas(new LoadPersonasCallBack());
 			} catch (Exception e) {
 				getErrorHandler().addException(e);
 				e.printStackTrace();
+				endProcessing();
 			}
 		}
 
@@ -89,11 +94,13 @@ public class PersonasCompositeController extends AbstractCompositeController
 		public void onFailure(Throwable caught) {
 			// Ok, got an error, let's default error handle handle this
 			getErrorHandler().addException(caught);
+			endProcessing();
 
 		}
 
 		@Override
 		public void onSuccess(List<PersonaDTO> result) {
+			endProcessing();
 			// Cool, let's add the persons :)
 			// TODO: Create a IDataLoaded handler that is the controller
 			getDataLoadedCallBack().onDataLoaded(result);
@@ -117,10 +124,9 @@ public class PersonasCompositeController extends AbstractCompositeController
 		if (result != null) {
 			for (PersonaDTO persona : result) {
 				createPersona(persona);
-
-
 			}
 		}
+		
 
 	}
 
@@ -147,24 +153,27 @@ public class PersonasCompositeController extends AbstractCompositeController
 	}
 
 	private void initializeSearchsController(int selectedTab) {
-		//TODO:Huum!!
-		PersonaView personaViewSelected = (PersonaView )this.personasCompositeView.getWidget(selectedTab);
-		
-		//Try to get the controller
-		SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers.get(personaViewSelected.getPersonaObj().getName());
-		if ( searchesCompositeController == null ) {
+		if ( selectedTab != 0 ) {
+			//TODO:Huum!!
+			PersonaView personaViewSelected = (PersonaView )this.personasCompositeView.getWidget(selectedTab);
 			
-			searchesCompositeController = new SearchesCompositeController();
-			searchesCompositeController.setErrorHandler(getErrorHandler());
-			searchesCompositeController.setName(AbstractController.generateDefaultName());
-			searchesCompositeController.setParentController(this);
-			searchesCompositeController.setTwitterAccount(personaViewSelected.getPersonaObj().getTwitterAccount());
-			searchesCompositeController.setServiceManager(getServiceManager());
-			searchesCompositeController.init();
-			//Add the created view of the controller to this view
-			personaViewSelected.add(searchesCompositeController.getView().getAsWidget());
-			this.searchesCompositeControllers.put(personaViewSelected.getPersonaObj().getName(), searchesCompositeController);
+			//Try to get the controller
+			SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers.get(personaViewSelected.getPersonaObj().getName());
+			if ( searchesCompositeController == null ) {
 				
+				searchesCompositeController = new SearchesCompositeController();
+				searchesCompositeController.setErrorHandler(getErrorHandler());
+				searchesCompositeController.setName(AbstractController.generateDefaultName());
+				searchesCompositeController.setParentController(this);
+				searchesCompositeController.setTwitterAccount(personaViewSelected.getPersonaObj().getTwitterAccount());
+				searchesCompositeController.setServiceManager(getServiceManager());
+				searchesCompositeController.init();
+				//Add the created view of the controller to this view
+				personaViewSelected.add(searchesCompositeController.getView().getAsWidget());
+				this.searchesCompositeControllers.put(personaViewSelected.getPersonaObj().getName(), searchesCompositeController);
+					
+			}
+			
 		}
 	}
 
@@ -228,7 +237,7 @@ public class PersonasCompositeController extends AbstractCompositeController
 		
 		
 	}
-	@Override
+	/*@Override
 	public AsyncCallback<String> getDataRemovedCallBack() {
 		return this.new PersonaRemovedCallBack();
 	}
@@ -248,11 +257,81 @@ public class PersonasCompositeController extends AbstractCompositeController
 			
 		}
 		
+	}*/
+
+	@Override
+	public void endProcessing() {
+		super.endProcessing();
+		getErrorHandler().isProcessing(false);
+		
+	}
+
+	@Override
+	public void startProcessing() {
+		getErrorHandler().isProcessing(true);
+		super.startProcessing();
 	}
 
 	@Override
 	public void handleAction(String action, Object... args) {
-		Window.alert("PersonaaCompositeController ActionEvent Handler"+action);
+		
+		if (action.equals(IController.IActions.DELETE)) {
+			String personaName = (String)args[0];
+			
+			try {
+				startProcessing();
+				getServiceManager().getRPCService().deletePersona(personaName, new AsyncCallback<String>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						endProcessing();
+						getErrorHandler().addException(caught);
+					}
+
+					@Override
+					public void onSuccess(String result) {
+						endProcessing();
+						removePersona(result);
+						
+					}
+					
+				});
+			} catch (Exception e) {
+				endProcessing();
+				getErrorHandler().addException(e);
+				e.printStackTrace();
+			}
+			
+		}
+		
+		if ( action.equals(IController.IActions.CREATE)) {
+			PersonaDTO persona =(PersonaDTO)args[0];
+			try {
+				startProcessing();
+				getServiceManager().getRPCService().createPersona(persona, new AsyncCallback<PersonaDTO>(){
+
+					@Override
+					public void onFailure(Throwable caught) {
+						endProcessing();
+						getErrorHandler().addException(caught);
+						
+						
+					}
+
+					@Override
+					public void onSuccess(PersonaDTO result) {
+						endProcessing();
+						handleDataLoaded(result);
+						
+					}
+					
+				});
+			} catch (Exception e) {
+				endProcessing();
+				getErrorHandler().addException(e);
+			}
+		}
+		//Window.alert("PersonaaCompositeController ActionEvent Handler"+action);
 		
 	}
 

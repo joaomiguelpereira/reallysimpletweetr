@@ -44,12 +44,7 @@ public class TwitterUpdatesSearchController extends AbstractController{
 	}
 
 
-	@Override
-	public AsyncCallback<String> getDataRemovedCallBack() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	
 
 	@Override
