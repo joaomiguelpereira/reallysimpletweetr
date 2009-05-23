@@ -12,11 +12,12 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 
-public class MainController extends AbstractCompositeController implements IErrorHandler{
+public class MainController extends AbstractCompositeController implements IMainController{
 	private Panel mainPanel = RootPanel.get();
 	private static MainController instance = null;
 	private IServiceManager serviceManager = new BasicServiceManager();
 	PersonasCompositeController personasCompositeController = null;
+	private final GlobalToolsWidget toolsWidget = new GlobalToolsWidget();
 	
 	
 	
@@ -35,6 +36,13 @@ public class MainController extends AbstractCompositeController implements IErro
 		//This will be the default error handle for this controller
 		setErrorHandler(this);
 		
+		
+		//Add the tools
+		toolsWidget.setController(this);
+		toolsWidget.init();
+		mainPanel.add(toolsWidget);
+
+		
 		//Create the PesonasCompisiteController
 		//This controller will control the Personas loaded for the logged user
 		//Another reponsabilit, is to handle the renderization of the tabs for the personas
@@ -51,6 +59,7 @@ public class MainController extends AbstractCompositeController implements IErro
 		personasCompositeController.init();
 		//Get the corresponding view and add it as a widget to the main Root Panel
 		mainPanel.add(personasCompositeController.getView().getAsWidget());
+		
 		
 		
 		
@@ -81,16 +90,17 @@ public class MainController extends AbstractCompositeController implements IErro
 		
 	}
 
-	@Override
-	public AsyncCallback<String> getDataRemovedCallBack() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public void handleAction(String action, Object... args) {
 		Window.alert("MainCOntroller ActionEvent Handler"+action);
 		
+	}
+
+	@Override
+	public void isProcessing(boolean isProcessing) {
+		//Window.alert("isProcessing:"+isProcessing);
+		toolsWidget.isUpdating(isProcessing);
 	}
 
 	

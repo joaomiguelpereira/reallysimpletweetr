@@ -2,6 +2,8 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -12,6 +14,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -25,6 +28,7 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 	private final TextBox twPersonaName = new TextBox();
 	private final TextBox twUserName = new TextBox();
 	private final PasswordTextBox twPassword = new PasswordTextBox();
+	
 	
 	public AddNewPersonaTabView() {
 		super();
@@ -53,6 +57,7 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 		loginButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
+
 				// Create a new Object to send to the Server
 				PersonaDTO persona = new PersonaDTO();
 				persona.setName(twPersonaName.getValue());
@@ -61,7 +66,10 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 				twitterAccountObj.setTwitterPassword(twPassword.getValue());
 				persona.setTwitterAccount(twitterAccountObj);
 
-				try {
+				//Pass to controller
+				getController().handleAction(IController.IActions.CREATE, persona);
+
+/*				try {
 					getController().getServiceManager().getRPCService().createPersona(persona, new AsyncCallback<PersonaDTO>(){
 
 						@Override
@@ -80,13 +88,16 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 				} catch (Exception e) {
 					getController().getErrorHandler().addException(e);
 				}
-			}
+*/			}
 
 		});
 
 		toolPanel.add(loginButton);
 
 		this.add(toolPanel);
+		
+		
+		
 		this.ensureDebugId("cwVerticalPanel");
 		
 	}
@@ -94,6 +105,7 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 	@Override
 	public void isUpdating(boolean isUpdating) {
 		Window.alert("Is Updating");
+		
 		
 	}
 }

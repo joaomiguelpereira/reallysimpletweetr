@@ -76,11 +76,7 @@ public class SearchesCompositeController extends AbstractCompositeController {
 		
 	}
 
-	@Override
-	public AsyncCallback<String> getDataRemovedCallBack() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	
 
 	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;

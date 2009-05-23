@@ -61,12 +61,12 @@ public interface IController {
 	 * Set the Error Handler for this this Controller
 	 * @param errorHandler
 	 */
-	public void setErrorHandler(IErrorHandler errorHandler);
+	public void setErrorHandler(IMainController errorHandler);
 	/**
 	 * Get The Error Handler registered with this controller
 	 * @return
 	 */
-	public IErrorHandler getErrorHandler();
+	public IMainController getErrorHandler();
 	
 	/**
 	 * TODO: Move for composite controllers with aspect Tab
@@ -91,7 +91,7 @@ public interface IController {
 	 * When data is removed 
 	 * @return
 	 */
-	public AsyncCallback<String> getDataRemovedCallBack();
+	//public AsyncCallback<String> getDataRemovedCallBack();
 	
 
 	
@@ -102,6 +102,7 @@ public interface IController {
 		public final String ENABLE_AUTO_UPDATE = "ENABLE_AUTO_UPDATE";
 		public final String DISABLE_AUTO_UPDATE = "DISABLE_AUTO_UPDATE";
 		public final String CHANGE_PAGE_SIZE = "CHANGE_PAGE_SIZE";
+		public final String CREATE = "CREATE";
 		
 		
 	}

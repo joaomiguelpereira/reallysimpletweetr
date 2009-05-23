@@ -2,9 +2,11 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Image;
 
 
 /**
@@ -14,6 +16,9 @@ import com.google.gwt.user.client.Window;
  */
 public class PersonasCompositeView extends AbstractTabbedPanel{
 
+	
+	
+	//private final PersonasCompositeToolsWidget = new PersonasCompositeToolsWidget(); 
 	/**
 	 * Constructor
 	 */
@@ -38,14 +43,16 @@ public class PersonasCompositeView extends AbstractTabbedPanel{
 		super.selectTab(0);
 		super.ensureDebugId("cwTabPanel");
 		//Add a selection listener to the tab
-		
+
 		super.addSelectionHandler(getController().getSelectionHandler());
 		
 	}
 
 	@Override
 	public void isUpdating(boolean isUpdating) {
-		Window.alert("Is Updating");
+		//Do noting
+		
+
 		
 	}
 }
