@@ -15,6 +15,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
@@ -114,12 +115,13 @@ public class TwitterUpdatesController extends AbstractController {
 	@Override
 	public void handleAction(String action, Object... args) {
 
+		if (action.equals(IController.IActions.CHANGE_PAGE_SIZE)) {
+			Window.alert(args[0].toString());
+		}
 		if (action.equals(IController.IActions.REFRESH_TWEETS)) {
-			
 			refresh();
 			
 		}
-
 		if (action.equals(IController.IActions.ENABLE_AUTO_UPDATE)) {
 			// Create the timmer
 			if (timerForAutoUpdates == null) {

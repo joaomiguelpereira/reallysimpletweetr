@@ -101,6 +101,7 @@ public interface IController {
 		public final String REFRESH_TWEETS="REFRESH_TWEETS";
 		public final String ENABLE_AUTO_UPDATE = "ENABLE_AUTO_UPDATE";
 		public final String DISABLE_AUTO_UPDATE = "DISABLE_AUTO_UPDATE";
+		public final String CHANGE_PAGE_SIZE = "CHANGE_PAGE_SIZE";
 		
 		
 	}
