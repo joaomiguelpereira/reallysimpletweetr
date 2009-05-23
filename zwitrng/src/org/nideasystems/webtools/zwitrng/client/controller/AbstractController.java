@@ -71,4 +71,15 @@ public abstract class AbstractController implements IController {
 		
 	}
 
+	@Override
+	public void endProcessing() {
+		view.isUpdating(false);
+		
+	}
+
+	@Override
+	public void startProcessing() {
+		view.isUpdating(true);
+		
+	}
 }

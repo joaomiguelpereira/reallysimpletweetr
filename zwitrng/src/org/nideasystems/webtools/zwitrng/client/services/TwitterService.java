@@ -20,6 +20,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("twitterService")
 public interface TwitterService extends RemoteService{
 	List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
-	List<TwitterUpdateDTO> getTwitterUpdates(UpdatesType type, TwitterAccountDTO twitterAccount) throws Exception;
+	List<TwitterUpdateDTO> getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
 	
 }

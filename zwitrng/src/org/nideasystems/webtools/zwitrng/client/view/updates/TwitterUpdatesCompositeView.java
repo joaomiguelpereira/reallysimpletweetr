@@ -6,6 +6,7 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 
@@ -37,6 +38,12 @@ public class TwitterUpdatesCompositeView extends AbstractTabbedPanel {
 		
 		
 		
+		
+	}
+
+	@Override
+	public void isUpdating(boolean isUpdating) {
+		Window.alert("Is Updating");
 		
 	}
 }

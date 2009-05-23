@@ -10,9 +10,9 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TwitterPersonaServiceAsync {
 	void createPersona(PersonaDTO persona, AsyncCallback<PersonaDTO> callback) throws Exception;
-	void deletePersona(String input, AsyncCallback<String> callback);
-	void getPersonas(AsyncCallback<List<PersonaDTO>> callback);
+	void deletePersona(String input, AsyncCallback<String> callback) throws Exception;
+	void getPersonas(AsyncCallback<List<PersonaDTO>> callback) throws Exception;
 	void getPersonaFilters(String personaKey,
-			AsyncCallback<List<FilterCriteriaDTO>> asyncCallback);
+			AsyncCallback<List<FilterCriteriaDTO>> asyncCallback) throws Exception;
 	
 }

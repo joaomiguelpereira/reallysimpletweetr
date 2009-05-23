@@ -4,6 +4,8 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
+import com.google.gwt.user.client.Window;
+
 
 /**
  * This is teh Tabbed view of personas
@@ -38,6 +40,12 @@ public class PersonasCompositeView extends AbstractTabbedPanel{
 		//Add a selection listener to the tab
 		
 		super.addSelectionHandler(getController().getSelectionHandler());
+		
+	}
+
+	@Override
+	public void isUpdating(boolean isUpdating) {
+		Window.alert("Is Updating");
 		
 	}
 }

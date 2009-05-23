@@ -11,6 +11,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TwitterServiceAsync {
 	void search(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter, AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception;
-	void getTwitterUpdates(UpdatesType type, TwitterAccountDTO twitterAccount, AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception;
+	
+	void getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter, AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception;
 	
 }

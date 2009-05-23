@@ -9,7 +9,14 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IController {
-	
+	/**
+	 * Call this when a remote call was made and we are waiting for data
+	 */
+	public void startProcessing();
+	/**
+	 * Call when call returns
+	 */
+	public void endProcessing();
 
 	/**
 	 * Get the Corresponding View
@@ -91,6 +98,10 @@ public interface IController {
 	public interface IActions {
 		public final String DELETE="DELETE";
 		public final String SEARCH="SEARCH";
+		public final String REFRESH_TWEETS="REFRESH_TWEETS";
+		public final String ENABLE_AUTO_UPDATE = "ENABLE_AUTO_UPDATE";
+		public final String DISABLE_AUTO_UPDATE = "DISABLE_AUTO_UPDATE";
+		
 		
 	}
 }

@@ -5,6 +5,8 @@ import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaToolsWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
+import com.google.gwt.user.client.Window;
+
 
 /**
  * This is the persona View that contains other subViews
@@ -49,6 +51,12 @@ public class PersonaView extends AbstractVerticalPanelView{
 		
 		
 		super.add(personaToolsWidget);
+		
+	}
+
+	@Override
+	public void isUpdating(boolean isUpdating) {
+		Window.alert("Is Updating");
 		
 	}
 

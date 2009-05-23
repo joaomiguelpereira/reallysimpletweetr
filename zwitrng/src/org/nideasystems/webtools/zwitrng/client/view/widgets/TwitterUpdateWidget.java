@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.widgets;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -38,9 +39,10 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView {
 		Image img = new Image(twitterUpdate.getTwitterAccount()
 				.getTwitterImageUrl());
 		img.setWidth("48px");
+		img.setHeight("48px");
 		container.add(img);
 
-		HTML updateText = new HTML("<div>" + twitterUpdate.getText() + "<div>");
+		HTML updateText = new HTML("<span class=\"userScreenName\">"+twitterUpdate.getTwitterAccount().getTwitterScreenName()+" </span><span class=\"text\">" + twitterUpdate.getText() + "<span>");
 		
 		HTML bottom = new HTML("<span class=\"createdAt\">"
 				+ twitterUpdate.getCreatedAt()
@@ -67,6 +69,12 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView {
 
 	public TwitterUpdateDTO getTwitterUpdate() {
 		return twitterUpdate;
+	}
+
+	@Override
+	public void isUpdating(boolean isUpdating) {
+		Window.alert("Is Updating");
+		
 	}
 
 }

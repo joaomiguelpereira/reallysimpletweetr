@@ -71,7 +71,12 @@ public class PersonasCompositeController extends AbstractCompositeController
 		if (service != null) {
 			// Call the service and give it a callback to handle service async
 			// call
-			service.loadPersonas(new LoadPersonasCallBack());
+			try {
+				service.loadPersonas(new LoadPersonasCallBack());
+			} catch (Exception e) {
+				getErrorHandler().addException(e);
+				e.printStackTrace();
+			}
 		}
 
 	}
@@ -250,5 +255,7 @@ public class PersonasCompositeController extends AbstractCompositeController
 		Window.alert("PersonaaCompositeController ActionEvent Handler"+action);
 		
 	}
+
+	
 
 }

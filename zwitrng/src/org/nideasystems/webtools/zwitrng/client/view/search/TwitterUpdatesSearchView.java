@@ -7,6 +7,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -49,6 +50,13 @@ public class TwitterUpdatesSearchView extends AbstractVerticalPanelView{
 		seachCriteriaBt.addClickHandler(new SearchClickHandler());
 		super.add(topPanel);
 
+		
+	}
+
+
+	@Override
+	public void isUpdating(boolean isUpdating) {
+		Window.alert("Is Updating");
 		
 	}
 

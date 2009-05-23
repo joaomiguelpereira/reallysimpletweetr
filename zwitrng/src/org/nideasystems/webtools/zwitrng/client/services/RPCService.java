@@ -21,10 +21,10 @@ public class RPCService implements IService {
 		twitterService = GWT.create(TwitterService.class);
 	}
 
-	public void getTwitterUpdates(UpdatesType type,
-			TwitterAccountDTO twitterAccount,
+	public void getTwitterUpdates(
+			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter,
 			AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception {
-		this.twitterService.getTwitterUpdates(type, twitterAccount, callback);
+		this.twitterService.getTwitterUpdates(twitterAccount, filter, callback);
 		
 	}
 
@@ -40,13 +40,13 @@ public class RPCService implements IService {
 
 	}
 
-	public void loadPersonas(final AsyncCallback<List<PersonaDTO>> callback) {
+	public void loadPersonas(final AsyncCallback<List<PersonaDTO>> callback) throws Exception{
 		this.personaService.getPersonas(callback);
 	}
 
-	public void deletePersona(final String name, AsyncCallback<String> callBack) {
+	public void deletePersona(final String name, AsyncCallback<String> callBack) throws Exception{
 
-		this.personaService.deletePersona(name, callBack);
+		this.personaService.deletePersona(name, callBack) ;
 	}
 
 }

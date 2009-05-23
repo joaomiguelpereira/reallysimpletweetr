@@ -8,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -87,6 +88,12 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 
 		this.add(toolPanel);
 		this.ensureDebugId("cwVerticalPanel");
+		
+	}
+
+	@Override
+	public void isUpdating(boolean isUpdating) {
+		Window.alert("Is Updating");
 		
 	}
 }
