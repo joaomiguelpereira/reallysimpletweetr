@@ -15,3 +15,13 @@
 	font-style:italic;
 }
 
+.bottonIcon {
+	background-color: #FFFFFF;
+	cursor: pointer;
+	
+}
+
+.userScreenName {
+	font-weight:bold;
+}
+

@@ -73,7 +73,9 @@ public class DataUtils {
 	 */
 	public static TwitterAccountDTO createTwitterAccountDto(ExtendedUser twitterUser) {
 		
+		assert(twitterUser!=null);
 		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
+		
 		twitterAcount.setTwitterDescription(twitterUser.getDescription());
 		twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
 		twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());

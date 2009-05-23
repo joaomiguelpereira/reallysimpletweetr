@@ -2,6 +2,8 @@ package org.nideasystems.webtools.zwitrng.server.twitter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
@@ -12,6 +14,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;
+import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
 import twitter4j.Status;
@@ -74,6 +77,7 @@ public class TwitterServiceAdapter {
 			queryResult = twitter.search(query);
 		} catch (TwitterException e) {
 			log.warning("Error calling twitter searche API: " + e.getMessage());
+			log.severe(e.getLocalizedMessage());
 			e.printStackTrace();
 			throw e;
 		}
@@ -138,6 +142,7 @@ public class TwitterServiceAdapter {
 					userDetails = twitter.getUserDetail(userId);
 
 				} catch (TwitterException e) {
+					e.printStackTrace();
 					throw new Exception(e);
 				}
 
@@ -147,29 +152,36 @@ public class TwitterServiceAdapter {
 
 	}
 
-	public List<TwitterUpdateDTO> getUpdates(UpdatesType type,
-			TwitterAccountDTO twitterAccount) throws Exception{
-		
-		
-		//Get the user twitter account
+	public List<TwitterUpdateDTO> getUpdates(TwitterAccountDTO twitterAccount,
+			FilterCriteriaDTO filter) throws Exception {
+
+		// Get the user twitter account
 		Twitter twitter = new Twitter(twitterAccount.getTwitterScreenName(),
 				twitterAccount.getTwitterPassword());
-		//Create new data structure
+		// Create new data structure
 		List<TwitterUpdateDTO> returnList = new ArrayList<TwitterUpdateDTO>();
-		
-		//if twitter is null, something went wrong
-		assert (twitter != null);
-		
-		//CAll twitter API
-		List<Status> statusList = twitter.getFriendsTimeline();
 
-		//Is something wrong?
+		// if twitter is null, something went wrong
+		assert (twitter != null);
+
+		// CAll twitter API
+		List<Status> statusList = null;
+
+		Paging paging = new Paging();
+		paging.setSinceId(filter.getSinceId());
+		// CAll twitter API
+		statusList = twitter.getFriendsTimeline(paging);
+
+		// CAll twitter API
+		// List<Status> statusList = twitter.getFriendsTimeline();
+
+		// Is something wrong?
 		assert (statusList != null);
-		
-		//Populate data structure
+
+		// Populate data structure
 		for (Status status : statusList) {
 			returnList.add(DataUtils.createTwitterUpdateDto(status));
-			
+
 			System.out.println("getInReplyToStatusId "
 					+ status.getInReplyToStatusId());
 			System.out.println("getId() " + status.getId());

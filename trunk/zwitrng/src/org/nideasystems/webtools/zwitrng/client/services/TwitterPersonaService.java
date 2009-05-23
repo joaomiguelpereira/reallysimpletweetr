@@ -14,8 +14,8 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("personaService")
 public interface TwitterPersonaService extends RemoteService {
 	PersonaDTO createPersona(PersonaDTO persona) throws Exception;
-	List<PersonaDTO> getPersonas();
-	String deletePersona(String persona);
-	List<FilterCriteriaDTO> getPersonaFilters(String  personaKey);
+	List<PersonaDTO> getPersonas()  throws Exception;
+	String deletePersona(String persona)  throws Exception;
+	List<FilterCriteriaDTO> getPersonaFilters(String  personaKey)  throws Exception;
 	
 }

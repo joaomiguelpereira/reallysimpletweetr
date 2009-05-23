@@ -15,6 +15,7 @@ public interface IView {
 	public String getName();
 	public Widget getAsWidget();
 	public void init();
+	public void isUpdating(boolean isUpdating);
 	
 	
 	

@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,7 +23,12 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		TwitterPersonaService {
-
+	private static final List<String> whiteListEmails = new ArrayList<String>();
+	static {
+		whiteListEmails.add("joao");
+		whiteListEmails.add("joaomiguel.pereira@gmail.com");
+		
+	}
 	public UserService getUserService() {
 		return userService;
 	}
@@ -65,7 +71,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		User currentUser = userService.getCurrentUser();
 
 		// do some validations...
-		if (currentUser == null) {
+		if (currentUser == null || !whiteListEmails.contains(currentUser.getEmail())) {
 			throw new Exception("You must be logged in");
 
 		}
@@ -106,17 +112,28 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 
 	
 	@Override
-	public String deletePersona(String persona) {
+	public String deletePersona(String persona) throws Exception {
+		
 		// TODO Auto-generated method stub
 		User user = UserServiceFactory.getUserService().getCurrentUser();
 
+		// do some validations...
+		if (user == null || !whiteListEmails.contains(user.getEmail())) {
+			throw new Exception("You must be logged in");
+
+		}
 		personaDao.deletePersona(persona, user.getEmail());
 		return persona;
 	}
 
 	@Override
-	public List<PersonaDTO> getPersonas() {
+	public List<PersonaDTO> getPersonas() throws Exception {
 		User user = UserServiceFactory.getUserService().getCurrentUser();
+		// do some validations...
+		if (user == null || !whiteListEmails.contains(user.getEmail())) {
+			throw new Exception("You must be logged in");
+
+		}
 		List<PersonaDTO> returnPersonas = null;
 		if (user != null) {
 
@@ -128,11 +145,16 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<FilterCriteriaDTO> getPersonaFilters(String personaName) {
+	public List<FilterCriteriaDTO> getPersonaFilters(String personaName) throws Exception {
 		
 		//get the DAO
 		//Key personaKey = ;
 		User user = UserServiceFactory.getUserService().getCurrentUser();
+		// do some validations...
+		if (user == null || !whiteListEmails.contains(user.getEmail())) {
+			throw new Exception("You must be logged in");
+
+		}
 		List<FilterCriteriaDTO> returnFilters = null;
 		if (user != null) {
 
