@@ -28,6 +28,7 @@ public class TwitterUpdatesController extends AbstractController {
 	private long lastUpdateId = 1;
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 10; // Seconds
+	private int updatesPerPage = 20; //20 updates in a page
 
 	public UpdatesType getUpdatesType() {
 		return updatesType;
@@ -80,6 +81,7 @@ public class TwitterUpdatesController extends AbstractController {
 			}
 
 		}
+		adjustPageSize();
 		endProcessing();
 	}
 
@@ -112,7 +114,10 @@ public class TwitterUpdatesController extends AbstractController {
 	public void handleAction(String action, Object... args) {
 
 		if (action.equals(IController.IActions.CHANGE_PAGE_SIZE)) {
-			Window.alert(args[0].toString());
+			//Window.alert(args[0].toString());
+			//Try to conver to int 
+			updatesPerPage = Integer.valueOf(args[0].toString());
+			adjustPageSize();
 		}
 		if (action.equals(IController.IActions.REFRESH_TWEETS)) {
 			refresh();
@@ -136,6 +141,33 @@ public class TwitterUpdatesController extends AbstractController {
 			}
 		}
 
+	}
+
+	/**
+	 * Check the current sise and update accordingly
+	 */
+	private void adjustPageSize() {
+		// TODO Auto-generated method stub
+		//With the subtraction I'm removing the widget that represents the tools (errrr)
+		int widgetCount = updatesView.getWidgetCount()-1;
+		if ( widgetCount > updatesPerPage ) {
+			//Remove any remaining update
+			//int updatesToRemove = updatesPerPage-newPageSize;
+			for ( int i=widgetCount; i>updatesPerPage;i--) {
+				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget)updatesView.getWidget(i);
+				updates.remove(updateWidget.getTwitterUpdate().getId());
+				updatesView.remove(i);
+				
+				
+				
+			}
+			assert(updates.size()==updatesPerPage);
+			assert((updatesView.getWidgetCount()-1)==updatesPerPage);
+		}
+		
+		
+		//updatesPerPage = newPageSize;
+		
 	}
 
 	private class AutoUpdatesUpdateTimer extends Timer {
