@@ -61,6 +61,7 @@ public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView {
 		updatesPerPage.addItem("20");
 		updatesPerPage.addItem("30");
 		updatesPerPage.addItem("50");
+		updatesPerPage.setSelectedIndex(1);
 		updatesPerPage.addChangeHandler(new ChangeHandler() {
 
 			@Override
