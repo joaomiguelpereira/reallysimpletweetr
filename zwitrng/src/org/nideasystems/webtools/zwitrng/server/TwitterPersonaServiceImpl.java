@@ -12,6 +12,7 @@ import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import twitter4j.ExtendedUser;
 
@@ -62,12 +63,11 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	}
 
 	/**
-	 * Create a new Persona and return the representation
+	 * Check if user is authenticated and is authorized
+	 * @throws Exception
 	 */
-	@Override
-	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
-
-		// Check if is logged in
+	private User checkAuthentication() throws Exception{
+		// Check if the user is logged in with a
 		User currentUser = userService.getCurrentUser();
 
 		// do some validations...
@@ -75,39 +75,37 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 			throw new Exception("You must be logged in");
 
 		}
+		return currentUser;
+	}
+	/**
+	 * Create a new Persona and return the representation
+	 */
+	@Override
+	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
+
+		User currentUser = checkAuthentication();
+		
 		if (persona.getTwitterAccount() == null) {
 			throw new Exception("Please provide your twitter information");
 		}
 
-		if (persona.getName().isEmpty()
-				|| persona.getTwitterAccount().getTwitterScreenName().isEmpty()
-				|| persona.getTwitterAccount().getTwitterPassword().isEmpty()) {
+		if (persona.getName().isEmpty()) {
 			throw new Exception("Not all data provided. All field are required");
 		}
 
-		ExtendedUser twitterUser = null;
-
-		// Check if account exists/credentials ok
-		try {
-			twitterUser = TwitterServiceAdapter.get().getExtendedUser(
-					persona.getTwitterAccount().getTwitterScreenName(),
-					persona.getTwitterAccount().getTwitterPassword(), true);
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			throw new Exception(e1);
-		}
-
+		//Create a preAuthorized TwitterAccount
+		TwitterAccountDTO preAutorizedTwitterAccount = TwitterServiceAdapter.get().getPreAuthorizedTwitterAccount();
+		persona.setTwitterAccount(preAutorizedTwitterAccount);
 		PersonaDO personaDo = null;
 		try {
 			personaDo = personaDao.createPersona(persona, currentUser
 					.getEmail());
 		} catch (Exception e) {
-			e.printStackTrace();
+			log.severe(e.getMessage());
 			throw e;
 
 		}
-
-		return DataUtils.createPersonaDto(personaDo, twitterUser);
+		return DataUtils.personaDtoFromDo(personaDo);
 	}
 
 	

@@ -17,7 +17,9 @@ public class TwitterUpdateDTO implements IModel{
 	private String source;
 	private String text;
 	private TwitterAccountDTO twitterAccount;
+	
 	public Date getCreatedAt() {
+		
 		return createdAt;
 	}
 	public void setCreatedAt(Date createdAt) {

@@ -5,9 +5,9 @@
 	border-top-width: 1px;
 	border-bottom-width: 1px;
 	border-top-style: dashed;
-	border-bottom-style: dashed;
+/*	border-bottom-style: dashed;
 	border-top-color: #999999;
-	border-bottom-color: #999999;
+	border-bottom-color: #999999;*/
 }
 
 .twitterUpdateMetaData	{
@@ -25,3 +25,10 @@
 	font-weight:bold;
 }
 
+.error {
+	color:#990000;
+}
+
+.loginWnd {
+
+}

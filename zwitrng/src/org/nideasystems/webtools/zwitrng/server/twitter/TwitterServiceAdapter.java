@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -18,8 +20,14 @@ import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.User;
+import twitter4j.http.AccessToken;
+import twitter4j.http.RequestToken;
 
 public class TwitterServiceAdapter {
+
+	private static final String CONSUMER_KEY = "sRNUnCqQfJohaTGoi2wQ";
+	private static final String CONSUMER_SECRET = "AQXUjWxTNv5e44i1mTsb3SKoUw2GI8MUFARU0uSLm8";
 
 	private static final Logger log = Logger
 			.getLogger(TwitterServiceAdapter.class.getName());
@@ -113,40 +121,27 @@ public class TwitterServiceAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	public ExtendedUser getExtendedUser(String twitterName, String twitterPass,
-			boolean authenticationNeeded) throws Exception {
+	public ExtendedUser getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount) throws Exception {
 
-		Twitter twitter = new Twitter(twitterName, twitterPass);
-
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(authenticatedTwitterAccount.getOAuthToken(), authenticatedTwitterAccount.getOAuthTokenSecret());
+		ExtendedUser extendedUser = twitter.verifyCredentials();
+		/*
+		String currentUserId = null;
+		ExtendedUser extendedUser = null;
 		
-		if (authenticationNeeded) {
-
-			// Try an operation to login
-			try {
-				// Dummy call
-				List<DirectMessage> msgs = twitter.getDirectMessages();
-
-			} catch (TwitterException e1) {
-				throw new Exception(e1);
-			}
+		
+		try {
+			currentUserId = twitter.getUserId();
+			extendedUser =twitter.getUserDetail(currentUserId);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-
-		ExtendedUser userDetails = null;
-
-		if (twitter != null) {
-			String userId = twitter.getUserId();
-			if (userId != null && !userId.isEmpty()) {
-				try {
-					userDetails = twitter.getUserDetail(userId);
-
-				} catch (TwitterException e) {
-					e.printStackTrace();
-					throw new Exception(e);
-				}
-
-			}
-		}
-		return userDetails;
+		
+*/		
+		return extendedUser;
 
 	}
 
@@ -154,8 +149,15 @@ public class TwitterServiceAdapter {
 			FilterCriteriaDTO filter) throws Exception {
 
 		// Get the user twitter account
-		Twitter twitter = new Twitter(twitterAccount.getTwitterScreenName(),
-				twitterAccount.getTwitterPassword());
+		/*Twitter twitter = new Twitter(twitterAccount.getTw
+				itterScreenName(),
+				twitterAccount.getTwitterPassword());*/
+		
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(twitterAccount.getOAuthToken(), twitterAccount.getOAuthTokenSecret());
+		//ExtendedUser extendedUser = twitter.verifyCredentials();
+		
 		// Create new data structure
 		List<TwitterUpdateDTO> returnList = new ArrayList<TwitterUpdateDTO>();
 
@@ -199,4 +201,157 @@ public class TwitterServiceAdapter {
 		}
 		return returnList;
 	}
+
+	public TwitterUpdateDTO postUpdate(TwitterAccountDTO twitterAccount,
+			String tweetText) throws Exception {
+		Twitter twitter = new Twitter(twitterAccount.getTwitterScreenName(),
+				twitterAccount.getTwitterPassword());
+		ExtendedUser user = null;
+		Status latestStatus = null;
+		TwitterUpdateDTO latestTwitterUpdate = null;
+		try {
+			user = twitter.verifyCredentials();
+			if (user != null) {
+				// Status newStatus = new Status();
+				twitter.setSource("http://zwitrng.appspot.com/");
+				latestStatus = twitter.updateStatus(tweetText);
+			}
+
+		} catch (TwitterException e) {
+			log.severe(e.getLocalizedMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		if (latestStatus != null) {
+			latestTwitterUpdate = DataUtils
+					.createTwitterUpdateDto(latestStatus);
+		} else {
+			log.severe("The Create status returned null");
+			throw new Exception("The Create status returned null");
+		}
+		return latestTwitterUpdate;
+
+	}
+
+	public TwitterAccountDTO getPreAuthorizedTwitterAccount()
+			throws Exception {
+		TwitterAccountDTO preAutwitterAccount = new TwitterAccountDTO();
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+
+		// must save this request token for later use
+		RequestToken requestToken = null;
+
+		try {
+			requestToken = twitter.getOAuthRequestToken();
+
+		} catch (TwitterException e) {
+			log.severe(e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		
+		//requestToken.getAccessToken();
+
+
+		preAutwitterAccount.setOAuthLoginUrl(requestToken.getAuthorizationURL());
+		preAutwitterAccount.setOAuthToken(requestToken.getToken());
+		preAutwitterAccount.setOAuthTokenSecret(requestToken.getTokenSecret());
+	
+		return preAutwitterAccount;
+	}
+
+	
+	public TwitterAccountDTO authorizeAccount(TwitterAccountDTO preAuthorizedTwitterAccount) throws Exception {
+		TwitterAccountDTO authorizedTwitterAccount = new TwitterAccountDTO();
+		
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		AccessToken accessToken = null;
+		User twitterUser = null;
+		try {
+			
+			
+			accessToken = twitter.getOAuthAccessToken(preAuthorizedTwitterAccount.getOAuthToken(),preAuthorizedTwitterAccount.getOAuthTokenSecret());
+			
+			twitter.setOAuthAccessToken(accessToken);
+			
+			
+			twitterUser = twitter.verifyCredentials();
+			
+			//twitter2.updateStatus("Setting new Status...");
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			throw e;
+		}
+
+		if ( twitterUser == null ) {
+			throw new Exception("Could not authenticate");
+		}
+		
+		authorizedTwitterAccount.setIsOAuthenticated(true);
+		authorizedTwitterAccount.setOAuthToken(accessToken.getToken());
+		authorizedTwitterAccount.setOAuthTokenSecret(accessToken.getTokenSecret());
+		return authorizedTwitterAccount;
+		
+	}
+	public User getAuthenticatedUser(
+			TwitterAccountDTO twitterAccount)
+			throws Exception {
+
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		AccessToken accessToken = null;
+		User twitterUser = null;
+		try {
+			
+			
+			accessToken = twitter.getOAuthAccessToken(twitterAccount.getOAuthToken(),twitterAccount.getOAuthTokenSecret());
+			
+			twitter.setOAuthAccessToken(accessToken);
+			
+			
+			twitterUser = twitter.verifyCredentials();
+			
+			//twitter2.updateStatus("Setting new Status...");
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+			throw e;
+		}
+
+		twitterAccount.setIsOAuthenticated(true);
+		twitterAccount.setOAuthToken(accessToken.getToken());
+		twitterAccount.setOAuthTokenSecret(accessToken.getTokenSecret());
+		
+		return twitterUser;
+	}
+
+	public User getAuthenticatedUser(TwitterAccountDO twitterAccount) throws Exception {
+		String oAuthToken = twitterAccount.getOAuthToken();
+		String oAuthTokenSecret = twitterAccount.getOAuthTokenSecret();
+		if (oAuthToken==null || oAuthTokenSecret==null ) {
+			throw new Exception("The user has no configured twitter account");
+		}
+		
+		try {
+			Twitter twitter = new Twitter();
+			AccessToken accessToken = new AccessToken(oAuthToken,oAuthTokenSecret);
+			twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+			twitter.setOAuthAccessToken(accessToken);
+			
+			User twitterUser = twitter.verifyCredentials();
+			return twitterUser;
+		} catch (Exception e) {
+			log.severe("Error: "+e.getLocalizedMessage());
+			throw e;
+		}
+		
+		
+		
+		
+	}
+
+	
 }

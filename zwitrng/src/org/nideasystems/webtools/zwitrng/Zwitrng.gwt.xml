@@ -13,14 +13,14 @@
 
 	<!-- Other module inherits                                      -->
 	<inherits name='com.google.gwt.json.JSON' />
-
+<inherits name='com.google.gwt.xml.XML' />
 	<!-- Specify where our GWT client code lives                    -->
 	<source path="client" />
 
 	<!-- We can also have source shared amongst client and server   -->
 	<source path="shared" />
-
-
+	
+	<inherits name='org.restlet.GWT' />
 	<!-- Specify the app entry point class.                         -->
 	<entry-point class='org.nideasystems.webtools.zwitrng.client.Zwitrng' />
 </module>
