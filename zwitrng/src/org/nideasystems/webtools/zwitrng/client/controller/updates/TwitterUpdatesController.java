@@ -235,6 +235,12 @@ public class TwitterUpdatesController extends AbstractController {
 
 	}
 
+	@Override
+	public void reload() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 
 }

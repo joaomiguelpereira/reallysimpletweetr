@@ -191,6 +191,7 @@ public class DataUtils {
 		TwitterAccountDTO authenticatedTwitterAccount = new TwitterAccountDTO();
 		
 		
+		authenticatedTwitterAccount.setIsOAuthenticated(twitterAccount.getIsOAuthenticated());
 		//Copy access info
 		authenticatedTwitterAccount.setOAuthToken(twitterAccount.getOAuthToken());
 		authenticatedTwitterAccount.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret());

@@ -34,7 +34,9 @@ public class PersonaView extends AbstractVerticalPanelView {
 	private String loginUrl = "none";
 	final HorizontalPanel authentication = new HorizontalPanel();
 	final HTML loginUrlLink = new HTML("You need to authenticate");
-
+	private boolean isInitialized = false;
+	HTML linkToLogin = new HTML("");
+	HTML continueLink = new HTML("");;
 	/**
 	 * P c
 	 * 
@@ -73,6 +75,7 @@ public class PersonaView extends AbstractVerticalPanelView {
 			personaToolsWidget.setController(getController());
 			personaToolsWidget.init();
 
+			//change this
 			whatImDoing = new HTML("");
 			whenIDidIt = new HTML("");
 			super.add(whatImDoing);
@@ -80,10 +83,18 @@ public class PersonaView extends AbstractVerticalPanelView {
 			super.add(personaToolsWidget);
 			waitingImg.setVisible(false);
 			super.add(waitingImg);
+			isInitialized = true;
+			linkToLogin.setVisible(false);
+			linkToLogin.setVisible(false);
+
+			
 		} else {
 			//Hyperlink linkToLogin = new Hyperlink();
-			HTML linkToLogin = new HTML("Click here to open a new window to login in twitter."+personaObj.getTwitterAccount().getOAuthLoginUrl());
-			HTML continueLink = new HTML("After you have logged in close the window and click here to grant you access");
+			
+			linkToLogin.setVisible(true);
+			linkToLogin.setVisible(true);
+			linkToLogin.setHTML("Click here to open a new window to login in twitter."+personaObj.getTwitterAccount().getOAuthLoginUrl());
+			continueLink.setHTML("After you have logged in close the window and click here to grant you access");
 			
 			linkToLogin.addClickHandler(new ClickHandler() {
 
@@ -108,59 +119,22 @@ public class PersonaView extends AbstractVerticalPanelView {
 			super.add(linkToLogin);
 			super.add(continueLink);
 		}
-		/*
-		 * if (!isOath) {
-		 * 
-		 * 
-		 * loginUrlLink.addClickHandler(new ClickHandler() {
-		 * 
-		 * @Override public void onClick(ClickEvent event) { try {
-		 * BasicAutehnticationService authService =
-		 * (BasicAutehnticationService)getController
-		 * ().getServiceManager().getAuthenticationService();
-		 * authService.doAuthentication(loginUrl);
-		 * Window.alert("Open new window with URL "+loginUrl); } catch
-		 * (Exception e) { getController().getErrorHandler().addException(e);
-		 * e.printStackTrace(); }
-		 * 
-		 * }
-		 * 
-		 * }); authentication.add(loginUrlLink); // You're not authenticated
-		 * //Window.alert("You're not authenticated"); //get the login URL from
-		 * server try { //BasicAutehnticationService authService =
-		 * (BasicAutehnticationService
-		 * )getController().getServiceManager().getAuthenticationService();
-		 * //String url = authService.getAuthenticationUrl();
-		 * //authentication.add(new HTML(url));
-		 * 
-		 * isUpdating(true);
-		 * getController().getServiceManager().getRPCService().
-		 * getLoginUrl(personaObj.getTwitterAccount(), new
-		 * AsyncCallback<String>() {
-		 * 
-		 * @Override public void onFailure(Throwable caught) {
-		 * isUpdating(false);
-		 * //getController().getErrorHandler().addException(caught);
-		 * caught.printStackTrace();
-		 * 
-		 * }
-		 * 
-		 * @Override public void onSuccess(String result) {
-		 * //Window.alert(result); authentication.add(new HTML(result));
-		 * 
-		 * }
-		 * 
-		 * }); } catch (Exception e) { isUpdating(false);
-		 * getController().getErrorHandler().addException(e);
-		 * e.printStackTrace(); } super.add(authentication); } else {
-		 */
-
-		// }
 
 	}
 
 	public void refresh() {
-		personaToolsWidget.refresh();
+		if (!isInitialized) {
+			init();
+		}
+		//personaViewSelected.refresh();
+		
+		//if (this.)
+		
+		if (personaToolsWidget!=null) {
+			personaToolsWidget.refresh();
+		}
+		
+		lastStatus = personaObj.getTwitterAccount().getTwitterUpdateDto();
 		if (lastStatus != null) {
 			whatImDoing.setHTML("</span><span class=\"text\">"
 					+ lastStatus.getText() + "<span>");
@@ -171,7 +145,7 @@ public class PersonaView extends AbstractVerticalPanelView {
 					+ lastStatus.getSource() + "</span>");
 
 		}
-		loginUrlLink.setHTML(this.loginUrl);
+		//loginUrlLink.setHTML(this.loginUrl);
 
 	}
 

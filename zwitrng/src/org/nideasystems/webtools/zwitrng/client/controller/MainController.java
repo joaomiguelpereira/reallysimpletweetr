@@ -102,5 +102,11 @@ public class MainController extends AbstractCompositeController implements IMain
 		toolsWidget.isUpdating(isProcessing);
 	}
 
+	@Override
+	public void reload() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	
 }

@@ -1,7 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -15,8 +19,37 @@ public class PersonaController extends AbstractController {
 
 	private PersonaView personaView = null;
 	private PersonaDTO persona = null;
+	//private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
+	SearchesCompositeController searchesCompositeController = null;
 	//private OAuthInfoDTO oAuthInfo = null;
 	
+	private void initializeUpdatesController() {
+		
+		/*SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers
+				.get(persona.getName());
+		*/
+		
+		if (searchesCompositeController == null && persona.getTwitterAccount() != null && persona.getTwitterAccount().getIsOAuthenticated() ) {
+
+			searchesCompositeController = new SearchesCompositeController();
+			searchesCompositeController.setErrorHandler(getErrorHandler());
+			searchesCompositeController.setName(AbstractController
+					.generateDefaultName());
+			searchesCompositeController.setParentController(this);
+			searchesCompositeController.setTwitterAccount(persona.getTwitterAccount());
+			searchesCompositeController.setServiceManager(getServiceManager());
+			searchesCompositeController.init();
+			
+			// Add the created view of the controller to this view
+			this.personaView.add(searchesCompositeController.getView()
+					.getAsWidget());
+			/*this.searchesCompositeControllers.put(personaView
+					.getPersonaObj().getName(), searchesCompositeController);*/
+
+		}
+
+	}
+
 	@Override
 	public void init() {
 		//Let's create the persona View
@@ -25,6 +58,17 @@ public class PersonaController extends AbstractController {
 		personaView.setController(this);
 		//Initialize the view
 		personaView.init();
+		/*initializeUpdatesController();
+		
+		if ( searchesCompositeController!= null ) {
+			personaView.add(searchesCompositeController.getView().getAsWidget());
+			
+		}*/
+		
+			
+		
+		
+		
 		//Now, tell the controller what view to use
 		this.view = personaView;
 		
@@ -76,9 +120,17 @@ public class PersonaController extends AbstractController {
 
 					@Override
 					public void onSuccess(TwitterAccountDTO result) {
-						//Check if it's authjenticated
-						Window.alert("ok");
+						
+						
 						if (result.getIsOAuthenticated()) {
+							persona.setTwitterAccount(result);
+							
+							//init();
+							//Re-initialize
+							
+							personaView.refresh();
+							initializeUpdatesController();
+							
 							
 						}
 						
@@ -158,6 +210,13 @@ public class PersonaController extends AbstractController {
 	public void startProcessing() {
 		getErrorHandler().isProcessing(true);
 		super.startProcessing();
+	}
+
+	@Override
+	public void reload() {
+		//Reload
+		initializeUpdatesController();
+		
 	}
 	
 
