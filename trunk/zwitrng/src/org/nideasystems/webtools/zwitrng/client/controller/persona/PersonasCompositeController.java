@@ -28,7 +28,7 @@ public class PersonasCompositeController extends AbstractCompositeController
 	GlobalToolsWidget toolsWidget = null;
 	private Map<String, PersonaDTO> personas = null;
 	private Map<String, Widget> personaTabs = new HashMap<String, Widget>();
-	private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
+	//private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
 
 	/**
 	 * Constructor
@@ -100,15 +100,13 @@ public class PersonasCompositeController extends AbstractCompositeController
 			endProcessing();
 			// Cool, let's add the persons :)
 			// TODO: Create a IDataLoaded handler that is the controller
-			getDataLoadedCallBack().onDataLoaded(result);
+			createPersonas(result);
+			//getDataLoadedCallBack().onDataLoaded(result);
 		}
 
 	}
 
-	private IDataLoadedHandler getDataLoadedCallBack() {
-		return this;
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onDataLoaded(Object obj) {
@@ -140,15 +138,18 @@ public class PersonasCompositeController extends AbstractCompositeController
 		public void onSelection(SelectionEvent<Integer> event) {
 			// Check if the user is authenticated with OAuth
 
-			initializeSearchsController(event.getSelectedItem());
+			onTabSelectedChanged(event.getSelectedItem());
 
 		}
 
 	}
 
-	private void initializeFullPersonaView(PersonaView personaView) {
+/*	private void initializeFullPersonaView(PersonaView personaView) {
+		
 		SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers
 				.get(personaView.getPersonaObj().getName());
+		
+		
 		if (searchesCompositeController == null) {
 
 			searchesCompositeController = new SearchesCompositeController();
@@ -169,20 +170,28 @@ public class PersonasCompositeController extends AbstractCompositeController
 		}
 
 	}
-
-	private void initializeSearchsController(int selectedTab) {
+*/
+	
+	private void onTabSelectedChanged(int selectedTab) {
 		if (selectedTab != 0) {
 			// TODO:Huum!!
 			final PersonaView personaViewSelected = (PersonaView) this.personasCompositeView
 					.getWidget(selectedTab);
 
+			//PersonaDTO
+			personaViewSelected.getController().reload();
+			personaViewSelected.refresh();
+			
 			// Check if the person is logged
-			if (!personaViewSelected.getPersonaObj().getTwitterAccount()
+			/*if (!personaViewSelected.getPersonaObj().getTwitterAccount()
 					.getIsOAuthenticated()) {
+				//do nothing??
 				// personaViewSelected.setVisible(false);
 
 			} else {
-				initializeFullPersonaView(personaViewSelected);/*
+				
+				personaViewSelected.refresh();//initializeFullPersonaView(personaViewSelected);
+				
 				// Try to get the controller
 				SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers
 						.get(personaViewSelected.getPersonaObj().getName());
@@ -207,9 +216,9 @@ public class PersonasCompositeController extends AbstractCompositeController
 							.getPersonaObj().getName(),
 							searchesCompositeController);
 
-				}*/
+				}
 
-			}
+			}*/
 			// Not authen
 			/*
 			 * try { personaViewSelected.isUpdating(true);
@@ -402,6 +411,12 @@ public class PersonasCompositeController extends AbstractCompositeController
 		}
 		// Window.alert("PersonaaCompositeController ActionEvent Handler"+action);
 
+	}
+
+	@Override
+	public void reload() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

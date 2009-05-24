@@ -93,6 +93,13 @@ public class SearchesCompositeController extends AbstractCompositeController {
 	}
 
 
+	@Override
+	public void reload() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 	
 
 	

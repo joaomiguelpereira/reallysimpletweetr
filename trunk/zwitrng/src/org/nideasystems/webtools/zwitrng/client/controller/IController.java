@@ -106,4 +106,6 @@ public interface IController {
 		
 		
 	}
+
+	public void reload();
 }
