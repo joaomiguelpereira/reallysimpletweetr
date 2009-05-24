@@ -2,32 +2,27 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import org.nideasystems.webtools.zwitrng.client.Constants;
+
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 	private final VerticalPanel formPPanel = new VerticalPanel();
 	private final Label twPersonaNameLabel = new Label("Persona Name");
-	private final Label twUserNameLabel = new Label("Twitter User Name");
-	private final Label twPasswordLabel = new Label("Twiter Password");
+
 	private final TextBox twPersonaName = new TextBox();
-	private final TextBox twUserName = new TextBox();
-	private final PasswordTextBox twPassword = new PasswordTextBox();
+
 	
 	
 	public AddNewPersonaTabView() {
@@ -37,13 +32,15 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 	@Override
 	public void init() {
 		formPPanel.setSpacing(5);	
+		formPPanel.add(new HTML("Create new Persona"));
+		formPPanel.add(new HTML("Enter the name of the persona. Later you'll be asked to login into a twitter account."));
 		formPPanel.add(twPersonaNameLabel);
 		formPPanel.add(twPersonaName);
-		formPPanel.add(twUserNameLabel);
-		formPPanel.add(twUserName);
-		formPPanel.add(twPasswordLabel);
-		formPPanel.add(twPassword);
-
+		
+		//formPPanel.add(twUserNameLabel);
+		//formPPanel.add(twUserName);
+		//formPPanel.add(twPasswordLabel);
+		//formPPanel.add(twPassword);
 		// Return the content
 		formPPanel.ensureDebugId("cwVerticalPanel");
 		this.add(formPPanel);
@@ -62,33 +59,13 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 				PersonaDTO persona = new PersonaDTO();
 				persona.setName(twPersonaName.getValue());
 				TwitterAccountDTO twitterAccountObj = new TwitterAccountDTO();
-				twitterAccountObj.setTwitterScreenName(twUserName.getValue());
-				twitterAccountObj.setTwitterPassword(twPassword.getValue());
+				//twitterAccountObj.setTwitterScreenName(twUserName.getValue());
+				//twitterAccountObj.setTwitterPassword(twPassword.getValue());
 				persona.setTwitterAccount(twitterAccountObj);
-
-				//Pass to controller
+				//Pass to controller. The controller will create the persona
 				getController().handleAction(IController.IActions.CREATE, persona);
 
-/*				try {
-					getController().getServiceManager().getRPCService().createPersona(persona, new AsyncCallback<PersonaDTO>(){
-
-						@Override
-						public void onFailure(Throwable caught) {
-							getController().getErrorHandler().addException(caught);
-							
-						}
-
-						@Override
-						public void onSuccess(PersonaDTO result) {
-							getController().handleDataLoaded(result);
-							
-						}
-						
-					});
-				} catch (Exception e) {
-					getController().getErrorHandler().addException(e);
-				}
-*/			}
+			}
 
 		});
 

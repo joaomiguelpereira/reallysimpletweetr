@@ -86,7 +86,7 @@ public class PersonaDTO implements IModel{
 		
 		
 		twitterAccount.setTwitterScreenName(jsonTwitterAccount.get("twitterScreenName").isString().stringValue());
-		twitterAccount.setTwitterUserName(jsonTwitterAccount.get("twitterUserName").isString().stringValue());
+		twitterAccount.setTwitterName(jsonTwitterAccount.get("twitterUserName").isString().stringValue());
 		twitterAccount.setTwitterDescription(jsonTwitterAccount.get("twitterDescription").isString().stringValue());
 		twitterAccount.setTwitterImageUrl(jsonTwitterAccount.get("twitterImageUrl").isString().stringValue());
 		persona.setTwitterAccount(twitterAccount);

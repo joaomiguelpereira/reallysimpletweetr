@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.services;
 
 import java.util.List;
 
+import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -21,6 +22,14 @@ public class RPCService implements IService {
 		twitterService = GWT.create(TwitterService.class);
 	}
 
+	public void getOAuthInfo(TwitterAccountDTO twitterAccount, AsyncCallback<OAuthInfoDTO> callback) throws Exception {
+		this.twitterService.getOAuthInfo(twitterAccount, callback);
+	}
+	public void postUpdate(TwitterAccountDTO twitterAccount, String tweetText,AsyncCallback<TwitterUpdateDTO> callback) throws Exception {
+		this.twitterService.postUpdate(twitterAccount, tweetText,callback);
+		
+	}
+		
 	public void getTwitterUpdates(
 			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter,
 			AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception {
@@ -48,5 +57,13 @@ public class RPCService implements IService {
 
 		this.personaService.deletePersona(name, callBack) ;
 	}
+
+	public void authenticateUser(PersonaDTO personaDto,
+			 AsyncCallback<TwitterAccountDTO> asyncCallback) throws Exception{
+		this.twitterService.authenticateUser(personaDto,asyncCallback);
+		
+	}
+
+	
 
 }

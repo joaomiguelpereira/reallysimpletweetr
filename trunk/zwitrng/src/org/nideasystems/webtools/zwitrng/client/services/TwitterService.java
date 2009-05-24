@@ -2,11 +2,14 @@ package org.nideasystems.webtools.zwitrng.client.services;
 
 import java.util.List;
 
+import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -20,6 +23,11 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("twitterService")
 public interface TwitterService extends RemoteService{
 	List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
+	TwitterUpdateDTO postUpdate(TwitterAccountDTO twitterAccount, String tweetText) throws Exception;
 	List<TwitterUpdateDTO> getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
+	
+	OAuthInfoDTO getOAuthInfo(TwitterAccountDTO twitterAccount) throws Exception;
+	
+	TwitterAccountDTO authenticateUser(PersonaDTO personaDto) throws Exception;
 	
 }

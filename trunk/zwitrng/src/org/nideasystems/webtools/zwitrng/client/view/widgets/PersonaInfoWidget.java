@@ -46,7 +46,7 @@ public class PersonaInfoWidget extends HorizontalPanel {
 		
 
 		
-		this.userName = new HTML(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterUserName());
+		this.userName = new HTML(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterName());
 		topPannel.add(this.userName);
 		
 		this.userScreenName = new HTML("("+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterScreenName())+")");
@@ -59,21 +59,21 @@ public class PersonaInfoWidget extends HorizontalPanel {
 			
 		this.userFollowers =  new HTML("Followers: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterFollowers()));
 		bottomPannel.add(this.userFollowers);
-		this.userFollowing =  new HTML("Following: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterFollowing()));
+		this.userFollowing =  new HTML("Following: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterFriends()));
 		bottomPannel.add(this.userFollowing);
 		this.userUpdates =  new HTML("Updates: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterUpdates()));
 		bottomPannel.add(this.userUpdates);
 		
-	
+		
+		
 		rightPanel.add(topPannel);
 		rightPanel.add(middlePannel);
 		rightPanel.add(bottomPannel);
 		
 		
+		
 	
-		
-		
-		
+	
 		
 		//
 		super.add(leftPanel);

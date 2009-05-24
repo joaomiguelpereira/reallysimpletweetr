@@ -103,6 +103,9 @@ public interface IController {
 		public final String DISABLE_AUTO_UPDATE = "DISABLE_AUTO_UPDATE";
 		public final String CHANGE_PAGE_SIZE = "CHANGE_PAGE_SIZE";
 		public final String CREATE = "CREATE";
+		public final String TWEET_THIS = "TWEET_THIS";
+		public final String START_LOGIN = "START_LOGIN";
+		public final String CONTINUE_LOGIN = "CONTINUE_LOGIN";
 		
 		
 	}

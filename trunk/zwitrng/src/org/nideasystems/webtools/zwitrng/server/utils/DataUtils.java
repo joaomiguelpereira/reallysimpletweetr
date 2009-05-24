@@ -17,15 +17,14 @@ import twitter4j.User;
 public class DataUtils {
 
 	public static PersonaDTO createPersonaDto(PersonaDO personaDo,
-			ExtendedUser twitterUser) {
+			TwitterAccountDTO authorizedTwitterAccount) {
 		
 		PersonaDTO returnPersona = new PersonaDTO();
 		returnPersona.setCreationDate(personaDo.getCreationDate());
 		returnPersona.setName(personaDo.getName());
 		returnPersona.setUserEmail(personaDo.getUserEmail());
 		
-		
-		TwitterAccountDTO twitterAcount = createTwitterAccountDto(twitterUser);
+		//TwitterAccountDTO twitterAcount = createTwitterAccountDto(authorizedTwitterAccount);
 		
 		/*twitterAcount.setTwitterDescription(twitterUser.getDescription());
 		twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
@@ -34,13 +33,10 @@ public class DataUtils {
 		twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
 		twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
 		twitterAcount.setTwitterUserName(twitterUser.getName());*/
-		
-
 		//Handle correcly the pass
-		twitterAcount.setTwitterPassword(personaDo.getTwitterAccount().getTwitterPass());
+		//twitterAcount.setTwitterPassword(personaDo.getTwitterAccount().getTwitterPass());
 
-		
-		returnPersona.setTwitterAccount(twitterAcount);
+		returnPersona.setTwitterAccount(authorizedTwitterAccount);
 		
 		return returnPersona;
 		
@@ -54,14 +50,17 @@ public class DataUtils {
 	public static TwitterAccountDTO createTwitterAccountDto(User twitterUser) {
 		
 		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
-		twitterAcount.setTwitterDescription(twitterUser.getDescription());
 		
-		twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
-		//twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
-		twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL().toExternalForm());
-		twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
-		//twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
-		twitterAcount.setTwitterUserName(twitterUser.getName());
+		if (twitterUser!=null) {
+			twitterAcount.setTwitterDescription(twitterUser.getDescription());
+			twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
+			//twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
+			twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL().toExternalForm());
+			twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
+			//twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
+			twitterAcount.setTwitterName(twitterUser.getName());
+			
+		}
 		
 		return twitterAcount;
 	}
@@ -78,34 +77,39 @@ public class DataUtils {
 		
 		twitterAcount.setTwitterDescription(twitterUser.getDescription());
 		twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
-		twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
+		twitterAcount.setTwitterFriends(twitterUser.getFriendsCount());
 		twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL().toExternalForm());
 		twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
 		twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
-		twitterAcount.setTwitterUserName(twitterUser.getName());
+		twitterAcount.setTwitterName(twitterUser.getName());
 		
 		return twitterAcount;
 	}
 	
-	public static PersonaDO fromDto(PersonaDTO personaDto, String email) {
+	public static PersonaDO personaDofromDto(PersonaDTO personaDto, String email) {
 		PersonaDO returnPersona = new PersonaDO();
 
 		returnPersona.setCreationDate(new Date());
 		returnPersona.setName(personaDto.getName());
 		returnPersona.setUserEmail(email);
-
-		TwitterAccountDO twitterAccount = new TwitterAccountDO();
-		twitterAccount.setTwitterName(personaDto.getTwitterAccount()
-				.getTwitterScreenName());
-		twitterAccount.setTwitterPass(personaDto.getTwitterAccount()
-				.getTwitterPassword());
-		returnPersona.setTwitterAccount(twitterAccount);
-		// Create the default filter
-		FilterDO defaultFilter = new FilterDO();
-		defaultFilter.setName("Home");
-		returnPersona.addFilter(defaultFilter);
+		
+		//Copy the TwitterAccountDTO
+		TwitterAccountDO twitterAccountDo = twitterAccountDofromDto(personaDto.getTwitterAccount());
+		returnPersona.setTwitterAccount(twitterAccountDo);
 		return returnPersona;
 
+	}
+
+	private static TwitterAccountDO twitterAccountDofromDto(TwitterAccountDTO twitterAccount) {
+		TwitterAccountDO twitterAccountDo = new TwitterAccountDO();
+		
+		twitterAccountDo.setOAuthLoginUrl(twitterAccount.getOAuthLoginUrl());
+		twitterAccountDo.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret());
+		twitterAccountDo.setOAuthToken(twitterAccount.getOAuthToken());
+		
+		return twitterAccountDo;
+		
+		
 	}
 
 	/**
@@ -146,6 +150,108 @@ public class DataUtils {
 		
 		
 		return twitterUpdate;
+		
+	}
+
+	public static PersonaDTO personaDtoFromDo(PersonaDO personaDo) {
+		
+		//Create new PersonaDTO
+		PersonaDTO returnPersona = new PersonaDTO();
+		returnPersona.setCreationDate(personaDo.getCreationDate());
+		returnPersona.setName(personaDo.getName());
+		returnPersona.setUserEmail(personaDo.getUserEmail());
+		
+		//Create associated Twitter Account
+		TwitterAccountDTO twitterAccount = twitterAccountDtoFromDo(personaDo.getTwitterAccount());
+		
+		returnPersona.setTwitterAccount(twitterAccount);
+		
+		
+		
+		return returnPersona;
+	}
+
+	public static TwitterAccountDTO twitterAccountDtoFromDo(
+			TwitterAccountDO twitterAccount) {
+		TwitterAccountDTO dto = new TwitterAccountDTO();
+		dto.setOAuthLoginUrl(twitterAccount.getOAuthLoginUrl());
+		dto.setOAuthToken(twitterAccount.getOAuthToken());
+		dto.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret());
+		return dto;
+	}
+
+	/**
+	 * Take an authenticated twitter user and merge with the given twitter account
+	 * @param authenticatedTwitterUser
+	 * @param twitterAccount
+	 * @return
+	 */
+	public static TwitterAccountDTO mergeTwitterAccount(
+			ExtendedUser authenticatedTwitterUser, TwitterAccountDTO twitterAccount) {
+		TwitterAccountDTO authenticatedTwitterAccount = new TwitterAccountDTO();
+		
+		
+		//Copy access info
+		authenticatedTwitterAccount.setOAuthToken(twitterAccount.getOAuthToken());
+		authenticatedTwitterAccount.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret());
+		
+		//Set twitter account details
+		authenticatedTwitterAccount.setTwitterDescription(authenticatedTwitterUser.getDescription());
+		authenticatedTwitterAccount.setTwitterFollowers(authenticatedTwitterUser.getFollowersCount());
+		authenticatedTwitterAccount.setTwitterImageUrl(authenticatedTwitterUser.getProfileImageURL().toExternalForm());
+		authenticatedTwitterAccount.setTwitterScreenName(authenticatedTwitterUser.getScreenName());
+		authenticatedTwitterAccount.setTwitterName(authenticatedTwitterUser.getName());
+		authenticatedTwitterAccount.setId(authenticatedTwitterUser.getId());
+		authenticatedTwitterAccount.setLocation(authenticatedTwitterUser.getLocation());
+		
+		authenticatedTwitterAccount.setTwitterFollowers(authenticatedTwitterUser.getFollowersCount());
+		authenticatedTwitterAccount.setTwitterFriends(authenticatedTwitterUser.getFriendsCount());
+		authenticatedTwitterAccount.setTwitterUpdates(authenticatedTwitterUser.getStatusesCount());
+		
+		
+		//Set the last status
+		TwitterUpdateDTO twitterUpdateDto = new TwitterUpdateDTO();
+		
+		twitterUpdateDto.setCreatedAt(authenticatedTwitterUser.getStatusCreatedAt());
+		twitterUpdateDto.setId(authenticatedTwitterUser.getStatusId());
+		twitterUpdateDto.setInReplyToStatusId(authenticatedTwitterUser.getStatusInReplyToStatusId());
+		twitterUpdateDto.setInReplyToUserId(authenticatedTwitterUser.getStatusInReplyToUserId());
+		twitterUpdateDto.setRateLimitLimit(authenticatedTwitterUser.getRateLimitLimit());
+		twitterUpdateDto.setRateLimitRemaining(authenticatedTwitterUser.getRateLimitRemaining());
+		twitterUpdateDto.setRateLimitReset(authenticatedTwitterUser.getRateLimitReset());
+		twitterUpdateDto.setSource(authenticatedTwitterUser.getStatusSource());
+		twitterUpdateDto.setText(authenticatedTwitterUser.getStatusText());
+		
+		authenticatedTwitterAccount.setTwitterUpdateDto(twitterUpdateDto);
+		
+		
+		
+		return authenticatedTwitterAccount;
+	}
+
+	/**
+	 * 
+	 * @param exUser
+	 * @param authenticatedAccount
+	 * @deprecated
+	 */
+	public static void mergeExtendedUserAccount(
+			ExtendedUser exUser, TwitterAccountDTO authenticatedAccount) {
+		// TODO Auto-generated method stub
+		authenticatedAccount.setTwitterFollowers(exUser.getFollowersCount());
+		authenticatedAccount.setTwitterFriends(exUser.getFriendsCount());
+		authenticatedAccount.setTwitterUpdates(exUser.getStatusesCount());
+	}
+
+	public static TwitterAccountDO twitterAccountDoFromDto(
+			TwitterAccountDTO fullAuthorizeddAccount) {
+		TwitterAccountDO accountDo = new TwitterAccountDO();
+		accountDo.setOAuthLoginUrl(fullAuthorizeddAccount.getOAuthLoginUrl());
+		accountDo.setOAuthToken(fullAuthorizeddAccount.getOAuthToken());
+		accountDo.setOAuthTokenSecret(fullAuthorizeddAccount.getOAuthTokenSecret());
+		return accountDo; 
+		
+		
 		
 	}
 

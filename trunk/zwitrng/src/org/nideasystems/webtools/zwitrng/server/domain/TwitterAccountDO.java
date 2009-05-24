@@ -20,7 +20,13 @@ public class TwitterAccountDO {
 	private String twitterName;
 	
 	@Persistent
-	private String twitterPass;
+	private String oAuthToken;
+	
+	@Persistent
+	private String oAuthTokenSecret;
+
+	@Persistent
+	private String oAuthLoginUrl;
 
 	public void setTwitterName(String twitterName) {
 		this.twitterName = twitterName;
@@ -38,12 +44,29 @@ public class TwitterAccountDO {
 		return key;
 	}
 
-	public void setTwitterPass(String twitterPass) {
-		this.twitterPass = twitterPass;
+	public void setOAuthTokenSecret(String oAuthTokenSecret) {
+		this.oAuthTokenSecret = oAuthTokenSecret;
 	}
 
-	public String getTwitterPass() {
-		return twitterPass;
+	public String getOAuthTokenSecret() {
+		return oAuthTokenSecret;
 	}
+
+	public void setOAuthToken(String oAuthToken) {
+		this.oAuthToken = oAuthToken;
+	}
+
+	public String getOAuthToken() {
+		return oAuthToken;
+	}
+
+	public void setOAuthLoginUrl(String oAuthLoginUrl) {
+		this.oAuthLoginUrl = oAuthLoginUrl;
+	}
+
+	public String getOAuthLoginUrl() {
+		return oAuthLoginUrl;
+	}
+
 	
 }

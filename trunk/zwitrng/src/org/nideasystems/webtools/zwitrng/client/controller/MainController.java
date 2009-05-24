@@ -13,7 +13,7 @@ import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
 
 public class MainController extends AbstractCompositeController implements IMainController{
-	private Panel mainPanel = RootPanel.get();
+	private Panel mainPanel = RootPanel.get("main");
 	private static MainController instance = null;
 	private IServiceManager serviceManager = new BasicServiceManager();
 	PersonasCompositeController personasCompositeController = null;

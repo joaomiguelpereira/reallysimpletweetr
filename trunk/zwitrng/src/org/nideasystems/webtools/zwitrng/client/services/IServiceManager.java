@@ -4,6 +4,7 @@ public interface IServiceManager {
 	
 	public IService getPesonaService() throws Exception;
 	public RPCService getRPCService() throws Exception;
+	public IService getAuthenticationService() throws Exception;
 	
 
 }
