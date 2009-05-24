@@ -26,8 +26,8 @@ import twitter4j.http.RequestToken;
 
 public class TwitterServiceAdapter {
 
-	private static final String CONSUMER_KEY = "sRNUnCqQfJohaTGoi2wQ";
-	private static final String CONSUMER_SECRET = "AQXUjWxTNv5e44i1mTsb3SKoUw2GI8MUFARU0uSLm8";
+	private static final String CONSUMER_KEY = "Th4VbjuSXf8PAf2eQuiJ2Q";
+	private static final String CONSUMER_SECRET = "HZu9vhygeXPShOr7jsvidkiWkTNZmQJRYkQZfYwc";
 
 	private static final Logger log = Logger
 			.getLogger(TwitterServiceAdapter.class.getName());
@@ -204,19 +204,19 @@ public class TwitterServiceAdapter {
 
 	public TwitterUpdateDTO postUpdate(TwitterAccountDTO twitterAccount,
 			String tweetText) throws Exception {
-		Twitter twitter = new Twitter(twitterAccount.getTwitterScreenName(),
-				twitterAccount.getTwitterPassword());
-		ExtendedUser user = null;
+
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(twitterAccount.getOAuthToken(), twitterAccount.getOAuthTokenSecret());
+		
+		twitter.updateStatus(tweetText);
+		
+		
+		//ExtendedUser user = null;
 		Status latestStatus = null;
 		TwitterUpdateDTO latestTwitterUpdate = null;
 		try {
-			user = twitter.verifyCredentials();
-			if (user != null) {
-				// Status newStatus = new Status();
-				twitter.setSource("http://zwitrng.appspot.com/");
 				latestStatus = twitter.updateStatus(tweetText);
-			}
-
 		} catch (TwitterException e) {
 			log.severe(e.getLocalizedMessage());
 			e.printStackTrace();
