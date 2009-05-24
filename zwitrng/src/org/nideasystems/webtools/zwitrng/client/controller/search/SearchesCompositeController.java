@@ -8,7 +8,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class SearchesCompositeController extends AbstractCompositeController {
 

@@ -3,10 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Image;
 
 
 /**
