@@ -314,6 +314,15 @@ public class PersonaDAO extends BaseDAO {
 		// Create a PersonaDO from a DTO
 		PersonaDO personaToSave = DataUtils.personaDofromDto(persona, email);
 
+		StringBuffer sb =new StringBuffer();
+		sb.append("\nIn DAO created a persona do Save:\n");
+		sb.append("\nPersona Name: "+personaToSave.getName());
+		sb.append("\nPersona Email: "+personaToSave.getUserEmail());
+		sb.append("\nPersona Twitter Account URL:"+personaToSave.getTwitterAccount().getOAuthLoginUrl());
+		sb.append("\nPersona Twitter Account Token:"+personaToSave.getTwitterAccount().getOAuthToken());
+		sb.append("\nPersona Twitter Account TokenSecret:"+personaToSave.getTwitterAccount().getOAuthTokenSecret());
+		
+		log.fine(sb.toString());
 		// Make the Object Persistent
 		try {
 			pm.makePersistent(personaToSave);
@@ -326,6 +335,16 @@ public class PersonaDAO extends BaseDAO {
 			//Close the connection
 			pm.close();
 		}
+		
+		sb = new StringBuffer();
+		
+		sb.append("\nIn DAO after created a persona do Save:\n");
+		sb.append("\nPersona Name: "+personaToSave.getName());
+		sb.append("\nPersona Email: "+personaToSave.getUserEmail());
+		sb.append("\nPersona Twitter Account URL:"+personaToSave.getTwitterAccount().getOAuthLoginUrl());
+		sb.append("\nPersona Twitter Account Token:"+personaToSave.getTwitterAccount().getOAuthToken());
+		sb.append("\nPersona Twitter Account TokenSecret:"+personaToSave.getTwitterAccount().getOAuthTokenSecret());
+
 		// return the persisted object
 		return personaToSave;
 
