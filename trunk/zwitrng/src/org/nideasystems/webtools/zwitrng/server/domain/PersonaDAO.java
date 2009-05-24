@@ -16,7 +16,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import twitter4j.ExtendedUser;
-import twitter4j.User;
 
 public class PersonaDAO extends BaseDAO {
 

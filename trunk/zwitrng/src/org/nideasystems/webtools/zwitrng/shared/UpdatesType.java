@@ -10,4 +10,7 @@ public enum UpdatesType {
 	UpdatesType(int val) {
 		this.val = val;
 	}
+	public int getVal() {
+		return val;
+	}
 }

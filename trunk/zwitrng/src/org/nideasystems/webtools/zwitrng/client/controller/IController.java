@@ -3,10 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
 import org.nideasystems.webtools.zwitrng.client.view.IView;
 
-
-
 import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface IController {
 	/**

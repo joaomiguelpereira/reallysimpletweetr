@@ -1,9 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view.persona;
 
-import org.eclipse.swt.internal.ole.win32.ISpecifyPropertyPages;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
-import org.nideasystems.webtools.zwitrng.client.services.BasicAutehnticationService;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaToolsWidget;
@@ -12,11 +10,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
 
 /**
