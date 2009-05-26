@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -32,11 +33,8 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 		HasMouseOverHandlers, HasMouseOutHandlers {
 
-	/*
-	 * private HorizontalPanel fullTweet = new HorizontalPanel(); private
-	 * VerticalPanel tweet = new VerticalPanel();
-	 */
-	// private HorizontalPanel rightPanel = new HorizontalPanel();
+	
+	private TwitterAccountDTO twitterAccount;
 	private TwitterUpdateDTO twitterUpdate;
 	private final SendUpdateWidget sendUpdate = new SendUpdateWidget();
 	private boolean isSendUpdateVisible = false;
@@ -140,6 +138,8 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 
 		});
 		sendUpdate.setController(getController());
+		sendUpdate.setSendingTwitterAccount(twitterAccount);
+		
 		sendUpdate.init();
 		sendUpdate.setVisible(false);
 
@@ -217,6 +217,14 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 	public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
 
 		return addDomHandler(handler, MouseOutEvent.getType());
+	}
+
+	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
+		this.twitterAccount = twitterAccount;
+	}
+
+	public TwitterAccountDTO getTwitterAccount() {
+		return twitterAccount;
 	}
 
 }
