@@ -15,7 +15,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterUpdatesController extends AbstractController {
@@ -63,6 +63,7 @@ public class TwitterUpdatesController extends AbstractController {
 			for (TwitterUpdateDTO update : twitterUpdates) {
 
 				TwitterUpdateWidget updateWidget = new TwitterUpdateWidget();
+				updateWidget.setTwitterAccount(getTwitterAccount());
 				updateWidget.setController(this);
 				updateWidget.setTwitterUpdate(update);
 				updateWidget.setStyleName("twitterUpdate");
@@ -136,9 +137,7 @@ public class TwitterUpdatesController extends AbstractController {
 								public void onSuccess(TwitterUpdateDTO result) {
 									endProcessing();
 									getParentController().handleAction(IController.IActions.UPDATE_LAST_UPDATE, result);
-									// updateLastStatus(result);
-									//updateLastStatus(result);
-									// Window.alert("Sent: "+result.getText());
+									
 
 								}
 

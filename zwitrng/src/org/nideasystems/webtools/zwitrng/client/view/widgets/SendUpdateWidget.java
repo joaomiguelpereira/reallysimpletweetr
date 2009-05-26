@@ -2,9 +2,11 @@ package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
-import twitter4j.Tweet;
+
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,6 +17,7 @@ import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.Image;
 
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
@@ -31,24 +34,30 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 	final TextArea update = new TextArea();
 	final Button send = new Button("Send");
 	private int type = STATUS;
+	private TwitterAccountDTO sendingTwitterAccount;
 	private TwitterUpdateDTO inResponseTotwitterUpdate;
 
 	@Override
 	public void init() {
 
 		
-		update.setWidth("700px");
+		update.setWidth("650px");
 		//update.setHeight("35px");
 		update.addStyleName("input");
-		update.setVisibleLines(3);
+		update.setVisibleLines(2);
 		
 		
 		FlexTable bottomLayout = new FlexTable();
 		FlexCellFormatter formater = bottomLayout.getFlexCellFormatter();
 		bottomLayout.setCellSpacing(0);
-		bottomLayout.setWidget(0, 0, update);
-		formater.setColSpan(0, 0, 3);
-		formater.setWidth(0, 0, "680px");
+		Image sendingUserImage = new Image(sendingTwitterAccount.getTwitterImageUrl());
+		sendingUserImage.setWidth("32px");
+		sendingUserImage.setHeight("32px");
+		bottomLayout.setWidget(0, 0, sendingUserImage);
+		
+		bottomLayout.setWidget(0, 1, update);
+		formater.setColSpan(0, 1, 2);
+		formater.setWidth(0, 1, "650px");
 		
 		
 		remainingChars.setWidth("35px");
@@ -149,8 +158,15 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 	}
 
 	public int getType() {
-		// TODO Auto-generated method stub
 		return this.type;
+	}
+
+	public void setSendingTwitterAccount(TwitterAccountDTO sendingTwitterAccount) {
+		this.sendingTwitterAccount = sendingTwitterAccount;
+	}
+
+	public TwitterAccountDTO getSendingTwitterAccount() {
+		return sendingTwitterAccount;
 	}
 
 }
