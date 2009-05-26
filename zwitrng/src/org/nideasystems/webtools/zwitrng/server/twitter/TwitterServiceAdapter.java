@@ -269,7 +269,7 @@ public class TwitterServiceAdapter {
 			
 			twitterUser = twitter.verifyCredentials();
 			
-			//twitter2.updateStatus("Setting new Status...");
+			
 		} catch (Exception e) {
 			
 			e.printStackTrace();
