@@ -178,7 +178,7 @@ public class TwitterServiceAdapter {
 
 		// Populate data structure
 		for (Status status : statusList) {
-			returnList.add(DataUtils.createTwitterUpdateDto(status));
+			returnList.add(DataUtils.createTwitterUpdateDto(status,true));
 
 			System.out.println("getInReplyToStatusId "
 					+ status.getInReplyToStatusId());
@@ -200,34 +200,26 @@ public class TwitterServiceAdapter {
 		return returnList;
 	}
 
-	public TwitterUpdateDTO postUpdate(TwitterAccountDTO twitterAccount,
-			String tweetText) throws Exception {
+	public Status postUpdate(TwitterUpdateDTO update) throws Exception {
 
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
-		twitter.setOAuthAccessToken(twitterAccount.getOAuthToken(), twitterAccount.getOAuthTokenSecret());
+		twitter.setOAuthAccessToken(update.getTwitterAccount().getOAuthToken(), update.getTwitterAccount().getOAuthTokenSecret());
 		
-		twitter.updateStatus(tweetText);
+		//twitter.updateStatus(update.getText());
 		
 		
 		//ExtendedUser user = null;
 		Status latestStatus = null;
-		TwitterUpdateDTO latestTwitterUpdate = null;
+		
 		try {
-				latestStatus = twitter.updateStatus(tweetText);
+				latestStatus = twitter.updateStatus(update.getText());
 		} catch (TwitterException e) {
 			log.severe(e.getLocalizedMessage());
 			e.printStackTrace();
 			throw new Exception(e);
 		}
-		if (latestStatus != null) {
-			latestTwitterUpdate = DataUtils
-					.createTwitterUpdateDto(latestStatus);
-		} else {
-			log.severe("The Create status returned null");
-			throw new Exception("The Create status returned null");
-		}
-		return latestTwitterUpdate;
+		return latestStatus;
 
 	}
 

@@ -15,8 +15,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
 
 public class TwitterUpdatesController extends AbstractController {
 
@@ -27,7 +27,7 @@ public class TwitterUpdatesController extends AbstractController {
 	private long lastUpdateId = 1;
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 10; // Seconds
-	private int updatesPerPage = 20; //20 updates in a page
+	private int updatesPerPage = 20; // 20 updates in a page
 
 	public UpdatesType getUpdatesType() {
 		return updatesType;
@@ -67,7 +67,7 @@ public class TwitterUpdatesController extends AbstractController {
 				updateWidget.setTwitterUpdate(update);
 				updateWidget.setStyleName("twitterUpdate");
 				updateWidget.init();
-				
+
 				if (addOnTop) {
 					updatesView.insert(updateWidget, i++);
 
@@ -83,8 +83,6 @@ public class TwitterUpdatesController extends AbstractController {
 		adjustPageSize();
 		endProcessing();
 	}
-
-	
 
 	@Override
 	public SelectionHandler<Integer> getSelectionHandler() {
@@ -112,22 +110,63 @@ public class TwitterUpdatesController extends AbstractController {
 	@Override
 	public void handleAction(String action, Object... args) {
 
+		if (action.equals(IController.IActions.TWEET_THIS)) {
+
+			//Window.alert("Here");
+
+			
+
+			if (args[0] != null && args[0] instanceof TwitterUpdateDTO) {
+				TwitterUpdateDTO update = (TwitterUpdateDTO) args[0];
+				update.setTwitterAccount(this.twitterAccount);
+
+				try {
+					startProcessing();
+					getServiceManager().getRPCService().postUpdate(update,
+							new AsyncCallback<TwitterUpdateDTO>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									endProcessing();
+									getErrorHandler().addException(caught);
+
+								}
+
+								@Override
+								public void onSuccess(TwitterUpdateDTO result) {
+									endProcessing();
+									getParentController().handleAction(IController.IActions.UPDATE_LAST_UPDATE, result);
+									// updateLastStatus(result);
+									//updateLastStatus(result);
+									// Window.alert("Sent: "+result.getText());
+
+								}
+
+							});
+				} catch (Exception e) {
+					endProcessing();
+					getErrorHandler().addException(e);
+					e.printStackTrace();
+				}
+			}
+
+		}
 		if (action.equals(IController.IActions.CHANGE_PAGE_SIZE)) {
-			//Window.alert(args[0].toString());
-			//Try to conver to int 
+			// Window.alert(args[0].toString());
+			// Try to conver to int
 			updatesPerPage = Integer.valueOf(args[0].toString());
 			adjustPageSize();
 		}
 		if (action.equals(IController.IActions.REFRESH_TWEETS)) {
 			refresh();
-			
+
 		}
 		if (action.equals(IController.IActions.ENABLE_AUTO_UPDATE)) {
 			// Create the timmer
 			if (timerForAutoUpdates == null) {
 				timerForAutoUpdates = new AutoUpdatesUpdateTimer();
 			}
-			
+
 			timerForAutoUpdates.scheduleRepeating(1000 * timeBeforeAutoUpdate);
 
 		}
@@ -147,33 +186,32 @@ public class TwitterUpdatesController extends AbstractController {
 	 */
 	private void adjustPageSize() {
 		// TODO Auto-generated method stub
-		//With the subtraction I'm removing the widget that represents the tools (errrr)
-		int widgetCount = updatesView.getWidgetCount()-1;
-		if ( widgetCount > updatesPerPage ) {
-			//Remove any remaining update
-			//int updatesToRemove = updatesPerPage-newPageSize;
-			for ( int i=widgetCount; i>updatesPerPage;i--) {
-				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget)updatesView.getWidget(i);
+		// With the subtraction I'm removing the widget that represents the
+		// tools (errrr)
+		int widgetCount = updatesView.getWidgetCount() - 1;
+		if (widgetCount > updatesPerPage) {
+			// Remove any remaining update
+			// int updatesToRemove = updatesPerPage-newPageSize;
+			for (int i = widgetCount; i > updatesPerPage; i--) {
+				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget) updatesView
+						.getWidget(i);
 				updates.remove(updateWidget.getTwitterUpdate().getId());
 				updatesView.remove(i);
-				
-				
-				
+
 			}
-			assert(updates.size()==updatesPerPage);
-			assert((updatesView.getWidgetCount()-1)==updatesPerPage);
+			assert (updates.size() == updatesPerPage);
+			assert ((updatesView.getWidgetCount() - 1) == updatesPerPage);
 		}
-		
-		
-		//updatesPerPage = newPageSize;
-		
+
+		// updatesPerPage = newPageSize;
+
 	}
 
 	private class AutoUpdatesUpdateTimer extends Timer {
 
 		@Override
 		public void run() {
-			
+
 			refresh();
 
 		}
@@ -238,9 +276,7 @@ public class TwitterUpdatesController extends AbstractController {
 	@Override
 	public void reload() {
 		// TODO Auto-generated method stub
-		
-	}
 
-	
+	}
 
 }

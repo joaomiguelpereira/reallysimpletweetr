@@ -1,7 +1,7 @@
-package org.nideasystems.webtools.zwitrng.client.controller.search;
+package org.nideasystems.webtools.zwitrng.client.controller.updates;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
-import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
+import org.nideasystems.webtools.zwitrng.client.controller.search.TwitterUpdatesSearchController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesCompositeView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -9,7 +9,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 
-public class SearchesCompositeController extends AbstractCompositeController {
+public class TwitterUpdatesCompositeController extends AbstractCompositeController {
 
 	// This update controller belong to one persona
 	private TwitterAccountDTO twitterAccount;
@@ -22,7 +22,7 @@ public class SearchesCompositeController extends AbstractCompositeController {
 	
 	//private Map<String, PersonaUpdatesTabView> updatesViews = null;
 
-	public SearchesCompositeController() {
+	public TwitterUpdatesCompositeController() {
 		super();
 	}
 
@@ -88,7 +88,8 @@ public class SearchesCompositeController extends AbstractCompositeController {
 
 	@Override
 	public void handleAction(String action, Object... args) {
-		Window.alert("SeachsCompositeController ActionEvent Handler"+action);
+		getParentController().handleAction(action, args);
+		//Window.alert("SeachsCompositeController ActionEvent Handler"+action);
 		
 	}
 

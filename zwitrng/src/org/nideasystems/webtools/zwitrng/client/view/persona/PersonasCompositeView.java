@@ -5,6 +5,12 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.HTML;
+
 
 /**
  * This is teh Tabbed view of personas
@@ -29,6 +35,8 @@ public class PersonasCompositeView extends AbstractTabbedPanel{
 	public void init() {
 		this.setWidth("750px");
 		super.setAnimationEnabled(true);
+		
+		
 		//Add the default AddPersonaPanel
 		AddNewPersonaTabView addNewPersonaView = new AddNewPersonaTabView();
 		addNewPersonaView.setController(getController());

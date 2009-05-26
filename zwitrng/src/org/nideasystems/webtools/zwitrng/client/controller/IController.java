@@ -103,6 +103,7 @@ public interface IController {
 		public final String TWEET_THIS = "TWEET_THIS";
 		public final String START_LOGIN = "START_LOGIN";
 		public final String CONTINUE_LOGIN = "CONTINUE_LOGIN";
+		public final String UPDATE_LAST_UPDATE = "UPDATE_LAST_STATUS";
 		
 		
 	}

@@ -16,6 +16,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import twitter4j.ExtendedUser;
+import twitter4j.Status;
 
 import com.google.appengine.api.users.User;
 import com.google.appengine.api.users.UserService;
@@ -74,7 +75,7 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public TwitterUpdateDTO postUpdate(TwitterAccountDTO twitterAccount, String tweetText)
+	public TwitterUpdateDTO postUpdate(TwitterUpdateDTO update)
 			throws Exception {
 		//Send tweet
 		// Check if is logged in
@@ -86,8 +87,12 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 			throw new Exception("You must be logged in");
 
 		}
-
-		return TwitterServiceAdapter.get().postUpdate(twitterAccount, tweetText);
+		TwitterUpdateDTO lastUpdate = null;
+		Status status = TwitterServiceAdapter.get().postUpdate(update);
+		if ( status != null ) {
+			lastUpdate = DataUtils.createTwitterUpdateDto(status,false);
+		}
+		return lastUpdate;
 		
 		//throw new Exception("Not implemented");
 		
