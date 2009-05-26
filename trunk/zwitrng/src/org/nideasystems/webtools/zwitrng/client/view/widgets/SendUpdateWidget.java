@@ -36,19 +36,27 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 	@Override
 	public void init() {
 
-		update.setWidth("600px");
-		update.setHeight("35px");
+		
+		update.setWidth("700px");
+		//update.setHeight("35px");
+		update.addStyleName("input");
+		update.setVisibleLines(3);
+		
+		
 		FlexTable bottomLayout = new FlexTable();
 		FlexCellFormatter formater = bottomLayout.getFlexCellFormatter();
 		bottomLayout.setCellSpacing(0);
 		bottomLayout.setWidget(0, 0, update);
 		formater.setColSpan(0, 0, 3);
-		formater.setWidth(0, 0, "600px");
+		formater.setWidth(0, 0, "680px");
+		
+		
 		remainingChars.setWidth("35px");
 		bottomLayout.setWidget(1, 0, remainingChars);
 		bottomLayout.setWidget(1, 1, pub);
 		bottomLayout.setWidget(1, 2, send);
-
+		
+		formater.setAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
 		formater.setAlignment(1, 0, HasHorizontalAlignment.ALIGN_LEFT,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		formater.setAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER,
