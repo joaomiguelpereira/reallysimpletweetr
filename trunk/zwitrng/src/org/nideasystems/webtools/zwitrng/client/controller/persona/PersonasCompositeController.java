@@ -5,11 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
-import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.GlobalToolsWidget;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.IDataLoadedHandler;
-import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
 import org.nideasystems.webtools.zwitrng.client.services.RPCService;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasCompositeView;

@@ -1,11 +1,10 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
-import java.util.HashMap;
-import java.util.Map;
+
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
-import org.nideasystems.webtools.zwitrng.client.controller.search.SearchesCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesCompositeController;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -20,7 +19,7 @@ public class PersonaController extends AbstractController {
 	private PersonaView personaView = null;
 	private PersonaDTO persona = null;
 	//private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
-	SearchesCompositeController searchesCompositeController = null;
+	TwitterUpdatesCompositeController twitterUpdatesCompositeController = null;
 	//private OAuthInfoDTO oAuthInfo = null;
 	
 	private void initializeUpdatesController() {
@@ -29,19 +28,19 @@ public class PersonaController extends AbstractController {
 				.get(persona.getName());
 		*/
 		
-		if (searchesCompositeController == null && persona.getTwitterAccount() != null && persona.getTwitterAccount().getIsOAuthenticated() ) {
+		if (twitterUpdatesCompositeController == null && persona.getTwitterAccount() != null && persona.getTwitterAccount().getIsOAuthenticated() ) {
 
-			searchesCompositeController = new SearchesCompositeController();
-			searchesCompositeController.setErrorHandler(getErrorHandler());
-			searchesCompositeController.setName(AbstractController
+			twitterUpdatesCompositeController = new TwitterUpdatesCompositeController();
+			twitterUpdatesCompositeController.setErrorHandler(getErrorHandler());
+			twitterUpdatesCompositeController.setName(AbstractController
 					.generateDefaultName());
-			searchesCompositeController.setParentController(this);
-			searchesCompositeController.setTwitterAccount(persona.getTwitterAccount());
-			searchesCompositeController.setServiceManager(getServiceManager());
-			searchesCompositeController.init();
+			twitterUpdatesCompositeController.setParentController(this);
+			twitterUpdatesCompositeController.setTwitterAccount(persona.getTwitterAccount());
+			twitterUpdatesCompositeController.setServiceManager(getServiceManager());
+			twitterUpdatesCompositeController.init();
 			
 			// Add the created view of the controller to this view
-			this.personaView.add(searchesCompositeController.getView()
+			this.personaView.add(twitterUpdatesCompositeController.getView()
 					.getAsWidget());
 			/*this.searchesCompositeControllers.put(personaView
 					.getPersonaObj().getName(), searchesCompositeController);*/
@@ -58,15 +57,8 @@ public class PersonaController extends AbstractController {
 		personaView.setController(this);
 		//Initialize the view
 		personaView.init();
-		/*initializeUpdatesController();
-		
-		if ( searchesCompositeController!= null ) {
-			personaView.add(searchesCompositeController.getView().getAsWidget());
+	
 			
-		}*/
-		
-			
-		
 		
 		
 		//Now, tell the controller what view to use
@@ -158,11 +150,16 @@ public class PersonaController extends AbstractController {
 				getErrorHandler().addException(e);
 			}
 		}
-		
+		if (action.endsWith(IController.IActions.UPDATE_LAST_UPDATE)) {
+			TwitterUpdateDTO update =(TwitterUpdateDTO)args[0];
+			updateLastStatus(update);
+		}
+		/*
 		if ( action.equals(IController.IActions.TWEET_THIS)) {
-			
+			Window.alert("deprecated here");
 			try {
 				startProcessing();
+				if (args[0]!= null && args[0] instanceof TwitterUpdateDTO )
 				getServiceManager().getRPCService().postUpdate(this.persona.getTwitterAccount(), (String)args[0], new AsyncCallback<TwitterUpdateDTO>(){
 
 					@Override
@@ -191,10 +188,10 @@ public class PersonaController extends AbstractController {
 			}
 			
 		}
-			
+*/			
 	}
 	private void updateLastStatus(TwitterUpdateDTO result) {
-		personaView.setLastStatus(result);
+		personaView.updateLastStatus(result);
 		personaView.refresh();
 		
 	}

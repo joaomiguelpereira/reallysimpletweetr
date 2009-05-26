@@ -24,8 +24,8 @@ public class RPCService implements IService {
 	public void getOAuthInfo(TwitterAccountDTO twitterAccount, AsyncCallback<OAuthInfoDTO> callback) throws Exception {
 		this.twitterService.getOAuthInfo(twitterAccount, callback);
 	}
-	public void postUpdate(TwitterAccountDTO twitterAccount, String tweetText,AsyncCallback<TwitterUpdateDTO> callback) throws Exception {
-		this.twitterService.postUpdate(twitterAccount, tweetText,callback);
+	public void postUpdate(TwitterUpdateDTO update, AsyncCallback<TwitterUpdateDTO> callback) throws Exception {
+		this.twitterService.postUpdate(update,callback);
 		
 	}
 		

@@ -156,14 +156,12 @@ public class PersonaView extends AbstractVerticalPanelView {
 
 	}
 
-	public void setLastStatus(TwitterUpdateDTO lastStatus) {
-		this.lastStatus = lastStatus;
+	public void updateLastStatus(TwitterUpdateDTO lastUpdate) {
+		personaObj.getTwitterAccount().setTwitterUpdateDto(lastUpdate);
+		//this.lastStatus = lastUpdate;
 	}
 
-	public TwitterUpdateDTO getLastStatus() {
-		return lastStatus;
-	}
-
+	
 	public void setLoginUrl(String loginUrl) {
 		this.loginUrl = loginUrl;
 	}

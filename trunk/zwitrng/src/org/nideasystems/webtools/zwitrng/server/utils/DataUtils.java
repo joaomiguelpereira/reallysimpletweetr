@@ -128,7 +128,7 @@ public class DataUtils {
 		
 	}
 
-	public static TwitterUpdateDTO createTwitterUpdateDto(Status status) {
+	public static TwitterUpdateDTO createTwitterUpdateDto(Status status, boolean copyUserForTwitterAccount) {
 		TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
 		
 		
@@ -143,10 +143,14 @@ public class DataUtils {
 		twitterUpdate.setSource(status.getSource());
 		twitterUpdate.setText(status.getText());
 		
-		//Create a twitter Account
-		TwitterAccountDTO twitterAccount =  DataUtils.createTwitterAccountDto(status.getUser());
 		
-		twitterUpdate.setTwitterAccount(twitterAccount);
+		if ( copyUserForTwitterAccount ) {
+			//Create a twitter Account
+			TwitterAccountDTO twitterAccount =  DataUtils.createTwitterAccountDto(status.getUser());
+			
+			twitterUpdate.setTwitterAccount(twitterAccount);
+				
+		}
 		
 		
 		return twitterUpdate;
