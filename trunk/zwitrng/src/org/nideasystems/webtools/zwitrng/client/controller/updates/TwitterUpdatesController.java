@@ -28,6 +28,10 @@ public class TwitterUpdatesController extends AbstractController {
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 10; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
+	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
+	// update automatically
+
+	private boolean isPaused = false;
 
 	public UpdatesType getUpdatesType() {
 		return updatesType;
@@ -92,19 +96,22 @@ public class TwitterUpdatesController extends AbstractController {
 	}
 
 	private void refresh() {
-		startProcessing();
-		FilterCriteriaDTO filter = new FilterCriteriaDTO();
-		filter.setSinceId(lastUpdateId);
-		filter.setUpdatesType(this.getUpdatesType());
-		// Let's update the tweets
-		try {
-			getServiceManager().getRPCService().getTwitterUpdates(
-					twitterAccount, filter, new TwitterUpdatesLoaded());
-		} catch (Exception e) {
-			endProcessing();
-			getErrorHandler().addException(e);
-			e.printStackTrace();
+		if (!isPaused) {
 
+			startProcessing();
+			FilterCriteriaDTO filter = new FilterCriteriaDTO();
+			filter.setSinceId(lastUpdateId);
+			filter.setUpdatesType(this.getUpdatesType());
+			// Let's update the tweets
+			try {
+				getServiceManager().getRPCService().getTwitterUpdates(
+						twitterAccount, filter, new TwitterUpdatesLoaded());
+			} catch (Exception e) {
+				endProcessing();
+				getErrorHandler().addException(e);
+				e.printStackTrace();
+
+			}
 		}
 	}
 
@@ -113,9 +120,7 @@ public class TwitterUpdatesController extends AbstractController {
 
 		if (action.equals(IController.IActions.TWEET_THIS)) {
 
-			//Window.alert("Here");
-
-			
+			// Window.alert("Here");
 
 			if (args[0] != null && args[0] instanceof TwitterUpdateDTO) {
 				TwitterUpdateDTO update = (TwitterUpdateDTO) args[0];
@@ -136,8 +141,10 @@ public class TwitterUpdatesController extends AbstractController {
 								@Override
 								public void onSuccess(TwitterUpdateDTO result) {
 									endProcessing();
-									getParentController().handleAction(IController.IActions.UPDATE_LAST_UPDATE, result);
-									
+									getParentController()
+											.handleAction(
+													IController.IActions.UPDATE_LAST_UPDATE,
+													result);
 
 								}
 
@@ -177,6 +184,12 @@ public class TwitterUpdatesController extends AbstractController {
 				timerForAutoUpdates.cancel();
 			}
 		}
+		if (action.equals(IController.IActions.PAUSE_AUTO_UPDATE)) {
+			this.isPaused = true;
+		} 
+		if (action.equals(IController.IActions.RESUME_AUTO_UPDATE)) {
+			this.isPaused = false;
+		} 
 
 	}
 
@@ -223,7 +236,7 @@ public class TwitterUpdatesController extends AbstractController {
 		updatesView.setController(this);
 		updatesView.init();
 		this.view = this.updatesView;
-		// Window.alert("going to initialize now");
+		
 		FilterCriteriaDTO filter = new FilterCriteriaDTO();
 		filter.setUpdatesType(this.getUpdatesType());
 
