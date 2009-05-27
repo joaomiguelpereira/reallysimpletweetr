@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
+import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -122,6 +123,7 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				addStyleName("currentTweet");
+				getController().handleAction(IController.IActions.PAUSE_AUTO_UPDATE);
 				// actionPanel.setVisible(true);
 
 			}
@@ -132,6 +134,7 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
 				removeStyleName("currentTweet");
+				getController().handleAction(IController.IActions.RESUME_AUTO_UPDATE);
 				// actionPanel.setVisible(false);
 
 			}

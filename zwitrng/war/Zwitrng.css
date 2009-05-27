@@ -5,6 +5,7 @@
 	border-top-width: 1px;
 	border-bottom-width: 1px;
 	border-top-style: dashed;
+	padding:0px;
 /*	border-bottom-style: dashed;
 	border-top-color: #999999;
 	border-bottom-color: #999999;*/
@@ -13,8 +14,21 @@
 .twitterUpdateMetaData	{
 	font-size:70%;
 	font-style:italic;
+	padding:0px;
 }
 
+.tweet {
+
+}
+
+.currentTweet {
+	background:#FFFFCC;
+	padding:0px;
+}
+.tweetOptions {
+	
+	
+}
 .bottonIcon {
 	background-color: #FFFFFF;
 	cursor: pointer;
@@ -27,6 +41,17 @@
 
 .error {
 	color:#990000;
+}
+
+.input {
+	border: 1px solid #CCCCCC;		
+
+}
+.link {
+	color:#0000CC;
+	cursor: pointer;
+	text-decoration:underline;
+
 }
 
 .loginWnd {

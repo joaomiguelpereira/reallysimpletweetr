@@ -29,7 +29,7 @@ public class TestTwitterPersonaServiceImpl extends LocalDataStoreTestCase {
 		UserService userServiceMock = createStrictMock(UserService.class);
 		expect(userServiceMock.getCurrentUser()).andReturn(user);
 		replay(userServiceMock);
-		service.setUserService(userServiceMock);
+		//service.setUserService(userServiceMock);
 		
 		//Create the persona Obj
 		PersonaDTO persona = new PersonaDTO();
@@ -60,7 +60,7 @@ public class TestTwitterPersonaServiceImpl extends LocalDataStoreTestCase {
 		UserService userServiceMock = createStrictMock(UserService.class);
 		expect(userServiceMock.getCurrentUser()).andReturn(user);
 		replay(userServiceMock);
-		service.setUserService(userServiceMock);
+		//service.setUserService(userServiceMock);
 		
 	
 		//Create the persona Obj

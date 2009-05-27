@@ -104,6 +104,8 @@ public interface IController {
 		public final String START_LOGIN = "START_LOGIN";
 		public final String CONTINUE_LOGIN = "CONTINUE_LOGIN";
 		public final String UPDATE_LAST_UPDATE = "UPDATE_LAST_STATUS";
+		public final String PAUSE_AUTO_UPDATE = "PAUSE_AUTO_UPDATE";
+		public final String RESUME_AUTO_UPDATE = "RESUME_AUTO_UPDATE";
 		
 		
 	}
