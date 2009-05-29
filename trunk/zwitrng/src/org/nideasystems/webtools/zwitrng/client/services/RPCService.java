@@ -5,6 +5,7 @@ import java.util.List;
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
@@ -48,7 +49,7 @@ public class RPCService implements IService {
 
 	}
 
-	public void loadPersonas(final AsyncCallback<List<PersonaDTO>> callback) throws Exception{
+	public void loadPersonas(final AsyncCallback<PersonaDTOList> callback) throws Exception{
 		this.personaService.getPersonas(callback);
 	}
 

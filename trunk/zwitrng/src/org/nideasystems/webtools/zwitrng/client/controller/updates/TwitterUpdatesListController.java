@@ -1,15 +1,20 @@
 package org.nideasystems.webtools.zwitrng.client.controller.updates;
 
-import org.nideasystems.webtools.zwitrng.client.controller.AbstractCompositeController;
+import java.util.HashMap;
+import java.util.Map;
+import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.search.TwitterUpdatesSearchController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesCompositeView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 
-public class TwitterUpdatesCompositeController extends AbstractCompositeController {
+public class TwitterUpdatesListController extends AbstractController<TwitterUpdateDTOList, TwitterUpdatesListView> implements AutoUpdatable {
 
 	// This update controller belong to one persona
 	private TwitterAccountDTO twitterAccount;
@@ -18,62 +23,63 @@ public class TwitterUpdatesCompositeController extends AbstractCompositeControll
 	//Controls if it's initialized
 	private boolean initialized = false;
 
-	private TwitterUpdatesCompositeView searchesCompositeView = null;
+	private TwitterUpdatesCompositeView twitterUpdatesCompositeView = null;
+	private Map<String, TwitterUpdatesController> twitterUpdatesControllers = new HashMap<String, TwitterUpdatesController>();
 	
 	//private Map<String, PersonaUpdatesTabView> updatesViews = null;
 
-	public TwitterUpdatesCompositeController() {
+	public TwitterUpdatesListController() {
 		super();
 	}
 
 	
 	public void init() {
 		if (!this.initialized) {
-			searchesCompositeView = new TwitterUpdatesCompositeView();
-			searchesCompositeView.setController(this);
-			searchesCompositeView.init();
-			this.view = searchesCompositeView;
+			twitterUpdatesCompositeView = new TwitterUpdatesCompositeView();
+			twitterUpdatesCompositeView.setController(this);
+			twitterUpdatesCompositeView.init();
+			//this.view = twitterUpdatesCompositeView;
 			
 			
 			//Initialize the Home view
 			TwitterUpdatesController twitterHomeController = new TwitterUpdatesController();
-			twitterHomeController.setErrorHandler(getErrorHandler());
-			twitterHomeController.setName("Home");
+			twitterHomeController.setMainController(getMainController());
+			//twitterHomeController.setName("Home");
 			twitterHomeController.setUpdatesType(UpdatesType.FRIENDS);
 			twitterHomeController.setTwitterAccount(twitterAccount);
-			twitterHomeController.setParentController(this);
+			//twitterHomeController.setParentController(this);
 			twitterHomeController.setServiceManager(getServiceManager());
 			twitterHomeController.init();
-			searchesCompositeView.add(twitterHomeController.getView().getAsWidget(),twitterHomeController.getName());
-			
+			//twitterUpdatesCompositeView.add(twitterHomeController.getView().getAsWidget(),twitterHomeController.getName());
+			//twitterUpdatesControllers.put(twitterHomeController.getName(), twitterHomeController);
 			
 			//Initialize the Search View
 			TwitterUpdatesSearchController defaultSearchController = new TwitterUpdatesSearchController();
-			defaultSearchController.setErrorHandler(getErrorHandler());
-			defaultSearchController.setName("Search_9192829192839372828372837465192H");
-			defaultSearchController.setParentController(this);
+			defaultSearchController.setMainController(getMainController());
+			//defaultSearchController.setName("Search_9192829192839372828372837465192H");
+			//defaultSearchController.setParentController(this);
 			defaultSearchController.setServiceManager(getServiceManager());
 			defaultSearchController.setTwitterAccount(twitterAccount);
 			defaultSearchController.init();
-			searchesCompositeView.add(defaultSearchController.getView().getAsWidget(),"Search");
-			
-			searchesCompositeView.selectTab(0);
+			twitterUpdatesCompositeView.add(defaultSearchController.getView().getAsWidget(),"Search");
+			//twitterUpdatesControllers.put(defaultSearchController.getName(), defaultSearchController);
+			twitterUpdatesCompositeView.selectTab(0);
 						
 		}
 
 	}
 
-	@Override
+	/*@Override
 	public SelectionHandler<Integer> getSelectionHandler() {
 		Window.alert("SelectionHandler<Integer> getSelectionHandler() Searches");
 		return null;
 	}
-
-	@Override
+*/
+/*	@Override
 	public void handleDataLoaded(Object result) {
 		Window.alert("getDataLoadedHandler(Object result)");
 		
-	}
+	}*/
 
 	
 
@@ -98,6 +104,24 @@ public class TwitterUpdatesCompositeController extends AbstractCompositeControll
 	public void reload() {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	@Override
+	public void pause() {
+		//get all controllers, and pause them
+		for (TwitterUpdatesController controller: this.twitterUpdatesControllers.values() ) {
+			controller.pause();
+		}
+		
+	}
+
+
+	@Override
+	public void resume() {
+		for (TwitterUpdatesController controller: this.twitterUpdatesControllers.values() ) {
+			controller.resume();
+		}		
 	}
 
 

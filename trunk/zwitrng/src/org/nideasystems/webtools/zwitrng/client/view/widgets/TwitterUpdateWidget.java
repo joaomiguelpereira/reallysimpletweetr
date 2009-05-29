@@ -34,18 +34,34 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 		HasMouseOverHandlers, HasMouseOutHandlers {
 
-	
 	private TwitterAccountDTO twitterAccount;
 	private TwitterUpdateDTO twitterUpdate;
 	private final SendUpdateWidget sendUpdate = new SendUpdateWidget();
 	private boolean isSendUpdateVisible = false;
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 
+	private Image userImg = null;
+
 	// final private HorizontalPanel tweetQuickOptions = new HorizontalPanel();
 
 	public TwitterUpdateWidget() {
 		super();
 		super.setWidth("700px");
+
+	}
+
+	private HTML getUpdateTextHtml(TwitterUpdateDTO twitterUpdate) {
+		return new HTML("<span class=\"userScreenName\">"
+				+ twitterUpdate.getTwitterAccount().getTwitterScreenName()
+				+ " </span><span class=\"text\">" + twitterUpdate.getText()
+				+ "</span>");
+	}
+
+	private HTML getUpdateMetaInfoHtml(TwitterUpdateDTO twitterUpdate) {
+		return new HTML("<span class=\"createdAt\">"
+				+ twitterUpdate.getCreatedAt()
+				+ "<span> from <span class=\"source\">"
+				+ twitterUpdate.getSource() + "</span>");
 
 	}
 
@@ -57,7 +73,7 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 		tweetLayout.setWidth("700px");
 
 		// Create the user image
-		Image userImg = new Image(twitterUpdate.getTwitterAccount()
+		userImg = new Image(twitterUpdate.getTwitterAccount()
 				.getTwitterImageUrl());
 		userImg.setWidth("48px");
 		userImg.setHeight("48px");
@@ -72,19 +88,14 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 		// TODO: Parse html
 		VerticalPanel tweetInfo = new VerticalPanel();
 		tweetInfo.setWidth("650px");
-		HTML updateText = new HTML("<span class=\"userScreenName\">"
-				+ twitterUpdate.getTwitterAccount().getTwitterScreenName()
-				+ " </span><span class=\"text\">" + twitterUpdate.getText()
-				+ "</span>");
+
+		HTML updateText = getUpdateTextHtml(twitterUpdate);
 		updateText.addStyleName("tweet");
 
 		tweetInfo.add(updateText);
-		HTML tweetUpdateMetaData = new HTML("<span class=\"createdAt\">"
-				+ twitterUpdate.getCreatedAt()
-				+ "<span> from <span class=\"source\">"
-				+ twitterUpdate.getSource() + "</span>");
-		tweetUpdateMetaData.addStyleName("twitterUpdateMetaData");
 
+		HTML tweetUpdateMetaData = getUpdateMetaInfoHtml(twitterUpdate);
+		tweetUpdateMetaData.addStyleName("twitterUpdateMetaData");
 		tweetInfo.add(tweetUpdateMetaData);
 
 		tweetLayout.setWidget(0, 1, tweetInfo);
@@ -123,7 +134,8 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				addStyleName("currentTweet");
-				getController().handleAction(IController.IActions.PAUSE_AUTO_UPDATE);
+				getController().handleAction(
+						IController.IActions.PAUSE_AUTO_UPDATE);
 				// actionPanel.setVisible(true);
 
 			}
@@ -134,7 +146,8 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
 				removeStyleName("currentTweet");
-				getController().handleAction(IController.IActions.RESUME_AUTO_UPDATE);
+				getController().handleAction(
+						IController.IActions.RESUME_AUTO_UPDATE);
 				// actionPanel.setVisible(false);
 
 			}
@@ -142,7 +155,7 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 		});
 		sendUpdate.setController(getController());
 		sendUpdate.setSendingTwitterAccount(twitterAccount);
-		
+
 		sendUpdate.init();
 		sendUpdate.setVisible(false);
 
@@ -174,7 +187,7 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				if (sendUpdate.getType() == SendUpdateWidget.REPLY
 						&& sendUpdate.isVisible()) {
 					isSendUpdateVisible = false;
@@ -192,8 +205,48 @@ public class TwitterUpdateWidget extends AbstractVerticalPanelView implements
 
 		});
 
+	}
+
+	public void hasReply(TwitterUpdateDTO result) {
+
+		HorizontalPanel replyPannel = new HorizontalPanel();
+		
+		Image userImg = new Image(result.getTwitterAccount()
+				.getTwitterImageUrl());
+
+		
+		userImg.setWidth("32px");
+		userImg.setHeight("32px");
+		userImg.addStyleName("userImageReply");
+		replyPannel.add(userImg);
+		//replyPannel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 		
 
+		FlexTable layout = new FlexTable();
+		layout.setCellSpacing(0);
+		layout.setCellSpacing(0);
+		
+		HTML updateText = getUpdateTextHtml(result);
+		
+		updateText.addStyleName("tweetReply");
+		layout.setWidget(0, 0, updateText);
+
+		HTML updateMetaInfoHtml = getUpdateMetaInfoHtml(result);
+		
+		updateMetaInfoHtml.addStyleName("tweetReplyMetadata");
+		
+		layout.setWidget(1, 0, updateMetaInfoHtml);
+		
+		replyPannel.add(layout);
+		
+		this.add(replyPannel);
+		this.sendUpdate.setVisible(false);
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		this.isSendUpdateVisible = false;
+		super.setVisible(visible);
 	}
 
 	public void setTwitterUpdate(TwitterUpdateDTO twitterUpdate) {

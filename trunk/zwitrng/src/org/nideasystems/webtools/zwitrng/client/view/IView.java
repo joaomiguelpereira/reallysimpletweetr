@@ -1,17 +1,19 @@
 package org.nideasystems.webtools.zwitrng.client.view;
 
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
 
 
 import com.google.gwt.user.client.ui.Widget;
 
 
-public interface IView {
+public interface IView<C extends IController> {
 	
-	public void setController(IController controller);
+	public void setController(C controller);
+	public C getController();
 	public void setName(String name);
-	public IController getController();
+	
 	public String getName();
 	public Widget getAsWidget();
 	public void init();

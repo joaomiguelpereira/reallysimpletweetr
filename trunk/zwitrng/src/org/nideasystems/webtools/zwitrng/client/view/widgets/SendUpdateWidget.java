@@ -1,12 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.client.view.AsyncHandler;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
-
-
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -22,11 +21,12 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
-public class SendUpdateWidget extends AbstractVerticalPanelView {
+public class SendUpdateWidget extends AbstractVerticalPanelView implements
+		 AsyncHandler {
 
-	protected static final int STATUS = 0;
-	protected static final int REPLY = 1;
-	protected static final int RETWEET = 2;
+	public static final int STATUS = 0;
+	public static final int REPLY = 1;
+	public static final int RETWEET = 2;
 	private static final Integer DEFAULT_TWEET_SIZE = 140;
 
 	private final HTML remainingChars = new HTML(DEFAULT_TWEET_SIZE.toString());
@@ -36,36 +36,42 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 	private int type = STATUS;
 	private TwitterAccountDTO sendingTwitterAccount;
 	private TwitterUpdateDTO inResponseTotwitterUpdate;
+	private final Image waitingImage = new Image(Constants.WAITING_IMAGE);
+	private SendUpdateWidget instance;
 
 	@Override
 	public void init() {
+		instance = this;
+		this.add(waitingImage);
+		waitingImage.setVisible(false);
 
-		
 		update.setWidth("650px");
-		//update.setHeight("35px");
+		// update.setHeight("35px");
 		update.addStyleName("input");
 		update.setVisibleLines(2);
-		
-		
+
 		FlexTable bottomLayout = new FlexTable();
 		FlexCellFormatter formater = bottomLayout.getFlexCellFormatter();
 		bottomLayout.setCellSpacing(0);
-		Image sendingUserImage = new Image(sendingTwitterAccount.getTwitterImageUrl());
+		
+		Image sendingUserImage = new Image(sendingTwitterAccount
+				.getTwitterImageUrl());
+		
 		sendingUserImage.setWidth("32px");
 		sendingUserImage.setHeight("32px");
 		bottomLayout.setWidget(0, 0, sendingUserImage);
-		
+
 		bottomLayout.setWidget(0, 1, update);
 		formater.setColSpan(0, 1, 2);
 		formater.setWidth(0, 1, "650px");
-		
-		
+
 		remainingChars.setWidth("35px");
 		bottomLayout.setWidget(1, 0, remainingChars);
 		bottomLayout.setWidget(1, 1, pub);
 		bottomLayout.setWidget(1, 2, send);
-		
-		formater.setAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER, HasVerticalAlignment.ALIGN_MIDDLE);
+
+		formater.setAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER,
+				HasVerticalAlignment.ALIGN_MIDDLE);
 		formater.setAlignment(1, 0, HasHorizontalAlignment.ALIGN_LEFT,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 		formater.setAlignment(1, 1, HasHorizontalAlignment.ALIGN_CENTER,
@@ -92,9 +98,15 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 			public void onClick(ClickEvent event) {
 				TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
 				twitterUpdate.setText(update.getValue());
+				twitterUpdate.setTwitterAccount(getSendingTwitterAccount());
+				if (type == REPLY ) {
+					twitterUpdate.setInReplyToStatusId(inResponseTotwitterUpdate
+							.getId());	
+				}
+				
+				isUpdating(true);
 				getController().handleAction(IController.IActions.TWEET_THIS,
-						twitterUpdate);
-
+						twitterUpdate,instance);
 			}
 
 		});
@@ -113,7 +125,8 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 
 	@Override
 	public void isUpdating(boolean isUpdating) {
-		// TODO Auto-generated method stub
+
+		this.waitingImage.setVisible(isUpdating);
 
 	}
 
@@ -148,7 +161,7 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 					+ this.inResponseTotwitterUpdate.getText());
 
 		}
-		
+
 		Integer remainingLength = DEFAULT_TWEET_SIZE
 				- this.update.getValue().length();
 
@@ -167,6 +180,20 @@ public class SendUpdateWidget extends AbstractVerticalPanelView {
 
 	public TwitterAccountDTO getSendingTwitterAccount() {
 		return sendingTwitterAccount;
+	}
+
+	@Override
+	public void onSuccess(Object result) {
+		isUpdating(false);
+		update.setValue("");
+		this.remainingChars.setText(DEFAULT_TWEET_SIZE.toString());
+		
+	}
+
+	@Override
+	public void onFailure(Throwable tr) {
+		isUpdating(false);
+		
 	}
 
 }

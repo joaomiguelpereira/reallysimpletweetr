@@ -1,15 +1,16 @@
 package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
+
+
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaInfoWidget;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaToolsWidget;
+import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -20,7 +21,7 @@ import com.google.gwt.user.client.ui.Image;
  * @author jpereira
  * 
  */
-public class PersonaView extends AbstractVerticalPanelView {
+public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 
 	private PersonaDTO personaObj = null;
 	// private SearchesCompositeView userUpdatetabPanel = new
@@ -35,6 +36,7 @@ public class PersonaView extends AbstractVerticalPanelView {
 	final HorizontalPanel authentication = new HorizontalPanel();
 	final HTML loginUrlLink = new HTML("You need to authenticate");
 	private boolean isInitialized = false;
+	private SendUpdateWidget sendUpdateWidget = null;
 	HTML linkToLogin = new HTML("");
 	HTML continueLink = new HTML("");;
 	/**
@@ -42,9 +44,9 @@ public class PersonaView extends AbstractVerticalPanelView {
 	 * 
 	 * @param persona
 	 */
-	public PersonaView(PersonaDTO persona) {
-		super();
-		this.personaObj = persona;
+	public PersonaView(/*PersonaDTO persona*/) {
+		//super();
+		//this.personaObj = persona;
 
 	}
 
@@ -58,20 +60,24 @@ public class PersonaView extends AbstractVerticalPanelView {
 
 	@Override
 	public void init() {
-		// check if it's authenticated
-		// http://zwitrng.appspot.com/
-		// Check if is Authenticate
-
+		if (isInitialized) {
+			throw new RuntimeException("You try to initialize personaView again?");
+		}
+		this.add(new HTML("Persona View"));
+		isInitialized = true;
 		
 		
-		if (personaObj.getTwitterAccount() != null && personaObj.getTwitterAccount().getIsOAuthenticated() ) {
+		
+		/*if (personaObj.getTwitterAccount() != null && personaObj.getTwitterAccount().getIsOAuthenticated() ) {
 
 			userInfoWidget = new PersonaInfoWidget(this.personaObj
 					.getTwitterAccount());
 			super.add(userInfoWidget);
 
 			
-			personaToolsWidget = new PersonaToolsWidget();
+			
+			personaToolsWidget = AbstractController.createView(PersonaToolsWidget.class);
+			
 			personaToolsWidget.setController(getController());
 			personaToolsWidget.init();
 
@@ -81,6 +87,14 @@ public class PersonaView extends AbstractVerticalPanelView {
 			super.add(whatImDoing);
 
 			super.add(personaToolsWidget);
+
+			//Send Updae must have a TwitterAccountController
+			sendUpdateWidget = new SendUpdateWidget();
+			sendUpdateWidget.setController(getController());
+			sendUpdateWidget.setType(SendUpdateWidget.STATUS);
+			sendUpdateWidget.setSendingTwitterAccount(this.personaObj.getTwitterAccount());
+			sendUpdateWidget.init();
+			super.add(sendUpdateWidget);
 			waitingImg.setVisible(false);
 			super.add(waitingImg);
 			isInitialized = true;
@@ -118,7 +132,7 @@ public class PersonaView extends AbstractVerticalPanelView {
 			});
 			super.add(linkToLogin);
 			super.add(continueLink);
-		}
+		}*/
 
 	}
 

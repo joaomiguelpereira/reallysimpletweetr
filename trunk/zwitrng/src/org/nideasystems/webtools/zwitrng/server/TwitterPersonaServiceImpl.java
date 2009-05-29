@@ -11,6 +11,7 @@ import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.appengine.api.users.User;
@@ -112,11 +113,11 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<PersonaDTO> getPersonas() throws Exception {
+	public PersonaDTOList getPersonas() throws Exception {
 		User user = AuthorizationManager.checkAuthentication();
 		
 		log.fine("Getting personas..");
-		List<PersonaDTO> returnPersonas = null;
+		PersonaDTOList returnPersonas = null;
 		if (user != null) {
 
 			try {

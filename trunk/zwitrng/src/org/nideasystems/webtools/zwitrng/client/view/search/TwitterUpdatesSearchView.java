@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view.search;
 
 
-import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 
@@ -15,7 +15,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public class TwitterUpdatesSearchView extends AbstractVerticalPanelView{
 	
 	private final VerticalPanel topPanel = new VerticalPanel();
-	TwitterUpdatesCompositeController controller = null;
+	TwitterUpdatesListController controller = null;
 	
 	private final Button seachCriteriaBt = new Button("Search");
 	private final TextBox seachCriteriaTb = new TextBox();

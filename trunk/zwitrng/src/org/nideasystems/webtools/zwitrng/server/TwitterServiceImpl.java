@@ -60,8 +60,18 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 		TwitterUpdateDTO lastUpdate = null;
 		Status status = TwitterServiceAdapter.get().postUpdate(update);
 		if ( status != null ) {
-			lastUpdate = DataUtils.createTwitterUpdateDto(status,false);
+			lastUpdate = DataUtils.createTwitterUpdateDto(status,true);
 		}
+			
+		//if this a inReplyTo
+		//if ( status.getInReplyToStatusId()>0) {
+			//Get the update
+			//get the status
+			//status.
+			//TwitterServiceAdapter.get().getStatus(update.getTwitterAccount(),status.getInReplyToStatusId());
+			//twitterUpdate.setInInre
+		//}
+
 		return lastUpdate;
 		
 		//throw new Exception("Not implemented");

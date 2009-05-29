@@ -1,31 +1,31 @@
-package org.nideasystems.webtools.zwitrng.client.view.widgets;
+package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
+
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
+
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.TextArea;
+import com.google.gwt.user.client.ui.Widget;
 
 
-public class PersonaToolsWidget extends AbstractVerticalPanelView{
+public class PersonaToolsWidget extends AbstractVerticalPanelView<PersonaController>{
 	Button deleteBt = null;
 	HorizontalPanel buttons = null;
-	HorizontalPanel newStatus= null;
-	TextArea newStatusTxa = null;
-	Button sendBt = null;
-	private final Label remainingChars = new Label("140");
-	private final Label remainingCharsLabel = new Label("Remaining Characters :");
+	//HorizontalPanel newStatus= null;
+	//TextArea newStatusTxa = null;
+	//Button sendBt = null;
+	//private final Label remainingChars = new Label("140");
+	//private final Label remainingCharsLabel = new Label("Remaining Characters :");
 	
 	
 	
@@ -40,7 +40,7 @@ public class PersonaToolsWidget extends AbstractVerticalPanelView{
 	public void init() {
 		
 		buttons = new HorizontalPanel();
-		newStatus = new HorizontalPanel();
+		//newStatus = new HorizontalPanel();
 		this.deleteBt = new Button();
 		this.deleteBt.setText("Delete");
 		this.deleteBt.setTitle("Delete");
@@ -48,15 +48,36 @@ public class PersonaToolsWidget extends AbstractVerticalPanelView{
 
 			@Override
 			public void onClick(ClickEvent event) {
-				getController().handleAction(IController.IActions.DELETE);
+				getController().delete();
 			}
 			
 		});
 		
-		 
+		//***************************************
+		//Extends decoratedpopo
+		final DecoratedPopupPanel optionsPanel = new DecoratedPopupPanel();
+		optionsPanel.add(new HTML("Test"));
+		HTML options = new HTML(">");
+		options.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				Widget source = (Widget)event.getSource();
+				int left = source.getAbsoluteLeft();
+				int top = source.getAbsoluteTop();
+				optionsPanel.setPopupPosition(left, top);
+				optionsPanel.show();
+				
+			}
+			
+		});
+		buttons.add(options);
+		//****************************************
 		buttons.add(deleteBt);
 		
-		//Build the statuc update (max 140 chars)
+		super.add(buttons);
+		
+		/*//Build the statuc update (max 140 chars)
 		newStatusTxa = new TextArea();
 		newStatusTxa.setWidth("700px");
 		newStatusTxa.setHeight("35px");
@@ -122,7 +143,7 @@ public class PersonaToolsWidget extends AbstractVerticalPanelView{
 		
 		super.add(updateInfo);		
 		//super.add(whatImDoing);
-		
+		*/
 	}
 
 	@Override
@@ -132,9 +153,9 @@ public class PersonaToolsWidget extends AbstractVerticalPanelView{
 	}
 
 	public void refresh() {
-		newStatusTxa.setValue("");
+		/*newStatusTxa.setValue("");
 		remainingChars.setText("140");
-		
+		*/
 	}
 
 	
