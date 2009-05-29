@@ -9,8 +9,8 @@ public class TwitterUpdateDTO implements IModel{
 	private Date createdAt;
 	private long id;
 	private long replyToStatusId;
-	private long InReplyToStatusId;
-	private long inReplyToUserId;
+	private long InReplyToStatusId = -1;
+	private long inReplyToUserId = -1;
 	private int rateLimitLimit;
 	private int rateLimitRemaining;
 	private long rateLimitReset;

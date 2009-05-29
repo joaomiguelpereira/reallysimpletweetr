@@ -2,10 +2,39 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
 import org.nideasystems.webtools.zwitrng.client.view.IView;
+import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
-import com.google.gwt.event.logical.shared.SelectionHandler;
 
-public interface IController {
+
+public interface IController<M extends IModel, V extends IView<?>> {
+	
+	
+	
+	
+	/**
+	 * Set the Parent Controller
+	 * TODO: make it typed
+	 * @param parentController
+	 */
+	public void setParentController(IController<?, ?> parentController);
+
+	/**
+	 * Get the parent Controller
+	 * @return
+	 */
+	public IController<?, ?> getParentController();
+	
+	/**
+	 * Set the model for this controller
+	 * @param model
+	 */
+	public void setModel(M model);
+	
+	/**
+	 * Get the model configured for this controller
+	 * @return
+	 */
+	public M getModel();
 	/**
 	 * Call this when a remote call was made and we are waiting for data
 	 */
@@ -16,32 +45,19 @@ public interface IController {
 	public void endProcessing();
 
 	/**
-	 * Get the Corresponding View
+	 * Set the view for this controller
+	 * @param <V>
+	 * @param view
+	 */
+	public void setView(V view);
+	/**
+	 * Get the View for this controller
 	 * @return
 	 */
-	public IView getView();
+	public V getView();
+
 	/**
-	 * Set the Parent Controller
-	 * @param parentController
-	 */
-	public void setParentController(IController parentController);
-	/**
-	 * Get the Parent Controller
-	 * @return
-	 */
-	public IController getParentController();
-	/**
-	 * Set the name of the controller
-	 * @param name
-	 */
-	public void setName(String name);
-	/**
-	 * Get the name Of the controller
-	 * @return
-	 */
-	public String getName();
-	/**
-	 * Initialize. Do any View creation here
+	 * Initialize the controller
 	 */
 	public void init();
 	/**
@@ -58,25 +74,25 @@ public interface IController {
 	 * Set the Error Handler for this this Controller
 	 * @param errorHandler
 	 */
-	public void setErrorHandler(IMainController errorHandler);
+	public void setMainController(IMainController errorHandler);
 	/**
 	 * Get The Error Handler registered with this controller
 	 * @return
 	 */
-	public IMainController getErrorHandler();
+	public IMainController getMainController();
 	
 	/**
 	 * TODO: Move for composite controllers with aspect Tab
 	 * Return the handler of a tab selection
 	 * @return
-	 */
-	public SelectionHandler<Integer> getSelectionHandler();
+	 *//*
+	public SelectionHandler<Integer> getSelectionHandler();*/
 	/**
 	 * Handel the data loaded
 	 * @param result
-	 */
+	 *//*
 	public void handleDataLoaded(Object result);
-	
+	*/
 	
 	/**
 	 * If this controller has tools (action associated)
@@ -106,6 +122,7 @@ public interface IController {
 		public final String UPDATE_LAST_UPDATE = "UPDATE_LAST_STATUS";
 		public final String PAUSE_AUTO_UPDATE = "PAUSE_AUTO_UPDATE";
 		public final String RESUME_AUTO_UPDATE = "RESUME_AUTO_UPDATE";
+		public final String PERSONA_SELECTED = "PERSONA_SELECTED";
 		
 		
 	}

@@ -2,16 +2,17 @@ package org.nideasystems.webtools.zwitrng.client.view;
 
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 
+
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class AbstractVerticalPanelView extends VerticalPanel implements IView{
-	private IController controller;
+public abstract class AbstractVerticalPanelView<C extends IController> extends VerticalPanel implements IView<C>{
+	private C controller;
 	private String name;
 	
 	
 	@Override
-	public IController getController() {
+	public C getController() {
 		// TODO Auto-generated method stub
 		return this.controller;
 	}
@@ -23,7 +24,7 @@ public abstract class AbstractVerticalPanelView extends VerticalPanel implements
 	}
 
 	@Override
-	public void setController(IController controller) {
+	public void setController(C controller) {
 		this.controller = controller;
 		
 	}

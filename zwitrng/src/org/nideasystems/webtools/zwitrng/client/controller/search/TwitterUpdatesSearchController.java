@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.search.TwitterUpdatesSearchView;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -15,7 +16,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 
-public class TwitterUpdatesSearchController extends AbstractController{
+public class TwitterUpdatesSearchController extends TwitterUpdatesController{
 
 	private TwitterUpdatesSearchView searchView = null;
 	private TwitterAccountDTO twitterAccount = null;
@@ -25,18 +26,18 @@ public class TwitterUpdatesSearchController extends AbstractController{
 		
 		searchView = new TwitterUpdatesSearchView();
 		searchView.setController(this);
-		searchView.setName(getName());
+		//searchView.setName(getName());
 		searchView.init();
-		this.view = searchView;
+		//this.view = searchView;
 			
 	}
 
-	@Override
+	/*@Override
 	public SelectionHandler<Integer> getSelectionHandler() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+*/
 	@Override
 	public void handleDataLoaded(Object result) {
 		// TODO Auto-generated method stub
@@ -55,7 +56,7 @@ public class TwitterUpdatesSearchController extends AbstractController{
 			try {
 				getServiceManager().getRPCService().search(filter, twitterAccount, new SearchCallback());
 			} catch (Exception e) {
-				getErrorHandler().addException(e);
+				getMainController().addException(e);
 			}
 		}
 		
@@ -77,7 +78,7 @@ public class TwitterUpdatesSearchController extends AbstractController{
 
 		@Override
 		public void onFailure(Throwable caught) {
-			getErrorHandler().addException(caught);
+			getMainController().addException(caught);
 			
 		}
 

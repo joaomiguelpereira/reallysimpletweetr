@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -21,8 +22,6 @@ public class TwitterUpdatesView extends AbstractVerticalPanelView {
 		toolContainer.add(waitingImage);
 		this.add(toolContainer);
 		
-		//I Have some tools That I want to control
-		
 		
 		
 	}
@@ -33,4 +32,5 @@ public class TwitterUpdatesView extends AbstractVerticalPanelView {
 		
 	}
 
+	
 }

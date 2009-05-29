@@ -211,17 +211,20 @@ public class TwitterServiceAdapter {
 		
 		//ExtendedUser user = null;
 		Status latestStatus = null;
+		log.fine("Updating status: "+update.getText());
 		
 		try {
-				latestStatus = twitter.updateStatus(update.getText());
+				latestStatus = twitter.updateStatus(update.getText(), update.getInReplyToStatusId());
+				
+				
 		} catch (TwitterException e) {
 			log.severe(e.getLocalizedMessage());
 			e.printStackTrace();
 			throw new Exception(e);
 		}
 		return latestStatus;
-
 	}
+	
 
 	public TwitterAccountDTO getPreAuthorizedTwitterAccount()
 			throws Exception {
@@ -336,12 +339,7 @@ public class TwitterServiceAdapter {
 		} catch (Exception e) {
 			log.severe("Error: "+e.getLocalizedMessage());
 			throw e;
-		}
-		
-		
-		
-		
+		}		
 	}
-
 	
 }

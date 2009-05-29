@@ -5,20 +5,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.client.view.AsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesView;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TwitterUpdatesController extends AbstractController {
+public class TwitterUpdatesController extends AbstractController<TwitterUpdateDTOList, TwitterUpdatesView> implements
+		AutoUpdatable {
 
 	private TwitterAccountDTO twitterAccount;
 	private UpdatesType updatesType;
@@ -28,6 +32,7 @@ public class TwitterUpdatesController extends AbstractController {
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 10; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
+	Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
 	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
 	// update automatically
 
@@ -41,8 +46,7 @@ public class TwitterUpdatesController extends AbstractController {
 		this.updatesType = updatesType;
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
+	
 	public void handleDataLoaded(Object result) {
 		List<TwitterUpdateDTO> twitterUpdates = (List<TwitterUpdateDTO>) result;
 		// Now start building the TwitterUpdateWidget
@@ -66,21 +70,16 @@ public class TwitterUpdatesController extends AbstractController {
 			int i = 1;
 			for (TwitterUpdateDTO update : twitterUpdates) {
 
-				TwitterUpdateWidget updateWidget = new TwitterUpdateWidget();
-				updateWidget.setTwitterAccount(getTwitterAccount());
-				updateWidget.setController(this);
-				updateWidget.setTwitterUpdate(update);
-				updateWidget.setStyleName("twitterUpdate");
-				updateWidget.init();
-
 				if (addOnTop) {
-					updatesView.insert(updateWidget, i++);
+					// updatesView.insert(updateWidget, i++);
+					addUpdateWidget(update, i++);
 
 				} else {
-					updatesView.add(updateWidget);
+					addUpdateWidget(update, -1);
+					// updatesView.add(updateWidget);
 				}
 
-				updates.put(update.getId(), update);
+				
 
 			}
 
@@ -89,11 +88,45 @@ public class TwitterUpdatesController extends AbstractController {
 		endProcessing();
 	}
 
-	@Override
-	public SelectionHandler<Integer> getSelectionHandler() {
-		// TODO Auto-generated method stub
-		return null;
+	private void addUpdateWidget(TwitterUpdateDTO update, int pos) {
+		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget();
+		updateWidget.setTwitterAccount(getTwitterAccount());
+		updateWidget.setController(this);
+		updateWidget.setTwitterUpdate(update);
+		updateWidget.setStyleName("twitterUpdate");
+		updateWidget.init();
+
+		if (pos > -1) {
+			updatesView.insert(updateWidget, pos);
+
+		} else {
+			updatesView.add(updateWidget);
+		}
+
+		updateWidgets.put(update.getId(), updateWidget);
+		updates.put(update.getId(), update);
 	}
+
+	private void handleTweetedUpdate(TwitterUpdateDTO result) {
+		// Check if the tweet is in reply to any rendered
+		Long inRelyTo = result.getInReplyToStatusId();
+
+		// Check if I have the tweet on my list
+		TwitterUpdateWidget widget = this.updateWidgets.get(inRelyTo);
+		if (widget != null) {
+			// find get the widget
+			widget.hasReply(result);
+		} else {
+			// Add to top
+			// updatesView.ad
+		}
+
+	}
+
+	/*
+	 * @Override public SelectionHandler<Integer> getSelectionHandler() { //
+	 * TODO Auto-generated method stub return null; }
+	 */
 
 	private void refresh() {
 		if (!isPaused) {
@@ -108,15 +141,23 @@ public class TwitterUpdatesController extends AbstractController {
 						twitterAccount, filter, new TwitterUpdatesLoaded());
 			} catch (Exception e) {
 				endProcessing();
-				getErrorHandler().addException(e);
+				getMainController().addException(e);
 				e.printStackTrace();
 
 			}
 		}
 	}
 
+	private void notifyViews(Object object) {
+		
+		if (object!= null && (object instanceof AsyncHandler)) {
+			AsyncHandler handler = (AsyncHandler)object;
+			handler.onSuccess(object);
+		}
+	}
+
 	@Override
-	public void handleAction(String action, Object... args) {
+	public void handleAction(String action, final Object... args) {
 
 		if (action.equals(IController.IActions.TWEET_THIS)) {
 
@@ -124,7 +165,7 @@ public class TwitterUpdatesController extends AbstractController {
 
 			if (args[0] != null && args[0] instanceof TwitterUpdateDTO) {
 				TwitterUpdateDTO update = (TwitterUpdateDTO) args[0];
-				update.setTwitterAccount(this.twitterAccount);
+				//update.setTwitterAccount(this.twitterAccount);
 
 				try {
 					startProcessing();
@@ -134,24 +175,27 @@ public class TwitterUpdatesController extends AbstractController {
 								@Override
 								public void onFailure(Throwable caught) {
 									endProcessing();
-									getErrorHandler().addException(caught);
+									notifyViews(args[args.length-1]);
+									getMainController().addException(caught);
 
 								}
 
 								@Override
 								public void onSuccess(TwitterUpdateDTO result) {
 									endProcessing();
+									notifyViews(args[args.length-1]);
 									getParentController()
 											.handleAction(
 													IController.IActions.UPDATE_LAST_UPDATE,
 													result);
+									handleTweetedUpdate(result);
 
 								}
 
 							});
 				} catch (Exception e) {
 					endProcessing();
-					getErrorHandler().addException(e);
+					getMainController().addException(e);
 					e.printStackTrace();
 				}
 			}
@@ -186,10 +230,10 @@ public class TwitterUpdatesController extends AbstractController {
 		}
 		if (action.equals(IController.IActions.PAUSE_AUTO_UPDATE)) {
 			this.isPaused = true;
-		} 
+		}
 		if (action.equals(IController.IActions.RESUME_AUTO_UPDATE)) {
 			this.isPaused = false;
-		} 
+		}
 
 	}
 
@@ -208,6 +252,7 @@ public class TwitterUpdatesController extends AbstractController {
 				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget) updatesView
 						.getWidget(i);
 				updates.remove(updateWidget.getTwitterUpdate().getId());
+				updateWidgets.remove(updateWidget.getTwitterUpdate().getId());
 				updatesView.remove(i);
 
 			}
@@ -235,8 +280,8 @@ public class TwitterUpdatesController extends AbstractController {
 		updatesView = new TwitterUpdatesView();
 		updatesView.setController(this);
 		updatesView.init();
-		this.view = this.updatesView;
-		
+		//this.view = this.updatesView;
+
 		FilterCriteriaDTO filter = new FilterCriteriaDTO();
 		filter.setUpdatesType(this.getUpdatesType());
 
@@ -245,10 +290,9 @@ public class TwitterUpdatesController extends AbstractController {
 					twitterAccount, filter, new TwitterUpdatesLoaded());
 			startProcessing();
 		} catch (Exception e) {
-			getErrorHandler().addException(e);
+			getMainController().addException(e);
 			e.printStackTrace();
 		}
-
 		// Load friends time line
 
 	}
@@ -272,7 +316,7 @@ public class TwitterUpdatesController extends AbstractController {
 
 		@Override
 		public void onFailure(Throwable caught) {
-			getErrorHandler().addException(caught);
+			getMainController().addException(caught);
 			endProcessing();
 
 		}
@@ -289,6 +333,17 @@ public class TwitterUpdatesController extends AbstractController {
 	public void reload() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void pause() {
+		this.isPaused = true;
+
+	}
+
+	@Override
+	public void resume() {
+		this.isPaused = false;
 	}
 
 }

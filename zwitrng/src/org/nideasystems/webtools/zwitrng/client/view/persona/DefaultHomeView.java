@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class AddNewPersonaTabView extends AbstractVerticalPanelView {
+public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListController> {
 	private final VerticalPanel formPPanel = new VerticalPanel();
 	private final Label twPersonaNameLabel = new Label("Persona Name");
 
@@ -25,7 +25,7 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 
 	
 	
-	public AddNewPersonaTabView() {
+	public DefaultHomeView() {
 		super();
 	}
 
@@ -37,10 +37,7 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 		formPPanel.add(twPersonaNameLabel);
 		formPPanel.add(twPersonaName);
 		
-		//formPPanel.add(twUserNameLabel);
-		//formPPanel.add(twUserName);
-		//formPPanel.add(twPasswordLabel);
-		//formPPanel.add(twPassword);
+		
 		// Return the content
 		formPPanel.ensureDebugId("cwVerticalPanel");
 		this.add(formPPanel);
@@ -63,7 +60,9 @@ public class AddNewPersonaTabView extends AbstractVerticalPanelView {
 				//twitterAccountObj.setTwitterPassword(twPassword.getValue());
 				persona.setTwitterAccount(twitterAccountObj);
 				//Pass to controller. The controller will create the persona
-				getController().handleAction(IController.IActions.CREATE, persona);
+				getController().createPersona(persona);
+				
+				
 
 			}
 

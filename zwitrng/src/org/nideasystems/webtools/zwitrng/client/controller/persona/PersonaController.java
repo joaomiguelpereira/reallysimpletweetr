@@ -3,38 +3,45 @@ package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
+import org.nideasystems.webtools.zwitrng.client.controller.HasParent;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
-import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesCompositeController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
+import org.nideasystems.webtools.zwitrng.client.view.AsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaToolsWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
-
+import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class PersonaController extends AbstractController {
+public class PersonaController extends AbstractController<PersonaDTO, PersonaView> implements AutoUpdatable{
 
-	private PersonaView personaView = null;
-	private PersonaDTO persona = null;
+	//private PersonaView personaView = null;
+	
+	//private PersonasListController parent;
+	//private PersonaDTO persona = null;
 	//private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
-	TwitterUpdatesCompositeController twitterUpdatesCompositeController = null;
+	TwitterUpdatesListController twitterUpdatesCompositeController = null;
+	TwitterAccountController twitterAccount = null;
+	PersonaToolsWidget tools = null;
 	//private OAuthInfoDTO oAuthInfo = null;
 	
 	private void initializeUpdatesController() {
 		
-		/*SearchesCompositeController searchesCompositeController = this.searchesCompositeControllers
-				.get(persona.getName());
-		*/
 		
-		if (twitterUpdatesCompositeController == null && persona.getTwitterAccount() != null && persona.getTwitterAccount().getIsOAuthenticated() ) {
+		
+		if (twitterUpdatesCompositeController == null && getModel().getTwitterAccount() != null && getModel().getTwitterAccount().getIsOAuthenticated() ) {
 
-			twitterUpdatesCompositeController = new TwitterUpdatesCompositeController();
-			twitterUpdatesCompositeController.setErrorHandler(getErrorHandler());
+			/*twitterUpdatesCompositeController = new TwitterUpdatesListController();
+			twitterUpdatesCompositeController.setMainController(getMainController());
 			twitterUpdatesCompositeController.setName(AbstractController
 					.generateDefaultName());
-			twitterUpdatesCompositeController.setParentController(this);
+			//twitterUpdatesCompositeController.setParentController(this);
 			twitterUpdatesCompositeController.setTwitterAccount(persona.getTwitterAccount());
 			twitterUpdatesCompositeController.setServiceManager(getServiceManager());
 			twitterUpdatesCompositeController.init();
@@ -42,71 +49,133 @@ public class PersonaController extends AbstractController {
 			// Add the created view of the controller to this view
 			this.personaView.add(twitterUpdatesCompositeController.getView()
 					.getAsWidget());
-			/*this.searchesCompositeControllers.put(personaView
-					.getPersonaObj().getName(), searchesCompositeController);*/
-
+			this.searchesCompositeControllers.put(personaView
+					.getPersonaObj().getName(), searchesCompositeController);
+*/
 		}
 
 	}
 
 	@Override
 	public void init() {
-		//Let's create the persona View
+		
+		setView(createView(PersonaView.class));
+		getView().setController(this);
+		getView().init();
+		//Add the Tools for the Persona
+		tools = new PersonaToolsWidget();
+		tools.setController(this);
+		tools.init();
+		getView().add(tools);
+		
+		
+		//Create a controller for the TwitterAccount
+		twitterAccount = AbstractController.createController(TwitterAccountController.class);
+		twitterAccount.setModel(getModel().getTwitterAccount());
+		twitterAccount.setMainController(getMainController());
+		twitterAccount.setServiceManager(getServiceManager());
+		
+		twitterAccount.setParentController(this);
+		twitterAccount.init();
+		//Add the view of TwitterAccount to this persona
+		getView().add(twitterAccount.getView());
+		
+		
+		
+		
+		/*//Let's create the persona View
 		personaView = new PersonaView(persona);
 		//The the controller for the view
 		personaView.setController(this);
 		//Initialize the view
 		personaView.init();
+		
+		//Initialize the Controller to Send updates
+		
+		SendUpdateWidgetController sendUpdateWidgetController = this.createChildController(SendUpdateWidgetController.class, persona.getTwitterAccount());
+		
+		
+		sendUpdateWidgetController.setParentController(this);
+		
+		sendUpdateWidgetController.setMainController(this.getMainController());
+		sendUpdateWidgetController.setServiceManager(getServiceManager());
+		
+		sendUpdateWidgetController
 	
 			
 		
 		
 		//Now, tell the controller what view to use
-		this.view = personaView;
+		this.view = personaView;*/
 		
 	}
 	
+	
+
 	/**
 	 * Set the Persona DTO
 	 * @param persona
-	 */
+	 *//*
 	public void setPersona(PersonaDTO persona) {
 		this.persona = persona;
 	}
 
-	/**
+	*//**
 	 * Get the Persona DTO
 	 * @return
-	 */
+	 *//*
 	public PersonaDTO getPersona() {
 		return persona;
 	}
-
-	@Override
-	public SelectionHandler<Integer> getSelectionHandler() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void handleDataLoaded(Object result) {
-		// TODO Auto-generated method stub
-		
-	}
+*/
+	
+	
 
 	@Override
 	public void handleAction(String action, Object...args) {
+		
+		if (action.endsWith(IController.IActions.TWEET_THIS)) {
+			TwitterUpdateDTO update = (TwitterUpdateDTO)args[0];
+			final AsyncHandler handle = (AsyncHandler)args[args.length-1];
+			//startProcessing();
+			try {
+				getServiceManager().getRPCService().postUpdate(update, new AsyncCallback<TwitterUpdateDTO>() {
 
+					@Override
+					public void onFailure(Throwable caught) {
+						//endProcessing();
+						handle.onFailure(caught);
+						getMainController().addException(caught);
+						
+					}
+
+					@Override
+					public void onSuccess(TwitterUpdateDTO result) {
+						//endProcessing();
+						handle.onSuccess(result);
+						
+						updateLastStatus(result);
+						
+						
+					}
+					
+				});
+			} catch (Exception e) {
+				endProcessing();
+				endProcessing();
+				e.printStackTrace();
+			}
+		}
 		if (action.equals(IController.IActions.CONTINUE_LOGIN)) {
 			//check if the window is still open
 			//Try to authorize the User
 			
 			try {
-				getServiceManager().getRPCService().authenticateUser(this.persona, new AsyncCallback<TwitterAccountDTO>() {
+				getServiceManager().getRPCService().authenticateUser(getModel(), new AsyncCallback<TwitterAccountDTO>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						getErrorHandler().addException(caught);
+						getMainController().addException(caught);
 						
 					}
 
@@ -115,12 +184,12 @@ public class PersonaController extends AbstractController {
 						
 						
 						if (result.getIsOAuthenticated()) {
-							persona.setTwitterAccount(result);
+							getModel().setTwitterAccount(result);
 							
 							//init();
 							//Re-initialize
 							
-							personaView.refresh();
+							getView().refresh();
 							initializeUpdatesController();
 							
 							
@@ -130,12 +199,12 @@ public class PersonaController extends AbstractController {
 					
 				});
 			} catch (Exception e) {
-				getErrorHandler().addException(e);
+				getMainController().addException(e);
 				e.printStackTrace();
 			}
 		}
 		if (action.equals(IController.IActions.START_LOGIN)) {
-			Window.open(persona.getTwitterAccount().getOAuthLoginUrl(), "_login_", "");
+			Window.open(getModel().getTwitterAccount().getOAuthLoginUrl(), "_login_", "");
 			
 		}
 
@@ -143,69 +212,41 @@ public class PersonaController extends AbstractController {
 		if (action.equals(IController.IActions.DELETE)) {
 			try {
 				startProcessing();
-				getParentController().handleAction(IController.IActions.DELETE, this.persona.getName());
+				getParentController().handleAction(IController.IActions.DELETE, getModel().getName());
 				//getServiceManager().getRPCService().deletePersona(this.persona.getName(), getParentController().getDataRemovedCallBack());
 			} catch (Exception e) {
 				endProcessing();
-				getErrorHandler().addException(e);
+				getMainController().addException(e);
 			}
 		}
 		if (action.endsWith(IController.IActions.UPDATE_LAST_UPDATE)) {
 			TwitterUpdateDTO update =(TwitterUpdateDTO)args[0];
 			updateLastStatus(update);
 		}
-		/*
-		if ( action.equals(IController.IActions.TWEET_THIS)) {
-			Window.alert("deprecated here");
-			try {
-				startProcessing();
-				if (args[0]!= null && args[0] instanceof TwitterUpdateDTO )
-				getServiceManager().getRPCService().postUpdate(this.persona.getTwitterAccount(), (String)args[0], new AsyncCallback<TwitterUpdateDTO>(){
-
-					@Override
-					public void onFailure(Throwable caught) {
-						endProcessing();
-						getErrorHandler().addException(caught);
-						
-					}
-
-					@Override
-					public void onSuccess(TwitterUpdateDTO result) {
-						endProcessing();
-						updateLastStatus(result);
-						//Window.alert("Sent: "+result.getText());
-						
-					}
-
-					
-				
-				});
-				
-			} catch (Exception e) {
-				endProcessing();
-				getErrorHandler().addException(e);
-				e.printStackTrace();
-			}
-			
-		}
-*/			
+	
 	}
 	private void updateLastStatus(TwitterUpdateDTO result) {
-		personaView.updateLastStatus(result);
-		personaView.refresh();
+		getView().updateLastStatus(result);
+		getView().refresh();
 		
 	}
 	
 	
+	public void delete() {
+		assert(getParentController() instanceof PersonasListController);
+		((PersonasListController)getParentController()).deletePersona(getModel());
+		
+	}
+	
 	@Override
 	public void endProcessing() {
-		getErrorHandler().isProcessing(false);
+		getMainController().isProcessing(false);
 		super.endProcessing();
 	}
 
 	@Override
 	public void startProcessing() {
-		getErrorHandler().isProcessing(true);
+		getMainController().isProcessing(true);
 		super.startProcessing();
 	}
 
@@ -215,6 +256,27 @@ public class PersonaController extends AbstractController {
 		initializeUpdatesController();
 		
 	}
+
+	@Override
+	public void pause() {
+		
+		if ( this.twitterUpdatesCompositeController != null ) {
+			this.twitterUpdatesCompositeController.pause();
+		}
+		
+		
+	}
+
+	@Override
+	public void resume() {
+		if ( this.twitterUpdatesCompositeController != null ) {
+			this.twitterUpdatesCompositeController.resume();
+		}
+		
+	}
+
+	
+	
 	
 
 	
