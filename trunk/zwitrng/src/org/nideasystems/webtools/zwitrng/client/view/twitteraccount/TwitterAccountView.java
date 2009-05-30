@@ -103,6 +103,8 @@ public class TwitterAccountView extends
 		remove(loginInfoPanel);
 		twitterAccountInfo = new TwitterAccountInfoWidget(getController().getModel());
 		add(twitterAccountInfo);
+		sendUpdate = getController().createSendUpdateWidget(null,SendUpdateWidget.STATUS,false);
+		add(sendUpdate);
 		
 	}
 
