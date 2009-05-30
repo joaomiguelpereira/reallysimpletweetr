@@ -3,15 +3,13 @@ package org.nideasystems.webtools.zwitrng.client.controller.search;
 
 import java.util.List;
 
-import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.search.TwitterUpdatesSearchView;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
-import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 

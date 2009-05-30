@@ -4,43 +4,30 @@ package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
-import org.nideasystems.webtools.zwitrng.client.controller.HasParent;
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
-import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaToolsWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
-import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 
 public class PersonaController extends AbstractController<PersonaDTO, PersonaView> implements AutoUpdatable{
 
-	//private PersonaView personaView = null;
 	
-	//private PersonasListController parent;
-	//private PersonaDTO persona = null;
-	//private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
 	TwitterUpdatesListController twitterUpdatesListController = null;
 	TwitterAccountController twitterAccountController = null;
 	PersonaToolsWidget tools = null;
-	//private OAuthInfoDTO oAuthInfo = null;
 	
-	private void initializeUpdatesController() {
+	
+	/*private void initializeUpdatesController() {
 		
 		
 		
 		if (twitterUpdatesListController == null && getModel().getTwitterAccount() != null && getModel().getTwitterAccount().getIsOAuthenticated() ) {
 
-			/*twitterUpdatesCompositeController = new TwitterUpdatesListController();
+			twitterUpdatesCompositeController = new TwitterUpdatesListController();
 			twitterUpdatesCompositeController.setMainController(getMainController());
 			twitterUpdatesCompositeController.setName(AbstractController
 					.generateDefaultName());
@@ -54,10 +41,10 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 					.getAsWidget());
 			this.searchesCompositeControllers.put(personaView
 					.getPersonaObj().getName(), searchesCompositeController);
-*/
+
 		}
 
-	}
+	}*/
 
 	@Override
 	public void init() {
@@ -143,7 +130,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 	@Override
 	public void handleAction(String action, Object...args) {
 		
-		if (action.endsWith(IController.IActions.TWEET_THIS)) {
+		/*if (action.endsWith(IController.IActions.TWEET_THIS)) {
 			TwitterUpdateDTO update = (TwitterUpdateDTO)args[0];
 			final SendUpdateAsyncHandler handle = (SendUpdateAsyncHandler)args[args.length-1];
 			//startProcessing();
@@ -232,13 +219,13 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 			TwitterUpdateDTO update =(TwitterUpdateDTO)args[0];
 			updateLastStatus(update);
 		}
-	
+	*/
 	}
-	private void updateLastStatus(TwitterUpdateDTO result) {
+	/*private void updateLastStatus(TwitterUpdateDTO result) {
 		getView().updateLastStatus(result);
 		getView().refresh();
 		
-	}
+	}*/
 	
 	
 	public void delete() {
@@ -262,7 +249,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 	@Override
 	public void reload() {
 		//Reload
-		initializeUpdatesController();
+		//initializeUpdatesController();
 		
 	}
 

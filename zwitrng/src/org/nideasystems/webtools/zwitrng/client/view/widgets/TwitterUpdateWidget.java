@@ -31,10 +31,8 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 public class TwitterUpdateWidget extends VerticalPanel implements
 		HasMouseOverHandlers, HasMouseOutHandlers, SendUpdateAsyncHandler {
 
-	//private TwitterAccountDTO twitterAccount;
 	private TwitterUpdateDTO twitterUpdate;
 	private TwitterUpdatesController parentController;
-	private boolean isSendUpdateVisible = false;
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final HorizontalPanel sendUpdateContainer = new HorizontalPanel();
 	private SendUpdateWidget sendUpdateWidget = null;
@@ -189,52 +187,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		
 		
 	}
-	private void reply() {
-		//create a send update widget
-		
-		
-		if ( sendUpdateWidget == null ) {
-			sendUpdateWidget = parentController.getTwitterAccountController().createSendUpdateWidget(twitterUpdate, SendUpdateWidget.REPLY, true);
-			sendUpdateWidget.addAsyncHandler(this);
-			sendUpdateContainer.add(sendUpdateWidget);
-			
-		
-		}
-		if (sendUpdateWidget.getType() == SendUpdateWidget.REPLY
-				&& sendUpdateContainer.isVisible()) {
-			isSendUpdateVisible = false;
-
-		} else {
-			isSendUpdateVisible = true;
-		}
-		sendUpdateContainer.setVisible(isSendUpdateVisible);
-		sendUpdateWidget.setInResponseTo(twitterUpdate);
-		sendUpdateWidget.refresh();
-
-	}		
-
-	private void retweet() {
-		//create a send update widget
-		
-		if ( sendUpdateWidget == null ) {
-			sendUpdateWidget = parentController.getTwitterAccountController().createSendUpdateWidget(twitterUpdate, SendUpdateWidget.RETWEET, true);
-			sendUpdateWidget.addAsyncHandler(this);
-			sendUpdateContainer.add(sendUpdateWidget);
-			
-		
-		}
-		if (sendUpdateWidget.getType() == SendUpdateWidget.RETWEET
-				&& sendUpdateContainer.isVisible()) {
-			isSendUpdateVisible = false;
-
-		} else {
-			isSendUpdateVisible = true;
-		}
-		sendUpdateContainer.setVisible(isSendUpdateVisible);
-		sendUpdateWidget.setInResponseTo(twitterUpdate);
-		sendUpdateWidget.refresh();
-
-	}		
+	
 
 	private HTML getUpdateTextHtml(TwitterUpdateDTO twitterUpdate) {
 		return new HTML("<span class=\"userScreenName\">"
@@ -251,152 +204,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	}
 
-	/**
-	 * @deprecated
-	 */
-	public void init() {
-		
-/*		FlexTable tweetLayout = new FlexTable();
-		FlexCellFormatter tweetLayoutFormatter = tweetLayout
-				.getFlexCellFormatter();
-		tweetLayout.setWidth("700px");
-
-		// Create the user image
-		userImg = new Image(twitterUpdate.getTwitterAccount()
-				.getTwitterImageUrl());
-		userImg.setWidth("48px");
-		userImg.setHeight("48px");
-		tweetLayout.setWidget(0, 0, userImg);
-		tweetLayoutFormatter.setAlignment(0, 0,
-				HasHorizontalAlignment.ALIGN_LEFT,
-				HasVerticalAlignment.ALIGN_TOP);
-		tweetLayoutFormatter.setRowSpan(0, 0, 1);
-		tweetLayoutFormatter.setWidth(0, 1, "50px");
-
-		// Create the update Text
-		// TODO: Parse html
-		VerticalPanel tweetInfo = new VerticalPanel();
-		tweetInfo.setWidth("650px");
-
-		HTML updateText = getUpdateTextHtml(twitterUpdate);
-		updateText.addStyleName("tweet");
-
-		tweetInfo.add(updateText);
-
-		HTML tweetUpdateMetaData = getUpdateMetaInfoHtml(twitterUpdate);
-		tweetUpdateMetaData.addStyleName("twitterUpdateMetaData");
-		tweetInfo.add(tweetUpdateMetaData);
-
-		tweetLayout.setWidget(0, 1, tweetInfo);
-		tweetLayoutFormatter.setColSpan(0, 1, 2);
-		tweetLayoutFormatter.setAlignment(0, 1,
-				HasHorizontalAlignment.ALIGN_RIGHT,
-				HasVerticalAlignment.ALIGN_TOP);
-
-		// tweetLayout.setWidget(1, 1, tweetUpdateMetaData);
-
-		// Now add the action
-
-		// HTML followUser = new HTML("unfollow user (do later)");
-		HTML retweet = new HTML("Retweet");
-		HTML reply = new HTML("Reply");
-		HTML moreOptions = new HTML("More options");
-
-		moreOptions.addStyleName("link");
-		retweet.addStyleName("link");
-		reply.addStyleName("link");
-
-		actionPanel.setSpacing(5);
-		actionPanel.add(retweet);
-		actionPanel.add(reply);
-		actionPanel.add(moreOptions);
-
-		tweetLayout.setWidget(1, 1, actionPanel);
-		tweetLayoutFormatter.setStyleName(1, 1, "tweetOptions");
-		tweetLayoutFormatter.setHeight(1, 1, "25px");
-		tweetLayoutFormatter.setAlignment(1, 1,
-				HasHorizontalAlignment.ALIGN_RIGHT,
-				HasVerticalAlignment.ALIGN_TOP);
-		super.add(tweetLayout);*/
-		/*this.addMouseOverHandler(new MouseOverHandler() {
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				addStyleName("currentTweet");
-				getController().handleAction(
-						IController.IActions.PAUSE_AUTO_UPDATE);
-				// actionPanel.setVisible(true);
-
-			}
-
-		});
-		this.addMouseOutHandler(new MouseOutHandler() {
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				removeStyleName("currentTweet");
-				getController().handleAction(
-						IController.IActions.RESUME_AUTO_UPDATE);
-				// actionPanel.setVisible(false);
-
-			}
-
-		});*/
-		
-		/*//sendUpdate.setController(getController());
-		sendUpdate.setSendingTwitterAccount(twitterAccount);
-
-		sendUpdate.init();
-		sendUpdate.setVisible(false);
-
-		this.add(sendUpdate);
-
-		retweet.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-
-				if (sendUpdate.getType() == SendUpdateWidget.RETWEET
-						&& sendUpdate.isVisible()) {
-					isSendUpdateVisible = false;
-
-				} else {
-					isSendUpdateVisible = true;
-				}
-				sendUpdate.setVisible(isSendUpdateVisible);
-				sendUpdate.setType(SendUpdateWidget.RETWEET);
-				sendUpdate.setInResponseTo(twitterUpdate);
-
-				sendUpdate.refresh();
-
-			}
-
-		});
-
-		reply.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-
-				if (sendUpdate.getType() == SendUpdateWidget.REPLY
-						&& sendUpdate.isVisible()) {
-					isSendUpdateVisible = false;
-
-				} else {
-					isSendUpdateVisible = true;
-				}
-				sendUpdate.setVisible(isSendUpdateVisible);
-				sendUpdate.setType(SendUpdateWidget.REPLY);
-				sendUpdate.setInResponseTo(twitterUpdate);
-
-				sendUpdate.refresh();
-
-			}
-
-		});
-*/
-	}
-
+	
 	private void hasReply(TwitterUpdateDTO result) {
 
 		HorizontalPanel replyPannel = new HorizontalPanel();
@@ -435,7 +243,6 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	@Override
 	public void setVisible(boolean visible) {
-		this.isSendUpdateVisible = false;
 		super.setVisible(visible);
 	}
 
@@ -486,12 +293,5 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		
 	}
 
-/*	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
-		this.twitterAccount = twitterAccount;
-	}
-
-	public TwitterAccountDTO getTwitterAccount() {
-		return twitterAccount;
-	}*/
 
 }

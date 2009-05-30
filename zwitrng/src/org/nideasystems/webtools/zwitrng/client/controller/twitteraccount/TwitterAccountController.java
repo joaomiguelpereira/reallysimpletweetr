@@ -2,7 +2,6 @@ package org.nideasystems.webtools.zwitrng.client.controller.twitteraccount;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
-import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterAccountView;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -10,13 +9,10 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.core.client.GWT;
-
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends AbstractController<TwitterAccountDTO, TwitterAccountView>{
 
-	private SendUpdateAsyncHandler sendUpdateCaller = null;
 	
 	@Override
 	public void init() {
@@ -90,17 +86,7 @@ public class TwitterAccountController extends AbstractController<TwitterAccountD
 	}
 	
 
-	/*public SendUpdateWidget createSendUpdateWidget(TwitterUpdateDTO inResponseTo, int type, boolean showUserImg,AsyncHandler caller) {
-		SendUpdateWidget updateWidget = new SendUpdateWidget();
-		updateWidget.setSendingTwitterAccount(getModel());
-		updateWidget.setInResponseTo(inResponseTo);
-		updateWidget.setType(type);
-		updateWidget.setShowUserImage(showUserImg);
-		updateWidget.setController(this);
-		updateWidget.init();
-		//this.sendUpdateCaller = caller;
-		return updateWidget;
-	}*/
+	
 
 	public void sendUpdate(TwitterUpdateDTO twitterUpdate,
 			final SendUpdateWidget instance) {

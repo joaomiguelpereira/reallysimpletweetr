@@ -1,14 +1,9 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.eclipse.swt.internal.ole.win32.ISpecifyPropertyPages;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
-import org.nideasystems.webtools.zwitrng.client.controller.GlobalToolsWidget;
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
-import org.nideasystems.webtools.zwitrng.client.controller.IDataLoadedHandler;
 
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
@@ -18,14 +13,9 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Widget;
 
 public class PersonasListController extends
 		AbstractController<PersonaDTOList, PersonasListView> {
-
-	// The controller view
-	//private PersonasListView personasListView = null;
-	GlobalToolsWidget toolsWidget = null;
 	
 	private Map<String, PersonaView> personaViews = new HashMap<String, PersonaView>();
 	
@@ -44,7 +34,6 @@ public class PersonasListController extends
 	 */
 	public void init() {
 		super.init();
-		Window.alert("initializing");
 		//Create the View
 		setView(createView(PersonasListView.class));
 		//Set the controller for the view
@@ -54,59 +43,8 @@ public class PersonasListController extends
 		//Load the personas
 		loadPersonas(getModel());
 		// create the view
-
-		/*
-		 * this.view = createView(PersonasListView.class);
-		 * 
-		 * // Initialize view // Create the view for this controller
-		 * this.personasListView = new PersonasListView(); // Tell the view who
-		 * is its controller this.personasListView.setController(this); //
-		 * Initialize the view this.personasListView.init(); // Tell this
-		 * controller what the view is this.view = this.personasListView; //
-		 * Initialize data structures this.personas = new HashMap<String,
-		 * PersonaDTO>();
-		 * 
-		 * this.loadData();
-		 */
-	}
-
-	/**
-	 * Load the Pseronas configured for the logged user
-	 */
-	private void loadData() {
-		/*
-		 * RPCService service = null; try { service =
-		 * getServiceManager().getRPCService(); } catch (Exception e) { // Get
-		 * the default error handler for this controller and let it // handle
-		 * the error getMainController().addException(e); } if (service != null)
-		 * { // Call the service and give it a callback to handle service async
-		 * // call try { startProcessing(); service.loadPersonas(new
-		 * LoadPersonasCallBack()); } catch (Exception e) {
-		 * getMainController().addException(e); e.printStackTrace();
-		 * endProcessing(); } }
-		 */
-
-	}
-
-	/*
-	 * public class LoadPersonasCallBack implements
-	 * AsyncCallback<List<PersonaDTO>> {
-	 * 
-	 * @Override public void onFailure(Throwable caught) { // Ok, got an error,
-	 * let's default error handle handle this
-	 * getMainController().addException(caught); endProcessing();
-	 * 
-	 * }
-	 * 
-	 * @Override public void onSuccess(List<PersonaDTO> result) {
-	 * endProcessing(); // Cool, let's add the persons :) // TODO: Create a
-	 * IDataLoaded handler that is the controller createPersonas(result); //
-	 * getDataLoadedCallBack().onDataLoaded(result); }
-	 * 
-	 * }
-	 */
 	
-	
+	}
 	/**
 	 * Load a PersonaDTOList into the controller
 	 */
@@ -122,27 +60,6 @@ public class PersonasListController extends
 
 	}
 
-	/**
-	 * When a Tab is selected
-	 * 
-	 * @author jpereira
-	 * 
-	 */
-	/*
-	 * private class PersonaTabSelectionHandler implements
-	 * SelectionHandler<Integer> {
-	 * 
-	 * // When a tab is selected what should I do?
-	 * 
-	 * @Override public void onSelection(SelectionEvent<Integer> event) { //
-	 * Check if the user is authenticated with OAuth
-	 * 
-	 * onTabSelectedChanged(event.getSelectedItem());
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
 
 	/**
 	 * called when a given persona is selecets
@@ -167,10 +84,6 @@ public class PersonasListController extends
 				currentPersonaController.initializeUpdatesListController();
 			}
 			
-			
-			// PersonaDTO
-			//personaViewSelected.getController().reload();
-			//personaViewSelected.refresh();
 
 		}
 	}
@@ -249,32 +162,7 @@ public class PersonasListController extends
 		
 	}
 
-	/*@Override
-	public void handleDataLoaded(Object result) {
-		// Hopefully, this is a PersonaDTO
-		loadPersona((PersonaDTO) result);
 
-	}
-*/
-	/*
-	 * @Override public AsyncCallback<String> getDataRemovedCallBack() { return
-	 * this.new PersonaRemovedCallBack(); }
-	 * 
-	 * private class PersonaRemovedCallBack implements AsyncCallback<String> {
-	 * 
-	 * @Override public void onFailure(Throwable caught) {
-	 * getErrorHandler().addException(caught);
-	 * 
-	 * }
-	 * 
-	 * @Override public void onSuccess(String result) {
-	 * 
-	 * removePersona(result);
-	 * 
-	 * }
-	 * 
-	 * }
-	 */
 
 	@Override
 	public void endProcessing() {
@@ -292,70 +180,6 @@ public class PersonasListController extends
 	@Override
 	public void handleAction(String action, Object... args) {
 
-		/*if (action.equals(IController.IActions.PERSONA_SELECTED)) {
-			Integer selectedItem = (Integer) args[0];
-			onTabSelectedChanged(selectedItem);
-		}
-
-		if (action.equals(IController.IActions.DELETE)) {
-			String personaName = (String) args[0];
-
-			try {
-				startProcessing();
-				getServiceManager().getRPCService().deletePersona(personaName,
-						new AsyncCallback<String>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								endProcessing();
-								getMainController().addException(caught);
-							}
-
-							@Override
-							public void onSuccess(String result) {
-								endProcessing();
-								unloadPersona(result);
-
-							}
-
-						});
-			} catch (Exception e) {
-				endProcessing();
-				getMainController().addException(e);
-				e.printStackTrace();
-			}
-
-		}
-
-		if (action.equals(IController.IActions.CREATE)) {
-			PersonaDTO persona = (PersonaDTO) args[0];
-			try {
-				startProcessing();
-				getServiceManager().getRPCService().createPersona(persona,
-						new AsyncCallback<PersonaDTO>() {
-
-							@Override
-							public void onFailure(Throwable caught) {
-								endProcessing();
-								getMainController().addException(caught);
-
-							}
-
-							@Override
-							public void onSuccess(PersonaDTO result) {
-								endProcessing();
-								loadPersona(result);
-
-							}
-
-						});
-			} catch (Exception e) {
-				endProcessing();
-				getMainController().addException(e);
-			}
-		}
-		// Window.alert("PersonaaCompositeController ActionEvent Handler"+action);
-*/
 	}
 
 	/**
@@ -394,14 +218,7 @@ public class PersonasListController extends
 
 	@Override
 	public void reload() {
-		// TODO Auto-generated method stub
 
 	}
-
-	/*@Override
-	public void onDataLoaded(Object obj) {
-		// TODO Auto-generated method stub
-
-	}*/
 
 }
