@@ -5,8 +5,6 @@ import org.nideasystems.webtools.zwitrng.client.Constants;
 
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterAccountInfoWidget;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 

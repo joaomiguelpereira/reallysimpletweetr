@@ -38,7 +38,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	@Override
 	public void init() {
 		//create the view 
-		setView(createView(TwitterUpdatesView.class));
+		setView(new TwitterUpdatesView());
 		getView().setController(this);
 		getView().init();
 		this.twitterAccount = ((TwitterUpdatesListController)getParentController()).getModel();

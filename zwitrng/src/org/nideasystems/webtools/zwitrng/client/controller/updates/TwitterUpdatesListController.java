@@ -31,7 +31,7 @@ public class TwitterUpdatesListController extends AbstractController<TwitterAcco
 
 	
 	public void init() {
-		setView(createView(TwitterUpdatesListView.class));
+		setView(new TwitterUpdatesListView());
 		getView().init();
 		
 		loadFriendsTweets();
@@ -43,7 +43,7 @@ public class TwitterUpdatesListController extends AbstractController<TwitterAcco
 
 	private void loadFriendsTweets() {
 		
-		this.friendsTwitterUpdatesController = AbstractController.createController(TwitterUpdatesController.class);
+		this.friendsTwitterUpdatesController = new TwitterUpdatesController();
 		this.friendsTwitterUpdatesController.setMainController(getMainController());
 		this.friendsTwitterUpdatesController.setParentController(this);
 		this.friendsTwitterUpdatesController.setServiceManager(getServiceManager());

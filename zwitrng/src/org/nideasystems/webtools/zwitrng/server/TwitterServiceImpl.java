@@ -19,7 +19,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import twitter4j.ExtendedUser;
 import twitter4j.Status;
 
-import com.google.appengine.api.users.User;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

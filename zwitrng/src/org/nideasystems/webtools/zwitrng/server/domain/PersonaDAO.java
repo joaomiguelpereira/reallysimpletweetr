@@ -54,8 +54,10 @@ public class PersonaDAO extends BaseDAO {
 	 * 
 	 * @param email
 	 * @return
-	 * @throws Exception 
+	 * @throws Exception
+	 *  
 	 */
+	
 	public PersonaDTOList findAllPersonas(String email) throws Exception {
 
 		PersonaDTOList returnList = new PersonaDTOList();
@@ -66,6 +68,7 @@ public class PersonaDAO extends BaseDAO {
 		queryPersona.setFilter("userEmail==paramUserEmail");
 		queryPersona.declareParameters("String paramUserEmail");
 
+		
 		List<PersonaDO> personas = (List<PersonaDO>) queryPersona
 				.execute(email);
 
@@ -195,7 +198,7 @@ public class PersonaDAO extends BaseDAO {
  * @return
  */
 	public List<FilterCriteriaDTO> findAllPersonaFilters(String personaName, String userEmail) {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		
 		List<FilterDO> filters = null;

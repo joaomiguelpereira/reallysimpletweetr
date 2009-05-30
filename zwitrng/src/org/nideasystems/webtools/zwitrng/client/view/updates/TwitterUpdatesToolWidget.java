@@ -1,7 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 

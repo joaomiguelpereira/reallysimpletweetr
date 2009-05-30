@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.updates;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
