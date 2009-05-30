@@ -6,7 +6,7 @@ import org.nideasystems.webtools.zwitrng.client.view.IView;
 
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
-import com.google.gwt.core.client.GWT;
+
 
 public abstract class AbstractController<M extends IModel, V extends IView<?>>
 		implements IController<M, V> {
@@ -144,8 +144,9 @@ public abstract class AbstractController<M extends IModel, V extends IView<?>>
 
 	}
 
-	public static <V extends IView<?>> V createView(Class<V> clazz) {
+	/*public static <V extends IView<?>> V createView(Class<V> clazz) {
 		V view = GWT.create(clazz);
+		
 		//view.setController(this);
 		return view;
 	}
@@ -159,6 +160,6 @@ public abstract class AbstractController<M extends IModel, V extends IView<?>>
 
 		// controller.init();
 		return controller;
-	}
+	}*/
 
 }

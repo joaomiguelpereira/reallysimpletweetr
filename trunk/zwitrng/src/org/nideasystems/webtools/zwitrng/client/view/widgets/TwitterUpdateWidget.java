@@ -241,11 +241,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		//this.sendUpdate.setVisible(false);
 	}
 
-	@Override
-	public void setVisible(boolean visible) {
-		super.setVisible(visible);
-	}
-
+	
 	public void setTwitterUpdate(TwitterUpdateDTO twitterUpdate) {
 		this.twitterUpdate = twitterUpdate;
 	}

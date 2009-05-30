@@ -57,8 +57,8 @@ public class MainController implements IMainController{
 					
 					//personasListController = new PersonasListController();
 					
-					personasListController = AbstractController.createController(PersonasListController.class);
-					
+					personasListController = new PersonasListController();
+					personasListController.setMainController(MainController.getInstance());
 					personasListController.setModel(result);
 					personasListController.setServiceManager(serviceManager);
 					personasListController.init();

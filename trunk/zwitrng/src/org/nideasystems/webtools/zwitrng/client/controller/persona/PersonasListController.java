@@ -35,7 +35,7 @@ public class PersonasListController extends
 	public void init() {
 		super.init();
 		//Create the View
-		setView(createView(PersonasListView.class));
+		setView(new PersonasListView());
 		//Set the controller for the view
 		getView().setController(this);
 		//Initialize the view
@@ -96,8 +96,8 @@ public class PersonasListController extends
 	 */
 	private void loadPersona(PersonaDTO persona, boolean selecteAfterCreated) {
 		
-		PersonaController personaController = AbstractController
-				.createController(PersonaController.class);
+		PersonaController personaController = new PersonaController();
+		personaController.setMainController(getMainController());
 		personaController.setServiceManager(getServiceManager());
 		personaController.setParentController(this);
 		personaController.setModel(persona);

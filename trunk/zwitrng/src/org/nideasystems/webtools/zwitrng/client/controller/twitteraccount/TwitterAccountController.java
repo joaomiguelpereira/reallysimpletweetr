@@ -19,7 +19,7 @@ public class TwitterAccountController extends AbstractController<TwitterAccountD
 		
 		super.init();
 		//Create the view for the TwitterAccount
-		setView(createView(TwitterAccountView.class));
+		setView(new TwitterAccountView());
 		getView().setController(this);
 		getView().init();
 		

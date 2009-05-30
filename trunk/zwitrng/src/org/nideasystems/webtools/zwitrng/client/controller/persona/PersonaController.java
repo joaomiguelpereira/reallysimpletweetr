@@ -49,7 +49,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 	@Override
 	public void init() {
 		
-		setView(createView(PersonaView.class));
+		setView(new PersonaView());
 		getView().setController(this);
 		getView().init();
 		//Add the Tools for the Persona
@@ -60,7 +60,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		
 		
 		//Create a controller for the TwitterAccount
-		twitterAccountController = AbstractController.createController(TwitterAccountController.class);
+		twitterAccountController = new TwitterAccountController();
 		twitterAccountController.setModel(getModel().getTwitterAccount());
 		twitterAccountController.setMainController(getMainController());
 		twitterAccountController.setServiceManager(getServiceManager());
@@ -280,7 +280,8 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		GWT.log("Initializing UpdatesListController...", null);
 		//initialize only if it's authenticated
 		if ( getModel().getTwitterAccount().getIsOAuthenticated() ) {
-			this.twitterUpdatesListController = AbstractController.createController(TwitterUpdatesListController.class);
+			this.twitterUpdatesListController = new TwitterUpdatesListController();
+			this.twitterUpdatesListController.setMainController(getMainController());
 			this.twitterUpdatesListController.setModel(getModel().getTwitterAccount());
 			this.twitterUpdatesListController.setParentController(this);
 			this.twitterUpdatesListController.setServiceManager(getServiceManager());
