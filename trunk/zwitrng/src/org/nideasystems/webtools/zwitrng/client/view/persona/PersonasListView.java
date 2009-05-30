@@ -3,7 +3,6 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
