@@ -4,38 +4,55 @@ import java.util.HashMap;
 import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.search.TwitterUpdatesSearchController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesCompositeView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
+import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TwitterUpdatesListController extends AbstractController<TwitterUpdateDTOList, TwitterUpdatesListView> implements AutoUpdatable {
-
-	// This update controller belong to one persona
-	private TwitterAccountDTO twitterAccount;
+public class TwitterUpdatesListController extends AbstractController<TwitterAccountDTO, TwitterUpdatesListView> implements AutoUpdatable {
 
 
 	//Controls if it's initialized
 	private boolean initialized = false;
 
-	private TwitterUpdatesCompositeView twitterUpdatesCompositeView = null;
+	//private TwitterUpdatesCompositeView twitterUpdatesCompositeView = null;
 	private Map<String, TwitterUpdatesController> twitterUpdatesControllers = new HashMap<String, TwitterUpdatesController>();
 	
 	//private Map<String, PersonaUpdatesTabView> updatesViews = null;
 
+	TwitterUpdatesController friendsTwitterUpdatesController = null;
 	public TwitterUpdatesListController() {
 		super();
 	}
 
 	
 	public void init() {
+		setView(createView(TwitterUpdatesListView.class));
+		getView().init();
+		
+		loadFriendsTweets();
+		
+		
+		
+		//Load Tweets
+		
+		
+		//Create the tabs
+		 
+		
+		//Create the view 
 		if (!this.initialized) {
-			twitterUpdatesCompositeView = new TwitterUpdatesCompositeView();
+			/*twitterUpdatesCompositeView = new TwitterUpdatesCompositeView();
 			twitterUpdatesCompositeView.setController(this);
 			twitterUpdatesCompositeView.init();
 			//this.view = twitterUpdatesCompositeView;
@@ -63,11 +80,57 @@ public class TwitterUpdatesListController extends AbstractController<TwitterUpda
 			defaultSearchController.init();
 			twitterUpdatesCompositeView.add(defaultSearchController.getView().getAsWidget(),"Search");
 			//twitterUpdatesControllers.put(defaultSearchController.getName(), defaultSearchController);
-			twitterUpdatesCompositeView.selectTab(0);
+			twitterUpdatesCompositeView.selectTab(0);*/
 						
 		}
 
 	}
+
+	private void loadFriendsTweets() {
+		
+		this.friendsTwitterUpdatesController = AbstractController.createController(TwitterUpdatesController.class);
+		this.friendsTwitterUpdatesController.setMainController(getMainController());
+		this.friendsTwitterUpdatesController.setParentController(this);
+		this.friendsTwitterUpdatesController.setServiceManager(getServiceManager());
+		this.friendsTwitterUpdatesController.setUpdatesType(UpdatesType.FRIENDS);
+		this.friendsTwitterUpdatesController.init();	
+		getView().add(this.friendsTwitterUpdatesController.getView(), "Friends");
+		getView().selectTab(0);
+		friendsTwitterUpdatesController.startProcessing();
+		GWT.log("Loading Friends Tweets", null);
+		FilterCriteriaDTO filter = new FilterCriteriaDTO();
+		filter.setUpdatesType(UpdatesType.FRIENDS);
+
+		
+		try {
+			getServiceManager().getRPCService().getTwitterUpdates(getModel(), filter, new AsyncCallback<TwitterUpdateDTOList>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					getMainController().addException(caught);
+					GWT.log("error returned from getTwitterUpdates", caught);
+					friendsTwitterUpdatesController.endProcessing();
+					
+				}
+
+				@Override
+				public void onSuccess(TwitterUpdateDTOList result) {
+					friendsTwitterUpdatesController.handleDataLoaded(result);
+					friendsTwitterUpdatesController.endProcessing();
+					
+					
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			friendsTwitterUpdatesController.endProcessing();
+			getMainController().addException(e);
+			GWT.log("error callint getTwitterUpdates", e);
+		}
+		
+	}
+
 
 	/*@Override
 	public SelectionHandler<Integer> getSelectionHandler() {
@@ -83,13 +146,13 @@ public class TwitterUpdatesListController extends AbstractController<TwitterUpda
 
 	
 
-	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
+	/*public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 	}
 
 	public TwitterAccountDTO getTwitterAccount() {
 		return twitterAccount;
-	}
+	}*/
 
 
 	@Override
@@ -122,6 +185,12 @@ public class TwitterUpdatesListController extends AbstractController<TwitterUpda
 		for (TwitterUpdatesController controller: this.twitterUpdatesControllers.values() ) {
 			controller.resume();
 		}		
+	}
+
+
+	public TwitterAccountController getTwitterAccountController() {
+		return ((PersonaController)getParentController()).getTwitterAccountController();
+		
 	}
 
 

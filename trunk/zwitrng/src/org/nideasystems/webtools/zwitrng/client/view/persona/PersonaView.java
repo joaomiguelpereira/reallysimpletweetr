@@ -5,7 +5,7 @@ import org.nideasystems.webtools.zwitrng.client.Constants;
 
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaInfoWidget;
+import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterAccountInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -26,19 +26,14 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 	private PersonaDTO personaObj = null;
 	// private SearchesCompositeView userUpdatetabPanel = new
 	// SearchesCompositeView();
-	private TwitterUpdateDTO lastStatus = null;
-	private PersonaInfoWidget userInfoWidget = null;
-	private PersonaToolsWidget personaToolsWidget = null;
+	
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
-	private HTML whatImDoing = null;
-	private HTML whenIDidIt = null;
 	private String loginUrl = "none";
 	final HorizontalPanel authentication = new HorizontalPanel();
 	final HTML loginUrlLink = new HTML("You need to authenticate");
 	private boolean isInitialized = false;
-	private SendUpdateWidget sendUpdateWidget = null;
-	HTML linkToLogin = new HTML("");
-	HTML continueLink = new HTML("");;
+	/*HTML linkToLogin = new HTML("");
+	HTML continueLink = new HTML("");;*/
 	/**
 	 * P c
 	 * 
@@ -144,7 +139,7 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 		
 		//if (this.)
 		
-		if (personaToolsWidget!=null) {
+		/*if (personaToolsWidget!=null) {
 			personaToolsWidget.refresh();
 		}
 		
@@ -158,7 +153,7 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 					+ "<span> from <span class=\"source\">"
 					+ lastStatus.getSource() + "</span>");
 
-		}
+		}*/
 		//loginUrlLink.setHTML(this.loginUrl);
 
 	}

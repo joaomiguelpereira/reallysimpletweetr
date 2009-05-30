@@ -7,6 +7,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -22,7 +23,7 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 public interface TwitterService extends RemoteService{
 	List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
 	TwitterUpdateDTO postUpdate(TwitterUpdateDTO update) throws Exception;
-	List<TwitterUpdateDTO> getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
+	TwitterUpdateDTOList getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter) throws Exception;
 	
 	OAuthInfoDTO getOAuthInfo(TwitterAccountDTO twitterAccount) throws Exception;
 	

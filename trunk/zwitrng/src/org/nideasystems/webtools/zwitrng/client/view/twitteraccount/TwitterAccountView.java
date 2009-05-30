@@ -4,7 +4,9 @@ import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
-import org.nideasystems.webtools.zwitrng.client.view.widgets.PersonaInfoWidget;
+import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
+import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterAccountInfoWidget;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,8 +19,9 @@ public class TwitterAccountView extends
 		AbstractVerticalPanelView<TwitterAccountController> {
 
 	final private Image waitingImg = new Image(Constants.WAITING_IMAGE);
-	private PersonaInfoWidget personaInfo = null;
+	private TwitterAccountInfoWidget twitterAccountInfo = null;
 	private VerticalPanel loginInfoPanel = null;
+	private SendUpdateWidget sendUpdate = null;
 
 	@Override
 	public void init() {
@@ -30,11 +33,16 @@ public class TwitterAccountView extends
 			loginInfoPanel = getLoginInstructions();
 			add(loginInfoPanel);
 		} else {
-			personaInfo = new PersonaInfoWidget(getController().getModel());
-			add(personaInfo);
+			twitterAccountInfo = new TwitterAccountInfoWidget(getController().getModel());
+			add(twitterAccountInfo);
+			sendUpdate = getController().createSendUpdateWidget(null,SendUpdateWidget.STATUS,false);
+			add(sendUpdate);
+			
 		}
 		waitingImg.setVisible(false);
-
+		
+		
+		//have a TwitterUpdatesListController
 	}
 
 	/**
@@ -93,8 +101,13 @@ public class TwitterAccountView extends
 	}
 	public void onAuthenticationSuccess() {
 		remove(loginInfoPanel);
-		personaInfo = new PersonaInfoWidget(getController().getModel());
-		add(personaInfo);
+		twitterAccountInfo = new TwitterAccountInfoWidget(getController().getModel());
+		add(twitterAccountInfo);
+		
+	}
+
+	public void updateLastStatus(TwitterUpdateDTO result) {
+		twitterAccountInfo.updateLastStatus(result);
 		
 	}
 

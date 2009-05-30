@@ -7,7 +7,8 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
-import org.nideasystems.webtools.zwitrng.client.view.AsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesView;
 import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
@@ -16,6 +17,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
@@ -26,18 +28,46 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 	private TwitterAccountDTO twitterAccount;
 	private UpdatesType updatesType;
-	private TwitterUpdatesView updatesView = null;
+	//private TwitterUpdatesView updatesView = null;
 	private Map<Long, TwitterUpdateDTO> updates = new HashMap<Long, TwitterUpdateDTO>();
 	private long lastUpdateId = 1;
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 10; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
-	Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
+	private Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
 	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
 	// update automatically
 
 	private boolean isPaused = false;
 
+	@Override
+	public void init() {
+		//create the view 
+		setView(createView(TwitterUpdatesView.class));
+		getView().setController(this);
+		getView().init();
+		this.twitterAccount = ((TwitterUpdatesListController)getParentController()).getModel();
+		/*updatesView = new TwitterUpdatesView();
+		updatesView.setController(this);
+		updatesView.init();
+		//this.view = this.updatesView;
+
+		FilterCriteriaDTO filter = new FilterCriteriaDTO();
+		filter.setUpdatesType(this.getUpdatesType());
+
+		try {
+			getServiceManager().getRPCService().getTwitterUpdates(
+					twitterAccount, filter, new TwitterUpdatesLoaded());
+			startProcessing();
+		} catch (Exception e) {
+			getMainController().addException(e);
+			e.printStackTrace();
+		}
+		// Load friends time line
+*/
+	}
+
+	
 	public UpdatesType getUpdatesType() {
 		return updatesType;
 	}
@@ -47,18 +77,18 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	}
 
 	
-	public void handleDataLoaded(Object result) {
-		List<TwitterUpdateDTO> twitterUpdates = (List<TwitterUpdateDTO>) result;
-		// Now start building the TwitterUpdateWidget
-		assert (result != null);
+	public void handleDataLoaded(TwitterUpdateDTOList twitterUpdates) {
+		
+		
+		assert (twitterUpdates != null);
 		boolean addOnTop = false;
 		boolean updateNeeded = false;
 		if (lastUpdateId > 1) {
 			addOnTop = true;
 		}
 
-		if (twitterUpdates.size() > 0) {
-			long newUpdateId = twitterUpdates.get(0).getId();
+		if (twitterUpdates.getTwitterUpdatesList().size() > 0) {
+			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0).getId();
 			if (newUpdateId != lastUpdateId) {
 				updateNeeded = true;
 				lastUpdateId = newUpdateId;
@@ -68,7 +98,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 		if (updateNeeded) {
 			int i = 1;
-			for (TwitterUpdateDTO update : twitterUpdates) {
+			for (TwitterUpdateDTO update : twitterUpdates.getTwitterUpdatesList()) {
 
 				if (addOnTop) {
 					// updatesView.insert(updateWidget, i++);
@@ -85,29 +115,27 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 		}
 		adjustPageSize();
-		endProcessing();
 	}
 
 	private void addUpdateWidget(TwitterUpdateDTO update, int pos) {
-		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget();
-		updateWidget.setTwitterAccount(getTwitterAccount());
-		updateWidget.setController(this);
-		updateWidget.setTwitterUpdate(update);
+		
+		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this,update);
+		
 		updateWidget.setStyleName("twitterUpdate");
-		updateWidget.init();
+		//updateWidget.init();
 
 		if (pos > -1) {
-			updatesView.insert(updateWidget, pos);
+			getView().insert(updateWidget, pos);
 
 		} else {
-			updatesView.add(updateWidget);
+			getView().add(updateWidget);
 		}
 
 		updateWidgets.put(update.getId(), updateWidget);
 		updates.put(update.getId(), update);
 	}
 
-	private void handleTweetedUpdate(TwitterUpdateDTO result) {
+	/*private void handleTweetedUpdate(TwitterUpdateDTO result) {
 		// Check if the tweet is in reply to any rendered
 		Long inRelyTo = result.getInReplyToStatusId();
 
@@ -121,17 +149,56 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 			// updatesView.ad
 		}
 
-	}
+	}*/
 
 	/*
 	 * @Override public SelectionHandler<Integer> getSelectionHandler() { //
 	 * TODO Auto-generated method stub return null; }
 	 */
 
+	@Override
+	public void reload() {
+		if (!isPaused) {
+			startProcessing();
+			FilterCriteriaDTO filter = new FilterCriteriaDTO();
+			filter.setSinceId(lastUpdateId);
+			filter.setUpdatesType(this.getUpdatesType());
+			// Let's update the tweets
+			try {
+				getServiceManager().getRPCService().getTwitterUpdates(
+						twitterAccount, filter, new AsyncCallback<TwitterUpdateDTOList>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								GWT.log("Error returned from service", caught);
+								endProcessing();
+								getMainController().addException(caught);
+								
+							}
+
+							@Override
+							public void onSuccess(TwitterUpdateDTOList result) {
+								endProcessing();
+								handleDataLoaded(result);
+								
+							}
+							
+						});
+			} catch (Exception e) {
+				endProcessing();
+				getMainController().addException(e);
+				GWT.log("Error calling serive", e);
+
+			}
+			
+		}
+
+	}
+
 	private void refresh() {
 		if (!isPaused) {
 
-			startProcessing();
+			/*startProcessing();
 			FilterCriteriaDTO filter = new FilterCriteriaDTO();
 			filter.setSinceId(lastUpdateId);
 			filter.setUpdatesType(this.getUpdatesType());
@@ -144,14 +211,14 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 				getMainController().addException(e);
 				e.printStackTrace();
 
-			}
+			}*/
 		}
 	}
 
 	private void notifyViews(Object object) {
 		
-		if (object!= null && (object instanceof AsyncHandler)) {
-			AsyncHandler handler = (AsyncHandler)object;
+		if (object!= null && (object instanceof SendUpdateAsyncHandler)) {
+			SendUpdateAsyncHandler handler = (SendUpdateAsyncHandler)object;
 			handler.onSuccess(object);
 		}
 	}
@@ -159,7 +226,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	@Override
 	public void handleAction(String action, final Object... args) {
 
-		if (action.equals(IController.IActions.TWEET_THIS)) {
+	/*	if (action.equals(IController.IActions.TWEET_THIS)) {
 
 			// Window.alert("Here");
 
@@ -200,8 +267,8 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 				}
 			}
 
-		}
-		if (action.equals(IController.IActions.CHANGE_PAGE_SIZE)) {
+		}*/
+		/*if (action.equals(IController.IActions.CHANGE_PAGE_SIZE)) {
 			// Window.alert(args[0].toString());
 			// Try to conver to int
 			updatesPerPage = Integer.valueOf(args[0].toString());
@@ -213,30 +280,44 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		}
 		if (action.equals(IController.IActions.ENABLE_AUTO_UPDATE)) {
 			// Create the timmer
-			if (timerForAutoUpdates == null) {
-				timerForAutoUpdates = new AutoUpdatesUpdateTimer();
-			}
-
-			timerForAutoUpdates.scheduleRepeating(1000 * timeBeforeAutoUpdate);
+			
 
 		}
 
 		if (action.equals(IController.IActions.DISABLE_AUTO_UPDATE)) {
 			// Create the timmer
 
-			if (timerForAutoUpdates != null) {
-				timerForAutoUpdates.cancel();
-			}
+			
 		}
 		if (action.equals(IController.IActions.PAUSE_AUTO_UPDATE)) {
 			this.isPaused = true;
 		}
 		if (action.equals(IController.IActions.RESUME_AUTO_UPDATE)) {
 			this.isPaused = false;
-		}
+		}*/
 
 	}
 
+	public void changePageSize(int newPageSize) {
+		GWT.log("Changing page size to "+newPageSize, null);
+		updatesPerPage = newPageSize;
+		adjustPageSize();
+	}
+	
+	public void enableAutoUpdate() {
+		GWT.log("Enabling auto update", null);
+		if (timerForAutoUpdates == null) {
+			timerForAutoUpdates = new AutoUpdatesUpdateTimer();
+		}
+
+		timerForAutoUpdates.scheduleRepeating(1000 * timeBeforeAutoUpdate);
+	}
+	public void disableAutoUpdate() {
+		GWT.log("Disabling auto update", null);
+		if (timerForAutoUpdates != null) {
+			timerForAutoUpdates.cancel();
+		}
+	}
 	/**
 	 * Check the current sise and update accordingly
 	 */
@@ -244,20 +325,20 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		// TODO Auto-generated method stub
 		// With the subtraction I'm removing the widget that represents the
 		// tools (errrr)
-		int widgetCount = updatesView.getWidgetCount() - 1;
+		int widgetCount = getView().getWidgetCount() - 1;
 		if (widgetCount > updatesPerPage) {
 			// Remove any remaining update
 			// int updatesToRemove = updatesPerPage-newPageSize;
 			for (int i = widgetCount; i > updatesPerPage; i--) {
-				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget) updatesView
+				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget) getView()
 						.getWidget(i);
 				updates.remove(updateWidget.getTwitterUpdate().getId());
 				updateWidgets.remove(updateWidget.getTwitterUpdate().getId());
-				updatesView.remove(i);
+				getView().remove(i);
 
 			}
 			assert (updates.size() == updatesPerPage);
-			assert ((updatesView.getWidgetCount() - 1) == updatesPerPage);
+			assert ((getView().getWidgetCount() - 1) == updatesPerPage);
 		}
 
 		// updatesPerPage = newPageSize;
@@ -269,34 +350,13 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		@Override
 		public void run() {
 
-			refresh();
+			reload();
 
 		}
 
 	}
 
-	@Override
-	public void init() {
-		updatesView = new TwitterUpdatesView();
-		updatesView.setController(this);
-		updatesView.init();
-		//this.view = this.updatesView;
-
-		FilterCriteriaDTO filter = new FilterCriteriaDTO();
-		filter.setUpdatesType(this.getUpdatesType());
-
-		try {
-			getServiceManager().getRPCService().getTwitterUpdates(
-					twitterAccount, filter, new TwitterUpdatesLoaded());
-			startProcessing();
-		} catch (Exception e) {
-			getMainController().addException(e);
-			e.printStackTrace();
-		}
-		// Load friends time line
-
-	}
-
+	
 	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 	}
@@ -310,7 +370,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	 * 
 	 * @author jpereira
 	 * 
-	 */
+	 *//*
 	private final class TwitterUpdatesLoaded implements
 			AsyncCallback<List<TwitterUpdateDTO>> {
 
@@ -327,14 +387,9 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 		}
 
-	}
+	}*/
 
-	@Override
-	public void reload() {
-		// TODO Auto-generated method stub
-
-	}
-
+	
 	@Override
 	public void pause() {
 		this.isPaused = true;
@@ -345,5 +400,14 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	public void resume() {
 		this.isPaused = false;
 	}
+
+
+	public TwitterAccountController getTwitterAccountController() {
+		return ((TwitterUpdatesListController)getParentController()).getTwitterAccountController();
+		
+	}
+
+
+	
 
 }

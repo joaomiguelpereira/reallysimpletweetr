@@ -7,12 +7,14 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TwitterServiceAsync {
 	void search(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter, AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception;
-	void getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter, AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception;
+	
+	void getTwitterUpdates(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter, AsyncCallback<TwitterUpdateDTOList> callback) throws Exception;
 	void postUpdate(TwitterUpdateDTO update,AsyncCallback<TwitterUpdateDTO> callback) throws Exception;
 	
 	void  getOAuthInfo(TwitterAccountDTO twitterAccount, AsyncCallback<OAuthInfoDTO> callback) throws Exception;

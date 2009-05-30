@@ -8,7 +8,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.HasParent;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
-import org.nideasystems.webtools.zwitrng.client.view.AsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaToolsWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
@@ -16,8 +16,11 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HTML;
 
 public class PersonaController extends AbstractController<PersonaDTO, PersonaView> implements AutoUpdatable{
 
@@ -26,8 +29,8 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 	//private PersonasListController parent;
 	//private PersonaDTO persona = null;
 	//private Map<String, SearchesCompositeController> searchesCompositeControllers = new HashMap<String, SearchesCompositeController>();
-	TwitterUpdatesListController twitterUpdatesCompositeController = null;
-	TwitterAccountController twitterAccount = null;
+	TwitterUpdatesListController twitterUpdatesListController = null;
+	TwitterAccountController twitterAccountController = null;
 	PersonaToolsWidget tools = null;
 	//private OAuthInfoDTO oAuthInfo = null;
 	
@@ -35,7 +38,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		
 		
 		
-		if (twitterUpdatesCompositeController == null && getModel().getTwitterAccount() != null && getModel().getTwitterAccount().getIsOAuthenticated() ) {
+		if (twitterUpdatesListController == null && getModel().getTwitterAccount() != null && getModel().getTwitterAccount().getIsOAuthenticated() ) {
 
 			/*twitterUpdatesCompositeController = new TwitterUpdatesListController();
 			twitterUpdatesCompositeController.setMainController(getMainController());
@@ -70,15 +73,21 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		
 		
 		//Create a controller for the TwitterAccount
-		twitterAccount = AbstractController.createController(TwitterAccountController.class);
-		twitterAccount.setModel(getModel().getTwitterAccount());
-		twitterAccount.setMainController(getMainController());
-		twitterAccount.setServiceManager(getServiceManager());
+		twitterAccountController = AbstractController.createController(TwitterAccountController.class);
+		twitterAccountController.setModel(getModel().getTwitterAccount());
+		twitterAccountController.setMainController(getMainController());
+		twitterAccountController.setServiceManager(getServiceManager());
 		
-		twitterAccount.setParentController(this);
-		twitterAccount.init();
+		twitterAccountController.setParentController(this);
+		twitterAccountController.init();
 		//Add the view of TwitterAccount to this persona
-		getView().add(twitterAccount.getView());
+		getView().add(twitterAccountController.getView());
+		//Add twitter updates list
+		getView().add(new HTML("Update list"));
+		
+		//twitterUpdatesListController = AbstractController.createController(TwitterUpdatesListController.class);
+		//twitterUpdatesListController.setParentController(this);
+		//twitterUpdatesListController.setModel(null);
 		
 		
 		
@@ -136,7 +145,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		
 		if (action.endsWith(IController.IActions.TWEET_THIS)) {
 			TwitterUpdateDTO update = (TwitterUpdateDTO)args[0];
-			final AsyncHandler handle = (AsyncHandler)args[args.length-1];
+			final SendUpdateAsyncHandler handle = (SendUpdateAsyncHandler)args[args.length-1];
 			//startProcessing();
 			try {
 				getServiceManager().getRPCService().postUpdate(update, new AsyncCallback<TwitterUpdateDTO>() {
@@ -260,8 +269,8 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 	@Override
 	public void pause() {
 		
-		if ( this.twitterUpdatesCompositeController != null ) {
-			this.twitterUpdatesCompositeController.pause();
+		if ( this.twitterUpdatesListController != null ) {
+			this.twitterUpdatesListController.pause();
 		}
 		
 		
@@ -269,9 +278,33 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 
 	@Override
 	public void resume() {
-		if ( this.twitterUpdatesCompositeController != null ) {
-			this.twitterUpdatesCompositeController.resume();
+		if ( this.twitterUpdatesListController != null ) {
+			this.twitterUpdatesListController.resume();
 		}
+		
+	}
+
+	public boolean hasTwitterUpdatesListControllerInitialized() {
+		return (this.twitterUpdatesListController != null);
+		
+	}
+
+	public void initializeUpdatesListController() {
+		GWT.log("Initializing UpdatesListController...", null);
+		//initialize only if it's authenticated
+		if ( getModel().getTwitterAccount().getIsOAuthenticated() ) {
+			this.twitterUpdatesListController = AbstractController.createController(TwitterUpdatesListController.class);
+			this.twitterUpdatesListController.setModel(getModel().getTwitterAccount());
+			this.twitterUpdatesListController.setParentController(this);
+			this.twitterUpdatesListController.setServiceManager(getServiceManager());
+			this.twitterUpdatesListController.init();
+			getView().add(this.twitterUpdatesListController.getView());			
+		}
+		
+	}
+
+	public TwitterAccountController getTwitterAccountController() {
+		return this.twitterAccountController;
 		
 	}
 

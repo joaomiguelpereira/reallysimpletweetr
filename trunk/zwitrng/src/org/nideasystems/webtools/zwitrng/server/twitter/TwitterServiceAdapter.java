@@ -9,6 +9,7 @@ import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import twitter4j.ExtendedUser;
 import twitter4j.Paging;
@@ -143,7 +144,7 @@ public class TwitterServiceAdapter {
 
 	}
 
-	public List<TwitterUpdateDTO> getUpdates(TwitterAccountDTO twitterAccount,
+	public TwitterUpdateDTOList getUpdates(TwitterAccountDTO twitterAccount,
 			FilterCriteriaDTO filter) throws Exception {
 
 		// Get the user twitter account
@@ -157,7 +158,7 @@ public class TwitterServiceAdapter {
 		//ExtendedUser extendedUser = twitter.verifyCredentials();
 		
 		// Create new data structure
-		List<TwitterUpdateDTO> returnList = new ArrayList<TwitterUpdateDTO>();
+		TwitterUpdateDTOList returnList = new TwitterUpdateDTOList();
 
 		// if twitter is null, something went wrong
 		assert (twitter != null);
@@ -178,7 +179,7 @@ public class TwitterServiceAdapter {
 
 		// Populate data structure
 		for (Status status : statusList) {
-			returnList.add(DataUtils.createTwitterUpdateDto(status,true));
+			returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(status,true));
 
 			System.out.println("getInReplyToStatusId "
 					+ status.getInReplyToStatusId());

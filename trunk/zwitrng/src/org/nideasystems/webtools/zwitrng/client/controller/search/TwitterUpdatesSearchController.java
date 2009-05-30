@@ -38,11 +38,7 @@ public class TwitterUpdatesSearchController extends TwitterUpdatesController{
 		return null;
 	}
 */
-	@Override
-	public void handleDataLoaded(Object result) {
-		// TODO Auto-generated method stub
-		
-	}
+	
 
 
 	
