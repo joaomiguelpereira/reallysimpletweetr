@@ -150,20 +150,27 @@ public class PersonasListController extends
 	public void onTabSelectedChanged(int selectedTab) {
 		GWT.log("You selected TAB"+selectedTab,null);
 		
+		
 		if (currentPersonaController != null) {
 			currentPersonaController.pause();
 		}
 
 		if (selectedTab != 0) {
-			// TODO:Huum!!
+			
 			final PersonaView personaViewSelected = (PersonaView) this.getView()
 					.getWidget(selectedTab);
-			currentPersonaController = (PersonaController) personaViewSelected
-					.getController();
-			currentPersonaController.resume();
+			
+			currentPersonaController = personaViewSelected.getController();
+			if ( currentPersonaController.hasTwitterUpdatesListControllerInitialized() ) {
+				currentPersonaController.resume();
+			} else {
+				currentPersonaController.initializeUpdatesListController();
+			}
+			
+			
 			// PersonaDTO
-			personaViewSelected.getController().reload();
-			personaViewSelected.refresh();
+			//personaViewSelected.getController().reload();
+			//personaViewSelected.refresh();
 
 		}
 	}

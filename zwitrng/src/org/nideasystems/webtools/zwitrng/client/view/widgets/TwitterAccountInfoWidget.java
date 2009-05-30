@@ -1,7 +1,9 @@
 package org.nideasystems.webtools.zwitrng.client.view.widgets;
 
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -12,7 +14,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author jpereira
  *
  */
-public class PersonaInfoWidget extends HorizontalPanel {
+public class TwitterAccountInfoWidget extends HorizontalPanel {
 
 	private static final String DEFAULT_IMAGE_URL = "https://static.twitter.com/images/default_profile_bigger.png";
 	//HorizontalPanel userInfoPanel = null;
@@ -28,13 +30,15 @@ public class PersonaInfoWidget extends HorizontalPanel {
 	HTML userFollowing = null;
 	HTML userFollowers = null;
 	HTML userUpdates = null;
+	HTML lastStatus = null;
 	
-	public PersonaInfoWidget(TwitterAccountDTO twitterAccount) {
+	public TwitterAccountInfoWidget(TwitterAccountDTO twitterAccount) {
 		super();
 		
 		HorizontalPanel topPannel= new HorizontalPanel();
 		HorizontalPanel middlePannel= new HorizontalPanel();
 		HorizontalPanel bottomPannel= new HorizontalPanel();
+		
 	
 		//create the pannel to hold image + info personal
 		this.leftPanel = new HorizontalPanel();
@@ -42,9 +46,6 @@ public class PersonaInfoWidget extends HorizontalPanel {
 		this.userImage = new Image(twitterAccount==null?DEFAULT_IMAGE_URL:twitterAccount.getTwitterImageUrl());
 		this.leftPanel.add(this.userImage);
 		
-		
-		
-
 		
 		this.userName = new HTML(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterName());
 		topPannel.add(this.userName);
@@ -63,17 +64,13 @@ public class PersonaInfoWidget extends HorizontalPanel {
 		bottomPannel.add(this.userFollowing);
 		this.userUpdates =  new HTML("Updates: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterUpdates()));
 		bottomPannel.add(this.userUpdates);
-		
-		
+		this.lastStatus = new HTML(twitterAccount.getTwitterUpdateDto().getText());
+		//Window.alert(twitterAccount.getTwitterUpdateDto().getText());
+		bottomPannel.add(this.lastStatus);
 		
 		rightPanel.add(topPannel);
 		rightPanel.add(middlePannel);
 		rightPanel.add(bottomPannel);
-		
-		
-		
-	
-	
 		
 		//
 		super.add(leftPanel);
@@ -81,9 +78,8 @@ public class PersonaInfoWidget extends HorizontalPanel {
 		
 		
 		
-		
-		
-		
-		
+	}
+	public void updateLastStatus(TwitterUpdateDTO update) {
+		this.lastStatus.setHTML(update.getText());
 	}
 }

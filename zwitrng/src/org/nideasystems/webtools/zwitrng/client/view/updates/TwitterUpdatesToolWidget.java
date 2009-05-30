@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
 
@@ -17,7 +18,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.PushButton;
 
-public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView {
+public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView<TwitterUpdatesController> {
 	
 	private final CheckBox autoUpdate = new CheckBox("Auto Update?");
 	private final Image refreshImg = new Image(Constants.REFRESH_IMAGE_LOCATION);
@@ -34,7 +35,8 @@ public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				getController().handleAction(IController.IActions.REFRESH_TWEETS);
+				getController().reload();
+				//getController().handleAction(IController.IActions.REFRESH_TWEETS);
 			}
 			
 		});
@@ -46,9 +48,10 @@ public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView {
 			@Override
 			public void onClick(ClickEvent event) {
 				if ( autoUpdate.getValue() ) {
-					getController().handleAction(IController.IActions.ENABLE_AUTO_UPDATE);
+					
+					getController().enableAutoUpdate();
 				} else {
-					getController().handleAction(IController.IActions.DISABLE_AUTO_UPDATE);
+					getController().disableAutoUpdate();
 				}
 				
 				
@@ -66,9 +69,9 @@ public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView {
 
 			@Override
 			public void onChange(ChangeEvent event) {
-				String param = updatesPerPage.getItemText(updatesPerPage.getSelectedIndex());
+				Integer param = Integer.valueOf(updatesPerPage.getItemText(updatesPerPage.getSelectedIndex()));
 				
-				getController().handleAction(IController.IActions.CHANGE_PAGE_SIZE,param);
+				getController().changePageSize(param);
 				
 			}
 			

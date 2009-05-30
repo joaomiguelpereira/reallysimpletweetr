@@ -24,6 +24,7 @@ public class DataUtils {
 		returnPersona.setName(personaDo.getName());
 		returnPersona.setUserEmail(personaDo.getUserEmail());
 
+		
 		// TwitterAccountDTO twitterAcount =
 		// createTwitterAccountDto(authorizedTwitterAccount);
 

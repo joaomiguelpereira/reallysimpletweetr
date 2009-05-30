@@ -14,6 +14,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import twitter4j.ExtendedUser;
 import twitter4j.Status;
@@ -40,7 +41,7 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public List<TwitterUpdateDTO> getTwitterUpdates(
+	public TwitterUpdateDTOList getTwitterUpdates(
 			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter)
 			throws Exception {
 		// Check if is logged in

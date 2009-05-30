@@ -8,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -32,7 +33,7 @@ public class RPCService implements IService {
 		
 	public void getTwitterUpdates(
 			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter,
-			AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception {
+			AsyncCallback<TwitterUpdateDTOList> callback) throws Exception {
 		this.twitterService.getTwitterUpdates(twitterAccount, filter, callback);
 		
 	}
