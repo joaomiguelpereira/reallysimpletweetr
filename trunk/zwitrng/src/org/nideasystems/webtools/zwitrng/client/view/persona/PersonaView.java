@@ -30,8 +30,6 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 	final HorizontalPanel authentication = new HorizontalPanel();
 	final HTML loginUrlLink = new HTML("You need to authenticate");
 	private boolean isInitialized = false;
-	/*HTML linkToLogin = new HTML("");
-	HTML continueLink = new HTML("");;*/
 	/**
 	 * P c
 	 * 
@@ -56,103 +54,9 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 		if (isInitialized) {
 			throw new RuntimeException("You try to initialize personaView again?");
 		}
-		this.add(new HTML("Persona View"));
 		isInitialized = true;
 		
 		
-		
-		/*if (personaObj.getTwitterAccount() != null && personaObj.getTwitterAccount().getIsOAuthenticated() ) {
-
-			userInfoWidget = new PersonaInfoWidget(this.personaObj
-					.getTwitterAccount());
-			super.add(userInfoWidget);
-
-			
-			
-			personaToolsWidget = AbstractController.createView(PersonaToolsWidget.class);
-			
-			personaToolsWidget.setController(getController());
-			personaToolsWidget.init();
-
-			//change this
-			whatImDoing = new HTML("");
-			whenIDidIt = new HTML("");
-			super.add(whatImDoing);
-
-			super.add(personaToolsWidget);
-
-			//Send Updae must have a TwitterAccountController
-			sendUpdateWidget = new SendUpdateWidget();
-			sendUpdateWidget.setController(getController());
-			sendUpdateWidget.setType(SendUpdateWidget.STATUS);
-			sendUpdateWidget.setSendingTwitterAccount(this.personaObj.getTwitterAccount());
-			sendUpdateWidget.init();
-			super.add(sendUpdateWidget);
-			waitingImg.setVisible(false);
-			super.add(waitingImg);
-			isInitialized = true;
-			linkToLogin.setVisible(false);
-			linkToLogin.setVisible(false);
-
-			
-		} else {
-			//Hyperlink linkToLogin = new Hyperlink();
-			
-			linkToLogin.setVisible(true);
-			linkToLogin.setVisible(true);
-			linkToLogin.setHTML("Click here to open a new window to login in twitter."+personaObj.getTwitterAccount().getOAuthLoginUrl());
-			continueLink.setHTML("After you have logged in close the window and click here to grant you access");
-			
-			linkToLogin.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					
-					getController().handleAction(IController.IActions.START_LOGIN);
-					
-				}
-				
-			});
-			
-			continueLink.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					getController().handleAction(IController.IActions.CONTINUE_LOGIN);
-					
-				}
-				
-			});
-			super.add(linkToLogin);
-			super.add(continueLink);
-		}*/
-
-	}
-
-	public void refresh() {
-		if (!isInitialized) {
-			init();
-		}
-		//personaViewSelected.refresh();
-		
-		//if (this.)
-		
-		/*if (personaToolsWidget!=null) {
-			personaToolsWidget.refresh();
-		}
-		
-		lastStatus = personaObj.getTwitterAccount().getTwitterUpdateDto();
-		if (lastStatus != null) {
-			whatImDoing.setHTML("</span><span class=\"text\">"
-					+ lastStatus.getText() + "<span>");
-
-			whenIDidIt.setHTML("<span class=\"createdAt\">"
-					+ lastStatus.getCreatedAt()
-					+ "<span> from <span class=\"source\">"
-					+ lastStatus.getSource() + "</span>");
-
-		}*/
-		//loginUrlLink.setHTML(this.loginUrl);
 
 	}
 

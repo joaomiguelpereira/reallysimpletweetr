@@ -62,8 +62,10 @@ public class DataUtils {
 			twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL()
 					.toExternalForm());
 			twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
-			// twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
 			twitterAcount.setTwitterName(twitterUser.getName());
+			twitterAcount.setTwitterLocation(twitterUser.getLocation());
+			twitterAcount.setTwitterWeb(twitterUser.getURL()!=null?twitterUser.getURL().toExternalForm():"");
+			
 
 		}
 
@@ -89,6 +91,8 @@ public class DataUtils {
 		twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
 		twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
 		twitterAcount.setTwitterName(twitterUser.getName());
+		twitterAcount.setTwitterLocation(twitterUser.getLocation());
+		twitterAcount.setTwitterWeb(twitterUser.getURL()!=null?twitterUser.getURL().toExternalForm():"");
 
 		return twitterAcount;
 	}

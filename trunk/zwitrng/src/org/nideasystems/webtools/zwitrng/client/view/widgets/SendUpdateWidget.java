@@ -52,7 +52,7 @@ public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountCo
 		this.add(waitingImage);
 		waitingImage.setVisible(false);
 
-		update.setWidth("650px");
+		update.setWidth("620px");
 		// update.setHeight("35px");
 		update.addStyleName("input");
 		update.setVisibleLines(2);

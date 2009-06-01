@@ -1,6 +1,7 @@
-package org.nideasystems.webtools.zwitrng.client.controller.updates;
+package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 
+import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 
 
@@ -8,7 +9,7 @@ import org.nideasystems.webtools.zwitrng.client.view.AbstractTabbedPanel;
 public class TwitterUpdatesListView extends AbstractTabbedPanel<TwitterUpdatesListController> {
 	@Override
 	public void init() {
-		super.setWidth("700px");
+		super.setWidth("680px");
 		super.setAnimationEnabled(true);
 		
 	}
