@@ -21,12 +21,6 @@ import com.google.gwt.user.client.ui.Widget;
 public class PersonaToolsWidget extends AbstractVerticalPanelView<PersonaController>{
 	Button deleteBt = null;
 	HorizontalPanel buttons = null;
-	//HorizontalPanel newStatus= null;
-	//TextArea newStatusTxa = null;
-	//Button sendBt = null;
-	//private final Label remainingChars = new Label("140");
-	//private final Label remainingCharsLabel = new Label("Remaining Characters :");
-	
 	
 	
 	public PersonaToolsWidget() {
@@ -38,6 +32,7 @@ public class PersonaToolsWidget extends AbstractVerticalPanelView<PersonaControl
 
 	@Override
 	public void init() {
+		
 		
 		buttons = new HorizontalPanel();
 		//newStatus = new HorizontalPanel();

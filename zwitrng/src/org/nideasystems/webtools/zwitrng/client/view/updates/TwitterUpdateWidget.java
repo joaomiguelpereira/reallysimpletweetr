@@ -1,7 +1,12 @@
-package org.nideasystems.webtools.zwitrng.client.view.widgets;
+package org.nideasystems.webtools.zwitrng.client.view.updates;
+
+import java.sql.Time;
+import java.util.Iterator;
 
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
+import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -13,13 +18,21 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 /**
@@ -36,29 +49,39 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final HorizontalPanel sendUpdateContainer = new HorizontalPanel();
 	private SendUpdateWidget sendUpdateWidget = null;
-	
+	private TwitterUserInfoWidget userInfoPopup = null;
+	private Timer keepUserInfoWidgetTimer = null;
+	private ShowUserInfoPanelTimer showUserInfoWidgetTimer = null;
+	private boolean showUserInfoWidget = false;
 
 	private Image userImg = null;
 
 	// final private HorizontalPanel tweetQuickOptions = new HorizontalPanel();
 
-	public TwitterUpdateWidget(TwitterUpdatesController theParentController, /*TwitterAccountDTO twitterAccount,*/ TwitterUpdateDTO twitterUpdateDTO) {
+	public TwitterUpdateWidget(TwitterUpdatesController theParentController, /*
+																			 * TwitterAccountDTO
+																			 * twitterAccount
+																			 * ,
+																			 */
+			TwitterUpdateDTO twitterUpdateDTO) {
 		super();
+
 		this.parentController = theParentController;
-		//this.twitterAccount = twitterAccount;
+		// this.twitterAccount = twitterAccount;
 		this.twitterUpdate = twitterUpdateDTO;
-		super.setWidth("700px");
-		
+		super.setWidth("630px");
+
 		FlexTable tweetLayout = new FlexTable();
 		FlexCellFormatter tweetLayoutFormatter = tweetLayout
 				.getFlexCellFormatter();
-		tweetLayout.setWidth("700px");
+		tweetLayout.setWidth("630px");
 
 		// Create the user image
 		userImg = new Image(twitterUpdate.getTwitterAccount()
 				.getTwitterImageUrl());
 		userImg.setWidth("48px");
 		userImg.setHeight("48px");
+
 		tweetLayout.setWidget(0, 0, userImg);
 		tweetLayoutFormatter.setAlignment(0, 0,
 				HasHorizontalAlignment.ALIGN_LEFT,
@@ -69,9 +92,9 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		// Create the update Text
 		// TODO: Parse html
 		VerticalPanel tweetInfo = new VerticalPanel();
-		tweetInfo.setWidth("650px");
+		tweetInfo.setWidth("630px");
 
-		HTML updateText = getUpdateTextHtml(twitterUpdate);
+		Widget updateText = getUpdateTextHtml(twitterUpdate);
 		updateText.addStyleName("tweet");
 
 		tweetInfo.add(updateText);
@@ -113,17 +136,13 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		super.add(tweetLayout);
 		super.add(sendUpdateContainer);
 		sendUpdateContainer.setVisible(false);
-		
-		
-		
-		
+
 		this.addMouseOverHandler(new MouseOverHandler() {
 
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				addStyleName("currentTweet");
 				parentController.pause();
-				
 
 			}
 
@@ -138,13 +157,11 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			}
 
 		});
-		
-		
-		
+
 		/***********
 		 * Add Retweet functionality
 		 */
-		
+
 		retweet.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -156,7 +173,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		/***********
 		 * Add Reply functionality
 		 */
-		
+
 		reply.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -165,35 +182,181 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			}
 
 		});
-		
-		
+		setupUserPanel();
 
 	}
+
+	private class HideUserInfoPanelTimer extends Timer {
+
+		@Override
+		public void run() {
+			if (userInfoPopup != null) {
+				userInfoPopup.hide(true);
+			}
+		}
+
+	}
+
+	private class ShowUserInfoPanelTimer extends Timer {
+
+		int left;
+		int top;
+
+		@Override
+		public void run() {
+			showUserInfoWidget = true;
+			createUserPopupPanel(left,top);
+		}
+	}
+
 	
-	
+	private void createUserPopupPanel(int left, int top) {
+		if (!showUserInfoWidget) {
+			if (showUserInfoWidgetTimer == null) {
+				showUserInfoWidgetTimer = new ShowUserInfoPanelTimer();
+				showUserInfoWidgetTimer.left = left;
+				showUserInfoWidgetTimer.top = top;
+				showUserInfoWidgetTimer.schedule(500);
+
+			}
+		} else {
+			if (userInfoPopup == null) {
+				userInfoPopup = new TwitterUserInfoWidget(twitterUpdate
+						.getTwitterAccount());
+
+			}
+			if (keepUserInfoWidgetTimer != null) {
+				keepUserInfoWidgetTimer.cancel();
+			}
+
+			userInfoPopup.setPopupPosition(left, top);
+			userInfoPopup.show();
+
+		}
+
+	}
+
+	private void destroyUserPopupPanel() {
+		if (userInfoPopup != null) {
+			if (keepUserInfoWidgetTimer == null) {
+				keepUserInfoWidgetTimer = new HideUserInfoPanelTimer();
+			}
+			keepUserInfoWidgetTimer.schedule(500);
+		}
+		if ( showUserInfoWidgetTimer!= null) {
+			showUserInfoWidgetTimer.cancel();
+			showUserInfoWidget = false;
+			showUserInfoWidgetTimer = null;
+			
+			
+		}
+
+	}
+
+	private void setupUserPanel() {
+		// Add mouse over
+		userImg.addMouseOverHandler(new MouseOverHandler() {
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				createUserPopupPanel(userImg.getAbsoluteLeft() + 48, userImg
+						.getAbsoluteTop());
+
+			}
+
+		});
+		userImg.addMouseOutHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				destroyUserPopupPanel();
+			}
+
+		});
+	}
+
 	private void showSendUpdate(int type) {
-		if ( sendUpdateWidget == null ) {
-			//Create new 
-			sendUpdateWidget = parentController.getTwitterAccountController().createSendUpdateWidget(twitterUpdate, type, true);
+		if (sendUpdateWidget == null) {
+			// Create new
+			sendUpdateWidget = parentController.getTwitterAccountController()
+					.createSendUpdateWidget(twitterUpdate, type, true);
 			sendUpdateContainer.add(sendUpdateWidget);
 			sendUpdateWidget.addAsyncHandler(this);
 			sendUpdateContainer.setVisible(true);
 			sendUpdateWidget.refresh();
-		} else if (sendUpdateWidget.getType() != type ) {
+		} else if (sendUpdateWidget.getType() != type) {
 			sendUpdateWidget.setType(type);
 			sendUpdateWidget.refresh();
 		}
-		
-		
-		
+
 	}
+
+	private Widget getUpdateTextHtml(TwitterUpdateDTO twitterUpdate) {
 	
 
-	private HTML getUpdateTextHtml(TwitterUpdateDTO twitterUpdate) {
-		return new HTML("<span class=\"userScreenName\">"
+		FlowPanel update = new FlowPanel();
+
+		final InlineHTML screenName = new InlineHTML();
+		
+
+		final InlineHTML updateText = new InlineHTML();
+
+		screenName.setHTML("<span class=\"userScreenName\">"
 				+ twitterUpdate.getTwitterAccount().getTwitterScreenName()
-				+ " </span><span class=\"text\">" + twitterUpdate.getText()
+				+ " </span>");
+
+		updateText.setHTML("<span class=\"text\">" + twitterUpdate.getText()
 				+ "</span>");
+
+		// updateText.addStyleName("html-noBlock");
+
+		update.add(screenName);
+		update.add(updateText);
+
+		screenName.addStyleName("link");
+		screenName.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
+						.getAbsoluteTop() + 20);
+				
+			}
+			
+		});
+		screenName.addMouseOverHandler(new MouseOverHandler() {
+
+			@Override
+			public void onMouseOver(MouseOverEvent event) {
+				createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
+						.getAbsoluteTop() + 20);
+
+			}
+
+		});
+		screenName.addMouseOutHandler(new MouseOutHandler() {
+
+			@Override
+			public void onMouseOut(MouseOutEvent event) {
+				destroyUserPopupPanel();
+
+			}
+
+		});
+		return update;
+
+		/*
+		 * updateTextPanel.add(screenName); updateTextPanel.add(updateText);
+		 * return updateTextPanel;
+		 */
+
+		/*
+		 * return new HTML("<span class=\"userScreenName\">" +
+		 * twitterUpdate.getTwitterAccount().getTwitterScreenName() +
+		 * " </span><span class=\"text\">" + twitterUpdate.getText() +
+		 * "</span>");
+		 */
+
 	}
 
 	private HTML getUpdateMetaInfoHtml(TwitterUpdateDTO twitterUpdate) {
@@ -204,44 +367,51 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	}
 
-	
+	/*
+	 * private native void publishNativeJSCode(TwitterUpdateWidget instance) -{
+	 * $wnd.testA = function () {
+	 * instance.@org.nideasystems.webtools.zwitrng.client
+	 * .view.updates.TwitterUpdateWidget::doSomething()(); };
+	 * 
+	 * }-;
+	 * 
+	 * 
+	 * public void doSomething() { Window.alert(twitterUpdate.getText()); }
+	 */
 	private void hasReply(TwitterUpdateDTO result) {
 
 		HorizontalPanel replyPannel = new HorizontalPanel();
-		
+
 		Image userImg = new Image(result.getTwitterAccount()
 				.getTwitterImageUrl());
 
-		
 		userImg.setWidth("32px");
 		userImg.setHeight("32px");
 		userImg.addStyleName("userImageReply");
 		replyPannel.add(userImg);
-		//replyPannel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
-		
+		// replyPannel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_RIGHT);
 
 		FlexTable layout = new FlexTable();
 		layout.setCellSpacing(0);
 		layout.setCellSpacing(0);
-		
-		HTML updateText = getUpdateTextHtml(result);
-		
+
+		Widget updateText = getUpdateTextHtml(result);
+
 		updateText.addStyleName("tweetReply");
 		layout.setWidget(0, 0, updateText);
 
 		HTML updateMetaInfoHtml = getUpdateMetaInfoHtml(result);
-		
+
 		updateMetaInfoHtml.addStyleName("tweetReplyMetadata");
-		
+
 		layout.setWidget(1, 0, updateMetaInfoHtml);
-		
+
 		replyPannel.add(layout);
-		
+
 		this.add(replyPannel);
-		//this.sendUpdate.setVisible(false);
+		// this.sendUpdate.setVisible(false);
 	}
 
-	
 	public void setTwitterUpdate(TwitterUpdateDTO twitterUpdate) {
 		this.twitterUpdate = twitterUpdate;
 	}
@@ -249,7 +419,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	public TwitterUpdateDTO getTwitterUpdate() {
 		return twitterUpdate;
 	}
-	
+
 	@Override
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());
@@ -264,30 +434,29 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	@Override
 	public void onFailure(Throwable tr) {
-		removeSendUpdate();		
+		removeSendUpdate();
 	}
 
 	@Override
 	public void onSuccess(Object arg) {
-		TwitterUpdateDTO update = (TwitterUpdateDTO)arg; 
-		if ( update.getInReplyToStatusId() == this.twitterUpdate.getId() ) {
+		TwitterUpdateDTO update = (TwitterUpdateDTO) arg;
+		if (update.getInReplyToStatusId() == this.twitterUpdate.getId()) {
 			hasReply(update);
 		}
-		
-		removeSendUpdate();	}
 
+		removeSendUpdate();
+	}
 
 	@Override
 	public void onCancel() {
 		removeSendUpdate();
 	}
-	
+
 	private void removeSendUpdate() {
 		this.sendUpdateContainer.remove(this.sendUpdateWidget);
 		this.sendUpdateContainer.setVisible(false);
 		this.sendUpdateWidget = null;
-		
-	}
 
+	}
 
 }

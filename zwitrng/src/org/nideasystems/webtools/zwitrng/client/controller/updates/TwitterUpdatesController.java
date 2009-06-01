@@ -6,8 +6,8 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesView;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -27,7 +27,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	private Map<Long, TwitterUpdateDTO> updates = new HashMap<Long, TwitterUpdateDTO>();
 	private long lastUpdateId = 1;
 	private Timer timerForAutoUpdates = null;
-	private int timeBeforeAutoUpdate = 10; // Seconds
+	private int timeBeforeAutoUpdate = 60; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
 	private Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
 	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
@@ -46,6 +46,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	}
 
 	
+
 	public UpdatesType getUpdatesType() {
 		return updatesType;
 	}

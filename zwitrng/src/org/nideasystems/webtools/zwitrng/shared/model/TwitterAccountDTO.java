@@ -7,6 +7,8 @@ public class TwitterAccountDTO implements IModel {
 	private String twitterScreenName;
 	private String twitterPassword;
 	private String twitterName;	
+	private String twitterLocation;
+	private String twitterWeb;
 	private String twitterDescription;
 	private String twitterImageUrl;
 	private Integer twitterFollowers;
@@ -14,6 +16,7 @@ public class TwitterAccountDTO implements IModel {
 	private String location;
 	private Integer twitterUpdates;
 	private Integer twitterFriends;
+	
 	
 	
 	private Boolean isOAuthenticated = false;
@@ -119,6 +122,18 @@ public class TwitterAccountDTO implements IModel {
 	}
 	public Integer getTwitterFriends() {
 		return twitterFriends;
+	}
+	public void setTwitterLocation(String twitterLocation) {
+		this.twitterLocation = twitterLocation;
+	}
+	public String getTwitterLocation() {
+		return twitterLocation;
+	}
+	public void setTwitterWeb(String twitterWeb) {
+		this.twitterWeb = twitterWeb;
+	}
+	public String getTwitterWeb() {
+		return twitterWeb;
 	}
 	
 }
