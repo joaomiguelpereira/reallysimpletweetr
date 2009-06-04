@@ -1,12 +1,8 @@
 package org.nideasystems.webtools.zwitrng.client.view.updates;
 
-import java.sql.Time;
-import java.util.Iterator;
-
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -19,8 +15,6 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -29,8 +23,6 @@ import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
@@ -58,11 +50,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	// final private HorizontalPanel tweetQuickOptions = new HorizontalPanel();
 
-	public TwitterUpdateWidget(TwitterUpdatesController theParentController, /*
-																			 * TwitterAccountDTO
-																			 * twitterAccount
-																			 * ,
-																			 */
+	public TwitterUpdateWidget(TwitterUpdatesController theParentController, 
 			TwitterUpdateDTO twitterUpdateDTO) {
 		super();
 
@@ -222,7 +210,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		} else {
 			if (userInfoPopup == null) {
 				userInfoPopup = new TwitterUserInfoWidget(twitterUpdate
-						.getTwitterAccount());
+						.getTwitterAccount(),parentController);
 
 			}
 			if (keepUserInfoWidgetTimer != null) {

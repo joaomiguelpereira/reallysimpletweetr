@@ -4,8 +4,7 @@ import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
-import org.nideasystems.webtools.zwitrng.client.view.widgets.SendUpdateWidget;
-import org.nideasystems.webtools.zwitrng.client.view.widgets.TwitterAccountInfoWidget;
+import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
