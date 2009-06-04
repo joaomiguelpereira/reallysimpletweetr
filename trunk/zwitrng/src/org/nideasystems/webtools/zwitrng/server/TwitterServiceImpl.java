@@ -1,6 +1,5 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-
 import java.util.List;
 
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
@@ -10,6 +9,7 @@ import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.ExtendedTwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -19,13 +19,11 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import twitter4j.ExtendedUser;
 import twitter4j.Status;
 
-
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class TwitterServiceImpl extends RemoteServiceServlet implements
 		TwitterService {
 
-	
 	private static final long serialVersionUID = -481643127871478064L;
 
 	@Override
@@ -34,8 +32,10 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 
 		// Check if is logged in
 		AuthorizationManager.checkAuthentication();
+		return null;
 
-		return TwitterServiceAdapter.get().searchStatus(twitterAccount, filter);
+		// return TwitterServiceAdapter.get().searchStatus(twitterAccount,
+		// filter);
 
 	}
 
@@ -53,71 +53,81 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public TwitterUpdateDTO postUpdate(TwitterUpdateDTO update)
 			throws Exception {
-		//Send tweet
+		// Send tweet
 		// Check if is logged in
 		AuthorizationManager.checkAuthentication();
-		
+
 		TwitterUpdateDTO lastUpdate = null;
 		Status status = TwitterServiceAdapter.get().postUpdate(update);
-		if ( status != null ) {
-			lastUpdate = DataUtils.createTwitterUpdateDto(status,true);
+		if (status != null) {
+			lastUpdate = DataUtils.createTwitterUpdateDto(status, true);
 		}
-			
-		//if this a inReplyTo
-		//if ( status.getInReplyToStatusId()>0) {
-			//Get the update
-			//get the status
-			//status.
-			//TwitterServiceAdapter.get().getStatus(update.getTwitterAccount(),status.getInReplyToStatusId());
-			//twitterUpdate.setInInre
-		//}
+
+		// if this a inReplyTo
+		// if ( status.getInReplyToStatusId()>0) {
+		// Get the update
+		// get the status
+		// status.
+		// TwitterServiceAdapter.get().getStatus(update.getTwitterAccount(),status.getInReplyToStatusId());
+		// twitterUpdate.setInInre
+		// }
 
 		return lastUpdate;
-		
-		//throw new Exception("Not implemented");
-		
+
+		// throw new Exception("Not implemented");
+
 	}
 
 	@Override
 	public OAuthInfoDTO getOAuthInfo(TwitterAccountDTO twitterAccount)
 			throws Exception {
-		
-		//throw new Exception("Not implemented");
+
+		// throw new Exception("Not implemented");
 		// TODO Auto-generated method stub
-		//return TwitterServiceAdapter.get().getOAuthInfo(twitterAccount);
+		// return TwitterServiceAdapter.get().getOAuthInfo(twitterAccount);
 		return null;
 	}
 
 	@Override
 	public TwitterAccountDTO authenticateUser(PersonaDTO personaDto)
 			throws Exception {
-		
-		TwitterAccountDTO authorizedTwitterAccount = TwitterServiceAdapter.get().authorizeAccount(personaDto.getTwitterAccount());
-		
-		ExtendedUser exUser = TwitterServiceAdapter.get().getExtendedUser(authorizedTwitterAccount);
-		
-		TwitterAccountDTO fullAuthorizeddAccount =  DataUtils.mergeTwitterAccount(exUser,authorizedTwitterAccount);
-		//Update DOmain Object in DB with new oauth token
+
+		TwitterAccountDTO authorizedTwitterAccount = TwitterServiceAdapter
+				.get().authorizeAccount(personaDto.getTwitterAccount());
+
+		ExtendedUser exUser = TwitterServiceAdapter.get().getExtendedUser(
+				authorizedTwitterAccount);
+
+		TwitterAccountDTO fullAuthorizeddAccount = DataUtils
+				.mergeTwitterAccount(exUser, authorizedTwitterAccount);
+		// Update DOmain Object in DB with new oauth token
 		PersonaDAO personaDao = new PersonaDAO();
-		TwitterAccountDO twitterAccountDo = DataUtils.twitterAccountDoFromDto(fullAuthorizeddAccount);
-		personaDao.updatePersonaTwitterAccount(personaDto,twitterAccountDo);
-		
-		
-		
-		
-		
-		/*twitter4j.User authenticatedTwitterUser = null;
-		
-		authenticatedTwitterUser = TwitterServiceAdapter.get().getAuthenticatedUser(twitterAccount);
-		//Merge 
-		TwitterAccountDTO authenticatedAccount =  DataUtils.mergeTwitterAccount(authenticatedTwitterUser,twitterAccount);
-		
-		//Update with Extended User
-		ExtendedUser exUser = TwitterServiceAdapter.get().getExtendedUser(authenticatedAccount);
-		//return authenticatedAccount;
-		DataUtils.mergeExtendedUserAccount(exUser,authenticatedAccount);*/
-		
+		TwitterAccountDO twitterAccountDo = DataUtils
+				.twitterAccountDoFromDto(fullAuthorizeddAccount);
+		personaDao.updatePersonaTwitterAccount(personaDto, twitterAccountDo);
+
 		return fullAuthorizeddAccount;
+	}
+
+	@Override
+	public TwitterAccountDTO getExtendedUserAccount(
+			TwitterAccountDTO twitterAccount, Integer userId) throws Exception {
+		return TwitterServiceAdapter.get().getExtendedUser(twitterAccount,
+				userId);
+
+	}
+
+	@Override
+	public void followUser(TwitterAccountDTO account, boolean follow,
+			Integer userId) throws Exception {
+		TwitterServiceAdapter.get().followUser(account, follow, userId);
+	}
+
+	@Override
+	public void blockUser(TwitterAccountDTO account, boolean block,
+			Integer userId) throws Exception {
+		TwitterServiceAdapter.get().blockUser(account, block, userId);
+		
 	}
 
 }
