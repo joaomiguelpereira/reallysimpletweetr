@@ -254,9 +254,14 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 
 
-	public void getExtendedUserInfo(Integer accountId,
+	/**
+	 * Delegate this request to parent controller
+	 * @param accountIdorScreenName
+	 * @param callback
+	 */
+	public void getExtendedUserInfo(String accountIdorScreenName,
 			TwitterAccountOperationCallBack callback) {
-		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().getExtendedUserAccount(accountId,callback);
+		getTwitterAccountController().getExtendedUserAccount(accountIdorScreenName,callback);
 		
 	}
 
@@ -270,7 +275,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	 */
 	public void followUser(boolean follow, Integer id, TwitterAccountOperationCallBack callback) {
 		
-		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().followUser(follow, id, callback);
+		getTwitterAccountController().followUser(follow, id, callback);
 		
 	}
 

@@ -65,9 +65,9 @@ public class RPCService implements IService {
 		
 	}
 
-	public void getExtendedUser(TwitterAccountDTO autehnticatedUser, Integer userId,
+	public void getExtendedUser(TwitterAccountDTO autehnticatedUser, String userIdOrScreenName,
 			AsyncCallback<TwitterAccountDTO> callback) throws Exception {
-		this.twitterService.getExtendedUserAccount(autehnticatedUser,userId, callback);
+		this.twitterService.getExtendedUserAccount(autehnticatedUser,userIdOrScreenName, callback);
 		
 	}
 

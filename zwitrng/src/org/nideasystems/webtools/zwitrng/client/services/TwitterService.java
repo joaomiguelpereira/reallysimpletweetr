@@ -35,7 +35,7 @@ public interface TwitterService extends RemoteService {
 	TwitterAccountDTO authenticateUser(PersonaDTO personaDto) throws Exception;
 
 	TwitterAccountDTO getExtendedUserAccount(TwitterAccountDTO twitterAccount,
-			Integer userId) throws Exception;
+			String userIdorScreenName) throws Exception;
 
 	void followUser(TwitterAccountDTO account, boolean follow, Integer userId)
 			throws Exception;

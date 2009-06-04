@@ -300,14 +300,21 @@ public class TwitterServiceAdapter {
 		}		
 	}
 
-	public TwitterAccountDTO getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount,Integer userId) throws Exception{
+	/**
+	 * Get extended information regarding the user identified by userIdOrScreenName
+	 * @param authenticatedTwitterAccount
+	 * @param userIdOrScreenName
+	 * @return
+	 * @throws Exception
+	 */
+	public TwitterAccountDTO getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount,String userIdOrScreenName) throws Exception{
 		
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(authenticatedTwitterAccount.getOAuthToken(), authenticatedTwitterAccount.getOAuthTokenSecret());
 		ExtendedUser extUser = null;
 		try {
-			extUser = twitter.getUserDetail(userId.toString());
+			extUser = twitter.getUserDetail(userIdOrScreenName);
 		} catch (TwitterException e) {
 			log.severe("error calling twitter"+e.getMessage());
 			throw new Exception(e);
@@ -319,9 +326,9 @@ public class TwitterServiceAdapter {
 		
 		ExtendedTwitterAccountDTO extendedDto = new ExtendedTwitterAccountDTO();
 		
-		extendedDto.setImBlocking(twitter.existsBlock(userId.toString()));
-		extendedDto.setImFollowing(twitter.existsFriendship(authenticatedTwitterAccount.getId().toString(), userId.toString()));
-		
+		extendedDto.setImBlocking(twitter.existsBlock(userIdOrScreenName));
+		extendedDto.setImFollowing(twitter.existsFriendship(authenticatedTwitterAccount.getId().toString(), userIdOrScreenName));
+		extendedDto.setMutualFriendShip(twitter.existsFriendship(userIdOrScreenName,authenticatedTwitterAccount.getId().toString()));
 		twitterAccountDto.setExtendedUserAccount(extendedDto);
 		return twitterAccountDto;
 		

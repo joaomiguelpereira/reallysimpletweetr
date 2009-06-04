@@ -4,7 +4,6 @@ import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -15,21 +14,19 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 public class TwitterUserInfoWidget extends PopupPanel implements
-		HasMouseOverHandlers, HasMouseOutHandlers, TwitterAccountOperationCallBack {
+		HasMouseOverHandlers, HasMouseOutHandlers,
+		TwitterAccountOperationCallBack {
 
 	private boolean hasMouseOver = false;
 	private Timer hidePanelTimer = null;
@@ -38,7 +35,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	private static final String HEIGHT = "150px";
 	private TwitterUpdatesController parentController = null;
 	private InlineHTML followLink = new InlineHTML();
-	private TwitterAccountDTO twitterAccount= null;
+	private TwitterAccountDTO twitterAccount = null;
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
 	private InlineHTML blockLink = new InlineHTML();
 
@@ -47,7 +44,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		this.setAnimationEnabled(true);
 		this.parentController = parentController;
 		this.setWidth(WIDTH);
-		
+
 		HorizontalPanel tempPanel = new HorizontalPanel();
 		tempPanel.add(waitingImg);
 		this.setWidget(tempPanel);
@@ -79,11 +76,11 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 		});
 		this.twitterAccount = account;
-		parentController.getExtendedUserInfo(account.getId(), this);
+		parentController.getExtendedUserInfo(account.getId().toString(), this);
 	}
 
-	private VerticalPanel createTopPanel() {
-		
+	private VerticalPanel createMainPanel() {
+
 		VerticalPanel mainPanel = new VerticalPanel();
 		mainPanel.setSpacing(2);
 		mainPanel.setWidth(WIDTH);
@@ -100,9 +97,11 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		infoPanel.setSpacing(0);
 
 		InlineHTML userNamePlusUserScreeName = new InlineHTML(
-				"<span class=\"userName\">" + this.twitterAccount.getTwitterName()
+				"<span class=\"userName\">"
+						+ this.twitterAccount.getTwitterName()
 						+ "</span> (<span class=\"userScreenName\">"
-						+ this.twitterAccount.getTwitterScreenName() + "</span>)");
+						+ this.twitterAccount.getTwitterScreenName()
+						+ "</span>)");
 		infoPanel.add(userNamePlusUserScreeName);
 
 		if (this.twitterAccount.getTwitterLocation() != null
@@ -110,19 +109,21 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 			InlineHTML userLocation = new InlineHTML(
 					"Location: <span class=\"userLocation\">"
-							+ this.twitterAccount.getTwitterLocation() + "</span>");
+							+ this.twitterAccount.getTwitterLocation()
+							+ "</span>");
 			infoPanel.add(userLocation);
 		}
 
 		if (this.twitterAccount.getTwitterWeb() != null
 				&& this.twitterAccount.getTwitterWeb().length() > 1) {
 
-			InlineHTML userWeb = new InlineHTML("<a href=\""
+			InlineHTML userUrl = new InlineHTML("<a href=\""
 					+ this.twitterAccount.getTwitterWeb()
 					+ "\" target=\"_blank\" class=\"userWeb\">"
 					+ this.twitterAccount.getTwitterWeb() + "</a>");
-			userWeb.addStyleName("link");
-			infoPanel.add(userWeb);
+			userUrl.addStyleName("link");
+			userUrl.setTitle("Click to open the user page in a new window");
+			infoPanel.add(userUrl);
 		}
 
 		topPanel.add(infoPanel);
@@ -131,7 +132,6 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 		VerticalPanel extendedUserInfo = new VerticalPanel();
 
-		
 		extendedUserInfo.setWidth(WIDTH);
 		FlexTable bottomLayout = new FlexTable();
 
@@ -140,15 +140,15 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		InlineHTML followers_label = new InlineHTML("Followers: ");
 		InlineHTML updates_label = new InlineHTML("Updates: ");
 
-		InlineHTML following = new InlineHTML(this.twitterAccount.getTwitterFriends()
-				.toString());
-		InlineHTML followers = new InlineHTML(this.twitterAccount.getTwitterFollowers()
-				.toString());
-		InlineHTML updates = new InlineHTML(this.twitterAccount.getTwitterUpdates()
-				.toString());
+		InlineHTML following = new InlineHTML(this.twitterAccount
+				.getTwitterFriends().toString());
+		InlineHTML followers = new InlineHTML(this.twitterAccount
+				.getTwitterFollowers().toString());
+		InlineHTML updates = new InlineHTML(this.twitterAccount
+				.getTwitterUpdates().toString());
 
-		following.setTitle("Click to see who " + this.twitterAccount.getTwitterScreenName()
-				+ " is following");
+		following.setTitle("Click to see who "
+				+ this.twitterAccount.getTwitterScreenName() + " is following");
 		followers.setTitle("Click to see who's following "
 				+ this.twitterAccount.getTwitterScreenName());
 		updates.setTitle("Click to see the updates for "
@@ -164,56 +164,72 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		bottomLayout.setWidget(0, 3, followers);
 		bottomLayout.setWidget(0, 4, updates_label);
 		bottomLayout.setWidget(0, 5, updates);
-		
-		
+
+		HorizontalPanel optionPannel = new HorizontalPanel();
+
+		optionPannel.addStyleName("user_options");
 
 		// Add follow/unfollow user link
-		setupFollowLink(this.twitterAccount.getExtendedUserAccount().isImFollowing());		
+		setupFollowLink(this.twitterAccount.getExtendedUserAccount()
+				.isImFollowing());
 		followLink.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				waitingImg.setVisible(true);
-				parentController.followUser(!twitterAccount.getExtendedUserAccount().isImFollowing(), twitterAccount.getId(), instance);
+				parentController.followUser(!twitterAccount
+						.getExtendedUserAccount().isImFollowing(),
+						twitterAccount.getId(), instance);
 			}
-			
+
 		});
+		optionPannel.add(followLink);
 
 		// Add block/unblok
-		setupBlockLink(this.twitterAccount.getExtendedUserAccount().isImBlocking());
+		setupBlockLink(this.twitterAccount.getExtendedUserAccount()
+				.isImBlocking());
 		blockLink.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				waitingImg.setVisible(true);
-				parentController.blockUser(!twitterAccount.getExtendedUserAccount().isImBlocking(), twitterAccount.getId(), instance);
-				
-				
+				parentController.blockUser(!twitterAccount
+						.getExtendedUserAccount().isImBlocking(),
+						twitterAccount.getId(), instance);
+
 			}
-			
+
 		});
-		
-		InlineHTML sendPm = new InlineHTML("Send private message");
-		sendPm.addStyleName("style");
+		optionPannel.add(blockLink);
+
+		// Start Set Up the Send Private Message Link
+		if (twitterAccount.getExtendedUserAccount().isMutualFriendShip()) {
+			InlineHTML sendPm = new InlineHTML("Send private message");
+			sendPm.addStyleName("link");
+			sendPm.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					Window.alert("opening");
+					SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(twitterAccount);
+					sendPrivateMessageWindow.setAnimationEnabled(true);
+					sendPrivateMessageWindow.show();
+				}
+
+			});
+
+			optionPannel.add(sendPm);
+		}
+		// End Set Up the Send Private Message Link
+
 		InlineHTML groups = new InlineHTML("Groups");
 		groups.addStyleName("link");
-		HorizontalPanel optionPannel = new HorizontalPanel();
-		
-		
-		optionPannel.addStyleName("user_options");
-		optionPannel.add(followLink);
-		optionPannel.add(blockLink);
-		optionPannel.add(sendPm);
+
 		optionPannel.add(groups);
 		optionPannel.add(waitingImg);
 		waitingImg.setVisible(false);
 		optionPannel.setSpacing(5);
-		
-		
-		/*
-		 * activity.setSpacing(5); activity.add(following);
-		 * activity.add(followers); activity.add(updates);
-		 */
+
 		extendedUserInfo.add(bottomLayout);
 		extendedUserInfo.add(optionPannel);
 		mainPanel.add(topPanel);
@@ -224,6 +240,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 	/**
 	 * Create block/unblock link
+	 * 
 	 * @param isBlocking
 	 */
 	private void setupBlockLink(boolean isBlocking) {
@@ -239,10 +256,12 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 		}
 		blockLink.addStyleName("link");
-		
+
 	}
+
 	/**
 	 * Set up the Follow/unfollow link
+	 * 
 	 * @param isFollowing
 	 */
 	private void setupFollowLink(boolean isFollowing) {
@@ -259,6 +278,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		}
 		followLink.addStyleName("link");
 	}
+
 	/**
 	 * Timer to hide the panel
 	 * 
@@ -304,47 +324,49 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	@Override
 	public void onTwitterAccountLoadSuccess(TwitterAccountDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;
-		this.setWidget(createTopPanel());
+		this.setWidget(createMainPanel());
 
 	}
 
 	@Override
 	public void onBlockUserError(String error) {
 		waitingImg.setVisible(false);
-		
+
 	}
 
 	@Override
 	public void onBlockUserSuccess(Object result) {
 		waitingImg.setVisible(false);
-		twitterAccount.getExtendedUserAccount().setImBlocking(!twitterAccount.getExtendedUserAccount().isImBlocking());
+		twitterAccount.getExtendedUserAccount().setImBlocking(
+				!twitterAccount.getExtendedUserAccount().isImBlocking());
 		setupBlockLink(twitterAccount.getExtendedUserAccount().isImBlocking());
 	}
 
 	@Override
 	public void onFollowUserError(String error) {
-		//Window.alert("Follow fail "+error);
+		// Window.alert("Follow fail "+error);
 		waitingImg.setVisible(false);
 	}
 
 	@Override
 	public void onFollowUserSuccess(Object result) {
 		waitingImg.setVisible(false);
-		twitterAccount.getExtendedUserAccount().setImFollowing(!twitterAccount.getExtendedUserAccount().isImFollowing());
+		twitterAccount.getExtendedUserAccount().setImFollowing(
+				!twitterAccount.getExtendedUserAccount().isImFollowing());
 		setupFollowLink(twitterAccount.getExtendedUserAccount().isImFollowing());
-		
+
 	}
 
 	@Override
 	public void onPrivateMessageError(String error) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onPrivateMessageSuccess(Object result) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

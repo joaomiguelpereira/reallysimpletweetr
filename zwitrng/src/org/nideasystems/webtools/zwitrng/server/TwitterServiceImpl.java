@@ -111,9 +111,9 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 
 	@Override
 	public TwitterAccountDTO getExtendedUserAccount(
-			TwitterAccountDTO twitterAccount, Integer userId) throws Exception {
+			TwitterAccountDTO twitterAccount, String userIdOrScreenName) throws Exception {
 		return TwitterServiceAdapter.get().getExtendedUser(twitterAccount,
-				userId);
+				userIdOrScreenName);
 
 	}
 
