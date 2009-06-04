@@ -5,7 +5,9 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
+import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
@@ -247,6 +249,42 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 	public TwitterAccountController getTwitterAccountController() {
 		return ((TwitterUpdatesListController)getParentController()).getTwitterAccountController();
+		
+	}
+
+
+
+	public void getExtendedUserInfo(Integer accountId,
+			TwitterAccountOperationCallBack callback) {
+		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().getExtendedUserAccount(accountId,callback);
+		
+	}
+
+
+
+	/**
+	 * Delegate followUser to parent controller
+	 * @param follow
+	 * @param id
+	 * @param callback
+	 */
+	public void followUser(boolean follow, Integer id, TwitterAccountOperationCallBack callback) {
+		
+		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().followUser(follow, id, callback);
+		
+	}
+
+
+
+	/**
+	 * Delegate block user to parent controller
+	 * @param block
+	 * @param id
+	 * @param callback
+	 */
+	public void blockUser(boolean block, Integer id, TwitterUserInfoWidget callback) {
+		
+		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().blockUser(block, id, callback);
 		
 	}
 
