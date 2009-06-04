@@ -29,7 +29,7 @@ public interface TwitterServiceAsync {
 			AsyncCallback<TwitterAccountDTO> asyncCallback) throws Exception;
 
 	void getExtendedUserAccount(TwitterAccountDTO twitterAccount,
-			Integer userId, AsyncCallback<TwitterAccountDTO> callbak)
+			String userIdOrScreenName, AsyncCallback<TwitterAccountDTO> callbak)
 			throws Exception;
 
 	void followUser(TwitterAccountDTO account, boolean follow, Integer id,

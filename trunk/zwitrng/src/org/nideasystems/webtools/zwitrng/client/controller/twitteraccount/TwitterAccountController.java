@@ -20,7 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class TwitterAccountController extends
 		AbstractController<TwitterAccountDTO, TwitterAccountView> {
 
-	private Map<Integer, TwitterAccountDTO> extendedUsersInfo = null;
+	private Map<String, TwitterAccountDTO> extendedUsersInfo = null;
 
 	@Override
 	public void init() {
@@ -129,16 +129,21 @@ public class TwitterAccountController extends
 
 	}
 
-	public void getExtendedUserAccount(final Integer accountId,
+	/**
+	 * Get from service extended information about a Twitter User
+	 * @param accountIdOrScreenName
+	 * @param callback
+	 */
+	public void getExtendedUserAccount(final String accountIdOrScreenName,
 			final TwitterAccountOperationCallBack callback) {
 
 		if (this.extendedUsersInfo != null
-				&& this.extendedUsersInfo.containsKey(accountId)) {
-			callback.onTwitterAccountLoadSuccess(this.extendedUsersInfo.get(accountId));
+				&& this.extendedUsersInfo.containsKey(accountIdOrScreenName)) {
+			callback.onTwitterAccountLoadSuccess(this.extendedUsersInfo.get(accountIdOrScreenName));
 		} else {
 			try {
 				getServiceManager().getRPCService().getExtendedUser(
-						this.getModel(), accountId,
+						this.getModel(), accountIdOrScreenName,
 						new AsyncCallback<TwitterAccountDTO>() {
 
 							@Override
@@ -151,9 +156,9 @@ public class TwitterAccountController extends
 							@Override
 							public void onSuccess(TwitterAccountDTO result) {
 								if (extendedUsersInfo == null ) {
-									extendedUsersInfo = new HashMap<Integer, TwitterAccountDTO>();
+									extendedUsersInfo = new HashMap<String, TwitterAccountDTO>();
 								}
-								extendedUsersInfo.put(accountId, result);
+								extendedUsersInfo.put(accountIdOrScreenName, result);
 								callback.onTwitterAccountLoadSuccess(result);
 
 							}
