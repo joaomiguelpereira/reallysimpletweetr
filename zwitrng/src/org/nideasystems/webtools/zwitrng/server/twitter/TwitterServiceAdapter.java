@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.model.ExtendedTwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -47,7 +48,7 @@ public class TwitterServiceAdapter {
 		return new TwitterServiceAdapter();
 	}
 
-	public List<TwitterUpdateDTO> searchStatus(
+	/*public List<TwitterUpdateDTO> searchStatus(
 			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter)
 			throws Exception {
 		Twitter twitter = new Twitter(twitterAccount.getTwitterScreenName(),
@@ -57,22 +58,7 @@ public class TwitterServiceAdapter {
 
 		assert (listStList != null);
 		for (Status stat : listStList) {
-			System.out.println("getInReplyToStatusId "
-					+ stat.getInReplyToStatusId());
-			System.out.println("getId() " + stat.getId());
-			System.out.println("getInReplyToUserId() "
-					+ stat.getInReplyToUserId());
-			System.out.println("getRateLimitLimit() "
-					+ stat.getRateLimitLimit());
-			System.out.println("getRateLimitRemaining() "
-					+ stat.getRateLimitRemaining());
-			System.out.println("getRateLimitReset() "
-					+ stat.getRateLimitReset());
-			System.out.println("getSource() " + stat.getSource());
-			System.out.println("stat.getText() " + stat.getText());
-			System.out.println("getCreatedAt() " + stat.getCreatedAt());
-			System.out.println("getUser().getScreenName() "
-					+ stat.getUser().getScreenName());
+			
 		}
 		QueryResult queryResult = null;
 		Query query = new Query();
@@ -110,7 +96,7 @@ public class TwitterServiceAdapter {
 		return new ArrayList<TwitterUpdateDTO>();
 
 	}
-
+*/
 	/**
 	 * Get a Twitter User information
 	 * 
@@ -126,20 +112,7 @@ public class TwitterServiceAdapter {
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(authenticatedTwitterAccount.getOAuthToken(), authenticatedTwitterAccount.getOAuthTokenSecret());
 		ExtendedUser extendedUser = twitter.verifyCredentials();
-		/*
-		String currentUserId = null;
-		ExtendedUser extendedUser = null;
 		
-		
-		try {
-			currentUserId = twitter.getUserId();
-			extendedUser =twitter.getUserDetail(currentUserId);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-*/		
 		return extendedUser;
 
 	}
@@ -181,22 +154,6 @@ public class TwitterServiceAdapter {
 		for (Status status : statusList) {
 			returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(status,true));
 
-			System.out.println("getInReplyToStatusId "
-					+ status.getInReplyToStatusId());
-			System.out.println("getId() " + status.getId());
-			System.out.println("getInReplyToUserId() "
-					+ status.getInReplyToUserId());
-			System.out.println("getRateLimitLimit() "
-					+ status.getRateLimitLimit());
-			System.out.println("getRateLimitRemaining() "
-					+ status.getRateLimitRemaining());
-			System.out.println("getRateLimitReset() "
-					+ status.getRateLimitReset());
-			System.out.println("getSource() " + status.getSource());
-			System.out.println("stat.getText() " + status.getText());
-			System.out.println("getCreatedAt() " + status.getCreatedAt());
-			System.out.println("getUser().getScreenName() "
-					+ status.getUser().getScreenName());
 		}
 		return returnList;
 	}
@@ -341,6 +298,92 @@ public class TwitterServiceAdapter {
 			log.severe("Error: "+e.getLocalizedMessage());
 			throw e;
 		}		
+	}
+
+	public TwitterAccountDTO getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount,Integer userId) throws Exception{
+		
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(authenticatedTwitterAccount.getOAuthToken(), authenticatedTwitterAccount.getOAuthTokenSecret());
+		ExtendedUser extUser = null;
+		try {
+			extUser = twitter.getUserDetail(userId.toString());
+		} catch (TwitterException e) {
+			log.severe("error calling twitter"+e.getMessage());
+			throw new Exception(e);
+		}
+		
+		TwitterAccountDTO twitterAccountDto = new TwitterAccountDTO();
+		
+		twitterAccountDto = DataUtils.createTwitterAccountDto(extUser);
+		
+		ExtendedTwitterAccountDTO extendedDto = new ExtendedTwitterAccountDTO();
+		
+		extendedDto.setImBlocking(twitter.existsBlock(userId.toString()));
+		extendedDto.setImFollowing(twitter.existsFriendship(authenticatedTwitterAccount.getId().toString(), userId.toString()));
+		
+		twitterAccountDto.setExtendedUserAccount(extendedDto);
+		return twitterAccountDto;
+		
+	}
+
+	/**
+	 * Follow/unfollow user
+	 * @param account
+	 * @param follow
+	 * @param userId
+	 * @return True if following/false otherwise
+	 * @throws Exception
+	 */
+	public void followUser(TwitterAccountDTO account, boolean follow,
+			Integer userId) throws Exception{
+		
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account.getOAuthTokenSecret());
+		
+		User user = null;
+		try {
+			if ( follow ) {
+				user = twitter.createFriendship(userId.toString());
+				
+			} else {
+				user = twitter.destroyFriendship(userId.toString());
+				
+			}
+		} catch (Exception e) {
+			log.severe("Error while following/unfollowing user"+e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		
+		if ( user == null || user.getScreenName().isEmpty() ) {
+			throw new Exception("Unable to follow/unfollow");
+		}
+	
+		
+	}
+
+	public void blockUser(TwitterAccountDTO account, boolean block,
+			Integer userId) throws Exception {
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account.getOAuthTokenSecret());
+	
+		User user = null;
+		try {
+			if ( block ) {
+				user = twitter.createBlock(userId.toString());
+			} else {
+				user = twitter.destroyBlock(userId.toString());
+			}
+		} catch (Exception e) {
+			log.severe("Error while blocking/unblocking user "+e.getMessage());
+			throw e;
+		}
+		if (user == null || user.getScreenName() == null ) {
+			throw new Exception("unable to block the user");
+		}
 	}
 	
 }

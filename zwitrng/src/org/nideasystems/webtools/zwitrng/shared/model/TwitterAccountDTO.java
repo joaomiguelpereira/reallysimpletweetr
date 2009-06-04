@@ -16,13 +16,12 @@ public class TwitterAccountDTO implements IModel {
 	private String location;
 	private Integer twitterUpdates;
 	private Integer twitterFriends;
-	
-	
-	
 	private Boolean isOAuthenticated = false;
 	private String oAuthToken;
 	private String oAuthTokenSecret;
 	private String oAuthLoginUrl;
+	
+	private ExtendedTwitterAccountDTO extendedUserAccount = null;
 	
 	private TwitterUpdateDTO twitterUpdateDto;
 	
@@ -134,6 +133,12 @@ public class TwitterAccountDTO implements IModel {
 	}
 	public String getTwitterWeb() {
 		return twitterWeb;
+	}
+	public void setExtendedUserAccount(ExtendedTwitterAccountDTO extendedUserAccount) {
+		this.extendedUserAccount = extendedUserAccount;
+	}
+	public ExtendedTwitterAccountDTO getExtendedUserAccount() {
+		return extendedUserAccount;
 	}
 	
 }

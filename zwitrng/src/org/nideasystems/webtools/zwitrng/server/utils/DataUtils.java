@@ -23,23 +23,6 @@ public class DataUtils {
 		returnPersona.setCreationDate(personaDo.getCreationDate());
 		returnPersona.setName(personaDo.getName());
 		returnPersona.setUserEmail(personaDo.getUserEmail());
-
-		
-		// TwitterAccountDTO twitterAcount =
-		// createTwitterAccountDto(authorizedTwitterAccount);
-
-		/*
-		 * twitterAcount.setTwitterDescription(twitterUser.getDescription());
-		 * twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
-		 * twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
-		 * twitterAcount
-		 * .setTwitterImageUrl(twitterUser.getProfileImageURL().toExternalForm
-		 * ()); twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
-		 * twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
-		 * twitterAcount.setTwitterUserName(twitterUser.getName());
-		 */
-		// Handle correcly the pass
-		// twitterAcount.setTwitterPassword(personaDo.getTwitterAccount().getTwitterPass());
 		returnPersona.setTwitterAccount(authorizedTwitterAccount);
 
 		return returnPersona;
@@ -58,9 +41,11 @@ public class DataUtils {
 		if (twitterUser != null) {
 			twitterAcount.setTwitterDescription(twitterUser.getDescription());
 			twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
-			// twitterAcount.setTwitterFollowing(twitterUser.getFriendsCount());
+			
 			twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL()
 					.toExternalForm());
+			twitterAcount.setId(twitterUser.getId());
+			
 			twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
 			twitterAcount.setTwitterName(twitterUser.getName());
 			twitterAcount.setTwitterLocation(twitterUser.getLocation());
@@ -92,7 +77,9 @@ public class DataUtils {
 		twitterAcount.setTwitterUpdates(twitterUser.getStatusesCount());
 		twitterAcount.setTwitterName(twitterUser.getName());
 		twitterAcount.setTwitterLocation(twitterUser.getLocation());
+		twitterAcount.setId(twitterUser.getId());
 		twitterAcount.setTwitterWeb(twitterUser.getURL()!=null?twitterUser.getURL().toExternalForm():"");
+		
 
 		return twitterAcount;
 	}
