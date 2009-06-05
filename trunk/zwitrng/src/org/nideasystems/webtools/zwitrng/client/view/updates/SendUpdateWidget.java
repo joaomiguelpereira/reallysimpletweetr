@@ -149,6 +149,10 @@ public class SendUpdateWidget extends
 								.setInReplyToStatusId(inResponseTotwitterUpdate
 										.getId());
 					}
+					if (type == PRIVATE_MESSAGE) {
+						twitterUpdate.setInReplyToUserId(getInResponseToUserAccount().getId());
+						
+					}
 
 					isUpdating(true);
 					getController().sendUpdate(twitterUpdate, instance);

@@ -6,23 +6,37 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HasVerticalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 public class SendPrivateMessageWindow extends DialogBox {
-
+	private final static String WIDTH_DIALOG_BOX = "600px";
+	private final static String HEIGH_DIALOG_BOX = "100px";
 	
+	private  VerticalPanel successPanel = new VerticalPanel(); 
 	public SendPrivateMessageWindow(TwitterAccountDTO recipient,final SendUpdateWidget updateWidget) {
 
+		HTML successMessage = new HTML("Your message was sent to "+recipient.getTwitterScreenName());
+
+		successPanel.setWidth(WIDTH_DIALOG_BOX);
+		successPanel.setHeight(HEIGH_DIALOG_BOX);
+		successPanel.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		
+		successPanel.add(successMessage);
+		HTML closeLink = new HTML("Close window");
+		closeLink.addStyleName("link");
+		successPanel.add(closeLink);
+		closeLink.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				hide(false);
+				
+			}
+			
+		});
 		setText("Send private message to " + recipient.getTwitterScreenName());
 		VerticalPanel mainPanel = new VerticalPanel();
 		setModal(true);
@@ -44,7 +58,8 @@ public class SendPrivateMessageWindow extends DialogBox {
 
 			@Override
 			public void onSuccess(Object arg) {
-				Window.alert("Message sent");
+				
+				setWidget(successPanel);
 				
 			}
 			

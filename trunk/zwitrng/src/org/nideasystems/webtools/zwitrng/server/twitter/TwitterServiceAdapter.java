@@ -12,6 +12,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
+import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;
 import twitter4j.Paging;
 import twitter4j.Query;
@@ -172,7 +173,15 @@ public class TwitterServiceAdapter {
 		log.fine("Updating status: "+update.getText());
 		
 		try {
+			if ( update.getInReplyToUserId() > -1 ) {
+				
+				//TODO: if you need to create a list of sent messages, return this one (major refactor needed :))
+				DirectMessage dm = twitter.sendDirectMessage(Long.toString(update.getInReplyToUserId()), update.getText());
+				
+			} else {
 				latestStatus = twitter.updateStatus(update.getText(), update.getInReplyToStatusId());
+			}
+			
 				
 				
 		} catch (TwitterException e) {

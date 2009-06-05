@@ -79,6 +79,9 @@ public class TwitterAccountInfoWidget extends HorizontalPanel {
 		
 	}
 	public void updateLastStatus(TwitterUpdateDTO update) {
-		this.lastStatus.setHTML(update.getText());
+		if (update != null ) {
+			this.lastStatus.setHTML(update.getText());
+		}
+		
 	}
 }
