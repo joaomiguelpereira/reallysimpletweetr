@@ -1,41 +1,59 @@
 package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
+import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.HasVerticalAlignment;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 public class SendPrivateMessageWindow extends DialogBox {
 
-	private static final String WIDTH = "400px";
-	private static final String WIDTH_TEXT_AREA = "390px";
-	private static final String HEIGHT_TEXT_AREA = "80px";
-	private TextArea messageTextArea = new TextArea();
 	
-	public SendPrivateMessageWindow(TwitterAccountDTO recipient) {
-		
-		setText("Send private message to "+recipient.getTwitterScreenName());
+	public SendPrivateMessageWindow(TwitterAccountDTO recipient,final SendUpdateWidget updateWidget) {
+
+		setText("Send private message to " + recipient.getTwitterScreenName());
 		VerticalPanel mainPanel = new VerticalPanel();
-		mainPanel.setWidth(WIDTH);
+		setModal(true);
+		mainPanel.add(updateWidget);
+		updateWidget.addAsyncHandler(new SendUpdateAsyncHandler() {
+
+			@Override
+			public void onCancel() {
+				hide(true);
+				
+			}
+
+			@Override
+			public void onFailure(Throwable tr) {
+				updateWidget.getController().getMainController().addException(tr);
+				
+				
+			}
+
+			@Override
+			public void onSuccess(Object arg) {
+				Window.alert("Message sent");
+				
+			}
+			
+		});
+
+		
 		setWidget(mainPanel);
-		setUpTextBox();
-		mainPanel.add(messageTextArea);
-		setUpTools();
+	
 		center();
 	}
-	
-	private void setUpTools() {
-		
-		
-	}
 
-	private void setUpTextBox() {
-		
-		messageTextArea.setWidth(WIDTH_TEXT_AREA);
-		messageTextArea.setHeight(HEIGHT_TEXT_AREA);
-		
-	}
-	
-	
 }

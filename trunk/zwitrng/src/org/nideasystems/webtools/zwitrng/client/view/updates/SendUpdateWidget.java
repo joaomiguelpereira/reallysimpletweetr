@@ -26,13 +26,15 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
-public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountController> implements
-		 SendUpdateAsyncHandler {
+public class SendUpdateWidget extends
+		AbstractVerticalPanelView<TwitterAccountController> implements
+		SendUpdateAsyncHandler {
 
 	public static final int STATUS = 0;
 	public static final int REPLY = 1;
 	public static final int RETWEET = 2;
-	private static final Integer DEFAULT_TWEET_SIZE = 140;
+	public static final int PRIVATE_MESSAGE = 3;
+	public static final Integer DEFAULT_TWEET_SIZE = 140;
 
 	private boolean showUserImage = true;
 	private final HTML remainingChars = new HTML(DEFAULT_TWEET_SIZE.toString());
@@ -40,10 +42,12 @@ public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountCo
 	final TextArea update = new TextArea();
 	final Button send = new Button("Send");
 	private int type = STATUS;
+	private TwitterAccountDTO inResponseToUserAccount = null;
 	private TwitterAccountDTO sendingTwitterAccount;
 	private TwitterUpdateDTO inResponseTotwitterUpdate;
 	private final Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	private SendUpdateWidget instance;
+	private final HTML loadTemplateLink = new HTML("Load template");
 	private List<SendUpdateAsyncHandler> asynHadlers = null;
 
 	@Override
@@ -60,52 +64,55 @@ public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountCo
 		FlexTable bottomLayout = new FlexTable();
 		FlexCellFormatter formater = bottomLayout.getFlexCellFormatter();
 		bottomLayout.setCellSpacing(0);
-		
+
 		Image sendingUserImage = new Image(sendingTwitterAccount
 				.getTwitterImageUrl());
-		
+
 		sendingUserImage.setWidth("32px");
 		sendingUserImage.setHeight("32px");
 		sendingUserImage.setVisible(showUserImage);
 		bottomLayout.setWidget(0, 0, sendingUserImage);
 		HTML cancelLink = new HTML("Cancel");
-		
-		
+
 		formater.setWidth(0, 0, "48px");
-		
+
 		bottomLayout.setWidget(0, 1, update);
 		formater.setColSpan(0, 1, 3);
-		//formater.setWidth(0, 1, "650px");
+		// formater.setWidth(0, 1, "650px");
 
 		remainingChars.setWidth("35px");
 		bottomLayout.setWidget(1, 0, new HTML(""));
-		
+
 		bottomLayout.setWidget(1, 1, remainingChars);
 		bottomLayout.setWidget(1, 2, pub);
+
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		toolsPanel.setSpacing(4);
+		loadTemplateLink.addStyleName("link");
+		cancelLink.addStyleName("link");
+		toolsPanel.add(loadTemplateLink);
 		toolsPanel.add(cancelLink);
 		toolsPanel.add(send);
-		
+
 		bottomLayout.setWidget(1, 3, toolsPanel);
-		//bottomLayout.setWidget(1, 4, send);
-		
+		// bottomLayout.setWidget(1, 4, send);
 
 		formater.setAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
-	
+
 		formater.setAlignment(1, 1, HasHorizontalAlignment.ALIGN_LEFT,
 				HasVerticalAlignment.ALIGN_MIDDLE);
-		
-		
+
 		formater.setAlignment(1, 2, HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
-		
+
 		formater.setAlignment(1, 3, HasHorizontalAlignment.ALIGN_RIGHT,
 				HasVerticalAlignment.ALIGN_MIDDLE);
-		
-		/*formater.setAlignment(1, 4, HasHorizontalAlignment.ALIGN_RIGHT,
-				HasVerticalAlignment.ALIGN_MIDDLE);*/
+
+		/*
+		 * formater.setAlignment(1, 4, HasHorizontalAlignment.ALIGN_RIGHT,
+		 * HasVerticalAlignment.ALIGN_MIDDLE);
+		 */
 
 		// Add handlers
 		update.addKeyUpHandler(new KeyUpHandler() {
@@ -125,27 +132,31 @@ public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountCo
 			@Override
 			public void onClick(ClickEvent event) {
 				onCancel();
-				
+
 			}
-			
+
 		});
 		send.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
-				twitterUpdate.setText(update.getValue());
-				twitterUpdate.setTwitterAccount(getSendingTwitterAccount());
-				if (type == REPLY ) {
-					twitterUpdate.setInReplyToStatusId(inResponseTotwitterUpdate
-							.getId());	
+				if (update.getValue().length() > 0) {
+					TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
+					twitterUpdate.setText(update.getValue());
+					twitterUpdate.setTwitterAccount(getSendingTwitterAccount());
+					if (type == REPLY) {
+						twitterUpdate
+								.setInReplyToStatusId(inResponseTotwitterUpdate
+										.getId());
+					}
+
+					isUpdating(true);
+					getController().sendUpdate(twitterUpdate, instance);
+
+					// getController().handleAction(IController.IActions.TWEET_THIS,
+					// twitterUpdate,instance);
+
 				}
-				
-				isUpdating(true);
-				getController().sendUpdate(twitterUpdate,instance);
-				
-				//getController().handleAction(IController.IActions.TWEET_THIS,
-				//		twitterUpdate,instance);
 			}
 
 		});
@@ -220,9 +231,9 @@ public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountCo
 	public TwitterAccountDTO getSendingTwitterAccount() {
 		return sendingTwitterAccount;
 	}
-	
+
 	public void addAsyncHandler(SendUpdateAsyncHandler asyncHandler) {
-		if (this.asynHadlers==null) {
+		if (this.asynHadlers == null) {
 			this.asynHadlers = new ArrayList<SendUpdateAsyncHandler>();
 		}
 		this.asynHadlers.add(asyncHandler);
@@ -233,42 +244,51 @@ public class SendUpdateWidget extends AbstractVerticalPanelView<TwitterAccountCo
 		isUpdating(false);
 		update.setValue("");
 		this.remainingChars.setText(DEFAULT_TWEET_SIZE.toString());
-		if (this.asynHadlers!= null ) {
+		if (this.asynHadlers != null) {
 			for (SendUpdateAsyncHandler handler : this.asynHadlers) {
 				handler.onSuccess(result);
 			}
 			this.asynHadlers = null;
 		}
-		
+
 	}
+
 	@Override
 	public void onFailure(Throwable tr) {
 		isUpdating(false);
-		if (this.asynHadlers!= null ) {
+		if (this.asynHadlers != null) {
 			for (SendUpdateAsyncHandler handler : this.asynHadlers) {
 				handler.onFailure(tr);
 			}
 			this.asynHadlers = null;
 		}
 
-		
 	}
 
 	public void setShowUserImage(boolean showUserImg) {
 		this.showUserImage = showUserImg;
-		
+
 	}
 
 	@Override
 	public void onCancel() {
 		update.setValue("");
-		if (this.asynHadlers!= null ) {
+		if (this.asynHadlers != null) {
 			for (SendUpdateAsyncHandler handler : this.asynHadlers) {
 				handler.onCancel();
 			}
 			this.asynHadlers = null;
 		}
-		
+
+	}
+
+	public TwitterAccountDTO getInResponseToUserAccount() {
+		return inResponseToUserAccount;
+	}
+
+	public void setInResponseToUserAccount(TwitterAccountDTO twitterAccount) {
+		this.inResponseToUserAccount = twitterAccount;
+
 	}
 
 }
