@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
+import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -210,8 +211,15 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 				@Override
 				public void onClick(ClickEvent event) {
-					Window.alert("opening");
-					SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(twitterAccount);
+					SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
+					sendUpdateWidget.setController(parentController.getTwitterAccountController());
+					sendUpdateWidget.setSendingTwitterAccount(parentController.getTwitterAccountController().getModel());
+					sendUpdateWidget.setShowUserImage(true);
+					sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
+					sendUpdateWidget.setType(SendUpdateWidget.PRIVATE_MESSAGE);
+					sendUpdateWidget.init();
+					
+					SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(twitterAccount,sendUpdateWidget);
 					sendPrivateMessageWindow.setAnimationEnabled(true);
 					sendPrivateMessageWindow.show();
 				}
