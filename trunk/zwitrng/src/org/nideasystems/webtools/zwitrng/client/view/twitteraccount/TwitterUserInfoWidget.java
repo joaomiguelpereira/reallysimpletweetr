@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
-import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
+
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
@@ -17,7 +17,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -31,7 +31,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		TwitterAccountOperationCallBack {
 
 	private boolean hasMouseOver = false;
-	private Timer hidePanelTimer = null;
+
 	private TwitterUserInfoWidget instance = this;
 	private static final String WIDTH = "550px";
 	private static final String HEIGHT = "150px";
@@ -290,23 +290,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		followLink.addStyleName("link");
 	}
 
-	/**
-	 * Timer to hide the panel
-	 * 
-	 * @author jpereira
-	 * 
-	 */
-	private class HidePanelTime extends Timer {
-
-		@Override
-		public void run() {
-
-			instance.hide(true);
-
-		}
-
-	}
-
+	
 	@Override
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());

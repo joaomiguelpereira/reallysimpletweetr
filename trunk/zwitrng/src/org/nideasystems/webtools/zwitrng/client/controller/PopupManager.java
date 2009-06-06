@@ -21,7 +21,9 @@ public class PopupManager {
 	public void showDelayedUserInfoPopup(int left, int top, String userIdOrScreenName) {
 		
 		userInfoPopup = new TwitterUserInfoWidget(userIdOrScreenName, personaController.getTwitterAccountController());
-		userInfoPopup.setPopupPosition(left, top);
+		
+		userInfoPopup.center();
+		userInfoPopup.setPopupPosition(userInfoPopup.getAbsoluteLeft(), top);
 		userInfoPopup.show();
 		
 		

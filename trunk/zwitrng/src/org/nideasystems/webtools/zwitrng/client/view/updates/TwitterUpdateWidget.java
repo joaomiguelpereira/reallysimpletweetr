@@ -76,7 +76,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		userImg.setWidth("48px");
 		userImg.setHeight("48px");
 		
-		if ( refLeftImage == null) {
+		if ( refLeftImage == null ) {
 			refLeftImage = userImg;
 		}
 		
