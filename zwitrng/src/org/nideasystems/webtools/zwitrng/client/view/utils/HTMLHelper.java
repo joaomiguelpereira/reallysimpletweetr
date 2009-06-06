@@ -1,75 +1,116 @@
 package org.nideasystems.webtools.zwitrng.client.view.utils;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gwt.core.client.GWT;
+import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
 
+import com.google.gwt.core.client.GWT;
 
 public class HTMLHelper {
 
 	private static long nextId = 0;
-	//public static final String USER_NAME_REGEX = "/[@]+[A-Za-z0-9-_]+/";
+	// public static final String USER_NAME_REGEX = "/[@]+[A-Za-z0-9-_]+/";
 	public static final String USER_NAME_REGEX = "\\B@[\\w\\d_]{1,15}";
 	public static final String DELIMITATORS_REGEX = "/\\W/ ";
+	
+	public static final String URL_REGEX = "(@)?(href=\")?(http://)?[A-Za-z]+(\\.\\w+)+(/[&\\n=?\\+\\%/\\.\\w]+)?";
+	
+	//public static final String URL_REGEX = "^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\\?\\/.=]+$";
+	// public static final String HASHTAG_REGEX = "/[#]+[A-Za-z0-9-_]+/";
+	public static final String HASHTAG_REGEX = "\\B#[\\w\\d_]{1,15}";
+
+	private List<String> twitterUserNameArray = new ArrayList<String>();
+	private List<String> linksArray = new ArrayList<String>();
+	private List<String> hashTags = new ArrayList<String>();
+
 	private String itHelper = null;
-	private HTMLHelper() {
+
+	public static native String getNativeJsRegex() /*-{
+		pattern = '^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$' 
 		
+		$wnd.alert(pattern)
+		return pattern;
+		//return "((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)"
+		
+	}-*/;
+	
+	private HTMLHelper() {
+
 	}
+
 	
 	public static HTMLHelper get() {
 		return new HTMLHelper();
 	}
-	
+
 	/**
 	 * Get a parsed text
+	 * 
 	 * @param text
 	 * @return
 	 */
 	public String getParsedUpdateHtml(String text) {
-		String[] twitterScreenNames = parseTwitterScreenNames(text);
+		parse(text);
+
 		String newString = text;
+
+
 		
-		for (String twitterScreenName : twitterScreenNames) {
+
+		for (String twitterScreenName : this.twitterUserNameArray) {
 			twitterScreenName = twitterScreenName.substring(1);
+			String twitterId = String.valueOf(++nextId) + twitterScreenName;
 			
-			String twitterId = String.valueOf(++nextId)+twitterScreenName;
-			newString = newString.replaceAll(twitterScreenName,
-					"<a id=\""+twitterId+"\" href=\"javascript:showUserPanel('"+twitterScreenName+"','"+twitterId+"')\">"+twitterScreenName+"</a>");			
-		//onmouseover=\"showUserPanel('"+twitterScreenName+"','"+twitterId+"')\" onmouseout=\"hideUserPanel('"+twitterId+"')\"
+			newString = newString.replaceAll(twitterScreenName, "<a id=\""
+					+ twitterId + "\" href=\"javascript:showUserPanel('"
+					+ twitterScreenName + "','" + twitterId + "')\">"
+					+ twitterScreenName + "</a>");
+
+		}
+
+		for (String hashTag : this.hashTags) {
+			newString = newString.replaceAll(hashTag, "<a href=\"" + hashTag
+					+ "\" target=\"_blank\">" + hashTag + "</a>");
+		}
+		for (String url : this.linksArray) {
+			newString = newString.replace((CharSequence)url, "<a href=\"" + url
+					+ "\" target=\"_blank\">" + url + "</a>");
 		}
 		return newString;
 	}
+
 	/**
-	 * Helper method to remove any trailing trash from the screenname.  
+	 * Helper method to remove any trailing trash from the screenname.
+	 * 
 	 * @param tmpString
 	 * @return
 	 */
-	private static String clearUserName(String tmpString) {
-		
-		String[] tmp = tmpString.split(USER_NAME_REGEX);
-		
+	private static String clearWord(String tmpString, String regex) {
+		GWT.log("Clearing " + tmpString, null);
+		String[] tmp = tmpString.split(regex);
+
 		String newString = tmpString.trim();
-		
-		if (tmp!= null) {
-			for (String str : tmp ) {
+
+		if (tmp != null) {
+			for (String str : tmp) {
 				newString = newString.replace(str, "");
 				GWT.log(str, null);
 			}
 		}
-		
+
 		return newString;
 	}
-	
+
 	/**
-	 * Find twitter names inside the text and decorate them with a <a href=""></a> tag
+	 * Find twitter names inside the text and decorate them with a <a
+	 * href=""></a> tag
+	 * 
 	 * @param text
 	 * @return
 	 */
-	private String[] parseTwitterScreenNames(String text) {
+	private void parse(String text) {
 
-		List<String> array = new ArrayList<String>();
 		GWT.log("Testing text: " + text, null);
 		int position = 0;
 
@@ -84,30 +125,48 @@ public class HTMLHelper {
 				tmpString = text.substring(position).trim();
 			} else {
 				word = tmpString;
+				word = word.trim();
 				process = false;
 			}
 
 			if (word.contains("@") && processScreenName(word) != null
-					&& !array.contains(itHelper)) {
-				array.add(itHelper);
+					&& !twitterUserNameArray.contains(itHelper)) {
+				twitterUserNameArray.add(itHelper);
+			}
+
+			if (word.startsWith("http://")
+					&& !linksArray.contains(word)) {
+				linksArray.add(word);
+			}
+			if (word.contains("#")) {
+				processHashTag(word);
 			}
 
 		} while (process);
-
-		String[] screenNames = array.toArray(new String[array.size()]);
-		return screenNames;
 	}
-	
+
+	private void processHashTag(String word) {
+		GWT.log("Processing hashTag " + word, null);
+		word = HTMLHelper.clearWord(word, HTMLHelper.HASHTAG_REGEX);
+		if (word.matches(HTMLHelper.HASHTAG_REGEX)) {
+			GWT.log("Adding Hashtag " + word, null);
+			hashTags.add(word);
+		} else {
+			GWT.log("Is not an HashTag " + word, null);
+		}
+	}
+
 	/**
 	 * Process a word, with no spaces, and check if it is a username
+	 * 
 	 * @param word
 	 * @return
 	 */
 	private String processScreenName(String word) {
 		GWT.log("Processing String: " + word, null);
-		//ithelper, works like an iterator
+		// ithelper, works like an iterator
 		itHelper = null;
-		word = HTMLHelper.clearUserName(word);
+		word = HTMLHelper.clearWord(word, HTMLHelper.USER_NAME_REGEX);
 
 		if (word.matches(HTMLHelper.USER_NAME_REGEX)) {
 			itHelper = word;
@@ -116,7 +175,6 @@ public class HTMLHelper {
 			GWT.log("Nothing found", null);
 		}
 
-		
 		return itHelper;
 	}
 }
