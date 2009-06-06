@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -34,15 +35,17 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	private TwitterUserInfoWidget instance = this;
 	private static final String WIDTH = "550px";
 	private static final String HEIGHT = "150px";
-	private TwitterUpdatesController parentController = null;
+	private TwitterAccountController parentController = null;
 	private InlineHTML followLink = new InlineHTML();
 	private TwitterAccountDTO twitterAccount = null;
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
 	private InlineHTML blockLink = new InlineHTML();
+	
 
-	public TwitterUserInfoWidget(TwitterAccountDTO account,
-			TwitterUpdatesController parentController) {
+	public TwitterUserInfoWidget(String accountIdOrScreenName,
+			/*TwitterUpdatesController*/TwitterAccountController parentController) {
 		this.setAnimationEnabled(true);
+		this.setAutoHideEnabled(true);
 		this.parentController = parentController;
 		this.setWidth(WIDTH);
 
@@ -51,7 +54,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		this.setWidget(tempPanel);
 		// this.setWidget(createTopPanel(account));
 
-		this.addMouseOverHandler(new MouseOverHandler() {
+/*		this.addMouseOverHandler(new MouseOverHandler() {
 
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
@@ -75,9 +78,9 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 				hidePanelTimer.schedule(300);
 			}
 
-		});
-		this.twitterAccount = account;
-		parentController.getExtendedUserInfo(account.getId().toString(), this);
+		});*/
+		//this.twitterAccount = account;
+		parentController.getExtendedUserAccount(accountIdOrScreenName, this);
 	}
 
 	private VerticalPanel createMainPanel() {
@@ -212,8 +215,8 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 				@Override
 				public void onClick(ClickEvent event) {
 					SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
-					sendUpdateWidget.setController(parentController.getTwitterAccountController());
-					sendUpdateWidget.setSendingTwitterAccount(parentController.getTwitterAccountController().getModel());
+					sendUpdateWidget.setController(parentController);
+					sendUpdateWidget.setSendingTwitterAccount(parentController.getModel());
 					sendUpdateWidget.setShowUserImage(true);
 					sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
 					sendUpdateWidget.setType(SendUpdateWidget.PRIVATE_MESSAGE);
@@ -325,7 +328,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 	@Override
 	public void onTwitterAccountLoadError(String error) {
-		// Ignore because error has been handled in controller, hopefully
+		this.hide(true);
 
 	}
 
