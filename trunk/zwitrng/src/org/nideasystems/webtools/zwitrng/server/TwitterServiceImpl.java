@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
@@ -25,6 +26,8 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 		TwitterService {
 
 	private static final long serialVersionUID = -481643127871478064L;
+	private static final Logger log = Logger
+	.getLogger(TwitterServiceImpl.class.getName());
 
 	@Override
 	public List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount,
@@ -45,8 +48,15 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 			throws Exception {
 		// Check if is logged in
 		AuthorizationManager.checkAuthentication();
-
-		return TwitterServiceAdapter.get().getUpdates(twitterAccount, filter);
+		TwitterUpdateDTOList list = null;
+		try {
+			list = TwitterServiceAdapter.get().getUpdates(twitterAccount, filter);
+		} catch (Exception e) {
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} 
+		
+		return list;
 
 	}
 
@@ -102,8 +112,16 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public TwitterAccountDTO getExtendedUserAccount(
 			TwitterAccountDTO twitterAccount, String userIdOrScreenName) throws Exception {
-		return TwitterServiceAdapter.get().getExtendedUser(twitterAccount,
-				userIdOrScreenName);
+		TwitterAccountDTO returnDto = null;
+		
+		try {
+			returnDto = TwitterServiceAdapter.get().getExtendedUser(twitterAccount,
+					userIdOrScreenName);
+		} catch (Exception e) {
+			log.severe("Error "+e.getMessage());
+			throw new Exception(e);
+		} 
+		return returnDto; 
 
 	}
 

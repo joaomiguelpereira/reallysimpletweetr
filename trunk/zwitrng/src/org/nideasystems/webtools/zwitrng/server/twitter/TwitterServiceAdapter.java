@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.twitter;
 
-import java.util.ArrayList;
+
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -12,13 +12,12 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
+
+
 import twitter4j.DirectMessage;
 import twitter4j.ExtendedUser;
 import twitter4j.Paging;
-import twitter4j.Query;
-import twitter4j.QueryResult;
 import twitter4j.Status;
-import twitter4j.Tweet;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.User;
@@ -35,7 +34,6 @@ public class TwitterServiceAdapter {
 
 	/**
 	 * This class has it's own object factory. Don't create it manually
-	 */
 	private TwitterServiceAdapter() {
 
 	}
@@ -109,6 +107,7 @@ public class TwitterServiceAdapter {
 	 */
 	public ExtendedUser getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount) throws Exception {
 
+		 log.info("Calling TWITTER API: "+authenticatedTwitterAccount.getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(authenticatedTwitterAccount.getOAuthToken(), authenticatedTwitterAccount.getOAuthTokenSecret());
@@ -160,7 +159,7 @@ public class TwitterServiceAdapter {
 	}
 
 	public Status postUpdate(TwitterUpdateDTO update) throws Exception {
-
+		log.info("Calling TWITTER API: "+update.getTwitterAccount().getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(update.getTwitterAccount().getOAuthToken(), update.getTwitterAccount().getOAuthTokenSecret());
@@ -317,7 +316,7 @@ public class TwitterServiceAdapter {
 	 * @throws Exception
 	 */
 	public TwitterAccountDTO getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount,String userIdOrScreenName) throws Exception{
-		
+		log.info("Calling TWITTER API: "+authenticatedTwitterAccount.getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(authenticatedTwitterAccount.getOAuthToken(), authenticatedTwitterAccount.getOAuthTokenSecret());
@@ -353,7 +352,7 @@ public class TwitterServiceAdapter {
 	 */
 	public void followUser(TwitterAccountDTO account, boolean follow,
 			Integer userId) throws Exception{
-		
+		log.info("Calling TWITTER API: "+account.getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(account.getOAuthToken(), account.getOAuthTokenSecret());
@@ -382,6 +381,7 @@ public class TwitterServiceAdapter {
 
 	public void blockUser(TwitterAccountDTO account, boolean block,
 			Integer userId) throws Exception {
+		log.info("Calling TWITTER API: "+account.getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
 		twitter.setOAuthAccessToken(account.getOAuthToken(), account.getOAuthTokenSecret());

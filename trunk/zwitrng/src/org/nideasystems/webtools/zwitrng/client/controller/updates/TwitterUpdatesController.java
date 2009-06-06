@@ -6,6 +6,7 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
@@ -18,6 +19,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterUpdatesController extends AbstractController<TwitterUpdateDTOList, TwitterUpdatesView> implements
@@ -44,6 +46,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		getView().setController(this);
 		getView().init();
 		this.twitterAccount = ((TwitterUpdatesListController)getParentController()).getModel();
+	
 		
 	}
 
@@ -251,33 +254,38 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		return ((TwitterUpdatesListController)getParentController()).getTwitterAccountController();
 		
 	}
-
+	
+/*	public PersonaController getPersonaController() {
+		return (PersonaController)getTwitterAccountController().getParentController();
+	}
+*/
 
 
 	/**
 	 * Delegate this request to parent controller
 	 * @param accountIdorScreenName
 	 * @param callback
-	 */
+	 *//*
 	public void getExtendedUserInfo(String accountIdorScreenName,
 			TwitterAccountOperationCallBack callback) {
+		
 		getTwitterAccountController().getExtendedUserAccount(accountIdorScreenName,callback);
 		
-	}
+	}*/
 
 
-
-	/**
+/*
+	*//**
 	 * Delegate followUser to parent controller
 	 * @param follow
 	 * @param id
 	 * @param callback
-	 */
+	 *//*
 	public void followUser(boolean follow, Integer id, TwitterAccountOperationCallBack callback) {
 		
 		getTwitterAccountController().followUser(follow, id, callback);
 		
-	}
+	}*/
 
 
 
@@ -286,12 +294,15 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	 * @param block
 	 * @param id
 	 * @param callback
-	 */
+	 *//*
 	public void blockUser(boolean block, Integer id, TwitterUserInfoWidget callback) {
 		
 		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().blockUser(block, id, callback);
 		
 	}
+*/
+	
+	
 
 
 	

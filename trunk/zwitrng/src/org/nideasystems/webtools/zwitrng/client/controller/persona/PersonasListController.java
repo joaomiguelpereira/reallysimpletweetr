@@ -19,7 +19,7 @@ public class PersonasListController extends
 	
 	private Map<String, PersonaView> personaViews = new HashMap<String, PersonaView>();
 	
-	PersonaController currentPersonaController = null;
+	private PersonaController currentPersonaController = null;
 	
 
 	/**
@@ -29,6 +29,9 @@ public class PersonasListController extends
 
 	}
 
+	public PersonaController getCurrentPersonaController() {
+		return currentPersonaController;
+	}
 	/**
 	 * Initialize the view where all tabs are placed
 	 */
