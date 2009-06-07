@@ -212,6 +212,9 @@ public class TwitterUpdatesListController extends
 	public void activateSearch(String hash) {
 		activeController = this.searchesTwitterUpdatesController;
 		this.searchesTwitterUpdatesController.getCurrentFilter().setSearchText(hash);
+		this.searchesTwitterUpdatesController.getCurrentFilter().reset();
+		
+		
 		getView().selectTab(2);
 		Window.scrollTo(0, 0);
 		this.searchesTwitterUpdatesController.reload();

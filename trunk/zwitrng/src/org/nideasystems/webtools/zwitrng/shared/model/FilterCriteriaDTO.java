@@ -9,6 +9,12 @@ public class FilterCriteriaDTO implements IModel{
 	private String searchText = null;
 	private String key = null;
 	private long sinceId = 1;
+	private long maxId = 0;
+	private long page = 0;
+	private int resultsPerPage = 20;
+	private String refreshUrl = null;
+	private double completedIn = 0.0;
+	
 	private UpdatesType updatesType = null;
 
 	
@@ -46,6 +52,57 @@ public class FilterCriteriaDTO implements IModel{
 
 	public String getSearchText() {
 		return searchText;
+	}
+
+	public void setMaxId(long maxId) {
+		this.maxId = maxId;
+	}
+
+	public long getMaxId() {
+		return maxId;
+	}
+
+	public void setResultsPerPage(int resultsPerPage) {
+		this.resultsPerPage = resultsPerPage;
+	}
+
+	public int getResultsPerPage() {
+		return resultsPerPage;
+	}
+
+	public void setPage(long page) {
+		this.page = page;
+	}
+
+	public long getPage() {
+		return page;
+	}
+
+	public void setRefreshUrl(String refreshUrl) {
+		this.refreshUrl = refreshUrl;
+	}
+
+	public String getRefreshUrl() {
+		return refreshUrl;
+	}
+
+	public void setCompletedIn(double completedIn) {
+		this.completedIn = completedIn;
+	}
+
+	public double getCompletedIn() {
+		return completedIn;
+	}
+
+	public void reset() {
+		key = null;
+		sinceId = 1;
+		maxId = 0;
+		page = 0;
+		resultsPerPage = 20;
+		refreshUrl = null;
+		completedIn = 0.0;
+		
 	}
 
 	

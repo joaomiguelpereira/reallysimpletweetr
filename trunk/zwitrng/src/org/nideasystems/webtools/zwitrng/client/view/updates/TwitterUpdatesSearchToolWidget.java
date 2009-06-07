@@ -17,10 +17,12 @@ import com.google.gwt.user.client.ui.TextBox;
 
 public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<TwitterUpdatesController>{
 
-	private FilterCriteriaDTO currentFiler = null;
+	private FilterCriteriaDTO currentFilter = null;
 	Button searchBt = new Button("Search");
 	TextBox search = new TextBox();
 	HTML currentSearch = null;
+	HTML completedIn = null;
+	HTML refreshUrl = null;
 	@Override
 	public void init() {
 		this.addStyleName("search-panel");
@@ -28,21 +30,31 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 		search.setWidth("250px");
 		searchPanel.add(search);
 		searchPanel.add(searchBt);
-		if ( currentFiler != null ) {
-			search.setValue(currentFiler.getSearchText());
-			currentSearch = new HTML(currentFiler.getSearchText());
+		if ( currentFilter != null ) {
+			search.setValue(currentFilter.getSearchText());
+			currentSearch = new HTML(currentFilter.getSearchText());
 		}
 		this.add(searchPanel);
+		
 		this.add(currentSearch);
+		completedIn = new HTML();
+		refreshUrl = new HTML();
+		completedIn.setText(currentFilter.getCompletedIn()+" s");
+		refreshUrl.setText(currentFilter.getRefreshUrl()+" url");
+		
+		this.add(completedIn);
+		this.add(refreshUrl);
+		
 		searchBt.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
 				//Window.alert(search.getValue());
 				//Window.alert(currentFiler.getSearchText());
-				if (!search.getValue().isEmpty() && !search.getValue().equals(currentFiler.getSearchText())) {
-					currentFiler.setSearchText(search.getValue());
-					//getController().setCurrentFilter(currentFiler);
+				if (!search.getValue().isEmpty() && !search.getValue().equals(currentFilter.getSearchText())) {
+					currentFilter.setSearchText(search.getValue());
+					currentFilter.reset();
+					getController().setCurrentFilter(currentFilter);
 					getController().reload();
 					//refresh();
 					
@@ -63,18 +75,22 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 
 
 	public void setCurrentFiler(FilterCriteriaDTO currentFiler) {
-		this.currentFiler = currentFiler;
+		this.currentFilter = currentFiler;
 	}
 
 
 	public FilterCriteriaDTO getCurrentFiler() {
-		return currentFiler;
+		return currentFilter;
 	}
 
 
 	public void refresh() {
-		search.setValue(currentFiler.getSearchText());
-		currentSearch.setText(currentFiler.getSearchText());
+		search.setValue(currentFilter.getSearchText());
+		currentSearch.setText(currentFilter.getSearchText());
+		
+		completedIn.setText(currentFilter.getCompletedIn()+" s");
+		refreshUrl.setText(currentFilter.getRefreshUrl()+" url");
+		
 		
 	}
 
