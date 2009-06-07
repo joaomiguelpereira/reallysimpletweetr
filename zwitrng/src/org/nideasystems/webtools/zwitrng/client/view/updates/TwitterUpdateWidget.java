@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.updates;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
-import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
+
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
@@ -18,7 +18,7 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -45,11 +45,9 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final HorizontalPanel sendUpdateContainer = new HorizontalPanel();
 	private SendUpdateWidget sendUpdateWidget = null;
-	
-	
-	//private ShowUserInfoPanelTimer showUserInfoWidgetTimer = null;
-	//private static Image refLeftImage = null;
-	
+
+	// private ShowUserInfoPanelTimer showUserInfoWidgetTimer = null;
+	// private static Image refLeftImage = null;
 
 	private Image userImg = null;
 
@@ -59,7 +57,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			TwitterUpdateDTO twitterUpdateDTO) {
 		super();
 		publishNativeJSCode(this);
-		
+
 		this.parentController = theParentController;
 		// this.twitterAccount = twitterAccount;
 		this.twitterUpdate = twitterUpdateDTO;
@@ -75,12 +73,11 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 				.getTwitterImageUrl());
 		userImg.setWidth("48px");
 		userImg.setHeight("48px");
-		
-//		if ( refLeftImage == null ) {
-//			refLeftImage = userImg;
-//		}
-		
-		
+
+		// if ( refLeftImage == null ) {
+		// refLeftImage = userImg;
+		// }
+
 		tweetLayout.setWidget(0, 0, userImg);
 		tweetLayoutFormatter.setAlignment(0, 0,
 				HasHorizontalAlignment.ALIGN_LEFT,
@@ -181,48 +178,57 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			}
 
 		});
-		//setupUserPanel();
-		
+		// setupUserPanel();
 
 	}
 
-	
-	
 	/**
 	 * Publish javascript native functions
-	 * @param twitterUpdateWidget 
+	 * 
+	 * @param twitterUpdateWidget
 	 * 
 	 * @param result
 	 */
 
-	private native void publishNativeJSCode(TwitterUpdateWidget twitterUpdateWidget) /*-{
+	private native void publishNativeJSCode(
+			TwitterUpdateWidget twitterUpdateWidget) /*-{
 		$wnd.showUserPanel = function (username, elementId) {
-			
+
 			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsShowTwitterUserInfoPanel(Ljava/lang/String;Ljava/lang/String;)(username,elementId); 
 
 		};
-		
+
 		$wnd.hideUserPanel = function (elementId) {
-			
-			
+
+
 			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsHideTwitterUserInfoPanel(Ljava/lang/String;)(elementId); 
 
 		};
+		$wnd.processHashTag = function(hash) {
+			
+			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsOpenSearch(Ljava/lang/String;)(hash);
+		}
 	}-*/;
 
-	
 	public static void jsHideTwitterUserInfoPanel(String id) {
 		MainController.getInstance().getPopupManager().destroyUserPopupPanel();
 	}
-	
-	public static void jsShowTwitterUserInfoPanel(String screenName, String id)   {
-		Element el = DOM.getElementById(id);
+
+	public static void jsOpenSearch(String hash) {
 		
-		MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(0, el.getAbsoluteTop()+20, screenName);
-		
+		MainController.getInstance().getCurrentPersonaController()
+				.getTwitterUpdatesListController().activateSearch(hash);
+
 	}
-	
-	
+
+	public static void jsShowTwitterUserInfoPanel(String screenName, String id) {
+		Element el = DOM.getElementById(id);
+
+		MainController.getInstance().getPopupManager()
+				.showDelayedUserInfoPopup(0, el.getAbsoluteTop() + 20,
+						screenName);
+
+	}
 
 	/**
 	 * Show the send update widget
@@ -281,36 +287,20 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 			@Override
 			public void onClick(ClickEvent event) {
-				
-				MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(screenName.getAbsoluteLeft(), screenName
-						.getAbsoluteTop() + 20, twitterUpdate.getTwitterAccount().getTwitterScreenName());
-				//createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
-				//		.getAbsoluteTop() + 20,null);
+
+				MainController.getInstance().getPopupManager()
+						.showDelayedUserInfoPopup(
+								screenName.getAbsoluteLeft(),
+								screenName.getAbsoluteTop() + 20,
+								twitterUpdate.getTwitterAccount()
+										.getTwitterScreenName());
+				// createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
+				// .getAbsoluteTop() + 20,null);
 
 			}
 
 		});
-		/*screenName.addMouseOverHandler(new MouseOverHandler() {
 
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(screenName.getAbsoluteLeft(), screenName
-						.getAbsoluteTop() + 20, twitterUpdate.getTwitterAccount().getId().toString());
-				//createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
-				//		.getAbsoluteTop() + 20,null);
-
-			}
-
-		});
-		screenName.addMouseOutHandler(new MouseOutHandler() {
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				MainController.getInstance().getPopupManager().destroyUserPopupPanel();
-
-			}
-
-		});*/
 		return update;
 
 	}
@@ -322,10 +312,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	 * @return
 	 */
 	private HTML getUpdateMetaInfoHtml(TwitterUpdateDTO twitterUpdate) {
-		return new HTML("<span class=\"createdAt\">"
-				+ twitterUpdate.getCreatedAt()
-				+ "<span> from <span class=\"source\">"
-				+ twitterUpdate.getSource() + "</span>");
+		return new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterUpdate));
 
 	}
 
@@ -333,21 +320,24 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	 * Publish javascript native functions
 	 * 
 	 * @param result
-	 *//*
-
-	private native void publishNativeJSCode(TwitterUpdateWidget instance) -{
-		$wnd.showUserPanel = function (username) {
-			instance.@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsShowTwitterUserInfoPanel(Ljava/lang/String;)(username); 
-
-		};
-	}-;
-
-	
-	public void jsShowTwitterUserInfoPanel(String screenName)   {
-		Window.alert(screenName);
-		parentController.getTwitterAccountController().getExtendedUserAccount(screenName, this);
-		Window.alert("ID:"+this.twitterUpdate.getTwitterAccount().getId());
-	}*/
+	 */
+	/*
+	 * 
+	 * private native void publishNativeJSCode(TwitterUpdateWidget instance) -{
+	 * $wnd.showUserPanel = function (username) {
+	 * instance.@org.nideasystems.webtools
+	 * .zwitrng.client.view.updates.TwitterUpdateWidget
+	 * ::jsShowTwitterUserInfoPanel(Ljava/lang/String;)(username);
+	 * 
+	 * }; }-;
+	 * 
+	 * 
+	 * public void jsShowTwitterUserInfoPanel(String screenName) {
+	 * Window.alert(screenName);
+	 * parentController.getTwitterAccountController().getExtendedUserAccount
+	 * (screenName, this);
+	 * Window.alert("ID:"+this.twitterUpdate.getTwitterAccount().getId()); }
+	 */
 
 	private void hasReply(TwitterUpdateDTO result) {
 

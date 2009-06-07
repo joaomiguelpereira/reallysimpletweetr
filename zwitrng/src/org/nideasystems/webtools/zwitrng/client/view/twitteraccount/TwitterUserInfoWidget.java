@@ -40,10 +40,9 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	private TwitterAccountDTO twitterAccount = null;
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
 	private InlineHTML blockLink = new InlineHTML();
-	
 
 	public TwitterUserInfoWidget(String accountIdOrScreenName,
-			/*TwitterUpdatesController*/TwitterAccountController parentController) {
+	/* TwitterUpdatesController */TwitterAccountController parentController) {
 		this.setAnimationEnabled(true);
 		this.setAutoHideEnabled(true);
 		this.parentController = parentController;
@@ -54,32 +53,26 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		this.setWidget(tempPanel);
 		// this.setWidget(createTopPanel(account));
 
-/*		this.addMouseOverHandler(new MouseOverHandler() {
-
-			@Override
-			public void onMouseOver(MouseOverEvent event) {
-				hasMouseOver = true;
-				if (hidePanelTimer != null) {
-					hidePanelTimer.cancel();
-				}
-
-			}
-
-		});
-
-		this.addMouseOutHandler(new MouseOutHandler() {
-
-			@Override
-			public void onMouseOut(MouseOutEvent event) {
-				hasMouseOver = false;
-				if (hidePanelTimer == null) {
-					hidePanelTimer = new HidePanelTime();
-				}
-				hidePanelTimer.schedule(300);
-			}
-
-		});*/
-		//this.twitterAccount = account;
+		/*
+		 * this.addMouseOverHandler(new MouseOverHandler() {
+		 * 
+		 * @Override public void onMouseOver(MouseOverEvent event) {
+		 * hasMouseOver = true; if (hidePanelTimer != null) {
+		 * hidePanelTimer.cancel(); }
+		 * 
+		 * }
+		 * 
+		 * });
+		 * 
+		 * this.addMouseOutHandler(new MouseOutHandler() {
+		 * 
+		 * @Override public void onMouseOut(MouseOutEvent event) { hasMouseOver
+		 * = false; if (hidePanelTimer == null) { hidePanelTimer = new
+		 * HidePanelTime(); } hidePanelTimer.schedule(300); }
+		 * 
+		 * });
+		 */
+		// this.twitterAccount = account;
 		parentController.getExtendedUserAccount(accountIdOrScreenName, this);
 	}
 
@@ -168,81 +161,88 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		bottomLayout.setWidget(0, 3, followers);
 		bottomLayout.setWidget(0, 4, updates_label);
 		bottomLayout.setWidget(0, 5, updates);
+		extendedUserInfo.add(bottomLayout);
+		if (!this.twitterAccount.getTwitterScreenName().endsWith(
+				parentController.getModel().getTwitterScreenName())) {
+			HorizontalPanel optionPannel = new HorizontalPanel();
 
-		HorizontalPanel optionPannel = new HorizontalPanel();
+			optionPannel.addStyleName("user_options");
 
-		optionPannel.addStyleName("user_options");
-
-		// Add follow/unfollow user link
-		setupFollowLink(this.twitterAccount.getExtendedUserAccount()
-				.isImFollowing());
-		followLink.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				waitingImg.setVisible(true);
-				parentController.followUser(!twitterAccount
-						.getExtendedUserAccount().isImFollowing(),
-						twitterAccount.getId(), instance);
-			}
-
-		});
-		optionPannel.add(followLink);
-
-		// Add block/unblok
-		setupBlockLink(this.twitterAccount.getExtendedUserAccount()
-				.isImBlocking());
-		blockLink.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				waitingImg.setVisible(true);
-				parentController.blockUser(!twitterAccount
-						.getExtendedUserAccount().isImBlocking(),
-						twitterAccount.getId(), instance);
-
-			}
-
-		});
-		optionPannel.add(blockLink);
-
-		// Start Set Up the Send Private Message Link
-		if (twitterAccount.getExtendedUserAccount().isMutualFriendShip()) {
-			InlineHTML sendPm = new InlineHTML("Send private message");
-			sendPm.addStyleName("link");
-			sendPm.addClickHandler(new ClickHandler() {
+			// Add follow/unfollow user link
+			setupFollowLink(this.twitterAccount.getExtendedUserAccount()
+					.isImFollowing());
+			followLink.addClickHandler(new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
-					sendUpdateWidget.setController(parentController);
-					sendUpdateWidget.setSendingTwitterAccount(parentController.getModel());
-					sendUpdateWidget.setShowUserImage(true);
-					sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
-					sendUpdateWidget.setType(SendUpdateWidget.PRIVATE_MESSAGE);
-					sendUpdateWidget.init();
-					
-					SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(twitterAccount,sendUpdateWidget);
-					sendPrivateMessageWindow.setAnimationEnabled(true);
-					sendPrivateMessageWindow.show();
+					waitingImg.setVisible(true);
+					parentController.followUser(!twitterAccount
+							.getExtendedUserAccount().isImFollowing(),
+							twitterAccount.getId(), instance);
 				}
 
 			});
+			optionPannel.add(followLink);
 
-			optionPannel.add(sendPm);
+			// Add block/unblok
+			setupBlockLink(this.twitterAccount.getExtendedUserAccount()
+					.isImBlocking());
+			blockLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					waitingImg.setVisible(true);
+					parentController.blockUser(!twitterAccount
+							.getExtendedUserAccount().isImBlocking(),
+							twitterAccount.getId(), instance);
+
+				}
+
+			});
+			optionPannel.add(blockLink);
+
+			// Start Set Up the Send Private Message Link
+			if (twitterAccount.getExtendedUserAccount().isMutualFriendShip()) {
+				InlineHTML sendPm = new InlineHTML("Send private message");
+				sendPm.addStyleName("link");
+				sendPm.addClickHandler(new ClickHandler() {
+
+					@Override
+					public void onClick(ClickEvent event) {
+						SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
+						sendUpdateWidget.setController(parentController);
+						sendUpdateWidget
+								.setSendingTwitterAccount(parentController
+										.getModel());
+						sendUpdateWidget.setShowUserImage(true);
+						sendUpdateWidget
+								.setInResponseToUserAccount(twitterAccount);
+						sendUpdateWidget
+								.setType(SendUpdateWidget.PRIVATE_MESSAGE);
+						sendUpdateWidget.init();
+
+						SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
+								twitterAccount, sendUpdateWidget);
+						sendPrivateMessageWindow.setAnimationEnabled(true);
+						sendPrivateMessageWindow.show();
+					}
+
+				});
+
+				optionPannel.add(sendPm);
+			}
+			// End Set Up the Send Private Message Link
+
+			InlineHTML groups = new InlineHTML("Groups");
+			groups.addStyleName("link");
+
+			optionPannel.add(groups);
+			optionPannel.add(waitingImg);
+			waitingImg.setVisible(false);
+			optionPannel.setSpacing(5);
+			extendedUserInfo.add(optionPannel);
 		}
-		// End Set Up the Send Private Message Link
 
-		InlineHTML groups = new InlineHTML("Groups");
-		groups.addStyleName("link");
-
-		optionPannel.add(groups);
-		optionPannel.add(waitingImg);
-		waitingImg.setVisible(false);
-		optionPannel.setSpacing(5);
-
-		extendedUserInfo.add(bottomLayout);
-		extendedUserInfo.add(optionPannel);
 		mainPanel.add(topPanel);
 		mainPanel.add(userDescription);
 		mainPanel.add(extendedUserInfo);
@@ -290,7 +290,6 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		followLink.addStyleName("link");
 	}
 
-	
 	@Override
 	public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
 		return addDomHandler(handler, MouseOverEvent.getType());

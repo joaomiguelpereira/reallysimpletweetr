@@ -24,8 +24,6 @@ public class TwitterAccountView extends
 
 	@Override
 	public void init() {
-		add(new HTML("TwitterAccountView"));
-
 		add(waitingImg);
 
 		if (!getController().getModel().getIsOAuthenticated()) {

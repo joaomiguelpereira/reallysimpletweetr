@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListController;
 import org.nideasystems.webtools.zwitrng.client.services.BasicServiceManager;
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
@@ -31,13 +32,14 @@ public class MainController implements IMainController {
 	public static MainController getInstance() {
 		if (instance == null) {
 			instance = new MainController();
-
 		}
-
 		return instance;
 
 	}
 
+	public PersonaController getCurrentPersonaController() {
+		return personasListController.getCurrentPersonaController();
+	}
 	
 	public PopupManager getPopupManager() {
 		

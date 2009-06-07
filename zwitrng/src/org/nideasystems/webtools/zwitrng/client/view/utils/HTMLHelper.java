@@ -1,11 +1,13 @@
 package org.nideasystems.webtools.zwitrng.client.view.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class HTMLHelper {
 
@@ -13,10 +15,11 @@ public class HTMLHelper {
 	// public static final String USER_NAME_REGEX = "/[@]+[A-Za-z0-9-_]+/";
 	public static final String USER_NAME_REGEX = "\\B@[\\w\\d_]{1,15}";
 	public static final String DELIMITATORS_REGEX = "/\\W/ ";
-	
+
 	public static final String URL_REGEX = "(@)?(href=\")?(http://)?[A-Za-z]+(\\.\\w+)+(/[&\\n=?\\+\\%/\\.\\w]+)?";
-	
-	//public static final String URL_REGEX = "^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\\?\\/.=]+$";
+
+	// public static final String URL_REGEX =
+	// "^[A-Za-z]+://[A-Za-z0-9-_]+\\.[A-Za-z0-9-_%&\\?\\/.=]+$";
 	// public static final String HASHTAG_REGEX = "/[#]+[A-Za-z0-9-_]+/";
 	public static final String HASHTAG_REGEX = "\\B#[\\w\\d_]{1,15}";
 
@@ -28,18 +31,16 @@ public class HTMLHelper {
 
 	public static native String getNativeJsRegex() /*-{
 		pattern = '^(?#Protocol)(?:(?:ht|f)tp(?:s?)\:\/\/|~/|/)?(?#Username:Password)(?:\w+:\w+@)?(?#Subdomains)(?:(?:[-\w]+\.)+(?#TopLevel Domains)(?:com|org|net|gov|mil|biz|info|mobi|name|aero|jobs|museum|travel|[a-z]{2}))(?#Port)(?::[\d]{1,5})?(?#Directories)(?:(?:(?:/(?:[-\w~!$+|.,=]|%[a-f\d]{2})+)+|/)+|\?|#)?(?#Query)(?:(?:\?(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)(?:&(?:[-\w~!$+|.,*:]|%[a-f\d{2}])+=(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)*)*(?#Anchor)(?:#(?:[-\w~!$+|.,*:=]|%[a-f\d]{2})*)?$' 
-		
+
 		$wnd.alert(pattern)
 		return pattern;
 		//return "((https?|ftp|gopher|telnet|file|notes|ms-help):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*)"
-		
 	}-*/;
-	
+
 	private HTMLHelper() {
 
 	}
 
-	
 	public static HTMLHelper get() {
 		return new HTMLHelper();
 	}
@@ -55,13 +56,10 @@ public class HTMLHelper {
 
 		String newString = text;
 
-
-		
-
 		for (String twitterScreenName : this.twitterUserNameArray) {
 			twitterScreenName = twitterScreenName.substring(1);
 			String twitterId = String.valueOf(++nextId) + twitterScreenName;
-			
+
 			newString = newString.replaceAll(twitterScreenName, "<a id=\""
 					+ twitterId + "\" href=\"javascript:showUserPanel('"
 					+ twitterScreenName + "','" + twitterId + "')\">"
@@ -70,12 +68,12 @@ public class HTMLHelper {
 		}
 
 		for (String hashTag : this.hashTags) {
-			newString = newString.replaceAll(hashTag, "<a href=\"" + hashTag
-					+ "\" target=\"_blank\">" + hashTag + "</a>");
+			newString = newString.replaceAll(hashTag, "<a href=\"javascript:processHashTag('" + hashTag
+					+ "')\">" + hashTag + "</a>");
 		}
 		for (String url : this.linksArray) {
-			newString = newString.replace((CharSequence)url, "<a href=\"" + url
-					+ "\" target=\"_blank\">" + url + "</a>");
+			newString = newString.replace((CharSequence) url, "<a href=\""
+					+ url + "\" target=\"_blank\">" + url + "</a>");
 		}
 		return newString;
 	}
@@ -134,8 +132,7 @@ public class HTMLHelper {
 				twitterUserNameArray.add(itHelper);
 			}
 
-			if (word.startsWith("http://")
-					&& !linksArray.contains(word)) {
+			if (word.startsWith("http://") && !linksArray.contains(word)) {
 				linksArray.add(word);
 			}
 			if (word.contains("#")) {
@@ -176,5 +173,80 @@ public class HTMLHelper {
 		}
 
 		return itHelper;
+	}
+
+	public String getParsedMetaDataHtml(TwitterUpdateDTO twitterUpdate) {
+		GWT.log("Parsing date:" + twitterUpdate.getCreatedAt(), null);
+		GWT.log("Parsing Source:" + twitterUpdate.getSource(), null);
+		GWT.log("Parsing date:" + twitterUpdate.getCreatedAt(), null);
+		GWT.log("Parsing InReplyToStatusId:"
+				+ twitterUpdate.getInReplyToStatusId(), null);
+		GWT
+				.log("Parsing InReplyToUserId:"
+						+ twitterUpdate.getInReplyToUserId(), null);
+
+		
+		String returnString = "<span class=\"createdAt\">"
+				+ getParsedUpdateCreated(twitterUpdate.getCreatedAt())
+				+ "<span> from <span class=\"source\">"
+				+ getParsedSource(twitterUpdate.getSource()) + "</span>";
+
+		return returnString;
+
+	}
+
+	private String getParsedSource(String source) {
+		return source.replace("&lt;", "<").replace("&quot;", "\"").replace("&gt;", ">");
+		
+		
+	}
+
+	private String getParsedUpdateCreated(Date createdAt) {
+		String returnStr = "";
+
+		Date now = new Date();
+
+		long longTimeBetween = now.getTime() - createdAt.getTime();
+
+		// if it's more that 24 hours,
+		if (longTimeBetween > 24 * 60 * 60 * 1000) {
+			DateTimeFormat df = DateTimeFormat
+					.getFormat("k:mm, EEE, MMM d, yyyyy");
+			returnStr = df.format(createdAt);
+		} else {
+			// if less that an second
+			long seconds = longTimeBetween / 1000;
+
+			long minutes = 0;
+
+			long hours = 0;
+
+			if (seconds > 0)
+				minutes = (seconds / 60);
+			
+			if (minutes > 0)
+				hours = (minutes / 60);
+
+			if (seconds <= 60) {
+				returnStr = "less than 1 minute ago";
+			} else if ( hours==0 && minutes < 60) {
+				if ( minutes>1) {
+					returnStr = minutes + " minutes ago";
+				} else {
+					returnStr = minutes + " minute ago";
+				}
+				
+			} else {
+				returnStr = "about "+hours + " hours ago";
+			}
+
+			// if ( minutes)
+			// returnStr =
+			// longTimeBetweenSeconds+" seconds, "+minutes+" minutes and "+hours+" hours";
+		}
+
+		// DateFormat df = new SimpleDateFormat("k M,d y");
+
+		return returnStr;
 	}
 }

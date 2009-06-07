@@ -51,6 +51,13 @@ public class TwitterUpdatesView extends AbstractVerticalPanelView<TwitterUpdates
 		
 		
 	}
+	public void refresh() {
+		if (currentFilter.getUpdatesType() == UpdatesType.SEARCHES) {
+			searchWidget.refresh();
+		}
+		
+	}
+
 
 	public FilterCriteriaDTO getCurrentFilter() {
 		return currentFilter;
@@ -66,5 +73,6 @@ public class TwitterUpdatesView extends AbstractVerticalPanelView<TwitterUpdates
 		
 	}
 
+	
 	
 }

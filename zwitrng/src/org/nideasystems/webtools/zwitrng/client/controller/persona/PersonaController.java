@@ -11,6 +11,7 @@ import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 
 public class PersonaController extends AbstractController<PersonaDTO, PersonaView> implements AutoUpdatable{
@@ -18,7 +19,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 	
 	TwitterUpdatesListController twitterUpdatesListController = null;
 	TwitterAccountController twitterAccountController = null;
-	PersonaToolsWidget tools = null;
+	
 	
 	@Override
 	public void init() {
@@ -27,11 +28,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		getView().setController(this);
 		getView().init();
 		//Add the Tools for the Persona
-		tools = new PersonaToolsWidget();
-		tools.setController(this);
-		tools.init();
-		getView().add(tools);
-		
+				
 		
 		//Create a controller for the TwitterAccount
 		twitterAccountController = new TwitterAccountController();
@@ -48,8 +45,12 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		
 		
 		
-		
 	}
+	public TwitterUpdatesListController getTwitterUpdatesListController() {
+		
+		return this.twitterUpdatesListController;
+	}
+	
 	
 	
 

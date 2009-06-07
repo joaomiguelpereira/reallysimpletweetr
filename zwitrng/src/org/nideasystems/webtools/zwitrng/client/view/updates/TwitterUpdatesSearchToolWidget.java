@@ -42,9 +42,10 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 				//Window.alert(currentFiler.getSearchText());
 				if (!search.getValue().isEmpty() && !search.getValue().equals(currentFiler.getSearchText())) {
 					currentFiler.setSearchText(search.getValue());
-					getController().setCurrentFilter(currentFiler);
+					//getController().setCurrentFilter(currentFiler);
 					getController().reload();
-					currentSearch.setText(currentFiler.getSearchText());
+					//refresh();
+					
 				}
 				
 			}
@@ -68,6 +69,13 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 
 	public FilterCriteriaDTO getCurrentFiler() {
 		return currentFiler;
+	}
+
+
+	public void refresh() {
+		search.setValue(currentFiler.getSearchText());
+		currentSearch.setText(currentFiler.getSearchText());
+		
 	}
 
 }

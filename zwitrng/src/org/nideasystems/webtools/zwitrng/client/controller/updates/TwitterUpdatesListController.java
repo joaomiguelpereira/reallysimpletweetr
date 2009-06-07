@@ -16,6 +16,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterUpdatesListController extends
@@ -34,6 +35,10 @@ public class TwitterUpdatesListController extends
 		super();
 	}
 
+	public TwitterUpdatesController getActiveUpdatesController() {
+		return activeController;
+	}
+	
 	public void init() {
 		setView(new TwitterUpdatesListView());
 		getView().init();
@@ -202,6 +207,14 @@ public class TwitterUpdatesListController extends
 		return ((PersonaController) getParentController())
 				.getTwitterAccountController();
 
+	}
+
+	public void activateSearch(String hash) {
+		activeController = this.searchesTwitterUpdatesController;
+		this.searchesTwitterUpdatesController.getCurrentFilter().setSearchText(hash);
+		getView().selectTab(2);
+		Window.scrollTo(0, 0);
+		this.searchesTwitterUpdatesController.reload();
 	}
 
 }
