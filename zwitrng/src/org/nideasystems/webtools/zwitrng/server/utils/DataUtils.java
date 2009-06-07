@@ -12,6 +12,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import twitter4j.ExtendedUser;
 import twitter4j.Status;
+import twitter4j.Tweet;
 import twitter4j.User;
 
 public class DataUtils {
@@ -41,16 +42,17 @@ public class DataUtils {
 		if (twitterUser != null) {
 			twitterAcount.setTwitterDescription(twitterUser.getDescription());
 			twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
-			
+
 			twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL()
 					.toExternalForm());
 			twitterAcount.setId(twitterUser.getId());
-			
+
 			twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
 			twitterAcount.setTwitterName(twitterUser.getName());
 			twitterAcount.setTwitterLocation(twitterUser.getLocation());
-			twitterAcount.setTwitterWeb(twitterUser.getURL()!=null?twitterUser.getURL().toExternalForm():"");
-			
+			twitterAcount
+					.setTwitterWeb(twitterUser.getURL() != null ? twitterUser
+							.getURL().toExternalForm() : "");
 
 		}
 
@@ -78,8 +80,8 @@ public class DataUtils {
 		twitterAcount.setTwitterName(twitterUser.getName());
 		twitterAcount.setTwitterLocation(twitterUser.getLocation());
 		twitterAcount.setId(twitterUser.getId());
-		twitterAcount.setTwitterWeb(twitterUser.getURL()!=null?twitterUser.getURL().toExternalForm():"");
-		
+		twitterAcount.setTwitterWeb(twitterUser.getURL() != null ? twitterUser
+				.getURL().toExternalForm() : "");
 
 		return twitterAcount;
 	}
@@ -121,10 +123,36 @@ public class DataUtils {
 	public static FilterCriteriaDTO createFilterCriteriaDto(FilterDO filterDo) {
 
 		FilterCriteriaDTO returnObj = new FilterCriteriaDTO();
-		returnObj.setName(filterDo.getName());
+		returnObj.setSearchText(filterDo.getName());
 		returnObj.setKey(filterDo.getKey().toString());
 
 		return returnObj;
+
+	}
+
+	public static TwitterUpdateDTO createTwitterUpdateDto(Tweet status) {
+		TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
+
+		twitterUpdate.setCreatedAt(status.getCreatedAt());
+		twitterUpdate.setId(status.getId());
+		//twitterUpdate.setInReplyToStatusId();
+		twitterUpdate.setInReplyToUserId(status.getToUserId());
+
+		twitterUpdate.setRateLimitLimit(status.getRateLimitLimit());
+		twitterUpdate.setRateLimitRemaining(status.getRateLimitRemaining());
+		twitterUpdate.setRateLimitReset(status.getRateLimitReset());
+		twitterUpdate.setSource(status.getSource());
+		twitterUpdate.setText(status.getText());
+
+		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
+		twitterAccount.setTwitterScreenName(status.getFromUser());
+		twitterAccount.setId(status.getFromUserId());
+		twitterAccount.setTwitterImageUrl(status.getProfileImageUrl());
+		
+		twitterUpdate.setTwitterAccount(twitterAccount);
+
+
+		return twitterUpdate;
 
 	}
 
@@ -267,7 +295,7 @@ public class DataUtils {
 	}
 
 	/**
-	 *
+	 * 
 	 * @param fullAuthorizeddAccount
 	 * @return
 	 */

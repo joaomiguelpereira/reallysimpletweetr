@@ -4,7 +4,7 @@ public enum UpdatesType {
 	FRIENDS (1),
 	MY(2),
 	FAVORITES(3),
-	DIRECT(4);
+	DIRECT(4), MENTIONS(5), SEARCHES(6);
 	
 	private final int val;
 	UpdatesType(int val) {
