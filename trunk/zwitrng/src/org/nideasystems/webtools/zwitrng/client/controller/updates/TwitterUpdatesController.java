@@ -137,6 +137,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 							public void onFailure(Throwable caught) {
 								GWT.log("Error returned from service", caught);
 								endProcessing();
+								getView().refresh();
 								getMainController().addException(caught);
 								
 							}
@@ -145,7 +146,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 							public void onSuccess(TwitterUpdateDTOList result) {
 								endProcessing();
 								handleDataLoaded(result);
-								
+								getView().refresh();
 							}
 							
 						});
@@ -153,6 +154,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 				endProcessing();
 				getMainController().addException(e);
 				GWT.log("Error calling serive", e);
+				getView().refresh();
 
 			}
 			
@@ -209,8 +211,8 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 				getView().remove(i);
 
 			}
-			assert (updates.size() == updatesPerPage);
-			assert ((getView().getWidgetCount() - 1) == updatesPerPage);
+			//assert (updates.size() == updatesPerPage);
+			//assert ((getView().getWidgetCount() - 1) == updatesPerPage);
 		}
 
 		// updatesPerPage = newPageSize;

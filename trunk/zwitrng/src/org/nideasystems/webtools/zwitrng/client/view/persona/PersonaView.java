@@ -29,6 +29,7 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 	private String loginUrl = "none";
 	final HorizontalPanel authentication = new HorizontalPanel();
 	final HTML loginUrlLink = new HTML("You need to authenticate");
+	private PersonaToolsWidget tools = null;
 	private boolean isInitialized = false;
 	/**
 	 * P c
@@ -54,6 +55,11 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 		if (isInitialized) {
 			throw new RuntimeException("You try to initialize personaView again?");
 		}
+		tools = new PersonaToolsWidget();
+		tools.setController(getController());
+		tools.init();
+		this.add(tools);
+
 		isInitialized = true;
 		
 		

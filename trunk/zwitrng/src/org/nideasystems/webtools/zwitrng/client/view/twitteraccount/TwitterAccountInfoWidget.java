@@ -1,11 +1,17 @@
 package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 /**
@@ -13,7 +19,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  * @author jpereira
  *
  */
-public class TwitterAccountInfoWidget extends HorizontalPanel {
+public class TwitterAccountInfoWidget extends VerticalPanel {
 
 	private static final String DEFAULT_IMAGE_URL = "https://static.twitter.com/images/default_profile_bigger.png";
 	//HorizontalPanel userInfoPanel = null;
@@ -28,11 +34,56 @@ public class TwitterAccountInfoWidget extends HorizontalPanel {
 	HTML userDescription = null;
 	HTML userFollowing = null;
 	HTML userFollowers = null;
-	HTML userUpdates = null;
-	HTML lastStatus = null;
+	InlineHTML userUpdates = null;
+	InlineHTML lastStatus = null;
+	HTML tweetMetadata = null;
 	
-	public TwitterAccountInfoWidget(TwitterAccountDTO twitterAccount) {
+	public TwitterAccountInfoWidget(final TwitterAccountDTO twitterAccount) {
 		super();
+		
+		HorizontalPanel horizontalPanel = new HorizontalPanel();
+		this.userImage = new Image(twitterAccount==null?DEFAULT_IMAGE_URL:twitterAccount.getTwitterImageUrl());
+		horizontalPanel.add(this.userImage);
+		
+		VerticalPanel lastTwee = new VerticalPanel();
+		
+		if ( twitterAccount.getTwitterUpdateDto()!= null ) {
+			FlowPanel tweetPanel = new FlowPanel();
+			final InlineHTML userName = new InlineHTML(twitterAccount.getTwitterName()+" ("+twitterAccount.getTwitterScreenName()+"): ");
+			userName.addStyleName("userScreenName");
+			tweetPanel.add(userName);
+			userName.addStyleName("link");
+			userName.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					
+					MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(userName.getAbsoluteLeft(), userName
+							.getAbsoluteTop() + 20, twitterAccount.getTwitterScreenName());
+					//createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
+					//		.getAbsoluteTop() + 20,null);
+
+				}
+
+			});
+
+			this.lastStatus = new InlineHTML(HTMLHelper.get().getParsedUpdateHtml(twitterAccount.getTwitterUpdateDto().getText()));
+			tweetPanel.addStyleName("tweet");
+			
+			tweetPanel.add(lastStatus);
+			tweetMetadata  = new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterAccount.getTwitterUpdateDto()));
+			tweetMetadata.addStyleName("twitterUpdateMetaData");
+			lastTwee.add(tweetPanel);
+			lastTwee.add(tweetMetadata);
+			
+			horizontalPanel.add(lastTwee);
+			
+		}
+		
+		this.add(horizontalPanel);
+		
+		
+		/*
 		
 		HorizontalPanel topPannel= new HorizontalPanel();
 		HorizontalPanel middlePannel= new HorizontalPanel();
@@ -42,8 +93,7 @@ public class TwitterAccountInfoWidget extends HorizontalPanel {
 		//create the pannel to hold image + info personal
 		this.leftPanel = new HorizontalPanel();
 				
-		this.userImage = new Image(twitterAccount==null?DEFAULT_IMAGE_URL:twitterAccount.getTwitterImageUrl());
-		this.leftPanel.add(this.userImage);
+		
 		
 		
 		this.userName = new HTML(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterName());
@@ -74,13 +124,18 @@ public class TwitterAccountInfoWidget extends HorizontalPanel {
 		//
 		super.add(leftPanel);
 		super.add(rightPanel);
-		
+		*/
 		
 		
 	}
 	public void updateLastStatus(TwitterUpdateDTO update) {
 		if (update != null ) {
 			this.lastStatus.setHTML(update.getText());
+			assert(this.tweetMetadata!=null);
+			assert(update.getCreatedAt()!=null);
+
+			assert(this.tweetMetadata!=null);
+			this.tweetMetadata.setHTML(HTMLHelper.get().getParsedMetaDataHtml(update));
 		}
 		
 	}
