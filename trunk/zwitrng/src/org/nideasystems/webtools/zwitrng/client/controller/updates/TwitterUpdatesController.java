@@ -26,14 +26,14 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		AutoUpdatable {
 
 	private TwitterAccountDTO twitterAccount;
-	private UpdatesType updatesType;
+
 	//private TwitterUpdatesView updatesView = null;
 	private Map<Long, TwitterUpdateDTO> updates = new HashMap<Long, TwitterUpdateDTO>();
-	private long lastUpdateId = 1;
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 60; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
 	private Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
+	private FilterCriteriaDTO currentFilter = null;
 	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
 	// update automatically
 
@@ -44,6 +44,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		//create the view 
 		setView(new TwitterUpdatesView());
 		getView().setController(this);
+		getView().setCurrentFilter(currentFilter);
 		getView().init();
 		this.twitterAccount = ((TwitterUpdatesListController)getParentController()).getModel();
 	
@@ -52,13 +53,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 	
 
-	public UpdatesType getUpdatesType() {
-		return updatesType;
-	}
-
-	public void setUpdatesType(UpdatesType updatesType) {
-		this.updatesType = updatesType;
-	}
+	
 
 	
 	public void handleDataLoaded(TwitterUpdateDTOList twitterUpdates) {
@@ -67,21 +62,25 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		assert (twitterUpdates != null);
 		boolean addOnTop = false;
 		boolean updateNeeded = false;
-		if (lastUpdateId > 1) {
+		if (currentFilter.getSinceId() > 1) {
 			addOnTop = true;
 		}
 
 		if (twitterUpdates.getTwitterUpdatesList().size() > 0) {
 			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0).getId();
-			if (newUpdateId != lastUpdateId) {
+			if (newUpdateId != currentFilter.getSinceId()) {
 				updateNeeded = true;
-				lastUpdateId = newUpdateId;
+				currentFilter.setSinceId(newUpdateId);
+				currentFilter.setSinceId(newUpdateId);
 			}
 
 		}
 
 		if (updateNeeded) {
 			int i = 1;
+				
+			
+			
 			for (TwitterUpdateDTO update : twitterUpdates.getTwitterUpdatesList()) {
 
 				if (addOnTop) {
@@ -125,13 +124,14 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	public void reload() {
 		if (!isPaused) {
 			startProcessing();
-			FilterCriteriaDTO filter = new FilterCriteriaDTO();
+			
+			/*FilterCriteriaDTO filter = new FilterCriteriaDTO();
 			filter.setSinceId(lastUpdateId);
-			filter.setUpdatesType(this.getUpdatesType());
+			filter.setUpdatesType(this.getCurrentFilter().getUpdatesType());*/
 			// Let's update the tweets
 			try {
 				getServiceManager().getRPCService().getTwitterUpdates(
-						twitterAccount, filter, new AsyncCallback<TwitterUpdateDTOList>() {
+						twitterAccount, this.getCurrentFilter(), new AsyncCallback<TwitterUpdateDTOList>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -222,7 +222,10 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		@Override
 		public void run() {
 
-			reload();
+			if (!isPaused) {
+				reload();
+			}
+			
 
 		}
 
@@ -253,6 +256,18 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	public TwitterAccountController getTwitterAccountController() {
 		return ((TwitterUpdatesListController)getParentController()).getTwitterAccountController();
 		
+	}
+
+
+
+	public void setCurrentFilter(FilterCriteriaDTO currentFilter) {
+		this.currentFilter = currentFilter;
+	}
+
+
+
+	public FilterCriteriaDTO getCurrentFilter() {
+		return currentFilter;
 	}
 	
 /*	public PersonaController getPersonaController() {

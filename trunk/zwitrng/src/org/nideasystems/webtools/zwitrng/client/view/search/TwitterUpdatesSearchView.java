@@ -32,9 +32,9 @@ public class TwitterUpdatesSearchView extends AbstractVerticalPanelView{
 		@Override
 		public void onClick(ClickEvent event) {
 			FilterCriteriaDTO filter = new FilterCriteriaDTO();
-			filter.setName("general");
+			filter.setSearchText("general");
 			getController().handleAction("SEARCH",filter);
-			//controller.search(filter);
+			
 			
 		}
 		

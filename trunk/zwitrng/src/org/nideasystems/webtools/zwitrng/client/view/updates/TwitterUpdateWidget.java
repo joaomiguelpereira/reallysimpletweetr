@@ -48,7 +48,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	
 	
 	//private ShowUserInfoPanelTimer showUserInfoWidgetTimer = null;
-	private static Image refLeftImage = null;
+	//private static Image refLeftImage = null;
 	
 
 	private Image userImg = null;
@@ -76,9 +76,9 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		userImg.setWidth("48px");
 		userImg.setHeight("48px");
 		
-		if ( refLeftImage == null ) {
-			refLeftImage = userImg;
-		}
+//		if ( refLeftImage == null ) {
+//			refLeftImage = userImg;
+//		}
 		
 		
 		tweetLayout.setWidget(0, 0, userImg);
@@ -218,7 +218,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	public static void jsShowTwitterUserInfoPanel(String screenName, String id)   {
 		Element el = DOM.getElementById(id);
 		
-		MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(refLeftImage.getAbsoluteLeft()+50, el.getAbsoluteTop()+20, screenName);
+		MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(0, el.getAbsoluteTop()+20, screenName);
 		
 	}
 	
@@ -283,7 +283,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			public void onClick(ClickEvent event) {
 				
 				MainController.getInstance().getPopupManager().showDelayedUserInfoPopup(screenName.getAbsoluteLeft(), screenName
-						.getAbsoluteTop() + 20, twitterUpdate.getTwitterAccount().getId().toString());
+						.getAbsoluteTop() + 20, twitterUpdate.getTwitterAccount().getTwitterScreenName());
 				//createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
 				//		.getAbsoluteTop() + 20,null);
 
