@@ -62,16 +62,20 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		assert (twitterUpdates != null);
 		boolean addOnTop = false;
 		boolean updateNeeded = false;
-		if (currentFilter.getSinceId() > 1) {
+		if (currentFilter.getSinceId() >= 1) {
 			addOnTop = true;
 		}
 
 		if (twitterUpdates.getTwitterUpdatesList().size() > 0) {
 			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0).getId();
+			
+			
 			if (newUpdateId != currentFilter.getSinceId()) {
 				updateNeeded = true;
 				currentFilter.setSinceId(newUpdateId);
-				currentFilter.setSinceId(newUpdateId);
+				currentFilter.setCompletedIn(twitterUpdates.getFilter().getCompletedIn());
+				currentFilter.setRefreshUrl(twitterUpdates.getFilter().getRefreshUrl());
+				//currentFilter = twitterUpdates.getFilter();
 			}
 
 		}
@@ -98,6 +102,7 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 		}
 		adjustPageSize();
+		getView().refresh();
 	}
 
 	private void addUpdateWidget(TwitterUpdateDTO update, int pos) {
@@ -146,7 +151,8 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 							public void onSuccess(TwitterUpdateDTOList result) {
 								endProcessing();
 								handleDataLoaded(result);
-								getView().refresh();
+								
+								//getView().refresh();
 							}
 							
 						});

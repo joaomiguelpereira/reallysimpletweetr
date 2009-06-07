@@ -121,7 +121,14 @@ public class TwitterServiceAdapter {
 
 		// Create new data structure
 		TwitterUpdateDTOList returnList = new TwitterUpdateDTOList();
-
+		FilterCriteriaDTO newFilter = new FilterCriteriaDTO();
+		returnList.setFilter(newFilter);
+		
+		
+		
+		
+		
+		returnList.setFilter(filter);
 		// if twitter is null, something went wrong
 		assert (twitter != null);
 
@@ -130,6 +137,7 @@ public class TwitterServiceAdapter {
 
 		Paging paging = new Paging();
 		paging.setSinceId(filter.getSinceId());
+		paging.setCount(filter.getResultsPerPage());
 
 		if (filter.getUpdatesType() == UpdatesType.FRIENDS) {
 			// CAll twitter API
@@ -148,21 +156,33 @@ public class TwitterServiceAdapter {
 			}
 		} else if (filter.getUpdatesType() == UpdatesType.SEARCHES) {
 			Query query = new Query();
+			query.setRpp(filter.getResultsPerPage());
+			query.setSinceId(filter.getSinceId());
 			query.setQuery(filter.getSearchText());
 			QueryResult qResult = twitter.search(query);
-			log.fine("qResult.getRefreshUrl() " + qResult.getRefreshUrl());
-			log.fine("qResult.getCompletedIn " + qResult.getCompletedIn());
-			log.fine("qResult.getgetMaxId() " + qResult.getMaxId());
-			log.fine("qResult.qResult.getPage() " + qResult.getPage());
-			log.fine("qResult.getQuery() " + qResult.getQuery());
-			log.fine("qResult.getRateLimitLimit() "
+			filter.setRefreshUrl(qResult.getRefreshUrl());
+			filter.setCompletedIn(qResult.getCompletedIn());
+			
+			newFilter.setMaxId(qResult.getMaxId());
+			newFilter.setPage(qResult.getPage());
+			newFilter.setResultsPerPage(qResult.getResultsPerPage());
+			newFilter.setSinceId(qResult.getSinceId());
+			/*
+			
+			//log.fine("qResult.getCompletedIn " + qResult.getCompletedIn());
+			//log.fine("qResult.getgetMaxId() " + qResult.getMaxId());
+			
+			//log.fine("qResult.qResult.getPage() " + qResult.getPage());
+			//log.fine("qResult.getQuery() " + qResult.getQuery());
+			//log.fine("qResult.getRateLimitLimit() "
 					+ qResult.getRateLimitLimit());
-			log.fine("qResult.getRateLimitRemaining() "
+			//log.fine("qResult.getRateLimitRemaining() "
 					+ qResult.getRateLimitRemaining());
 			log.fine("qResult.getResultsPerPage() "
 					+ qResult.getResultsPerPage());
 			log.fine("qResult.getSinceId() " + qResult.getSinceId());
 			log.fine("qResult.getWarning() " + qResult.getWarning());
+			*/
 			List<Tweet> tuites = qResult.getTweets();
 
 			for (Tweet tuite : tuites) {
@@ -181,6 +201,7 @@ public class TwitterServiceAdapter {
 
 		return returnList;
 	}
+	
 
 	public Status postUpdate(TwitterUpdateDTO update) throws Exception {
 		log.info("Calling TWITTER API: "

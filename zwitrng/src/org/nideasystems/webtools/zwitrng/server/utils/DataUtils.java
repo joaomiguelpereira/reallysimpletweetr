@@ -143,7 +143,7 @@ public class DataUtils {
 		twitterUpdate.setRateLimitReset(status.getRateLimitReset());
 		twitterUpdate.setSource(status.getSource());
 		twitterUpdate.setText(status.getText());
-
+		
 		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
 		twitterAccount.setTwitterScreenName(status.getFromUser());
 		twitterAccount.setId(status.getFromUserId());
