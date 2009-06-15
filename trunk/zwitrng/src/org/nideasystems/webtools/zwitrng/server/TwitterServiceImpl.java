@@ -10,15 +10,14 @@ import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.ExtendedTwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
-import twitter4j.ExtendedUser;
 import twitter4j.Status;
+import twitter4j.User;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -53,6 +52,7 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 			list = TwitterServiceAdapter.get().getUpdates(twitterAccount, filter);
 		} catch (Exception e) {
 			log.severe(e.getMessage());
+			e.printStackTrace();
 			throw new Exception(e);
 		} 
 		
@@ -95,7 +95,7 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 		TwitterAccountDTO authorizedTwitterAccount = TwitterServiceAdapter
 				.get().authorizeAccount(personaDto.getTwitterAccount());
 
-		ExtendedUser exUser = TwitterServiceAdapter.get().getExtendedUser(
+		User exUser = TwitterServiceAdapter.get().getExtendedUser(
 				authorizedTwitterAccount);
 
 		TwitterAccountDTO fullAuthorizeddAccount = DataUtils
