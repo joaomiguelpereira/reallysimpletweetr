@@ -89,11 +89,11 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	}
 
 	@Override
-	public TwitterAccountDTO authenticateUser(PersonaDTO personaDto)
+	public TwitterAccountDTO authenticateUser(PersonaDTO personaDto, String pinCode)
 			throws Exception {
 
 		TwitterAccountDTO authorizedTwitterAccount = TwitterServiceAdapter
-				.get().authorizeAccount(personaDto.getTwitterAccount());
+				.get().authorizeAccount(personaDto.getTwitterAccount(), pinCode);
 
 		User exUser = TwitterServiceAdapter.get().getExtendedUser(
 				authorizedTwitterAccount);

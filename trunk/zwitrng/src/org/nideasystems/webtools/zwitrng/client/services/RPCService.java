@@ -59,9 +59,9 @@ public class RPCService implements IService {
 		this.personaService.deletePersona(name, callBack) ;
 	}
 
-	public void authenticateUser(PersonaDTO personaDto,
+	public void authenticateUser(PersonaDTO personaDto, String pinCode,
 			 AsyncCallback<TwitterAccountDTO> asyncCallback) throws Exception{
-		this.twitterService.authenticateUser(personaDto,asyncCallback);
+		this.twitterService.authenticateUser(personaDto,pinCode, asyncCallback);
 		
 	}
 

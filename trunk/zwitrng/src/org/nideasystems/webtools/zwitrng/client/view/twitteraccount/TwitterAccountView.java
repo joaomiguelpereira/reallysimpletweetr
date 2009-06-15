@@ -11,7 +11,10 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class TwitterAccountView extends
@@ -57,6 +60,11 @@ public class TwitterAccountView extends
 
 		final Image continueSignWithTwitterImg = new Image(
 				Constants.CONTINUE_SIGN_WITH_TWITTER_IMG);
+		final Label pinCodeLabel = new Label("Pin Code:");
+		final TextBox pinCode = new TextBox();
+		final HorizontalPanel pinCodeInfo = new HorizontalPanel();
+		pinCodeInfo.add(pinCodeLabel);
+		pinCodeInfo.add(pinCode);
 
 		signWithTwitterImg.addClickHandler(new ClickHandler() {
 
@@ -67,6 +75,7 @@ public class TwitterAccountView extends
 				loginInstuctions.remove(signWithTwitterImg);
 				loginInstuctions.remove(loginMessage);
 				loginInstuctions.add(continueLoginMessage);
+				loginInstuctions.add(pinCodeInfo);
 				loginInstuctions.add(continueSignWithTwitterImg);
 			}
 		});
@@ -76,8 +85,12 @@ public class TwitterAccountView extends
 
 			@Override
 			public void onClick(ClickEvent event) {
-
-				getController().finishTwitterLogin();
+				if (pinCode.getValue().isEmpty()) {
+					getController().getMainController().addError("Please provide the Pin Code");
+				} else {
+					getController().finishTwitterLogin(pinCode.getValue());
+				}
+				
 
 			}
 

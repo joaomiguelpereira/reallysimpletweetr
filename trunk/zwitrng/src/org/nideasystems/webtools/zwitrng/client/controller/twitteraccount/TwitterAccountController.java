@@ -44,14 +44,14 @@ public class TwitterAccountController extends
 
 	}
 
-	public void finishTwitterLogin() {
+	public void finishTwitterLogin(String pinCode) {
 		startProcessing();
 		assert (getParentController() instanceof PersonaController);
 		PersonaDTO personaDto = ((PersonaController) getParentController())
 				.getModel();
 
 		try {
-			getServiceManager().getRPCService().authenticateUser(personaDto,
+			getServiceManager().getRPCService().authenticateUser(personaDto, pinCode,
 					new AsyncCallback<TwitterAccountDTO>() {
 
 						@Override

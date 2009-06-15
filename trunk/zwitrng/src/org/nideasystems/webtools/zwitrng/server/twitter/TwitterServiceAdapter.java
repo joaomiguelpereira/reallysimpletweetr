@@ -266,7 +266,7 @@ public class TwitterServiceAdapter {
 	}
 
 	public TwitterAccountDTO authorizeAccount(
-			TwitterAccountDTO preAuthorizedTwitterAccount) throws Exception {
+			TwitterAccountDTO preAuthorizedTwitterAccount, String pinCode) throws Exception {
 		TwitterAccountDTO authorizedTwitterAccount = new TwitterAccountDTO();
 
 		Twitter twitter = new Twitter();
@@ -277,8 +277,9 @@ public class TwitterServiceAdapter {
 
 			accessToken = twitter.getOAuthAccessToken(
 					preAuthorizedTwitterAccount.getOAuthToken(),
-					preAuthorizedTwitterAccount.getOAuthTokenSecret());
-
+					preAuthorizedTwitterAccount.getOAuthTokenSecret(), pinCode);
+			
+			
 			twitter.setOAuthAccessToken(accessToken);
 
 			twitterUser = twitter.verifyCredentials();
