@@ -67,7 +67,7 @@ public class TwitterUpdatesListController extends
 
 		getView().selectTab(0);
 		loadUpdateList(this.friendsTwitterUpdatesController);
-
+		activeController=this.friendsTwitterUpdatesController;
 		// Add mentions tab
 		mentionsTwitterUpdatesController = new TwitterUpdatesController();
 		this.mentionsTwitterUpdatesController
@@ -121,7 +121,7 @@ public class TwitterUpdatesListController extends
 					if (friendsTwitterUpdatesController.getModel() == null) {
 						loadUpdateList(friendsTwitterUpdatesController);
 					}
-
+					activeController = friendsTwitterUpdatesController;
 				} else if (event.getSelectedItem() == 2) {
 					if (activeController != null) {
 						activeController.pause();
@@ -130,12 +130,17 @@ public class TwitterUpdatesListController extends
 						loadUpdateList(searchesTwitterUpdatesController);
 
 					}
+					activeController = searchesTwitterUpdatesController;
 				}
 				activeController.resume();
 
 			}
 
 		});
+		this.twitterUpdatesControllers.put("friends", friendsTwitterUpdatesController);
+		this.twitterUpdatesControllers.put("mentions", mentionsTwitterUpdatesController);
+		this.twitterUpdatesControllers.put("searches",searchesTwitterUpdatesController);
+		
 
 	}
 

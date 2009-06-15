@@ -16,7 +16,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
-import twitter4j.ExtendedUser;
+import twitter4j.User;
 
 public class PersonaDAO extends BaseDAO {
 
@@ -79,7 +79,7 @@ public class PersonaDAO extends BaseDAO {
 				
 				
 				// now Try to get twitt user info
-				ExtendedUser twitterUser = null;
+				User twitterUser = null;
 				TwitterAccountDTO authorizedTwitterAccount = null;
 				
 				

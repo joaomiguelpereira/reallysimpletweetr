@@ -1,5 +1,21 @@
 /** Add css rules here for your application. */
 
+
+body {
+	
+}
+
+.search-panel {
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+	border-bottom-color: #666666;
+}
+.user_options {
+	border-top-width: 1px;
+	border-top-style: solid;
+	padding:0px;
+
+}
 .twitterUpdate {
 	background-color: #FFFFFF;
 	border-top-width: 1px;
@@ -11,15 +27,26 @@
 	border-bottom-color: #999999;*/
 }
 
-.twitterUpdateMetaData	{
-	font-size:70%;
+.twitterUpdateMetaData, tweetReplyMetadata	{
+	font-size:80%;
 	font-style:italic;
 	padding:0px;
 }
-
+.userImageReply {
+	margin-left :40px;
+}
 .tweet {
 
 }
+.tweetReplyMetadata {
+	font-size:70%;
+}
+
+.tweetReply {
+	font-size:90%;
+}
+
+
 
 .currentTweet {
 	background:#FFFFCC;
@@ -55,5 +82,17 @@
 }
 
 .loginWnd {
+
+}
+
+#main {
+	position:absolute;
+	left: 50%;
+	width:700px;	
+	margin-left: -350px; /*set to a negative number 1/2 of your width*/
+}
+
+a.linkButton {
+	border: 1px solid #999999;
 
 }

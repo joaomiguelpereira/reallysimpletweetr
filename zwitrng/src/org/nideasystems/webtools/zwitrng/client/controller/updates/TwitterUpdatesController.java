@@ -22,12 +22,13 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-public class TwitterUpdatesController extends AbstractController<TwitterUpdateDTOList, TwitterUpdatesView> implements
+public class TwitterUpdatesController extends
+		AbstractController<TwitterUpdateDTOList, TwitterUpdatesView> implements
 		AutoUpdatable {
 
 	private TwitterAccountDTO twitterAccount;
 
-	//private TwitterUpdatesView updatesView = null;
+	// private TwitterUpdatesView updatesView = null;
 	private Map<Long, TwitterUpdateDTO> updates = new HashMap<Long, TwitterUpdateDTO>();
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 60; // Seconds
@@ -41,24 +42,18 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 	@Override
 	public void init() {
-		//create the view 
+		// create the view
 		setView(new TwitterUpdatesView());
 		getView().setController(this);
 		getView().setCurrentFilter(currentFilter);
 		getView().init();
-		this.twitterAccount = ((TwitterUpdatesListController)getParentController()).getModel();
-	
-		
+		this.twitterAccount = ((TwitterUpdatesListController) getParentController())
+				.getModel();
+
 	}
 
-	
-
-	
-
-	
 	public void handleDataLoaded(TwitterUpdateDTOList twitterUpdates) {
-		
-		
+
 		assert (twitterUpdates != null);
 		boolean addOnTop = false;
 		boolean updateNeeded = false;
@@ -67,25 +62,26 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		}
 
 		if (twitterUpdates.getTwitterUpdatesList().size() > 0) {
-			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0).getId();
-			
-			
+			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0)
+					.getId();
+
 			if (newUpdateId != currentFilter.getSinceId()) {
 				updateNeeded = true;
 				currentFilter.setSinceId(newUpdateId);
-				currentFilter.setCompletedIn(twitterUpdates.getFilter().getCompletedIn());
-				currentFilter.setRefreshUrl(twitterUpdates.getFilter().getRefreshUrl());
-				//currentFilter = twitterUpdates.getFilter();
+				currentFilter.setCompletedIn(twitterUpdates.getFilter()
+						.getCompletedIn());
+				currentFilter.setRefreshUrl(twitterUpdates.getFilter()
+						.getRefreshUrl());
+				// currentFilter = twitterUpdates.getFilter();
 			}
 
 		}
 
 		if (updateNeeded) {
 			int i = 1;
-				
-			
-			
-			for (TwitterUpdateDTO update : twitterUpdates.getTwitterUpdatesList()) {
+
+			for (TwitterUpdateDTO update : twitterUpdates
+					.getTwitterUpdatesList()) {
 
 				if (addOnTop) {
 					// updatesView.insert(updateWidget, i++);
@@ -96,8 +92,6 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 					// updatesView.add(updateWidget);
 				}
 
-				
-
 			}
 
 		}
@@ -106,11 +100,11 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 	}
 
 	private void addUpdateWidget(TwitterUpdateDTO update, int pos) {
-		
-		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this,update);
-		
+
+		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this, update);
+
 		updateWidget.setStyleName("twitterUpdate");
-		//updateWidget.init();
+		// updateWidget.init();
 
 		if (pos > -1) {
 			getView().insert(updateWidget, pos);
@@ -123,20 +117,21 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		updates.put(update.getId(), update);
 	}
 
-
-
 	@Override
 	public void reload() {
 		if (!isPaused) {
 			startProcessing();
-			
-			/*FilterCriteriaDTO filter = new FilterCriteriaDTO();
-			filter.setSinceId(lastUpdateId);
-			filter.setUpdatesType(this.getCurrentFilter().getUpdatesType());*/
+
+			/*
+			 * FilterCriteriaDTO filter = new FilterCriteriaDTO();
+			 * filter.setSinceId(lastUpdateId);
+			 * filter.setUpdatesType(this.getCurrentFilter().getUpdatesType());
+			 */
 			// Let's update the tweets
 			try {
 				getServiceManager().getRPCService().getTwitterUpdates(
-						twitterAccount, this.getCurrentFilter(), new AsyncCallback<TwitterUpdateDTOList>() {
+						twitterAccount, this.getCurrentFilter(),
+						new AsyncCallback<TwitterUpdateDTOList>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -144,17 +139,17 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 								endProcessing();
 								getView().refresh();
 								getMainController().addException(caught);
-								
+
 							}
 
 							@Override
 							public void onSuccess(TwitterUpdateDTOList result) {
 								endProcessing();
 								handleDataLoaded(result);
-								
-								//getView().refresh();
+
+								// getView().refresh();
 							}
-							
+
 						});
 			} catch (Exception e) {
 				endProcessing();
@@ -163,27 +158,22 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 				getView().refresh();
 
 			}
-			
+
 		}
 
 	}
 
-	
-	
-
 	@Override
 	public void handleAction(String action, final Object... args) {
-
-	
 
 	}
 
 	public void changePageSize(int newPageSize) {
-		GWT.log("Changing page size to "+newPageSize, null);
+		GWT.log("Changing page size to " + newPageSize, null);
 		updatesPerPage = newPageSize;
 		adjustPageSize();
 	}
-	
+
 	public void enableAutoUpdate() {
 		GWT.log("Enabling auto update", null);
 		if (timerForAutoUpdates == null) {
@@ -192,12 +182,14 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 
 		timerForAutoUpdates.scheduleRepeating(1000 * timeBeforeAutoUpdate);
 	}
+
 	public void disableAutoUpdate() {
 		GWT.log("Disabling auto update", null);
 		if (timerForAutoUpdates != null) {
 			timerForAutoUpdates.cancel();
 		}
 	}
+
 	/**
 	 * Check the current sise and update accordingly
 	 */
@@ -217,8 +209,8 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 				getView().remove(i);
 
 			}
-			//assert (updates.size() == updatesPerPage);
-			//assert ((getView().getWidgetCount() - 1) == updatesPerPage);
+			// assert (updates.size() == updatesPerPage);
+			// assert ((getView().getWidgetCount() - 1) == updatesPerPage);
 		}
 
 		// updatesPerPage = newPageSize;
@@ -230,16 +222,12 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		@Override
 		public void run() {
 
-			if (!isPaused) {
-				reload();
-			}
-			
+			reload();
 
 		}
 
 	}
 
-	
 	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 	}
@@ -248,7 +236,6 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		return twitterAccount;
 	}
 
-	
 	@Override
 	public void pause() {
 		this.isPaused = true;
@@ -260,74 +247,74 @@ public class TwitterUpdatesController extends AbstractController<TwitterUpdateDT
 		this.isPaused = false;
 	}
 
-
 	public TwitterAccountController getTwitterAccountController() {
-		return ((TwitterUpdatesListController)getParentController()).getTwitterAccountController();
-		
+		return ((TwitterUpdatesListController) getParentController())
+				.getTwitterAccountController();
+
 	}
-
-
 
 	public void setCurrentFilter(FilterCriteriaDTO currentFilter) {
 		this.currentFilter = currentFilter;
 	}
 
-
-
 	public FilterCriteriaDTO getCurrentFilter() {
 		return currentFilter;
 	}
-	
-/*	public PersonaController getPersonaController() {
-		return (PersonaController)getTwitterAccountController().getParentController();
-	}
-*/
 
+	/*
+	 * public PersonaController getPersonaController() { return
+	 * (PersonaController)getTwitterAccountController().getParentController(); }
+	 */
 
 	/**
 	 * Delegate this request to parent controller
+	 * 
 	 * @param accountIdorScreenName
 	 * @param callback
-	 *//*
-	public void getExtendedUserInfo(String accountIdorScreenName,
-			TwitterAccountOperationCallBack callback) {
-		
-		getTwitterAccountController().getExtendedUserAccount(accountIdorScreenName,callback);
-		
-	}*/
+	 */
+	/*
+	 * public void getExtendedUserInfo(String accountIdorScreenName,
+	 * TwitterAccountOperationCallBack callback) {
+	 * 
+	 * 
+	 * getTwitterAccountController().getExtendedUserAccount(accountIdorScreenName
+	 * ,callback);
+	 * 
+	 * }
+	 */
 
-
-/*
+	/*
 	*//**
 	 * Delegate followUser to parent controller
+	 * 
 	 * @param follow
 	 * @param id
 	 * @param callback
-	 *//*
-	public void followUser(boolean follow, Integer id, TwitterAccountOperationCallBack callback) {
-		
-		getTwitterAccountController().followUser(follow, id, callback);
-		
-	}*/
-
-
+	 */
+	/*
+	 * public void followUser(boolean follow, Integer id,
+	 * TwitterAccountOperationCallBack callback) {
+	 * 
+	 * getTwitterAccountController().followUser(follow, id, callback);
+	 * 
+	 * }
+	 */
 
 	/**
 	 * Delegate block user to parent controller
+	 * 
 	 * @param block
 	 * @param id
 	 * @param callback
-	 *//*
-	public void blockUser(boolean block, Integer id, TwitterUserInfoWidget callback) {
-		
-		((TwitterUpdatesListController)getParentController()).getTwitterAccountController().blockUser(block, id, callback);
-		
-	}
-*/
-	
-	
-
-
-	
+	 */
+	/*
+	 * public void blockUser(boolean block, Integer id, TwitterUserInfoWidget
+	 * callback) {
+	 * 
+	 * ((TwitterUpdatesListController)getParentController()).
+	 * getTwitterAccountController().blockUser(block, id, callback);
+	 * 
+	 * }
+	 */
 
 }

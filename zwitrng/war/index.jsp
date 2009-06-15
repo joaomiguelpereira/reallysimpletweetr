@@ -14,13 +14,18 @@
 <%@page import="twitter4j.Status"%>
 <%@page import="java.io.InputStreamReader"%><html>
 
+<script src="http://www.google.com/jsapi"></script>
+
+<script>
+  google.load("prototype", "1.6.0.3");
+ </script>
 <%
 	UserService userService = UserServiceFactory.getUserService();
 	User user = userService.getCurrentUser();
 %>
 
 <% if (user!=null) { %>
-
+	
 	<script type="text/javascript" language="javascript" src="zwitrng/zwitrng.nocache.js"></script>
 <% } %>
 
@@ -31,7 +36,7 @@
 <title>Web Application Starter Project</title>
 </head>
 <body>
-
+<div id="main">
 <%
 	if (user != null) {
 %>
@@ -48,7 +53,7 @@ in</a> with a Google Account.</p>
 <%
 	}
 %>
-<div id="main">
+
 	
 </div>
 	

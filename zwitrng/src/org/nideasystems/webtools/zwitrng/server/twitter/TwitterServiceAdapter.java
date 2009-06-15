@@ -13,7 +13,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import twitter4j.DirectMessage;
-import twitter4j.ExtendedUser;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -88,7 +87,7 @@ public class TwitterServiceAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	public ExtendedUser getExtendedUser(
+	public User getExtendedUser(
 			TwitterAccountDTO authenticatedTwitterAccount) throws Exception {
 
 		log.info("Calling TWITTER API: "
@@ -98,7 +97,7 @@ public class TwitterServiceAdapter {
 		twitter.setOAuthAccessToken(
 				authenticatedTwitterAccount.getOAuthToken(),
 				authenticatedTwitterAccount.getOAuthTokenSecret());
-		ExtendedUser extendedUser = twitter.verifyCredentials();
+		User extendedUser = twitter.verifyCredentials();
 
 		return extendedUser;
 
@@ -374,7 +373,7 @@ public class TwitterServiceAdapter {
 		twitter.setOAuthAccessToken(
 				authenticatedTwitterAccount.getOAuthToken(),
 				authenticatedTwitterAccount.getOAuthTokenSecret());
-		ExtendedUser extUser = null;
+		User extUser = null;
 		try {
 			extUser = twitter.getUserDetail(userIdOrScreenName);
 		} catch (TwitterException e) {

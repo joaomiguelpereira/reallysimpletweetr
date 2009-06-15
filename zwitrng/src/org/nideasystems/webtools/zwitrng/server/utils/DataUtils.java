@@ -10,7 +10,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
-import twitter4j.ExtendedUser;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.User;
@@ -35,7 +34,7 @@ public class DataUtils {
 	 * @param twitterUser
 	 * @return
 	 */
-	public static TwitterAccountDTO createTwitterAccountDto(User twitterUser) {
+	/*public static TwitterAccountDTO createTwitterAccountDto(User twitterUser) {
 
 		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
 
@@ -57,7 +56,7 @@ public class DataUtils {
 		}
 
 		return twitterAcount;
-	}
+	}*/
 
 	/**
 	 * 
@@ -65,7 +64,7 @@ public class DataUtils {
 	 * @return
 	 */
 	public static TwitterAccountDTO createTwitterAccountDto(
-			ExtendedUser twitterUser) {
+			User twitterUser) {
 
 		assert (twitterUser != null);
 		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
@@ -219,7 +218,7 @@ public class DataUtils {
 	 * @return
 	 */
 	public static TwitterAccountDTO mergeTwitterAccount(
-			ExtendedUser authenticatedTwitterUser,
+			User authenticatedTwitterUser,
 			TwitterAccountDTO twitterAccount) {
 		TwitterAccountDTO authenticatedTwitterAccount = new TwitterAccountDTO();
 
@@ -286,7 +285,7 @@ public class DataUtils {
 	 * @param authenticatedAccount
 	 * @deprecated
 	 */
-	public static void mergeExtendedUserAccount(ExtendedUser exUser,
+	public static void mergeExtendedUserAccount(User exUser,
 			TwitterAccountDTO authenticatedAccount) {
 		// TODO Auto-generated method stub
 		authenticatedAccount.setTwitterFollowers(exUser.getFollowersCount());
