@@ -32,7 +32,7 @@ public interface TwitterService extends RemoteService {
 	OAuthInfoDTO getOAuthInfo(TwitterAccountDTO twitterAccount)
 			throws Exception;
 
-	TwitterAccountDTO authenticateUser(PersonaDTO personaDto) throws Exception;
+	TwitterAccountDTO authenticateUser(PersonaDTO personaDto, String pinCode) throws Exception;
 
 	TwitterAccountDTO getExtendedUserAccount(TwitterAccountDTO twitterAccount,
 			String userIdorScreenName) throws Exception;

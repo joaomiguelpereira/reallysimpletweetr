@@ -67,11 +67,19 @@ public class TwitterAccountInfoWidget extends VerticalPanel {
 
 			});
 
-			this.lastStatus = new InlineHTML(HTMLHelper.get().getParsedUpdateHtml(twitterAccount.getTwitterUpdateDto().getText()));
+			if (twitterAccount.getTwitterUpdateDto().getText() != null ) {
+				this.lastStatus = new InlineHTML(HTMLHelper.get().getParsedUpdateHtml(twitterAccount.getTwitterUpdateDto().getText()));
+				tweetMetadata  = new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterAccount.getTwitterUpdateDto()));
+			} else {
+				this.lastStatus = new InlineHTML("huum, it seems you have no activity on twitter yet :)");
+				tweetMetadata = new HTML("");
+			}
+			
 			tweetPanel.addStyleName("tweet");
 			
 			tweetPanel.add(lastStatus);
-			tweetMetadata  = new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterAccount.getTwitterUpdateDto()));
+			
+			
 			tweetMetadata.addStyleName("twitterUpdateMetaData");
 			lastTwee.add(tweetPanel);
 			lastTwee.add(tweetMetadata);

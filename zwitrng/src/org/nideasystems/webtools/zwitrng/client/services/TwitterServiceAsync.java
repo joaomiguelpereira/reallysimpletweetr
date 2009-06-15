@@ -25,7 +25,7 @@ public interface TwitterServiceAsync {
 	void getOAuthInfo(TwitterAccountDTO twitterAccount,
 			AsyncCallback<OAuthInfoDTO> callback) throws Exception;
 
-	void authenticateUser(PersonaDTO personaDto,
+	void authenticateUser(PersonaDTO personaDto, String pinCode,
 			AsyncCallback<TwitterAccountDTO> asyncCallback) throws Exception;
 
 	void getExtendedUserAccount(TwitterAccountDTO twitterAccount,
