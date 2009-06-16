@@ -12,6 +12,8 @@ import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -236,6 +238,41 @@ public class TwitterAccountController extends
 		} catch (Exception e) {
 		GWT.log("Error calling service", e);
 			getMainController().addException(e);
+		}
+		
+	}
+
+	public void showNewFriends() {
+		TwitterUserFilterDTO filter = new TwitterUserFilterDTO();
+		filter.setType(TwitterUserType.FRIENDS);
+		filter.setTwitterUserScreenName("joaomrpereira");
+		
+		UsersWindow friendsWindow = new UsersWindow(this,filter);
+		friendsWindow.show();
+		
+	}
+
+	public void loadFriends(final UsersWindow usersWindow,
+			TwitterUserFilterDTO currentFilter) {
+		
+		try {
+			getServiceManager().getRPCService().getUsers(getModel(),currentFilter, new AsyncCallback<TwitterAccountListDTO>( ){
+
+				@Override
+				public void onFailure(Throwable caught) {
+					usersWindow.onLoadError(caught);
+				}
+
+				@Override
+				public void onSuccess(TwitterAccountListDTO result) {
+					usersWindow.onLoadSuccess(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			usersWindow.onLoadError(e);
+			
 		}
 		
 	}

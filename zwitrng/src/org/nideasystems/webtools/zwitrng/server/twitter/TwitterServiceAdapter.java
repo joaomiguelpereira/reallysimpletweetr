@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.server.twitter;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
@@ -11,6 +12,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
 import twitter4j.DirectMessage;
 import twitter4j.Paging;
@@ -154,13 +156,33 @@ public class TwitterServiceAdapter {
 
 			}
 		} else if (filter.getUpdatesType() == UpdatesType.SEARCHES) {
+			log.fine("Doing search for text: "+filter.getSearchText());
+			log.fine("Doing search sinceId: "+filter.getSinceId());
+			log.fine("Doing search maxId: "+filter.getMaxId());
+			log.fine("Doing search page: "+filter.getPage());
+			log.fine("Doing search results per page: "+filter.getResultsPerPage());
+			
 			Query query = new Query();
+			
 			query.setRpp(filter.getResultsPerPage());
+			/*
+			if (filter.getSearchText().startsWith("from:")) {
+				
+				query.setSinceId(-1);
+			} else {
+				query.setSinceId(filter.getSinceId());
+			}*/
+			if ( filter.getSinceId()==1) {
+				filter.setSinceId(-1);
+			}
 			query.setSinceId(filter.getSinceId());
-			query.setQuery(filter.getSearchText());
+			query.setQuery(filter.getSearchText().trim());
+			
 			QueryResult qResult = twitter.search(query);
-			filter.setRefreshUrl(qResult.getRefreshUrl());
-			filter.setCompletedIn(qResult.getCompletedIn());
+			
+			//TODO: remove these from here. 
+			newFilter.setRefreshUrl(qResult.getRefreshUrl());
+			newFilter.setCompletedIn(qResult.getCompletedIn());
 			
 			newFilter.setMaxId(qResult.getMaxId());
 			newFilter.setPage(qResult.getPage());
@@ -183,7 +205,7 @@ public class TwitterServiceAdapter {
 			log.fine("qResult.getWarning() " + qResult.getWarning());
 			*/
 			List<Tweet> tuites = qResult.getTweets();
-
+			log.fine("returned: "+tuites.size()+" tuites");
 			for (Tweet tuite : tuites) {
 				returnList.addTwitterUpdate(DataUtils
 						.createTwitterUpdateDto(tuite));
@@ -463,6 +485,41 @@ public class TwitterServiceAdapter {
 		if (user == null || user.getScreenName() == null) {
 			throw new Exception("unable to block the user");
 		}
+	}
+
+	public TwitterAccountListDTO getUsers(TwitterAccountDTO account,
+			TwitterUserFilterDTO currentFilter) throws Exception{
+		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account
+				.getOAuthTokenSecret());
+
+		Paging paging = new Paging();
+		paging.count(currentFilter.getCount());
+		paging.setPage(currentFilter.getPage());
+		
+		
+		List<User> users = null;
+		try {
+			users = twitter.getFriends(currentFilter.getTwitterUserScreenName(), paging);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+			log.severe("Error: "+e.getMessage());
+			throw new Exception(e);
+		}
+		TwitterAccountListDTO ret = new TwitterAccountListDTO();
+		
+		if ( users != null ) {
+			for (User user:users) {
+				
+				TwitterAccountDTO twAccount = DataUtils.createTwitterAccountDto(user);
+				log.fine("Loading user: "+twAccount.getTwitterScreenName());
+				ret.add(twAccount);
+			}
+		}
+		
+		return ret;
 	}
 
 }

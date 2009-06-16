@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.server;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
@@ -15,6 +16,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
 import twitter4j.Status;
 import twitter4j.User;
@@ -135,6 +137,15 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	public void blockUser(TwitterAccountDTO account, boolean block,
 			Integer userId) throws Exception {
 		TwitterServiceAdapter.get().blockUser(account, block, userId);
+		
+	}
+
+	@Override
+	public TwitterAccountListDTO getUsers(TwitterAccountDTO account,
+			TwitterUserFilterDTO currentFilter) throws Exception{
+		
+		return TwitterServiceAdapter.get().getUsers(account, currentFilter);
+		
 		
 	}
 

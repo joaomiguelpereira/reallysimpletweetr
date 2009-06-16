@@ -2,12 +2,14 @@ package org.nideasystems.webtools.zwitrng.client.services;
 
 import java.util.List;
 
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -42,5 +44,9 @@ public interface TwitterService extends RemoteService {
 
 	void blockUser(TwitterAccountDTO account, boolean block, Integer userId)
 			throws Exception;
+	
+
+	TwitterAccountListDTO getUsers(TwitterAccountDTO account,
+			TwitterUserFilterDTO currentFilter) throws Exception;
 
 }

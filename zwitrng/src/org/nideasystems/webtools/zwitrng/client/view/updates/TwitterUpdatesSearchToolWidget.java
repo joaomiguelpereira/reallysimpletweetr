@@ -54,6 +54,7 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 				if (!search.getValue().isEmpty() && !search.getValue().equals(currentFilter.getSearchText())) {
 					currentFilter.setSearchText(search.getValue());
 					currentFilter.reset();
+					
 					getController().setCurrentFilter(currentFilter);
 					getController().reload();
 					//refresh();
