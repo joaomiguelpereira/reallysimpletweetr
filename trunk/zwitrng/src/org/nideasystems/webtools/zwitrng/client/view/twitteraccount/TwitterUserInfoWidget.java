@@ -1,10 +1,12 @@
 package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
+
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -16,7 +18,7 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
-import com.google.gwt.user.client.Timer;
+
 
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
@@ -137,10 +139,17 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		InlineHTML followers_label = new InlineHTML("Followers: ");
 		InlineHTML updates_label = new InlineHTML("Updates: ");
 
-		InlineHTML following = new InlineHTML(this.twitterAccount
-				.getTwitterFriends().toString());
-		InlineHTML followers = new InlineHTML(this.twitterAccount
-				.getTwitterFollowers().toString());
+		InlineHTML following = new InlineHTML("<a href=\"http://twitter.com/"+this.twitterAccount.getTwitterScreenName()+"/friends\" target=\"_blank\">"+this.twitterAccount
+				.getTwitterFriends().toString()+"</a>");
+		
+		InlineHTML followers = new InlineHTML("<a href=\"http://twitter.com/"+this.twitterAccount.getTwitterScreenName()+"/followers\" target=\"_blank\">"+this.twitterAccount
+				.getTwitterFollowers().toString()+"</a>");
+		
+		/*InlineHTML followers = new InlineHTML(this.twitterAccount
+				.getTwitterFollowers().toString());*/
+		
+		
+		
 		InlineHTML updates = new InlineHTML(this.twitterAccount
 				.getTwitterUpdates().toString());
 
@@ -151,9 +160,25 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		updates.setTitle("Click to see the updates for "
 				+ this.twitterAccount.getTwitterScreenName());
 
-		following.addStyleName("link");
-		followers.addStyleName("link");
+		//following.addStyleName("link");
+		//followers.addStyleName("link");
 		updates.addStyleName("link");
+		
+		updates.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+			/*	FilterCriteriaDTO newFilter = MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().getActiveUpdatesController().getCurrentFilter();
+				newFilter.setSearchText("from:"+twitterAccount.getTwitterScreenName());
+				MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().getActiveUpdatesController().setCurrentFilter(newFilter);*/
+				hide(true);
+				MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().activateSearch("from:"+twitterAccount.getTwitterScreenName());
+			}
+			
+		});
+		
+		
+				
 
 		bottomLayout.setWidget(0, 0, following_label);
 		bottomLayout.setWidget(0, 1, following);
@@ -162,6 +187,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		bottomLayout.setWidget(0, 4, updates_label);
 		bottomLayout.setWidget(0, 5, updates);
 		extendedUserInfo.add(bottomLayout);
+		
 		if (!this.twitterAccount.getTwitterScreenName().endsWith(
 				parentController.getModel().getTwitterScreenName())) {
 			HorizontalPanel optionPannel = new HorizontalPanel();
@@ -241,7 +267,29 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 			waitingImg.setVisible(false);
 			optionPannel.setSpacing(5);
 			extendedUserInfo.add(optionPannel);
+		} else {
+			InlineHTML showMeNewFollowers = new InlineHTML("New followers");
+			HorizontalPanel optionPannel = new HorizontalPanel();
+			optionPannel.add(showMeNewFollowers);
+			showMeNewFollowers.addStyleName("link");
+			
+			showMeNewFollowers.addClickHandler(new ClickHandler()  {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					parentController.showNewFriends();
+					hide(true);
+				}
+				
+			});
+			
+			
+			
+			extendedUserInfo.add(optionPannel);
+			
+			 
 		}
+			
 
 		mainPanel.add(topPanel);
 		mainPanel.add(userDescription);
