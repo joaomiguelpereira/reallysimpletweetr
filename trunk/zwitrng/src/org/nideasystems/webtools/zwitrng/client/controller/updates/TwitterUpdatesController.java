@@ -101,7 +101,7 @@ public class TwitterUpdatesController extends
 
 	private void addUpdateWidget(TwitterUpdateDTO update, int pos) {
 
-		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this, update);
+		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this.getTwitterAccountController(), update);
 
 		updateWidget.setStyleName("twitterUpdate");
 		// updateWidget.init();

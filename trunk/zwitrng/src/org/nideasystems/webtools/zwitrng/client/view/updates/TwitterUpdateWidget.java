@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 
@@ -18,7 +19,6 @@ import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
@@ -41,7 +41,8 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		HasMouseOverHandlers, HasMouseOutHandlers, SendUpdateAsyncHandler {
 
 	private TwitterUpdateDTO twitterUpdate;
-	private TwitterUpdatesController parentController;
+	//private TwitterUpdatesController parentController;
+	private TwitterAccountController parentController;
 	private final HorizontalPanel actionPanel = new HorizontalPanel();
 	private final HorizontalPanel sendUpdateContainer = new HorizontalPanel();
 	private SendUpdateWidget sendUpdateWidget = null;
@@ -53,7 +54,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	// final private HorizontalPanel tweetQuickOptions = new HorizontalPanel();
 
-	public TwitterUpdateWidget(TwitterUpdatesController theParentController,
+	public TwitterUpdateWidget(/*TwitterUpdatesController theParentController*/TwitterAccountController theParentController,
 			TwitterUpdateDTO twitterUpdateDTO) {
 		super();
 		publishNativeJSCode(this);
@@ -138,7 +139,8 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				addStyleName("currentTweet");
-				parentController.pause();
+				//parentController.pause();
+				MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().getActiveUpdatesController().pause();
 
 			}
 
@@ -148,7 +150,8 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
 				removeStyleName("currentTweet");
-				parentController.resume();
+				//parentController.resume();
+				MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().getActiveUpdatesController().resume();
 
 			}
 
@@ -208,8 +211,18 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			
 			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsOpenSearch(Ljava/lang/String;)(hash);
 		}
+		
+		$wnd.showStatus = function(id) {
+			
+			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsShowStatus(Ljava/lang/String;)(id);
+		}
 	}-*/;
 
+	public static void jsShowStatus(String id) {
+		MainController.getInstance().getPopupManager().showStatus(id);
+	}
+
+	
 	public static void jsHideTwitterUserInfoPanel(String id) {
 		MainController.getInstance().getPopupManager().destroyUserPopupPanel();
 	}
@@ -238,8 +251,13 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	private void showSendUpdate(int type) {
 		if (sendUpdateWidget == null) {
 			// Create new
-			sendUpdateWidget = parentController.getTwitterAccountController()
-					.createSendUpdateWidget(twitterUpdate, type, true);
+			/*sendUpdateWidget = parentController.getTwitterAccountController()
+					.createSendUpdateWidget(twitterUpdate, type, true);*/
+			assert(parentController!=null);
+			assert(twitterUpdate!=null);
+			
+			sendUpdateWidget = parentController.createSendUpdateWidget(twitterUpdate, type, true);
+			
 			sendUpdateContainer.add(sendUpdateWidget);
 			sendUpdateWidget.addAsyncHandler(this);
 			sendUpdateContainer.setVisible(true);

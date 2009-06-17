@@ -212,11 +212,16 @@ public class HTMLHelper {
 				.log("Parsing InReplyToUserId:"
 						+ twitterUpdate.getInReplyToUserId(), null);
 
+		String inReplyTo = "";
+		
+		if ( twitterUpdate.getInReplyToStatusId()>0) {
+			inReplyTo = "<a href=\"javascript:showStatus('"+twitterUpdate.getInReplyToStatusId()+"')\">in reply to "+twitterUpdate.getInReplyToScreenName()+"</a>";
+		}
 		String returnString = "<span class=\"createdAt\">"
 				+ getParsedUpdateCreated(twitterUpdate.getCreatedAt())
 				+ "<span> from <span class=\"source\">"
-				+ getParsedSource(twitterUpdate.getSource()) + "</span>";
-
+				+ getParsedSource(twitterUpdate.getSource()) + "</span> "+inReplyTo;
+		
 		return returnString;
 
 	}
