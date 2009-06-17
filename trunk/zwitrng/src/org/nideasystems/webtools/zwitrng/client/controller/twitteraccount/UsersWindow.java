@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.controller.twitteraccount;
 
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
@@ -12,6 +13,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
 
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
@@ -26,6 +28,7 @@ public class UsersWindow extends DialogBox  {
 	private TwitterUserFilterDTO currentFilter = null;
 	private TwitterAccountController twitterAccountController = null;
 	private TwitterAccountListDTO model;
+	private Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	
 	public UsersWindow(TwitterAccountController controller, TwitterUserFilterDTO filter) {
 		this.setCurrentFilter(filter);
@@ -38,6 +41,9 @@ public class UsersWindow extends DialogBox  {
 		VerticalPanel vPanel = new VerticalPanel();
 		vPanel.setWidth(WIDTH);
 		vPanel.setHeight(HEIGHT);
+		waitingImage.setVisible(false);
+		vPanel.add(waitingImage);
+		
 	
 		
 		HorizontalPanel filterPanel = new HorizontalPanel();
@@ -137,14 +143,14 @@ public class UsersWindow extends DialogBox  {
 
 	public void onLoadError(Throwable caught) {
 		twitterAccountController.getMainController().addException(caught);
+		isUpdating(false);
 		
 	}
 
 	public void onLoadSuccess(TwitterAccountListDTO result) {
 		this.setModel(result);
+		isUpdating(false);
 		Window.alert("Size "+result.getAccounts().size());
-		
-		
 	}
 
 	public void setModel(TwitterAccountListDTO model) {
@@ -153,6 +159,11 @@ public class UsersWindow extends DialogBox  {
 
 	public TwitterAccountListDTO getModel() {
 		return model;
+	}
+
+	public void isUpdating(boolean b) {
+		waitingImage.setVisible(b);
+		
 	}
 	
 }

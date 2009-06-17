@@ -2,19 +2,25 @@ package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HTML;
@@ -48,6 +54,7 @@ public class SendUpdateWidget extends
 	private final Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	private SendUpdateWidget instance;
 	private final HTML loadTemplateLink = new HTML("Load template");
+	private final HTML shortLinks = new HTML("Short links");
 	private List<SendUpdateAsyncHandler> asynHadlers = null;
 
 	@Override
@@ -90,6 +97,10 @@ public class SendUpdateWidget extends
 		toolsPanel.setSpacing(4);
 		loadTemplateLink.addStyleName("link");
 		cancelLink.addStyleName("link");
+
+		shortLinks.addStyleName("link");
+
+		toolsPanel.add(shortLinks);
 		toolsPanel.add(loadTemplateLink);
 		toolsPanel.add(cancelLink);
 		toolsPanel.add(send);
@@ -119,10 +130,13 @@ public class SendUpdateWidget extends
 
 			@Override
 			public void onKeyUp(KeyUpEvent event) {
-				Integer remaining = DEFAULT_TWEET_SIZE
-						- update.getValue().length();
-				remainingChars.setText(remaining.toString());
-				updateRemainingCharsClass(remaining);
+				/*
+				 * Integer remaining = DEFAULT_TWEET_SIZE -
+				 * update.getValue().length();
+				 * remainingChars.setText(remaining.toString());
+				 * updateRemainingCharsClass(remaining);
+				 */
+				updateRemainingChars();
 			}
 
 		});
@@ -150,8 +164,10 @@ public class SendUpdateWidget extends
 										.getId());
 					}
 					if (type == PRIVATE_MESSAGE) {
-						twitterUpdate.setInReplyToUserId(getInResponseToUserAccount().getId());
-						
+						twitterUpdate
+								.setInReplyToUserId(getInResponseToUserAccount()
+										.getId());
+
 					}
 
 					isUpdating(true);
@@ -164,11 +180,83 @@ public class SendUpdateWidget extends
 			}
 
 		});
+
+		shortLinks.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				shortLinks();
+
+			}
+
+		});
 		super.add(bottomLayout);
 
 	}
 
-	private void updateRemainingCharsClass(Integer remaining) {
+	/**
+	 * Short any link in the update
+	 */
+	private void shortLinks() {
+		// Get the links
+		List<String> links = HTMLHelper.get().getLinks(update.getValue());
+		if (links.size() > 0) {
+			try {
+				getController().getServiceManager().getRPCService().shortLinks(
+						links, new AsyncCallback<Map<String, String>>() {
+
+							@Override
+							public void onFailure(Throwable caught) {
+								getController().getMainController()
+										.addException(caught);
+
+							}
+
+							@Override
+							public void onSuccess(Map<String, String> result) {
+								replaceShortLinks(result);
+
+							}
+
+						});
+			} catch (Exception e) {
+				getController().getMainController().addException(e);
+			}
+
+		}
+
+	}
+
+	private void replaceShortLinks(Map<String, String> result) {
+		String currentStr = update.getValue();
+		String newStr = currentStr;
+		GWT.log("Shortning links ", null);
+		for (String longLink : result.keySet()) {
+			// Strinr decoded =
+
+			GWT.log("Replacing link: " + result.get(longLink) + " with "
+					+ longLink, null);
+
+			// String decodedLongLink = URL.decodeComponent(longLink);
+			// GWT.log("Decoded: replacing link: "+result.get(longLink)+" with "+decodedLongLink,
+			// null);
+			// newStr = currentStr.replaceAll(longLink.,result.get(longLink));
+			newStr = currentStr.replace(longLink, result.get(longLink));
+
+		}
+		update.setValue(newStr);
+		updateRemainingChars();
+		update.setFocus(true);
+		
+
+	}
+
+	private void updateRemainingChars(/* Integer remaining */) {
+
+		Integer remaining = DEFAULT_TWEET_SIZE - update.getValue().length();
+		remainingChars.setText(remaining.toString());
+		//updateRemainingCharsClass(remaining);
+		
 		if (remaining < 0) {
 			remainingChars.addStyleName("error");
 		} else {
@@ -216,11 +304,11 @@ public class SendUpdateWidget extends
 
 		}
 
-		Integer remainingLength = DEFAULT_TWEET_SIZE
+		/*Integer remainingLength = DEFAULT_TWEET_SIZE
 				- this.update.getValue().length();
 
-		this.remainingChars.setText(remainingLength.toString());
-		updateRemainingCharsClass(remainingLength);
+		this.remainingChars.setText(remainingLength.toString());*/
+		updateRemainingChars(/*remainingLength*/);
 
 	}
 

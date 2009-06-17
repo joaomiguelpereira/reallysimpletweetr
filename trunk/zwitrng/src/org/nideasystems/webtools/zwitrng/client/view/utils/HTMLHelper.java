@@ -7,7 +7,9 @@ import java.util.List;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.ui.HTML;
 
 public class HTMLHelper {
 
@@ -68,8 +70,9 @@ public class HTMLHelper {
 		}
 
 		for (String hashTag : this.hashTags) {
-			newString = newString.replaceAll(hashTag, "<a href=\"javascript:processHashTag('" + hashTag
-					+ "')\">" + hashTag + "</a>");
+			newString = newString.replaceAll(hashTag,
+					"<a href=\"javascript:processHashTag('" + hashTag + "')\">"
+							+ hashTag + "</a>");
 		}
 		for (String url : this.linksArray) {
 			newString = newString.replace((CharSequence) url, "<a href=\""
@@ -142,6 +145,30 @@ public class HTMLHelper {
 		} while (process);
 	}
 
+	/**
+	 * From the text, return the links
+	 * 
+	 * @param text
+	 * @return
+	 */
+	public List<String> getLinks(String text) {
+		ArrayList<String> retList = new ArrayList<String>();
+		text = text.trim();
+		String[] words = text.split(" ");
+
+		for (String str : words) {
+			if (str.startsWith("http") && !retList.contains(str)) {
+				//GWT.log("URL before econding:" + str, null);
+				//GWT.log("URL after econding:" + URL.encodeComponent(str), null);
+				//URL.
+				retList.add(/*URL.encodeComponent(*/str/*)*/);
+			}
+		}
+
+		return retList;
+
+	}
+
 	private void processHashTag(String word) {
 		GWT.log("Processing hashTag " + word, null);
 		word = HTMLHelper.clearWord(word, HTMLHelper.HASHTAG_REGEX);
@@ -185,7 +212,6 @@ public class HTMLHelper {
 				.log("Parsing InReplyToUserId:"
 						+ twitterUpdate.getInReplyToUserId(), null);
 
-		
 		String returnString = "<span class=\"createdAt\">"
 				+ getParsedUpdateCreated(twitterUpdate.getCreatedAt())
 				+ "<span> from <span class=\"source\">"
@@ -196,9 +222,9 @@ public class HTMLHelper {
 	}
 
 	private String getParsedSource(String source) {
-		return source.replace("&lt;", "<").replace("&quot;", "\"").replace("&gt;", ">");
-		
-		
+		return source.replace("&lt;", "<").replace("&quot;", "\"").replace(
+				"&gt;", ">");
+
 	}
 
 	private String getParsedUpdateCreated(Date createdAt) {
@@ -223,21 +249,21 @@ public class HTMLHelper {
 
 			if (seconds > 0)
 				minutes = (seconds / 60);
-			
+
 			if (minutes > 0)
 				hours = (minutes / 60);
 
 			if (seconds <= 60) {
 				returnStr = "less than 1 minute ago";
-			} else if ( hours==0 && minutes < 60) {
-				if ( minutes>1) {
+			} else if (hours == 0 && minutes < 60) {
+				if (minutes > 1) {
 					returnStr = minutes + " minutes ago";
 				} else {
 					returnStr = minutes + " minute ago";
 				}
-				
+
 			} else {
-				returnStr = "about "+hours + " hours ago";
+				returnStr = "about " + hours + " hours ago";
 			}
 
 			// if ( minutes)
