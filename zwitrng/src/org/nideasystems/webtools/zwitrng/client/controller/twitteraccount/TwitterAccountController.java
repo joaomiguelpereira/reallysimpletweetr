@@ -242,14 +242,15 @@ public class TwitterAccountController extends
 		
 	}
 
-	public void showNewFriends() {
+	public void showNewFriends(String twitterScreenName) {
 		TwitterUserFilterDTO filter = new TwitterUserFilterDTO();
 		filter.setType(TwitterUserType.FRIENDS);
-		filter.setTwitterUserScreenName("joaomrpereira");
+		filter.setTwitterUserScreenName(twitterScreenName);
 		
 		UsersWindow friendsWindow = new UsersWindow(this,filter);
 		friendsWindow.show();
-		
+		friendsWindow.isUpdating(true);
+		loadFriends(friendsWindow, filter);
 	}
 
 	public void loadFriends(final UsersWindow usersWindow,

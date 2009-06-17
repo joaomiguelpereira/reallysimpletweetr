@@ -172,6 +172,8 @@ public class TwitterServiceAdapter {
 			} else {
 				query.setSinceId(filter.getSinceId());
 			}*/
+			
+			//cannot use 1 when doing a search with from:operator
 			if ( filter.getSinceId()==1) {
 				filter.setSinceId(-1);
 			}
@@ -497,9 +499,11 @@ public class TwitterServiceAdapter {
 
 		Paging paging = new Paging();
 		paging.count(currentFilter.getCount());
+		paging.setCount(currentFilter.getCount());
 		paging.setPage(currentFilter.getPage());
 		
-		
+		log.fine("Paging count is: "+paging.getCount());
+		log.fine("Paging page is: "+paging.getPage());
 		List<User> users = null;
 		try {
 			users = twitter.getFriends(currentFilter.getTwitterUserScreenName(), paging);
@@ -508,6 +512,7 @@ public class TwitterServiceAdapter {
 			log.severe("Error: "+e.getMessage());
 			throw new Exception(e);
 		}
+		log.fine("returned "+users.size()+" users from twitter");
 		TwitterAccountListDTO ret = new TwitterAccountListDTO();
 		
 		if ( users != null ) {

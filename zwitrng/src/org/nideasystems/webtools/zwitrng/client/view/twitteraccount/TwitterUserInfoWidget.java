@@ -188,7 +188,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 		bottomLayout.setWidget(0, 5, updates);
 		extendedUserInfo.add(bottomLayout);
 		
-		if (!this.twitterAccount.getTwitterScreenName().endsWith(
+		if (!this.twitterAccount.getTwitterScreenName().equals(
 				parentController.getModel().getTwitterScreenName())) {
 			HorizontalPanel optionPannel = new HorizontalPanel();
 
@@ -277,7 +277,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 				@Override
 				public void onClick(ClickEvent event) {
-					parentController.showNewFriends();
+					parentController.showNewFriends(twitterAccount.getTwitterScreenName());
 					hide(true);
 				}
 				

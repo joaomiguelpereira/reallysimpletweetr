@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
@@ -19,10 +20,12 @@ public class RPCService implements IService {
 
 	private TwitterPersonaServiceAsync personaService = null;
 	private TwitterServiceAsync twitterService = null;
+	private UrlServiceAsync urlService = null;
 
 	public RPCService() {
 		personaService = GWT.create(TwitterPersonaService.class);
 		twitterService = GWT.create(TwitterService.class);
+		urlService = GWT.create(UrlService.class);
 	}
 
 	public void getOAuthInfo(TwitterAccountDTO twitterAccount, AsyncCallback<OAuthInfoDTO> callback) throws Exception {
@@ -89,6 +92,10 @@ public class RPCService implements IService {
 			AsyncCallback<TwitterAccountListDTO> callback) throws Exception{
 		this.twitterService.getUsers(account,currentFilter,callback);
 		
+	}
+
+	public void shortLinks(List<String> links,AsyncCallback<Map<String,String>> callback) throws Exception{
+		this.urlService.shortLinks(links, callback);
 	}
 
 	
