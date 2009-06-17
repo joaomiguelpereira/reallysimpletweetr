@@ -11,6 +11,8 @@ public class TwitterUpdateDTO implements IModel{
 	private long replyToStatusId;
 	private long InReplyToStatusId = -1;
 	private long inReplyToUserId = -1;
+	private String inReplyToScreenName = null;
+	
 	private int rateLimitLimit;
 	private int rateLimitRemaining;
 	private long rateLimitReset;
@@ -84,6 +86,12 @@ public class TwitterUpdateDTO implements IModel{
 	}
 	public long getInReplyToStatusId() {
 		return InReplyToStatusId;
+	}
+	public void setInReplyToScreenName(String inReplyToScreenName) {
+		this.inReplyToScreenName = inReplyToScreenName;
+	}
+	public String getInReplyToScreenName() {
+		return inReplyToScreenName;
 	}
 	
 	

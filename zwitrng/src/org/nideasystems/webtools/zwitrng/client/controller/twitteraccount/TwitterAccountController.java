@@ -8,14 +8,20 @@ import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperati
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterAccountView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.UsersWindow;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
+import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
+import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
+import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends
@@ -274,6 +280,37 @@ public class TwitterAccountController extends
 		} catch (Exception e) {
 			usersWindow.onLoadError(e);
 			
+		}
+		
+	}
+
+	public void loadTwitterUpdate(final ShowStatusWindow showStatusWindow, String tweetId) {
+		
+		FilterCriteriaDTO filter = new FilterCriteriaDTO();
+		
+		filter.setStatusId(Long.parseLong(tweetId));
+		filter.setUpdatesType(UpdatesType.SINGLE);
+		//filter.setUniqueResult(true);
+		
+		
+		try {
+			getServiceManager().getRPCService().getTwitterUpdates(getModel(), filter, new AsyncCallback<TwitterUpdateDTOList> () {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					showStatusWindow.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(TwitterUpdateDTOList result) {
+					showStatusWindow.onSuccess(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			showStatusWindow.onError(e);
 		}
 		
 	}

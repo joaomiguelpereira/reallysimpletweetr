@@ -1,7 +1,10 @@
-package org.nideasystems.webtools.zwitrng.client.controller.twitteraccount;
+package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
+import org.nideasystems.webtools.zwitrng.client.view.DialogBoxesConstants;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
@@ -23,8 +26,8 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class UsersWindow extends DialogBox  {
 
-	private static final String WIDTH = "600px";
-	private static final String HEIGHT = "150px";
+	/*private static final String WIDTH = "600px";
+	private static final String HEIGHT = "150px";*/
 	private TwitterUserFilterDTO currentFilter = null;
 	private TwitterAccountController twitterAccountController = null;
 	private TwitterAccountListDTO model;
@@ -39,8 +42,8 @@ public class UsersWindow extends DialogBox  {
 		this.setAnimationEnabled(true);
 		
 		VerticalPanel vPanel = new VerticalPanel();
-		vPanel.setWidth(WIDTH);
-		vPanel.setHeight(HEIGHT);
+		vPanel.setWidth(DialogBoxesConstants.WIDTH);
+		vPanel.setHeight(DialogBoxesConstants.HEIGHT);
 		waitingImage.setVisible(false);
 		vPanel.add(waitingImage);
 		

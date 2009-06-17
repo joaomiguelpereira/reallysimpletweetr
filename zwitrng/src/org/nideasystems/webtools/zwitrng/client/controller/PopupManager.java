@@ -2,7 +2,10 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
+import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+
+import com.google.gwt.user.client.Window;
 
 
 
@@ -31,6 +34,15 @@ public class PopupManager {
 
 	public void destroyUserPopupPanel() {
 		userInfoPopup.hide(true);
+		
+	}
+
+	public void showStatus(String id) {
+		ShowStatusWindow wnd = new ShowStatusWindow(personaController.getTwitterAccountController());
+		wnd.setTweetId(id);
+		wnd.show();
+		wnd.load();
+		
 		
 	}
 	

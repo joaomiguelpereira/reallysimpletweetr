@@ -213,6 +213,11 @@ public class TwitterServiceAdapter {
 						.createTwitterUpdateDto(tuite));
 			}
 
+		} else if (filter.getUpdatesType() == UpdatesType.SINGLE) {
+			Status status = twitter.showStatus(filter.getStatusId());
+			returnList.addTwitterUpdate(DataUtils
+					.createTwitterUpdateDto(status,true));
+
 		}
 
 		// CAll twitter API

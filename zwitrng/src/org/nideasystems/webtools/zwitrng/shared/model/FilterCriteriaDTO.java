@@ -14,6 +14,8 @@ public class FilterCriteriaDTO implements IModel{
 	private int resultsPerPage = 20;
 	private String refreshUrl = null;
 	private double completedIn = 0.0;
+	private long statusId = 1;
+	
 	
 	private UpdatesType updatesType = null;
 
@@ -105,6 +107,16 @@ public class FilterCriteriaDTO implements IModel{
 		
 	}
 
+	public void setStatusId(long tweetId) {
+		this.statusId = tweetId;
+	}
+
+	public long getStatusId() {
+		return statusId;
+	}
+
+
+	
 	
 
 	

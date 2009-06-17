@@ -142,12 +142,11 @@ public class DataUtils {
 		twitterUpdate.setRateLimitReset(status.getRateLimitReset());
 		twitterUpdate.setSource(status.getSource());
 		twitterUpdate.setText(status.getText());
-		
 		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
 		twitterAccount.setTwitterScreenName(status.getFromUser());
 		twitterAccount.setId(status.getFromUserId());
 		twitterAccount.setTwitterImageUrl(status.getProfileImageUrl());
-		
+		//twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
 		twitterUpdate.setTwitterAccount(twitterAccount);
 
 
@@ -169,7 +168,7 @@ public class DataUtils {
 		twitterUpdate.setRateLimitReset(status.getRateLimitReset());
 		twitterUpdate.setSource(status.getSource());
 		twitterUpdate.setText(status.getText());
-
+		twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
 		if (copyUserForTwitterAccount) {
 			// Create a twitter Account
 			TwitterAccountDTO twitterAccount = DataUtils
@@ -265,6 +264,9 @@ public class DataUtils {
 				.getStatusInReplyToStatusId());
 		twitterUpdateDto.setInReplyToUserId(authenticatedTwitterUser
 				.getStatusInReplyToUserId());
+		
+		twitterUpdateDto.setInReplyToScreenName(authenticatedTwitterUser.getStatusInReplyToScreenName());
+		
 		twitterUpdateDto.setRateLimitLimit(authenticatedTwitterUser
 				.getRateLimitLimit());
 		twitterUpdateDto.setRateLimitRemaining(authenticatedTwitterUser
