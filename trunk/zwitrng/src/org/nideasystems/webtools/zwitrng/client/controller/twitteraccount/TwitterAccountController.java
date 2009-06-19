@@ -306,6 +306,7 @@ public class TwitterAccountController extends
 				public void onSuccess(TwitterUpdateDTOList result) {
 					showStatusWindow.onSuccess(result);
 					
+					
 				}
 				
 			});

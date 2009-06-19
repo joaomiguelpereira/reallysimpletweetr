@@ -2,7 +2,6 @@ package org.nideasystems.webtools.zwitrng.client.view.updates;
 
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
-import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
@@ -212,14 +211,14 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsOpenSearch(Ljava/lang/String;)(hash);
 		}
 		
-		$wnd.showStatus = function(id) {
+		$wnd.showStatus = function(originalId, id) {
 			
-			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsShowStatus(Ljava/lang/String;)(id);
+			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsShowStatus(Ljava/lang/String;Ljava/lang/String;)(originalId, id);
 		}
 	}-*/;
 
-	public static void jsShowStatus(String id) {
-		MainController.getInstance().getPopupManager().showStatus(id);
+	public static void jsShowStatus(String originalId, String id) {
+		MainController.getInstance().getPopupManager().showStatus(originalId,id);
 	}
 
 	

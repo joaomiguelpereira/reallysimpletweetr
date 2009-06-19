@@ -215,7 +215,7 @@ public class HTMLHelper {
 		String inReplyTo = "";
 		
 		if ( twitterUpdate.getInReplyToStatusId()>0) {
-			inReplyTo = "<a href=\"javascript:showStatus('"+twitterUpdate.getInReplyToStatusId()+"')\">in reply to "+twitterUpdate.getInReplyToScreenName()+"</a>";
+			inReplyTo = "<a href=\"javascript:showStatus('"+twitterUpdate.getId()+"','"+twitterUpdate.getInReplyToStatusId()+"')\">in reply to "+twitterUpdate.getInReplyToScreenName()+"</a>";
 		}
 		String returnString = "<span class=\"createdAt\">"
 				+ getParsedUpdateCreated(twitterUpdate.getCreatedAt())
