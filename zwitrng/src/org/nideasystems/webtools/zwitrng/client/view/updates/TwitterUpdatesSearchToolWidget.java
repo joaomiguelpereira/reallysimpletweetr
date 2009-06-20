@@ -56,6 +56,7 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 					currentFilter.reset();
 					
 					getController().setCurrentFilter(currentFilter);
+					getController().clearView();
 					getController().reload();
 					//refresh();
 					

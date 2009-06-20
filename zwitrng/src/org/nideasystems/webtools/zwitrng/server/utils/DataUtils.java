@@ -5,11 +5,13 @@ import java.util.Date;
 import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
+import twitter4j.DirectMessage;
 import twitter4j.Status;
 import twitter4j.Tweet;
 import twitter4j.User;
@@ -129,6 +131,53 @@ public class DataUtils {
 
 	}
 
+	public static TwitterUpdateDTO createTwitterUpdateDto(DirectMessage dm,
+			boolean copyUserForTwitterAccount,UpdatesType type) {
+		
+		TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
+
+		
+		twitterUpdate.setCreatedAt(dm.getCreatedAt());
+		twitterUpdate.setId(dm.getId());
+		
+		
+		//twitterUpdate.setInReplyToStatusId();
+		
+		twitterUpdate.setInReplyToUserId(dm.getRecipientId());
+		twitterUpdate.setInReplyToScreenName(dm.getRecipientScreenName());
+		
+		twitterUpdate.setRateLimitLimit(dm.getRateLimitLimit());
+		twitterUpdate.setRateLimitRemaining(dm.getRateLimitRemaining());
+		twitterUpdate.setRateLimitReset(dm.getRateLimitReset());
+		
+		twitterUpdate.setSource("");
+		twitterUpdate.setText(dm.getText());
+		twitterUpdate.setType(type);
+		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
+		
+		if ( type.equals(UpdatesType.DIRECT_SENT)) {
+			twitterAccount.setTwitterScreenName(dm.getRecipientScreenName());
+			twitterAccount.setId(dm.getRecipientId());
+			//twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
+			
+			twitterAccount.setTwitterImageUrl(dm.getRecipient().getProfileImageURL().toExternalForm());
+			
+		} else {
+			twitterAccount.setTwitterScreenName(dm.getSenderScreenName());
+			twitterAccount.setId(dm.getSenderId());
+			//twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
+			
+			twitterAccount.setTwitterImageUrl(dm.getSender().getProfileImageURL().toExternalForm());
+			
+		}
+		
+		twitterUpdate.setTwitterAccount(twitterAccount);
+
+
+		return twitterUpdate;
+
+	}
+
 	public static TwitterUpdateDTO createTwitterUpdateDto(Tweet status) {
 		TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
 
@@ -149,7 +198,7 @@ public class DataUtils {
 		twitterAccount.setTwitterImageUrl(status.getProfileImageUrl());
 		//twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
 		twitterUpdate.setTwitterAccount(twitterAccount);
-
+		twitterUpdate.setType(UpdatesType.TWEET);
 
 		return twitterUpdate;
 
@@ -178,6 +227,7 @@ public class DataUtils {
 			twitterUpdate.setTwitterAccount(twitterAccount);
 
 		}
+		twitterUpdate.setType(UpdatesType.STATUS);
 
 		return twitterUpdate;
 
@@ -311,5 +361,6 @@ public class DataUtils {
 		return accountDo;
 
 	}
+
 
 }

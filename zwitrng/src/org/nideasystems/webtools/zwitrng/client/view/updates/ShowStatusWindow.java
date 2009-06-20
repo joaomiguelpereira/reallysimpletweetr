@@ -17,10 +17,11 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ShowStatusWindow extends DialogBox {
+public class ShowStatusWindow extends /*DialogBox*/ PopupPanel {
 
 	private Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	private TwitterAccountController controller = null;
@@ -36,9 +37,10 @@ public class ShowStatusWindow extends DialogBox {
 	public ShowStatusWindow(TwitterAccountController controller) {
 		this.setController(controller);
 		
-
+		
 		// TODO: Refactor this duplicated code
 		this.setAnimationEnabled(true);
+		this.setAutoHideEnabled(true);
 		vPanel = new VerticalPanel();
 		vPanel.setWidth(DialogBoxesConstants.WIDTH);
 		vPanel.setHeight("150px");
@@ -134,6 +136,7 @@ public class ShowStatusWindow extends DialogBox {
 	private void addUpdate(TwitterUpdateWidget update) {
 		contentPanel.add(update);
 		scrollPannel.scrollToBottom();
+		
 		
 
 

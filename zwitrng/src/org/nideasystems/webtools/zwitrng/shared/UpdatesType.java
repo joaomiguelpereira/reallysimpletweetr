@@ -4,7 +4,7 @@ public enum UpdatesType {
 	FRIENDS (1),
 	MY(2),
 	FAVORITES(3),
-	DIRECT(4), MENTIONS(5), SEARCHES(6),SINGLE(7), CONVERSATION(8);
+	DIRECT_RECEIVED(4), MENTIONS(5), SEARCHES(6),SINGLE(7), CONVERSATION(8), STATUS(9), TWEET(10), DIRECT_SENT(11);
 	
 	private final int val;
 	UpdatesType(int val) {

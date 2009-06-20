@@ -5,6 +5,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.Twitte
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
+import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.dom.client.Element;
@@ -43,7 +44,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	private TwitterUpdateDTO twitterUpdate;
 	//private TwitterUpdatesController parentController;
 	private TwitterAccountController parentController;
-	private final HorizontalPanel actionPanel = new HorizontalPanel();
+	private HorizontalPanel actionPanel = new HorizontalPanel();
 	private final HorizontalPanel sendUpdateContainer = new HorizontalPanel();
 	private SendUpdateWidget sendUpdateWidget = null;
 	private boolean showConversationEnabled = false;
@@ -111,33 +112,16 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		// Now add the action
 
 		// HTML followUser = new HTML("unfollow user (do later)");
-		HTML retweet = new HTML("Retweet");
-		HTML reply = new HTML("Reply");
-		actionPanel.setSpacing(5);
-		actionPanel.add(retweet);
-		actionPanel.add(reply);
-		retweet.addStyleName("link");
-		reply.addStyleName("link");
 
-		if (showConversationEnabled) {
-			final HTML showConversation = new HTML("Show Conversation");
-			
-			showConversation.addStyleName("link");
-			showConversation.addClickHandler(new ClickHandler() {
-
-				@Override
-				public void onClick(ClickEvent event) {
-					MainController.getInstance().getPopupManager().showConversation(twitterUpdate.getId(),showConversation.getAbsoluteTop()+20);
-					
-				}
-				
-			});
-
-			actionPanel.add(showConversation);
-
+		//Create Reguldate action panel
+		if ( twitterUpdate.getType().equals(UpdatesType.DIRECT_RECEIVED) || twitterUpdate.getType().equals(UpdatesType.DIRECT_SENT)) {
+			actionPanel = createDMActionPanel();
+		} else {
+			actionPanel = createDefaultActionPanel();	
 		}
 		
-
+		
+		
 		tweetLayout.setWidget(1, 1, actionPanel);
 		tweetLayoutFormatter.setStyleName(1, 1, "tweetOptions");
 		tweetLayoutFormatter.setHeight(1, 1, "25px");
@@ -171,6 +155,60 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		});
 
+		
+		// setupUserPanel();
+
+	}
+	private HorizontalPanel createDMActionPanel() {
+		HorizontalPanel tmpPanel = new HorizontalPanel();
+		
+		HTML reply = new HTML("Reply");
+		tmpPanel.setSpacing(5);
+		
+		tmpPanel.add(reply);
+		
+		reply.addStyleName("link");
+
+		/***********
+		 * Add Reply functionality
+		 */
+
+		reply.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				showSendUpdate(SendUpdateWidget.STATUS);
+			}
+
+		});
+		return tmpPanel;	}
+
+	private HorizontalPanel createDefaultActionPanel() {
+		HorizontalPanel tmpPanel = new HorizontalPanel();
+		HTML retweet = new HTML("Retweet");
+		HTML reply = new HTML("Reply");
+		tmpPanel.setSpacing(5);
+		tmpPanel.add(retweet);
+		tmpPanel.add(reply);
+		retweet.addStyleName("link");
+		reply.addStyleName("link");
+
+		if (showConversationEnabled) {
+			final HTML showConversation = new HTML("Show Conversation");
+			
+			showConversation.addStyleName("link");
+			showConversation.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					MainController.getInstance().getPopupManager().showConversation(twitterUpdate.getId(),showConversation.getAbsoluteTop()+20);
+					
+				}
+				
+			});
+
+			tmpPanel.add(showConversation);
+		}
 		/***********
 		 * Add Retweet functionality
 		 */
@@ -195,9 +233,10 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			}
 
 		});
-		// setupUserPanel();
-
+		return tmpPanel;
+		
 	}
+
 	public TwitterUpdateWidget(/*TwitterUpdatesController theParentController*/TwitterAccountController theParentController,
 			TwitterUpdateDTO aTwitterUpdateDTO) {
 		super();

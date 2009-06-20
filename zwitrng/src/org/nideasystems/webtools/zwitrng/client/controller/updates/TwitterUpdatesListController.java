@@ -28,6 +28,7 @@ public class TwitterUpdatesListController extends
 	TwitterUpdatesController friendsTwitterUpdatesController = null;
 	TwitterUpdatesController mentionsTwitterUpdatesController = null;
 	TwitterUpdatesController searchesTwitterUpdatesController = null;
+	TwitterUpdatesController dmTwitterUpdatesController = null;
 
 	TwitterUpdatesController activeController = null;
 
@@ -38,7 +39,7 @@ public class TwitterUpdatesListController extends
 	public TwitterUpdatesController getActiveUpdatesController() {
 		return activeController;
 	}
-	
+
 	public void init() {
 		setView(new TwitterUpdatesListView());
 		getView().init();
@@ -49,13 +50,14 @@ public class TwitterUpdatesListController extends
 
 	private void loadFriendsTweets() {
 
+		// Create Friends
 		this.friendsTwitterUpdatesController = new TwitterUpdatesController();
 		this.friendsTwitterUpdatesController
 				.setMainController(getMainController());
 		this.friendsTwitterUpdatesController.setParentController(this);
 		this.friendsTwitterUpdatesController
 				.setServiceManager(getServiceManager());
-		
+
 		FilterCriteriaDTO friendsFilter = new FilterCriteriaDTO();
 		friendsFilter.setUpdatesType(UpdatesType.FRIENDS);
 		friendsFilter.setSearchText("friends");
@@ -67,8 +69,9 @@ public class TwitterUpdatesListController extends
 
 		getView().selectTab(0);
 		loadUpdateList(this.friendsTwitterUpdatesController);
-		activeController=this.friendsTwitterUpdatesController;
-		// Add mentions tab
+		activeController = this.friendsTwitterUpdatesController;
+
+		// Create Mentions
 		mentionsTwitterUpdatesController = new TwitterUpdatesController();
 		this.mentionsTwitterUpdatesController
 				.setMainController(getMainController());
@@ -84,7 +87,7 @@ public class TwitterUpdatesListController extends
 		getView().add(this.mentionsTwitterUpdatesController.getView(),
 				"Mentions");
 
-		// Add search tab
+		// Create Search
 		this.searchesTwitterUpdatesController = new TwitterUpdatesController();
 		this.searchesTwitterUpdatesController
 				.setMainController(getMainController());
@@ -101,19 +104,37 @@ public class TwitterUpdatesListController extends
 		getView().add(this.searchesTwitterUpdatesController.getView(),
 				"Searches");
 
+		// Create Direct Messages
+		dmTwitterUpdatesController = new TwitterUpdatesController();
+		this.dmTwitterUpdatesController.setMainController(getMainController());
+		this.dmTwitterUpdatesController.setParentController(this);
+		this.dmTwitterUpdatesController.setServiceManager(getServiceManager());
+		// Create the filter
+		FilterCriteriaDTO dmFlter = new FilterCriteriaDTO();
+		dmFlter.setUpdatesType(UpdatesType.DIRECT_RECEIVED);
+		//dmFlter.setSearchText("direct messages");
+		this.dmTwitterUpdatesController.setCurrentFilter(dmFlter);
+
+		this.dmTwitterUpdatesController.init();
+
+		getView().add(this.dmTwitterUpdatesController.getView(),
+				"Direct Messages");
+
+		// Add change tab handler
 		getView().addSelectionHandler(new SelectionHandler<Integer>() {
 
 			@Override
 			public void onSelection(SelectionEvent<Integer> event) {
 				if (event.getSelectedItem() == 1) {
+
 					if (activeController != null) {
 						activeController.pause();
 					}
 					if (mentionsTwitterUpdatesController.getModel() == null) {
 						loadUpdateList(mentionsTwitterUpdatesController);
 					}
-
 					activeController = mentionsTwitterUpdatesController;
+
 				} else if (event.getSelectedItem() == 0) {
 					if (activeController != null) {
 						activeController.pause();
@@ -131,23 +152,36 @@ public class TwitterUpdatesListController extends
 
 					}
 					activeController = searchesTwitterUpdatesController;
+				} else if (event.getSelectedItem() == 3) {
+					if (activeController != null) {
+						activeController.pause();
+					}
+					if (dmTwitterUpdatesController.getModel() == null) {
+						loadUpdateList(dmTwitterUpdatesController);
+					}
+					activeController = dmTwitterUpdatesController;
 				}
 				activeController.resume();
 
 			}
 
 		});
-		this.twitterUpdatesControllers.put("friends", friendsTwitterUpdatesController);
-		this.twitterUpdatesControllers.put("mentions", mentionsTwitterUpdatesController);
-		this.twitterUpdatesControllers.put("searches",searchesTwitterUpdatesController);
-		
+		this.twitterUpdatesControllers.put("friends",
+				friendsTwitterUpdatesController);
+		this.twitterUpdatesControllers.put("mentions",
+				mentionsTwitterUpdatesController);
+		this.twitterUpdatesControllers.put("searches",
+				searchesTwitterUpdatesController);
+		this.twitterUpdatesControllers.put("dmessages",
+				searchesTwitterUpdatesController);
+
 
 	}
 
-	private void loadUpdateList(
-			final TwitterUpdatesController updatesController) {
+	private void loadUpdateList(final TwitterUpdatesController updatesController) {
 
 		updatesController.startProcessing();
+		
 
 		try {
 			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
@@ -216,10 +250,10 @@ public class TwitterUpdatesListController extends
 
 	public void activateSearch(String searchText) {
 		activeController = this.searchesTwitterUpdatesController;
-		this.searchesTwitterUpdatesController.getCurrentFilter().setSearchText(searchText);
+		this.searchesTwitterUpdatesController.getCurrentFilter().setSearchText(
+				searchText);
 		this.searchesTwitterUpdatesController.getCurrentFilter().reset();
-		
-		
+
 		getView().selectTab(2);
 		Window.scrollTo(0, 0);
 		this.searchesTwitterUpdatesController.reload();
