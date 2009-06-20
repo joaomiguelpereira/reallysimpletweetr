@@ -30,10 +30,11 @@ public class TwitterUpdatesController extends
 
 	// private TwitterUpdatesView updatesView = null;
 	private Map<Long, TwitterUpdateDTO> updates = new HashMap<Long, TwitterUpdateDTO>();
+	private Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 60; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
-	private Map<Long, TwitterUpdateWidget> updateWidgets = new HashMap<Long, TwitterUpdateWidget>();
+	
 	private FilterCriteriaDTO currentFilter = null;
 	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
 	// update automatically
@@ -120,6 +121,7 @@ public class TwitterUpdatesController extends
 
 	@Override
 	public void reload() {
+		
 		if (!isPaused) {
 			startProcessing();
 
@@ -260,6 +262,19 @@ public class TwitterUpdatesController extends
 
 	public FilterCriteriaDTO getCurrentFilter() {
 		return currentFilter;
+	}
+
+	public void clearView() {
+
+
+
+		for (TwitterUpdateWidget wid: this.updateWidgets.values() ) {
+			getView().remove(wid);
+		}
+		this.updates.clear();
+		this.updateWidgets.clear();
+		
+		
 	}
 
 	/*

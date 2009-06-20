@@ -234,6 +234,22 @@ public class TwitterServiceAdapter {
 					nextId = -1;
 				}
 			}
+		} else if (filter.getUpdatesType() == UpdatesType.DIRECT_RECEIVED) {
+			List<DirectMessage> dms = twitter.getDirectMessages(paging);
+
+			for (DirectMessage dm: dms) {
+				returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
+						dm, true,filter.getUpdatesType()));
+			}
+			
+		} else if (filter.getUpdatesType() == UpdatesType.DIRECT_SENT) {
+			List<DirectMessage> dms = twitter.getSentDirectMessages(paging);
+
+			for (DirectMessage dm: dms) {
+				returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
+						dm, true,filter.getUpdatesType()));
+			}
+			
 		}
 
 		// CAll twitter API

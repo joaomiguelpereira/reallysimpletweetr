@@ -42,7 +42,7 @@ public class PopupManager {
 			conversationWindow = new ShowStatusWindow(personaController
 					.getTwitterAccountController());
 		}
-		conversationWindow.setText("conversation");
+		//conversationWindow.setText("conversation");
 		conversationWindow.center();
 		conversationWindow.show();
 		conversationWindow.setTop(top);
@@ -60,7 +60,7 @@ public class PopupManager {
 		}
 		
 		statusWindow.clear();
-		statusWindow.setText("Status");
+		//statusWindow.setText("Status");
 		statusWindow.center();
 		statusWindow.show();
 		if ( statusWindow.getTop() == -1 ) {

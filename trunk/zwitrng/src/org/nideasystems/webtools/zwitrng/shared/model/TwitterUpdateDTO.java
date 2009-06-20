@@ -2,6 +2,8 @@ package org.nideasystems.webtools.zwitrng.shared.model;
 
 import java.util.Date;
 
+import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
+
 
 public class TwitterUpdateDTO implements IModel{
 
@@ -19,6 +21,7 @@ public class TwitterUpdateDTO implements IModel{
 	private String source;
 	private String text;
 	private TwitterAccountDTO twitterAccount;
+	private UpdatesType type;
 	
 	public Date getCreatedAt() {
 		
@@ -90,8 +93,15 @@ public class TwitterUpdateDTO implements IModel{
 	public void setInReplyToScreenName(String inReplyToScreenName) {
 		this.inReplyToScreenName = inReplyToScreenName;
 	}
+	public UpdatesType getType() {
+		return type;
+	}
 	public String getInReplyToScreenName() {
 		return inReplyToScreenName;
+	}
+	public void setType(UpdatesType type) {
+		this.type = type;
+		
 	}
 	
 	

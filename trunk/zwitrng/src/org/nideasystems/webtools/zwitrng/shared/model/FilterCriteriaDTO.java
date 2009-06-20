@@ -101,7 +101,7 @@ public class FilterCriteriaDTO implements IModel{
 		sinceId = 1;
 		maxId = 0;
 		page = 0;
-		resultsPerPage = 20;
+		//resultsPerPage = 20;
 		refreshUrl = null;
 		completedIn = 0.0;
 		

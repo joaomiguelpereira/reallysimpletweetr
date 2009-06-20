@@ -6,6 +6,8 @@ import org.nideasystems.webtools.zwitrng.client.view.IView;
 
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
+import com.google.gwt.user.client.Window;
+
 
 
 public abstract class AbstractController<M extends IModel, V extends IView<?>>
@@ -135,6 +137,7 @@ public abstract class AbstractController<M extends IModel, V extends IView<?>>
 	@Override
 	public void endProcessing() {
 		view.isUpdating(false);
+		
 
 	}
 
