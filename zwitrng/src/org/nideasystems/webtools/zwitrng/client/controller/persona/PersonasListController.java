@@ -1,9 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
@@ -20,7 +22,7 @@ public class PersonasListController extends
 	private Map<String, PersonaView> personaViews = new HashMap<String, PersonaView>();
 	
 	private PersonaController currentPersonaController = null;
-	
+	private Map<String, PersonaController> personaControllers = new HashMap<String, PersonaController>();
 
 	/**
 	 * Constructor
@@ -111,6 +113,8 @@ public class PersonasListController extends
 		if ( selecteAfterCreated ) {
 			getView().selectTab(getView().getWidgetCount()-1);
 		}
+		
+		personaControllers.put(persona.getName(),personaController);
 	}
 
 	/**
@@ -123,6 +127,7 @@ public class PersonasListController extends
 			getView().remove(personaViews.get(personaName));
 			getView().selectTab(0);
 			this.personaViews.remove(personaName);
+			personaControllers.remove(personaName);
 
 		}
 
@@ -222,6 +227,17 @@ public class PersonasListController extends
 	@Override
 	public void reload() {
 
+	}
+
+	public TwitterAccountController getTwitterAccountController(
+			String userScreenName) {
+		for (PersonaController pController: this.personaControllers.values() ) {
+			if (pController.getTwitterAccountController().getModel().getTwitterScreenName().endsWith(userScreenName)) {
+				return pController.getTwitterAccountController();
+			}
+		}
+		
+		return null;
 	}
 
 }

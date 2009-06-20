@@ -7,9 +7,9 @@ import java.util.List;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.http.client.URL;
+
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.Window;
 
 public class HTMLHelper {
 
@@ -158,10 +158,11 @@ public class HTMLHelper {
 
 		for (String str : words) {
 			if (str.startsWith("http") && !retList.contains(str)) {
-				//GWT.log("URL before econding:" + str, null);
-				//GWT.log("URL after econding:" + URL.encodeComponent(str), null);
-				//URL.
-				retList.add(/*URL.encodeComponent(*/str/*)*/);
+				// GWT.log("URL before econding:" + str, null);
+				// GWT.log("URL after econding:" + URL.encodeComponent(str),
+				// null);
+				// URL.
+				retList.add(/* URL.encodeComponent( */str/* ) */);
 			}
 		}
 
@@ -202,7 +203,7 @@ public class HTMLHelper {
 		return itHelper;
 	}
 
-	public String getParsedMetaDataHtml(TwitterUpdateDTO twitterUpdate) {
+	public String getParsedMetaDataHtml(TwitterUpdateDTO twitterUpdate, boolean showConversationOptions) {
 		GWT.log("Parsing date:" + twitterUpdate.getCreatedAt(), null);
 		GWT.log("Parsing Source:" + twitterUpdate.getSource(), null);
 		GWT.log("Parsing date:" + twitterUpdate.getCreatedAt(), null);
@@ -213,15 +214,24 @@ public class HTMLHelper {
 						+ twitterUpdate.getInReplyToUserId(), null);
 
 		String inReplyTo = "";
-		
-		if ( twitterUpdate.getInReplyToStatusId()>0) {
-			inReplyTo = "<a href=\"javascript:showStatus('"+twitterUpdate.getId()+"','"+twitterUpdate.getInReplyToStatusId()+"')\">in reply to "+twitterUpdate.getInReplyToScreenName()+"</a>";
+
+		if (twitterUpdate.getInReplyToStatusId() > 0 && showConversationOptions ) {
+			String elId = "update_" + twitterUpdate.getId();
+			
+			inReplyTo = "<a id=\"" + elId + "\" href=\"javascript:showStatus('"
+					+ twitterUpdate.getInReplyToStatusId() + "','" + elId
+					+ "')\">in reply to "
+					+ twitterUpdate.getInReplyToScreenName() + "</a>";
+			
+			//Window.alert(inReplyTo);
 		}
+
 		String returnString = "<span class=\"createdAt\">"
 				+ getParsedUpdateCreated(twitterUpdate.getCreatedAt())
 				+ "<span> from <span class=\"source\">"
-				+ getParsedSource(twitterUpdate.getSource()) + "</span> "+inReplyTo;
-		
+				+ getParsedSource(twitterUpdate.getSource()) + "</span> "
+				+ inReplyTo;
+
 		return returnString;
 
 	}

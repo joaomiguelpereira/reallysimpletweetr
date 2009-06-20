@@ -6,10 +6,9 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.DialogBoxesConstants;
+import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
@@ -28,35 +27,34 @@ public class ShowStatusWindow extends DialogBox {
 
 	private VerticalPanel vPanel = new VerticalPanel();
 	private VerticalPanel contentPanel = new VerticalPanel();
+	private ScrollPanel scrollPannel = null;
 	
+
 	Map<String, TwitterUpdateDTO> loadedUpdates = new HashMap<String, TwitterUpdateDTO>();
-	
-	
+	private int top = -1;
+
 	public ShowStatusWindow(TwitterAccountController controller) {
 		this.setController(controller);
-		this.setTitle("Show status");
-		this.setText("Show status ");
 		
-		//TODO: Refactor this duplicated code
+
+		// TODO: Refactor this duplicated code
 		this.setAnimationEnabled(true);
 		vPanel = new VerticalPanel();
 		vPanel.setWidth(DialogBoxesConstants.WIDTH);
-		vPanel.setHeight(DialogBoxesConstants.HEIGHT);
+		vPanel.setHeight("150px");
 		waitingImage.setVisible(false);
 		vPanel.add(waitingImage);
-		/**Content goes here*/
-		
-		
-		
-		ScrollPanel scrollPannel = new ScrollPanel(contentPanel);
-		//scrollPannel.setWidth(DialogBoxesConstants.WIDTH);
-		scrollPannel.setHeight("300px");
-		
-		//scrollPannel.add(contentPanel);
-		
+		/** Content goes here */
+
+		scrollPannel = new ScrollPanel(contentPanel);
+		// scrollPannel.setWidth(DialogBoxesConstants.WIDTH);
+		scrollPannel.setHeight("150px");
+
+		// scrollPannel.add(contentPanel);
+
 		vPanel.add(scrollPannel);
-		/**End Content */	
-		//TODO: Refactor this duplicated code
+		/** End Content */
+		// TODO: Refactor this duplicated code
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		InlineHTML closeOption = new InlineHTML("Close");
 		closeOption.addStyleName("link");
@@ -64,80 +62,116 @@ public class ShowStatusWindow extends DialogBox {
 
 			@Override
 			public void onClick(ClickEvent event) {
+				setTop(-1);
 				hide(true);
-				
+
 			}
-			
+
 		});
-		
-		
-		//add tools panel
+
+		// add tools panel
 		toolsPanel.add(closeOption);
 		vPanel.add(toolsPanel);
 		this.add(vPanel);
 		this.center();
 
 	}
+
 	public void setController(TwitterAccountController controller) {
 		this.controller = controller;
 	}
+
 	public TwitterAccountController getController() {
 		return controller;
 	}
+
 	public void isProcessing(boolean b) {
 		this.waitingImage.setVisible(b);
-		
-		
-		
+
 	}
-	
+
 	@Override
 	public void hide(boolean autoClosed) {
 		this.loadedUpdates.clear();
 		contentPanel.clear();
 		super.hide(autoClosed);
-		
+
 	}
-	public void load(String id) {
-		
-		if ( this.loadedUpdates.get(id) == null ) {
-			this.isProcessing(true);
-			controller.loadTwitterUpdate(this,id);
-		} else {
-			
-			//Just scroll to the leaded
-		}
-		
+
+	@Override
+	public void clear() {
+		this.contentPanel.clear();
+		this.loadedUpdates.clear();
 		
 	}
 	public void onError(Throwable caught) {
 		isProcessing(false);
 		controller.getMainController().addException(caught);
-		
+
 	}
+
 	public void onSuccess(TwitterUpdateDTOList result) {
 		isProcessing(false);
-		
-		if ( result.getTwitterUpdatesList().size() == 0 ) {
+
+		if (result.getTwitterUpdatesList().size() == 0) {
 			controller.getMainController().addError("Tweet not found");
 		} else {
-			//Window.alert("Loaded Tweet: "+result.getTwitterUpdatesList().get(0).getText());
-			TwitterUpdateWidget update = new TwitterUpdateWidget(controller,result.getTwitterUpdatesList().get(0));
-			this.loadedUpdates.put(result.getTwitterUpdatesList().get(0).getId()+"", result.getTwitterUpdatesList().get(0));
-			contentPanel.add(update);
-			
-			if ( this.loadedUpdates.size()==1 ) {
-				contentPanel.add(new HTML("----------------------------------------------------------------"));
+			// Window.alert("Loaded Tweet: "+result.getTwitterUpdatesList().get(0).getText());
+			for ( TwitterUpdateDTO update : result.getTwitterUpdatesList() ) {
+				TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(controller,update);
+				updateWidget.setShowConversationEnabled(false);
+				updateWidget.init();
+				this.loadedUpdates.put(update.getId()
+						+ "", update);
+				addUpdate(updateWidget);
+	
 			}
 			
-			
-			
 		}
+
+	}
+
+	private void addUpdate(TwitterUpdateWidget update) {
+		contentPanel.add(update);
+		scrollPannel.scrollToBottom();
 		
+
+
+	}
+
+	public boolean isEmpty() {
+
+		return (this.loadedUpdates.size() == 0);
+	}
+
+	public void load(long id) {
+
+		if (this.loadedUpdates.get(id) == null) {
+			this.isProcessing(true);
+			controller.loadTwitterConversation(this, id, UpdatesType.SINGLE);
+		} else {
+
+			// Just scroll to the leaded
+		}
+
+	}
+
+	public void loadConversation(long id) {
+		this.isProcessing(true);
+		controller.loadTwitterConversation(this,id, UpdatesType.CONVERSATION);
 		
 	}
-	public boolean isEmpty() {
+
+	public void setTop(int top) {
 		
-		return (this.loadedUpdates.size()==0);
+		int left = this.getAbsoluteLeft()+20;
+		this.setPopupPosition(left, top);
+		this.top  = top;
+		
+	}
+
+	public int getTop() {
+		
+		return top;
 	}
 }

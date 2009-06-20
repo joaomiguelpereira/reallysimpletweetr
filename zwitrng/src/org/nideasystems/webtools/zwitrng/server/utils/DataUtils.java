@@ -134,6 +134,7 @@ public class DataUtils {
 
 		twitterUpdate.setCreatedAt(status.getCreatedAt());
 		twitterUpdate.setId(status.getId());
+		
 		//twitterUpdate.setInReplyToStatusId();
 		twitterUpdate.setInReplyToUserId(status.getToUserId());
 

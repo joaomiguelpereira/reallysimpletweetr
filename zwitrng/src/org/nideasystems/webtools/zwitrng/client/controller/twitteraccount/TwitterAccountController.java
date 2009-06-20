@@ -22,6 +22,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends
@@ -59,8 +60,8 @@ public class TwitterAccountController extends
 				.getModel();
 
 		try {
-			getServiceManager().getRPCService().authenticateUser(personaDto, pinCode,
-					new AsyncCallback<TwitterAccountDTO>() {
+			getServiceManager().getRPCService().authenticateUser(personaDto,
+					pinCode, new AsyncCallback<TwitterAccountDTO>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -117,14 +118,18 @@ public class TwitterAccountController extends
 						public void onFailure(Throwable caught) {
 							GWT.log("received error from postUpdate", caught);
 							getMainController().addException(caught);
-							instance.onFailure(caught);
+							if (instance != null) {
+								instance.onFailure(caught);
+							}
 
 						}
 
 						@Override
 						public void onSuccess(TwitterUpdateDTO result) {
 							getView().updateLastStatus(result);
-							instance.onSuccess(result);
+							if (instance != null) {
+								instance.onSuccess(result);
+							}
 
 						}
 
@@ -138,6 +143,7 @@ public class TwitterAccountController extends
 
 	/**
 	 * Get from service extended information about a Twitter User
+	 * 
 	 * @param accountIdOrScreenName
 	 * @param callback
 	 */
@@ -146,7 +152,8 @@ public class TwitterAccountController extends
 
 		if (this.extendedUsersInfo != null
 				&& this.extendedUsersInfo.containsKey(accountIdOrScreenName)) {
-			callback.onTwitterAccountLoadSuccess(this.extendedUsersInfo.get(accountIdOrScreenName));
+			callback.onTwitterAccountLoadSuccess(this.extendedUsersInfo
+					.get(accountIdOrScreenName));
 		} else {
 			try {
 				getServiceManager().getRPCService().getExtendedUser(
@@ -156,16 +163,18 @@ public class TwitterAccountController extends
 							@Override
 							public void onFailure(Throwable caught) {
 								getMainController().addException(caught);
-								callback.onTwitterAccountLoadError(caught.getMessage());
+								callback.onTwitterAccountLoadError(caught
+										.getMessage());
 								GWT.log("Error calling service", caught);
 							}
 
 							@Override
 							public void onSuccess(TwitterAccountDTO result) {
-								if (extendedUsersInfo == null ) {
+								if (extendedUsersInfo == null) {
 									extendedUsersInfo = new HashMap<String, TwitterAccountDTO>();
 								}
-								extendedUsersInfo.put(accountIdOrScreenName, result);
+								extendedUsersInfo.put(accountIdOrScreenName,
+										result);
 								callback.onTwitterAccountLoadSuccess(result);
 
 							}
@@ -181,79 +190,87 @@ public class TwitterAccountController extends
 
 	/**
 	 * Follow/Ufollow a User
-	 * @param follow true to follow, false to unfollow
-	 * @param id the id of the user to follow/unfollow
-	 * @param callback the callback to be notified
+	 * 
+	 * @param follow
+	 *            true to follow, false to unfollow
+	 * @param id
+	 *            the id of the user to follow/unfollow
+	 * @param callback
+	 *            the callback to be notified
 	 */
 	public void followUser(boolean follow, Integer id,
 			final TwitterAccountOperationCallBack callback) {
 
 		try {
-			getServiceManager().getRPCService().followUser(this.getModel(),follow, id, new AsyncCallback<Void>() {
+			getServiceManager().getRPCService().followUser(this.getModel(),
+					follow, id, new AsyncCallback<Void>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					GWT.log("error returned from followUser method", caught);
-					getMainController().addException(caught);
-					callback.onFollowUserError(caught.getMessage());
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log("error returned from followUser method",
+									caught);
+							getMainController().addException(caught);
+							callback.onFollowUserError(caught.getMessage());
 
-				@Override
-				public void onSuccess(Void result) {
-					callback.onFollowUserSuccess(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							callback.onFollowUserSuccess(result);
+
+						}
+
+					});
 		} catch (Exception e) {
 			GWT.log("error calling followUser method", e);
 			getMainController().addException(e);
 			callback.onFollowUserError(e.getMessage());
 		}
-		
+
 	}
 
 	/**
 	 * Block/unblock user
+	 * 
 	 * @param block
 	 * @param id
 	 * @param callback
 	 */
 	public void blockUser(final boolean block, final Integer id,
 			final TwitterUserInfoWidget callback) {
-		
+
 		try {
-			getServiceManager().getRPCService().blockUser(getModel(), block, id, new AsyncCallback<Void>() {
+			getServiceManager().getRPCService().blockUser(getModel(), block,
+					id, new AsyncCallback<Void>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					GWT.log("Error returned from service" , caught);
-					getMainController().addException(caught);
-					callback.onBlockUserError(caught.getMessage());
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log("Error returned from service", caught);
+							getMainController().addException(caught);
+							callback.onBlockUserError(caught.getMessage());
 
-				@Override
-				public void onSuccess(Void result) {
-					callback.onBlockUserSuccess(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							callback.onBlockUserSuccess(result);
+
+						}
+
+					});
 		} catch (Exception e) {
-		GWT.log("Error calling service", e);
+			GWT.log("Error calling service", e);
 			getMainController().addException(e);
 		}
-		
+
 	}
 
 	public void showNewFriends(String twitterScreenName) {
 		TwitterUserFilterDTO filter = new TwitterUserFilterDTO();
 		filter.setType(TwitterUserType.FRIENDS);
 		filter.setTwitterUserScreenName(twitterScreenName);
-		
-		UsersWindow friendsWindow = new UsersWindow(this,filter);
+
+		UsersWindow friendsWindow = new UsersWindow(this, filter);
 		friendsWindow.show();
 		friendsWindow.isUpdating(true);
 		loadFriends(friendsWindow, filter);
@@ -261,59 +278,97 @@ public class TwitterAccountController extends
 
 	public void loadFriends(final UsersWindow usersWindow,
 			TwitterUserFilterDTO currentFilter) {
-		
+
 		try {
-			getServiceManager().getRPCService().getUsers(getModel(),currentFilter, new AsyncCallback<TwitterAccountListDTO>( ){
+			getServiceManager().getRPCService().getUsers(getModel(),
+					currentFilter, new AsyncCallback<TwitterAccountListDTO>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					usersWindow.onLoadError(caught);
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							usersWindow.onLoadError(caught);
+						}
 
-				@Override
-				public void onSuccess(TwitterAccountListDTO result) {
-					usersWindow.onLoadSuccess(result);
-					
-				}
-				
-			});
+						@Override
+						public void onSuccess(TwitterAccountListDTO result) {
+							usersWindow.onLoadSuccess(result);
+
+						}
+
+					});
 		} catch (Exception e) {
 			usersWindow.onLoadError(e);
-			
+
 		}
-		
+
 	}
 
-	public void loadTwitterUpdate(final ShowStatusWindow showStatusWindow, String tweetId) {
-		
+	/*public void loadTwitterUpdate(final ShowStatusWindow showStatusWindow,
+			String tweetId) {
+
 		FilterCriteriaDTO filter = new FilterCriteriaDTO();
-		
+
 		filter.setStatusId(Long.parseLong(tweetId));
 		filter.setUpdatesType(UpdatesType.SINGLE);
-		//filter.setUniqueResult(true);
-		
-		
+		// filter.setUniqueResult(true);
+
 		try {
-			getServiceManager().getRPCService().getTwitterUpdates(getModel(), filter, new AsyncCallback<TwitterUpdateDTOList> () {
+			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
+					filter, new AsyncCallback<TwitterUpdateDTOList>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					showStatusWindow.onError(caught);
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							showStatusWindow.onError(caught);
 
-				@Override
-				public void onSuccess(TwitterUpdateDTOList result) {
-					showStatusWindow.onSuccess(result);
-					
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(TwitterUpdateDTOList result) {
+							showStatusWindow.onSuccess(result);
+
+						}
+
+					});
 		} catch (Exception e) {
 			showStatusWindow.onError(e);
 		}
-		
+
+	}
+*/
+	public void loadTwitterConversation(final ShowStatusWindow showStatusWindow,
+			long id, UpdatesType type) {
+		FilterCriteriaDTO filter = new FilterCriteriaDTO();
+
+		filter.setStatusId(id);
+		filter.setUpdatesType(type);
+		// filter.setUniqueResult(true);
+
+		try {
+			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
+					filter, new AsyncCallback<TwitterUpdateDTOList>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							showStatusWindow.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(TwitterUpdateDTOList result) {
+							showStatusWindow.onSuccess(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			showStatusWindow.onError(e);
+		}
+
+		// TODO Auto-generated method stub
+
 	}
 
+	public void sendUpdate(TwitterUpdateDTO twitterUpdate) {
+		this.sendUpdate(twitterUpdate, null);
+
+	}
 }

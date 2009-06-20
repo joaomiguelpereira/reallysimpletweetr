@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
-
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendingAccountWindow;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -18,7 +18,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -28,7 +27,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HasVerticalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
-
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
@@ -50,12 +49,14 @@ public class SendUpdateWidget extends
 	private int type = STATUS;
 	private TwitterAccountDTO inResponseToUserAccount = null;
 	private TwitterAccountDTO sendingTwitterAccount;
+	private List<String> sendingTwitterAccountNames = new ArrayList<String>();
 	private TwitterUpdateDTO inResponseTotwitterUpdate;
 	private final Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	private SendUpdateWidget instance;
 	private final HTML loadTemplateLink = new HTML("Load template");
 	private final HTML shortLinks = new HTML("Short links");
 	private List<SendUpdateAsyncHandler> asynHadlers = null;
+	private InlineHTML sendUpdatesFrom = null; 
 
 	@Override
 	public void init() {
@@ -68,6 +69,7 @@ public class SendUpdateWidget extends
 		update.addStyleName("input");
 		update.setVisibleLines(2);
 
+		
 		FlexTable bottomLayout = new FlexTable();
 		FlexCellFormatter formater = bottomLayout.getFlexCellFormatter();
 		bottomLayout.setCellSpacing(0);
@@ -78,20 +80,52 @@ public class SendUpdateWidget extends
 		sendingUserImage.setWidth("32px");
 		sendingUserImage.setHeight("32px");
 		sendingUserImage.setVisible(showUserImage);
-		bottomLayout.setWidget(0, 0, sendingUserImage);
+
+		//Send from block:
+		final InlineHTML sendUpdatesFromLabel = new InlineHTML("From: ");
+		sendUpdatesFromLabel.addStyleName("link");
+		
+		sendUpdatesFromLabel.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				//Open a window bellow the from label with a list of avaialble accounts in the system
+				SelectSendingAccountWindow window = new SelectSendingAccountWindow(getController(),instance);
+				window.init();
+				window.show(sendUpdatesFromLabel.getAbsoluteLeft(), sendUpdatesFromLabel.getAbsoluteTop()+20);
+				//Load the account by twitter screen name
+				window.load(sendingTwitterAccountNames);
+				
+			}
+			
+		});
+		this.sendingTwitterAccountNames.add(sendingTwitterAccount.getTwitterScreenName());
+		
+		sendUpdatesFrom = new InlineHTML("");
+		updateSendFromList();
+		
+		
+		//this.add(sendUpdatesFromLabel);
+
+		bottomLayout.setWidget(0, 1, sendUpdatesFromLabel);
+		bottomLayout.setWidget(0, 2, sendUpdatesFrom);
+		formater.setColSpan(0, 2, 2);
+		
+		//End send from block
+		bottomLayout.setWidget(1, 0, sendingUserImage);
 		HTML cancelLink = new HTML("Cancel");
 
-		formater.setWidth(0, 0, "48px");
+		formater.setWidth(1, 0, "48px");
 
-		bottomLayout.setWidget(0, 1, update);
-		formater.setColSpan(0, 1, 3);
+		bottomLayout.setWidget(1, 1, update);
+		formater.setColSpan(1, 1, 3);
 		// formater.setWidth(0, 1, "650px");
 
 		remainingChars.setWidth("35px");
-		bottomLayout.setWidget(1, 0, new HTML(""));
+		bottomLayout.setWidget(2, 0, new HTML(""));
 
-		bottomLayout.setWidget(1, 1, remainingChars);
-		bottomLayout.setWidget(1, 2, pub);
+		bottomLayout.setWidget(2, 1, remainingChars);
+		bottomLayout.setWidget(2, 2, pub);
 
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		toolsPanel.setSpacing(4);
@@ -105,19 +139,19 @@ public class SendUpdateWidget extends
 		toolsPanel.add(cancelLink);
 		toolsPanel.add(send);
 
-		bottomLayout.setWidget(1, 3, toolsPanel);
+		bottomLayout.setWidget(2, 3, toolsPanel);
 		// bottomLayout.setWidget(1, 4, send);
 
-		formater.setAlignment(0, 0, HasHorizontalAlignment.ALIGN_CENTER,
+		formater.setAlignment(1, 0, HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		formater.setAlignment(1, 1, HasHorizontalAlignment.ALIGN_LEFT,
+		formater.setAlignment(2, 1, HasHorizontalAlignment.ALIGN_LEFT,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		formater.setAlignment(1, 2, HasHorizontalAlignment.ALIGN_CENTER,
+		formater.setAlignment(2, 2, HasHorizontalAlignment.ALIGN_CENTER,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
-		formater.setAlignment(1, 3, HasHorizontalAlignment.ALIGN_RIGHT,
+		formater.setAlignment(2, 3, HasHorizontalAlignment.ALIGN_RIGHT,
 				HasVerticalAlignment.ALIGN_MIDDLE);
 
 		/*
@@ -154,7 +188,9 @@ public class SendUpdateWidget extends
 
 			@Override
 			public void onClick(ClickEvent event) {
-				if (update.getValue().length() > 0) {
+				if ( sendingTwitterAccountNames.isEmpty() ) {
+					getController().getMainController().addError("Select at least one sending account");
+				} else if (update.getValue().length() > 0 ) {
 					TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
 					twitterUpdate.setText(update.getValue());
 					twitterUpdate.setTwitterAccount(getSendingTwitterAccount());
@@ -171,10 +207,25 @@ public class SendUpdateWidget extends
 					}
 
 					isUpdating(true);
-					getController().sendUpdate(twitterUpdate, instance);
-
-					// getController().handleAction(IController.IActions.TWEET_THIS,
-					// twitterUpdate,instance);
+					
+					//getController().sendUpdate(twitterUpdate, instance);
+					for ( String userScreenName: sendingTwitterAccountNames) {
+						
+						
+						TwitterAccountController controller = getController().getMainController().getTwitterAccountController(userScreenName);
+						
+						twitterUpdate.setTwitterAccount(controller.getModel());
+						//if ( controller.getModel().getTwitterScreenName().equals(getController().getModel().getTwitterScreenName())) {
+							
+							controller.sendUpdate(twitterUpdate, instance);
+						//} else {
+						//	controller.sendUpdate(twitterUpdate);
+						//}
+					}
+					//Clear 
+					sendingTwitterAccountNames.clear();
+					sendingTwitterAccountNames.add(getController().getModel().getTwitterScreenName());
+					updateSendFromList();
 
 				}
 			}
@@ -193,6 +244,8 @@ public class SendUpdateWidget extends
 		super.add(bottomLayout);
 
 	}
+
+	
 
 	/**
 	 * Short any link in the update
@@ -381,6 +434,38 @@ public class SendUpdateWidget extends
 	public void setInResponseToUserAccount(TwitterAccountDTO twitterAccount) {
 		this.inResponseToUserAccount = twitterAccount;
 
+	}
+
+	public void addSendingAccount(TwitterAccountDTO account) {
+		
+		this.sendingTwitterAccountNames.add(account.getTwitterScreenName());
+		updateSendFromList();
+		
+		
+		
+	}
+
+	private void updateSendFromList() {
+		StringBuffer sb = new StringBuffer();
+		
+		for (int i=0; i<this.sendingTwitterAccountNames.size(); i++ ) {
+			sb.append(this.sendingTwitterAccountNames.get(i));
+			
+			if ( i < this.sendingTwitterAccountNames.size()-1 ) {
+				sb.append(", ");	
+			} 
+			
+			
+			
+		}
+		
+		this.sendUpdatesFrom.setHTML(sb.toString());
+		
+	}
+	public void removeSendingAccount(TwitterAccountDTO account) {
+		this.sendingTwitterAccountNames.remove(account.getTwitterScreenName());
+		updateSendFromList();
+		
 	}
 
 }

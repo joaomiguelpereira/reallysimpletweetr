@@ -69,7 +69,7 @@ public class TwitterAccountInfoWidget extends VerticalPanel {
 
 			if (twitterAccount.getTwitterUpdateDto().getText() != null ) {
 				this.lastStatus = new InlineHTML(HTMLHelper.get().getParsedUpdateHtml(twitterAccount.getTwitterUpdateDto().getText()));
-				tweetMetadata  = new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterAccount.getTwitterUpdateDto()));
+				tweetMetadata  = new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterAccount.getTwitterUpdateDto(),true));
 			} else {
 				this.lastStatus = new InlineHTML("huum, it seems you have no activity on twitter yet :)");
 				tweetMetadata = new HTML("");
@@ -90,60 +90,15 @@ public class TwitterAccountInfoWidget extends VerticalPanel {
 		
 		this.add(horizontalPanel);
 		
-		
-		/*
-		
-		HorizontalPanel topPannel= new HorizontalPanel();
-		HorizontalPanel middlePannel= new HorizontalPanel();
-		HorizontalPanel bottomPannel= new HorizontalPanel();
-		
-	
-		//create the pannel to hold image + info personal
-		this.leftPanel = new HorizontalPanel();
-				
-		
-		
-		
-		this.userName = new HTML(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterName());
-		topPannel.add(this.userName);
-		
-		this.userScreenName = new HTML("("+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterScreenName())+")");
-		topPannel.add(this.userScreenName);
-
-	
-		this.userDescription = new HTML(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterDescription());
-		middlePannel.add(this.userDescription);
-		
-			
-		this.userFollowers =  new HTML("Followers: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterFollowers()));
-		bottomPannel.add(this.userFollowers);
-		this.userFollowing =  new HTML("Following: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterFriends()));
-		bottomPannel.add(this.userFollowing);
-		this.userUpdates =  new HTML("Updates: "+(twitterAccount==null?DEFAULT_HTML:twitterAccount.getTwitterUpdates()));
-		bottomPannel.add(this.userUpdates);
-		this.lastStatus = new HTML(twitterAccount.getTwitterUpdateDto().getText());
-		//Window.alert(twitterAccount.getTwitterUpdateDto().getText());
-		bottomPannel.add(this.lastStatus);
-		
-		rightPanel.add(topPannel);
-		rightPanel.add(middlePannel);
-		rightPanel.add(bottomPannel);
-		
-		//
-		super.add(leftPanel);
-		super.add(rightPanel);
-		*/
-		
-		
 	}
 	public void updateLastStatus(TwitterUpdateDTO update) {
 		if (update != null ) {
-			this.lastStatus.setHTML(update.getText());
+			
+			this.lastStatus.setHTML(HTMLHelper.get().getParsedUpdateHtml(update.getText()));
 			assert(this.tweetMetadata!=null);
 			assert(update.getCreatedAt()!=null);
-
 			assert(this.tweetMetadata!=null);
-			this.tweetMetadata.setHTML(HTMLHelper.get().getParsedMetaDataHtml(update));
+			this.tweetMetadata.setHTML(HTMLHelper.get().getParsedMetaDataHtml(update,true));
 		}
 		
 	}
