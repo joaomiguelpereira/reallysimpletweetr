@@ -218,6 +218,22 @@ public class TwitterServiceAdapter {
 			returnList.addTwitterUpdate(DataUtils
 					.createTwitterUpdateDto(status,true));
 
+		} else if (filter.getUpdatesType() == UpdatesType.CONVERSATION )  {
+			//Load the status
+			
+			
+			long nextId = filter.getStatusId();
+			while ( nextId > 0 ) {
+				Status status = twitter.showStatus(nextId);
+				returnList.addTwitterUpdate(DataUtils
+						.createTwitterUpdateDto(status,true));
+				
+				if (status.getInReplyToStatusId() > 0) {
+					nextId = status.getInReplyToStatusId();
+				} else {
+					nextId = -1;
+				}
+			}
 		}
 
 		// CAll twitter API

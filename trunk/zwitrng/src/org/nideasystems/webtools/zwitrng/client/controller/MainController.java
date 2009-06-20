@@ -1,15 +1,21 @@
 package org.nideasystems.webtools.zwitrng.client.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.services.BasicServiceManager;
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendingAccountWindow;
 
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -40,15 +46,18 @@ public class MainController implements IMainController {
 	public PersonaController getCurrentPersonaController() {
 		return personasListController.getCurrentPersonaController();
 	}
-	
+
 	public PopupManager getPopupManager() {
-		
-		PopupManager popup = popupManagers.get(personasListController.getCurrentPersonaController().getModel().getName());
-		if ( popup == null ) {
-			String currentPersonaController = personasListController.getCurrentPersonaController().getModel().getName(); 
-			popup = new PopupManager(personasListController.getCurrentPersonaController());
-			popupManagers.put(currentPersonaController, popup );
-			
+
+		PopupManager popup = popupManagers.get(personasListController
+				.getCurrentPersonaController().getModel().getName());
+		if (popup == null) {
+			String currentPersonaController = personasListController
+					.getCurrentPersonaController().getModel().getName();
+			popup = new PopupManager(personasListController
+					.getCurrentPersonaController());
+			popupManagers.put(currentPersonaController, popup);
+
 		}
 		return popup;
 	}
@@ -166,6 +175,28 @@ public class MainController implements IMainController {
 	@Override
 	public void isProcessing(boolean isProcessing) {
 		waitingImg.setVisible(isProcessing);
+	}
+
+	@Override
+	public List<TwitterAccountDTO> getAllTwitterAccounts(
+			SelectSendingAccountWindow selectSendingAccountWindow) {
+		// get all personas
+		List<TwitterAccountDTO> retList = new ArrayList<TwitterAccountDTO>();
+		for (PersonaDTO persona : personasListController.getModel()
+				.getPersonaList()) {
+			retList.add(persona.getTwitterAccount());
+		}
+		return retList;
+
+	}
+
+	@Override
+	public TwitterAccountController getTwitterAccountController(
+			String userScreenName) {
+
+		return this.personasListController
+				.getTwitterAccountController(userScreenName);
+
 	}
 
 	/*

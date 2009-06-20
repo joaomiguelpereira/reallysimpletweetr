@@ -4,11 +4,14 @@ import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaContro
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
 
+import com.google.gwt.user.client.Window;
+
 public class PopupManager {
 
 	PersonaController personaController = null;
 	TwitterUserInfoWidget userInfoPopup = null;
-	ShowStatusWindow showStatusWindow = null;
+	ShowStatusWindow statusWindow = null;
+	ShowStatusWindow conversationWindow = null;
 
 	public PopupManager(PersonaController currentPersonaController) {
 		personaController = currentPersonaController;
@@ -34,27 +37,38 @@ public class PopupManager {
 
 	}
 
-	public void showStatus(String originalId, String id) {
+	public void showConversation(long id, int top) {
+		if (conversationWindow == null) {
+			conversationWindow = new ShowStatusWindow(personaController
+					.getTwitterAccountController());
+		}
+		conversationWindow.setText("conversation");
+		conversationWindow.center();
+		conversationWindow.show();
+		conversationWindow.setTop(top);
+		conversationWindow.loadConversation(id);
+		
+	}
+
+	public void showStatus(long id,int top) {
 		// If the window is already opened, then just add the tweet to the
 		// pannel
-		if (showStatusWindow == null) {
-			showStatusWindow = new ShowStatusWindow(personaController
+
+		if (statusWindow == null) {
+			statusWindow = new ShowStatusWindow(personaController
 					.getTwitterAccountController());
-			
-			showStatusWindow.show();
-			
-
 		}
-		if (showStatusWindow.isEmpty() ) {
-			showStatusWindow.load(originalId);
+		
+		statusWindow.clear();
+		statusWindow.setText("Status");
+		statusWindow.center();
+		statusWindow.show();
+		if ( statusWindow.getTop() == -1 ) {
+			statusWindow.setTop(top);
 		}
 		
 		
-		// showStatusWindow.addTweetId(id);
-
-		showStatusWindow.show();
-
-		showStatusWindow.load(id);
+		statusWindow.load(id);
 
 	}
 
