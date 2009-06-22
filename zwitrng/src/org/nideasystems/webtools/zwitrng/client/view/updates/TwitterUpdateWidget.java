@@ -4,8 +4,10 @@ import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateMessageWindow;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.dom.client.Element;
@@ -42,7 +44,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		HasMouseOverHandlers, HasMouseOutHandlers, SendUpdateAsyncHandler {
 
 	private TwitterUpdateDTO twitterUpdate;
-	//private TwitterUpdatesController parentController;
+	// private TwitterUpdatesController parentController;
 	private TwitterAccountController parentController;
 	private HorizontalPanel actionPanel = new HorizontalPanel();
 	private final HorizontalPanel sendUpdateContainer = new HorizontalPanel();
@@ -97,7 +99,8 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		tweetInfo.add(updateText);
 
-		HTML tweetUpdateMetaData = getUpdateMetaInfoHtml(twitterUpdate,showConversationEnabled);
+		HTML tweetUpdateMetaData = getUpdateMetaInfoHtml(twitterUpdate,
+				showConversationEnabled);
 		tweetUpdateMetaData.addStyleName("twitterUpdateMetaData");
 		tweetInfo.add(tweetUpdateMetaData);
 
@@ -113,15 +116,14 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		// HTML followUser = new HTML("unfollow user (do later)");
 
-		//Create Reguldate action panel
-		if ( twitterUpdate.getType().equals(UpdatesType.DIRECT_RECEIVED) || twitterUpdate.getType().equals(UpdatesType.DIRECT_SENT)) {
+		// Create Reguldate action panel
+		if (twitterUpdate.getType().equals(UpdatesType.DIRECT_RECEIVED)
+				|| twitterUpdate.getType().equals(UpdatesType.DIRECT_SENT)) {
 			actionPanel = createDMActionPanel();
 		} else {
-			actionPanel = createDefaultActionPanel();	
+			actionPanel = createDefaultActionPanel();
 		}
-		
-		
-		
+
 		tweetLayout.setWidget(1, 1, actionPanel);
 		tweetLayoutFormatter.setStyleName(1, 1, "tweetOptions");
 		tweetLayoutFormatter.setHeight(1, 1, "25px");
@@ -137,8 +139,10 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
 				addStyleName("currentTweet");
-				//parentController.pause();
-				MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().getActiveUpdatesController().pause();
+				// parentController.pause();
+				MainController.getInstance().getCurrentPersonaController()
+						.getTwitterUpdatesListController()
+						.getActiveUpdatesController().pause();
 
 			}
 
@@ -148,40 +152,48 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
 				removeStyleName("currentTweet");
-				//parentController.resume();
-				MainController.getInstance().getCurrentPersonaController().getTwitterUpdatesListController().getActiveUpdatesController().resume();
+				// parentController.resume();
+				MainController.getInstance().getCurrentPersonaController()
+						.getTwitterUpdatesListController()
+						.getActiveUpdatesController().resume();
 
 			}
 
 		});
 
-		
 		// setupUserPanel();
 
 	}
+
 	private HorizontalPanel createDMActionPanel() {
 		HorizontalPanel tmpPanel = new HorizontalPanel();
-		
-		HTML reply = new HTML("Reply");
-		tmpPanel.setSpacing(5);
-		
-		tmpPanel.add(reply);
-		
-		reply.addStyleName("link");
+		if (this.twitterUpdate.getInReplyToUserId() == this.parentController
+				.getModel().getId()) {
+			HTML reply = new HTML("Reply");
+			tmpPanel.setSpacing(5);
 
-		/***********
-		 * Add Reply functionality
-		 */
+			tmpPanel.add(reply);
 
-		reply.addClickHandler(new ClickHandler() {
+			reply.addStyleName("link");
 
-			@Override
-			public void onClick(ClickEvent event) {
-				showSendUpdate(SendUpdateWidget.STATUS);
-			}
+			/***********
+			 * Add Reply functionality
+			 */
 
-		});
-		return tmpPanel;	}
+			reply.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+
+					showSendDM(twitterUpdate.getTwitterAccount(),
+							SendUpdateWidget.PRIVATE_MESSAGE);
+				}
+
+			});
+
+		}
+		return tmpPanel;
+	}
 
 	private HorizontalPanel createDefaultActionPanel() {
 		HorizontalPanel tmpPanel = new HorizontalPanel();
@@ -195,16 +207,18 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		if (showConversationEnabled) {
 			final HTML showConversation = new HTML("Show Conversation");
-			
+
 			showConversation.addStyleName("link");
 			showConversation.addClickHandler(new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
-					MainController.getInstance().getPopupManager().showConversation(twitterUpdate.getId(),showConversation.getAbsoluteTop()+20);
-					
+					MainController.getInstance().getPopupManager()
+							.showConversation(twitterUpdate.getId(),
+									showConversation.getAbsoluteTop() + 20);
+
 				}
-				
+
 			});
 
 			tmpPanel.add(showConversation);
@@ -234,10 +248,11 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		});
 		return tmpPanel;
-		
+
 	}
 
-	public TwitterUpdateWidget(/*TwitterUpdatesController theParentController*/TwitterAccountController theParentController,
+	public TwitterUpdateWidget(
+			/* TwitterUpdatesController theParentController */TwitterAccountController theParentController,
 			TwitterUpdateDTO aTwitterUpdateDTO) {
 		super();
 		publishNativeJSCode(this);
@@ -246,13 +261,12 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		// this.twitterAccount = twitterAccount;
 		this.twitterUpdate = aTwitterUpdateDTO;
 		super.setWidth("630px");
-		
-		
-		if ( twitterUpdate.getInReplyToStatusId() > 0 || twitterUpdate.getInReplyToUserId()>0) {
+
+		if (twitterUpdate.getInReplyToStatusId() > 0
+				|| twitterUpdate.getInReplyToUserId() > 0) {
 			this.setShowConversationEnabled(true);
 		}
 
-		
 	}
 
 	/**
@@ -278,10 +292,10 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		};
 		$wnd.processHashTag = function(hash) {
-			
+
 			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsOpenSearch(Ljava/lang/String;)(hash);
 		}
-		
+
 		$wnd.showStatus = function(id, elId) {
 			//$wnd.alert(elId);
 			@org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget::jsShowStatus(Ljava/lang/String;Ljava/lang/String;)(id,elId);
@@ -289,19 +303,19 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	}-*/;
 
 	public static void jsShowStatus(String id, String elId) {
-		
+
 		Element el = DOM.getElementById(elId);
-		assert(el!=null);
-		MainController.getInstance().getPopupManager().showStatus(Long.parseLong(id), el.getAbsoluteTop()+20);
+		assert (el != null);
+		MainController.getInstance().getPopupManager().showStatus(
+				Long.parseLong(id), el.getAbsoluteTop() + 20);
 	}
 
-	
 	public static void jsHideTwitterUserInfoPanel(String id) {
 		MainController.getInstance().getPopupManager().destroyUserPopupPanel();
 	}
 
 	public static void jsOpenSearch(String hash) {
-		
+
 		MainController.getInstance().getCurrentPersonaController()
 				.getTwitterUpdatesListController().activateSearch(hash);
 
@@ -316,21 +330,53 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	}
 
+	private void showSendDM(TwitterAccountDTO twitterAccount, int type) {
+
+		
+		SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
+		sendUpdateWidget.setController(parentController);
+		sendUpdateWidget
+				.setSendingTwitterAccount(parentController
+						.getModel());
+		sendUpdateWidget.setShowUserImage(true);
+		sendUpdateWidget
+				.setInResponseToUserAccount(twitterAccount);
+		sendUpdateWidget
+				.setType(SendUpdateWidget.PRIVATE_MESSAGE);
+		sendUpdateWidget.init();
+
+		SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
+				twitterAccount, sendUpdateWidget);
+		sendPrivateMessageWindow.setAnimationEnabled(true);
+		sendPrivateMessageWindow.show();
+
+		
+		
+		
+
+	}
+
 	/**
 	 * Show the send update widget
 	 * 
 	 * @param type
 	 */
 	private void showSendUpdate(int type) {
+		
 		if (sendUpdateWidget == null) {
 			// Create new
-			/*sendUpdateWidget = parentController.getTwitterAccountController()
-					.createSendUpdateWidget(twitterUpdate, type, true);*/
-			assert(parentController!=null);
-			assert(twitterUpdate!=null);
-			
-			sendUpdateWidget = parentController.createSendUpdateWidget(twitterUpdate, type, true);
-			
+			/*
+			 * sendUpdateWidget = parentController.getTwitterAccountController()
+			 * .createSendUpdateWidget(twitterUpdate, type, true);
+			 */
+			assert (parentController != null);
+			assert (twitterUpdate != null);
+
+			sendUpdateWidget = parentController.createSendUpdateWidget(
+					twitterUpdate, type, true);
+			//if (twitterAccount != null) {
+			//	sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
+			//}
 			sendUpdateContainer.add(sendUpdateWidget);
 			sendUpdateWidget.addAsyncHandler(this);
 			sendUpdateContainer.setVisible(true);
@@ -402,8 +448,10 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	 * @param twitterUpdate
 	 * @return
 	 */
-	private HTML getUpdateMetaInfoHtml(TwitterUpdateDTO twitterUpdate, boolean showConversationOptions) {
-		return new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterUpdate,showConversationOptions));
+	private HTML getUpdateMetaInfoHtml(TwitterUpdateDTO twitterUpdate,
+			boolean showConversationOptions) {
+		return new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterUpdate,
+				showConversationOptions));
 
 	}
 
@@ -452,7 +500,8 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		updateText.addStyleName("tweetReply");
 		layout.setWidget(0, 0, updateText);
 
-		HTML updateMetaInfoHtml = getUpdateMetaInfoHtml(result,showConversationEnabled);
+		HTML updateMetaInfoHtml = getUpdateMetaInfoHtml(result,
+				showConversationEnabled);
 
 		updateMetaInfoHtml.addStyleName("tweetReplyMetadata");
 
@@ -492,10 +541,12 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	@Override
 	public void onSuccess(Object arg) {
 		TwitterUpdateDTO update = (TwitterUpdateDTO) arg;
+		assert(update!=null);
+		assert(this.twitterUpdate!=null);
 		if (update.getInReplyToStatusId() == this.twitterUpdate.getId()) {
 			hasReply(update);
 		}
-
+Window.alert("on sucess");
 		removeSendUpdate();
 	}
 

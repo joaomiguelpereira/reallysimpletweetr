@@ -9,8 +9,8 @@ public class FilterCriteriaDTO implements IModel{
 	private String searchText = null;
 	private String key = null;
 	private long sinceId = 1;
-	private long maxId = 0;
-	private long page = 0;
+	private long maxId = 1;
+	private int page = 1;	
 	private int resultsPerPage = 20;
 	private String refreshUrl = null;
 	private double completedIn = 0.0;
@@ -72,11 +72,11 @@ public class FilterCriteriaDTO implements IModel{
 		return resultsPerPage;
 	}
 
-	public void setPage(long page) {
+	public void setPage(int page) {
 		this.page = page;
 	}
 
-	public long getPage() {
+	public int getPage() {
 		return page;
 	}
 
@@ -100,7 +100,7 @@ public class FilterCriteriaDTO implements IModel{
 		key = null;
 		sinceId = 1;
 		maxId = 0;
-		page = 0;
+		page = 1;
 		//resultsPerPage = 20;
 		refreshUrl = null;
 		completedIn = 0.0;

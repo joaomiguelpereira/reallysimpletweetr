@@ -235,6 +235,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 
 					@Override
 					public void onClick(ClickEvent event) {
+						
 						SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
 						sendUpdateWidget.setController(parentController);
 						sendUpdateWidget

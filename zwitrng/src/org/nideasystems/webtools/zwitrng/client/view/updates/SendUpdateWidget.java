@@ -5,7 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.controller.IController;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.controller.updates.ShortLinksListenerCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendingAccountWindow;
@@ -33,7 +36,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 
 public class SendUpdateWidget extends
 		AbstractVerticalPanelView<TwitterAccountController> implements
-		SendUpdateAsyncHandler {
+		SendUpdateAsyncHandler, ShortLinksListenerCallBack {
 
 	public static final int STATUS = 0;
 	public static final int REPLY = 1;
@@ -180,6 +183,7 @@ public class SendUpdateWidget extends
 			@Override
 			public void onClick(ClickEvent event) {
 				onCancel();
+				
 
 			}
 
@@ -199,29 +203,28 @@ public class SendUpdateWidget extends
 								.setInReplyToStatusId(inResponseTotwitterUpdate
 										.getId());
 					}
+					
 					if (type == PRIVATE_MESSAGE) {
+						assert(twitterUpdate!=null);
+						assert(getInResponseToUserAccount()!=null);
 						twitterUpdate
 								.setInReplyToUserId(getInResponseToUserAccount()
 										.getId());
-
+						
 					}
 
 					isUpdating(true);
 					
-					//getController().sendUpdate(twitterUpdate, instance);
 					for ( String userScreenName: sendingTwitterAccountNames) {
 						
 						
 						TwitterAccountController controller = getController().getMainController().getTwitterAccountController(userScreenName);
 						
 						twitterUpdate.setTwitterAccount(controller.getModel());
-						//if ( controller.getModel().getTwitterScreenName().equals(getController().getModel().getTwitterScreenName())) {
 							
 							controller.sendUpdate(twitterUpdate, instance);
-						//} else {
-						//	controller.sendUpdate(twitterUpdate);
-						//}
 					}
+
 					//Clear 
 					sendingTwitterAccountNames.clear();
 					sendingTwitterAccountNames.add(getController().getModel().getTwitterScreenName());
@@ -232,11 +235,21 @@ public class SendUpdateWidget extends
 
 		});
 
+		loadTemplateLink.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				MainController.getInstance().getPopupManager().showSelectTemplateWindow(instance, loadTemplateLink.getAbsoluteLeft(),loadTemplateLink.getAbsoluteTop()+20);
+				
+				
+			}
+			
+		});
 		shortLinks.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				shortLinks();
+				SendUpdateWidget.shortLinks(update.getValue(),getController(), instance);
 
 			}
 
@@ -247,10 +260,12 @@ public class SendUpdateWidget extends
 
 	
 
+	
 	/**
+	 * TODO:Refactor this. Is copied somewhere else
 	 * Short any link in the update
 	 */
-	private void shortLinks() {
+	/*private void shortLinks() {
 		// Get the links
 		List<String> links = HTMLHelper.get().getLinks(update.getValue());
 		if (links.size() > 0) {
@@ -279,30 +294,39 @@ public class SendUpdateWidget extends
 		}
 
 	}
+*/
+	
+	public static void shortLinks(String updateText, final IController controller, final ShortLinksListenerCallBack callback) {
+		// Get the links
+		List<String> links = HTMLHelper.get().getLinks(updateText);
+		if (links.size() > 0) {
+			try {
+				controller.getServiceManager().getRPCService().shortLinks(
+						links, new AsyncCallback<Map<String, String>>() {
 
-	private void replaceShortLinks(Map<String, String> result) {
-		String currentStr = update.getValue();
-		String newStr = currentStr;
-		GWT.log("Shortning links ", null);
-		for (String longLink : result.keySet()) {
-			// Strinr decoded =
+							@Override
+							public void onFailure(Throwable caught) {
+								controller.getMainController()
+										.addException(caught);
 
-			GWT.log("Replacing link: " + result.get(longLink) + " with "
-					+ longLink, null);
+							}
 
-			// String decodedLongLink = URL.decodeComponent(longLink);
-			// GWT.log("Decoded: replacing link: "+result.get(longLink)+" with "+decodedLongLink,
-			// null);
-			// newStr = currentStr.replaceAll(longLink.,result.get(longLink));
-			newStr = currentStr.replace(longLink, result.get(longLink));
+							@Override
+							public void onSuccess(Map<String, String> result) {
+								callback.onLinksShortened(result);
+
+							}
+
+						});
+			} catch (Exception e) {
+				controller.getMainController().addException(e);
+			}
 
 		}
-		update.setValue(newStr);
-		updateRemainingChars();
-		update.setFocus(true);
-		
 
 	}
+
+	
 
 	private void updateRemainingChars(/* Integer remaining */) {
 
@@ -418,6 +442,7 @@ public class SendUpdateWidget extends
 	@Override
 	public void onCancel() {
 		update.setValue("");
+		updateRemainingChars();
 		if (this.asynHadlers != null) {
 			for (SendUpdateAsyncHandler handler : this.asynHadlers) {
 				handler.onCancel();
@@ -465,6 +490,28 @@ public class SendUpdateWidget extends
 	public void removeSendingAccount(TwitterAccountDTO account) {
 		this.sendingTwitterAccountNames.remove(account.getTwitterScreenName());
 		updateSendFromList();
+		
+	}
+
+
+
+	public void setTemplateText(String templateText) {
+		this.update.setValue(templateText);
+		this.updateRemainingChars();
+		
+		
+		
+	}
+
+		
+	@Override
+	public void onLinksShortened(Map<String, String> result) {
+		String currentStr = update.getValue();
+		String newStr = HTMLHelper.get().replaceText(currentStr,result);
+		update.setFocus(true);
+		update.setValue(newStr);
+		updateRemainingChars();
+		
 		
 	}
 

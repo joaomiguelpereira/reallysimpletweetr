@@ -6,6 +6,7 @@ import java.util.List;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -15,6 +16,7 @@ public interface TwitterPersonaServiceAsync {
 	void getPersonas(AsyncCallback<PersonaDTOList> callback) throws Exception;
 	void getPersonaFilters(String personaKey,
 			AsyncCallback<List<FilterCriteriaDTO>> asyncCallback) throws Exception;
+	void getTemplates(String name, AsyncCallback<TemplateDTOList> callback) throws Exception;
 	
 
 	

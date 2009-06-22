@@ -6,10 +6,13 @@ import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 
-
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TwitterUpdatesView extends
 		AbstractVerticalPanelView<TwitterUpdatesController> {
@@ -19,7 +22,15 @@ public class TwitterUpdatesView extends
 	private TwitterUpdatesSearchToolWidget searchWidget = null;
 	private DirectMessagesSearchToolWidget dmSearchToolWidget = null;
 	VerticalPanel toolsPanel = null;
+	private VerticalPanel contentsPanel = null;
 
+	private InlineHTML currentPageHtml = null;
+	private InlineHTML previousPageLink = null;
+	private InlineHTML nextPageLink = null;
+
+	private InlineHTML topCurrentPageHtml = null;
+	private InlineHTML topPreviousPageLink = null;
+	private InlineHTML topNextPageLink = null;
 	private FilterCriteriaDTO currentFilter = null;
 
 	@Override
@@ -39,10 +50,10 @@ public class TwitterUpdatesView extends
 		waitingImage.setVisible(false);
 		toolContainer.add(waitingImage);
 		toolsPanel.add(toolContainer);
-
+		
 		// Add searches
 		if (currentFilter.getUpdatesType() == UpdatesType.SEARCHES) {
-			
+
 			searchWidget = new TwitterUpdatesSearchToolWidget();
 			searchWidget.setCurrentFiler(currentFilter);
 
@@ -51,17 +62,137 @@ public class TwitterUpdatesView extends
 			toolsPanel.add(searchWidget);
 
 		}
-
-		if (currentFilter.getUpdatesType() == UpdatesType.DIRECT_RECEIVED || currentFilter.getUpdatesType() == UpdatesType.DIRECT_SENT ) {
+		this.add(toolsPanel);
+		
+		if (currentFilter.getUpdatesType() == UpdatesType.DIRECT_RECEIVED
+				|| currentFilter.getUpdatesType() == UpdatesType.DIRECT_SENT) {
 			// Add the widget
 			dmSearchToolWidget = new DirectMessagesSearchToolWidget();
 			dmSearchToolWidget.setCurrentFilter(currentFilter);
 			dmSearchToolWidget.setController(getController());
 			dmSearchToolWidget.init();
 			toolsPanel.add(dmSearchToolWidget);
+
+			this.add(createTopPaginPanel());
+
+		}
+		
+		
+		contentsPanel = new VerticalPanel();
+		this.add(contentsPanel);
+
+		// final HorizontalPanel pagingOptions = createPaginPanel();
+		if (currentFilter.getUpdatesType() == UpdatesType.DIRECT_RECEIVED
+				|| currentFilter.getUpdatesType() == UpdatesType.DIRECT_SENT) {
+			this.add(createPagingPanel());
+		} else {
+			this.add(createLoadMorePanel());
 		}
 
-		this.add(toolsPanel);
+	}
+
+	private Widget createLoadMorePanel() {
+
+		HorizontalPanel pagingOptions = new HorizontalPanel();
+		pagingOptions.setSpacing(5);
+
+		InlineHTML loadMoreLink = new InlineHTML("More");
+		loadMoreLink.addStyleName("link");
+		pagingOptions.add(loadMoreLink);
+		loadMoreLink.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				getController().loadMoreUpdates();
+				
+			}
+			
+		});
+		return pagingOptions;
+	}
+
+	private HorizontalPanel createTopPaginPanel() {
+		HorizontalPanel pagingOptions = new HorizontalPanel();
+		pagingOptions.setSpacing(5);
+
+		topPreviousPageLink = new InlineHTML("Previous");
+		topPreviousPageLink.setVisible(false);
+		topPreviousPageLink.addStyleName("link");
+		pagingOptions.add(topPreviousPageLink);
+
+		topCurrentPageHtml = new InlineHTML("Page " + currentFilter.getPage());
+		pagingOptions.add(topCurrentPageHtml);
+
+		topNextPageLink = new InlineHTML("Next");
+		topNextPageLink.addStyleName("link");
+
+		topPreviousPageLink.addClickHandler(new PreviousPageClickHandler());
+
+		topNextPageLink.addClickHandler(new NextPageClickHandler());
+		pagingOptions.add(topNextPageLink);
+
+		return pagingOptions;
+	}
+
+	private HorizontalPanel createPagingPanel() {
+		HorizontalPanel pagingOptions = new HorizontalPanel();
+		pagingOptions.setSpacing(5);
+		previousPageLink = new InlineHTML("Previous");
+		previousPageLink.setVisible(false);
+		previousPageLink.addStyleName("link");
+		pagingOptions.add(previousPageLink);
+
+		currentPageHtml = new InlineHTML("Page " + currentFilter.getPage());
+		pagingOptions.add(currentPageHtml);
+
+		nextPageLink = new InlineHTML("Next");
+		nextPageLink.addStyleName("link");
+
+		previousPageLink.addClickHandler(new PreviousPageClickHandler());
+
+		nextPageLink.addClickHandler(new NextPageClickHandler());
+		pagingOptions.add(nextPageLink);
+
+		return pagingOptions;
+	}
+
+	private class PreviousPageClickHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+			getController().changePage(currentFilter.getPage() - 1);
+
+		}
+
+	}
+
+	private class NextPageClickHandler implements ClickHandler {
+
+		@Override
+		public void onClick(ClickEvent event) {
+			getController().changePage(currentFilter.getPage() + 1);
+
+		}
+
+	}
+
+	private void updatePaging() {
+
+		if (currentFilter.getUpdatesType().equals(UpdatesType.DIRECT_RECEIVED)
+				|| currentFilter.getUpdatesType().equals(
+						UpdatesType.DIRECT_SENT)) {
+			if (currentFilter.getPage() > 1) {
+				previousPageLink.setVisible(true);
+				topPreviousPageLink.setVisible(true);
+			} else {
+				previousPageLink.setVisible(false);
+				topPreviousPageLink.setVisible(false);
+
+			}
+			currentPageHtml.setHTML("Page " + currentFilter.getPage());
+			topCurrentPageHtml.setHTML("Page " + currentFilter.getPage());
+
+		}
 
 	}
 
@@ -69,6 +200,7 @@ public class TwitterUpdatesView extends
 		if (currentFilter.getUpdatesType() == UpdatesType.SEARCHES) {
 			searchWidget.refresh();
 		}
+		updatePaging();
 
 	}
 
@@ -86,5 +218,29 @@ public class TwitterUpdatesView extends
 
 	}
 
+	public void addUpdate(TwitterUpdateWidget updateWidget, int pos) {
+		this.contentsPanel.insert(updateWidget, pos);
+
+	}
+
+	public void addUpdate(TwitterUpdateWidget updateWidget) {
+		this.contentsPanel.add(updateWidget);
+
+	}
+
+	public int getUpdateCount() {
+
+		return this.contentsPanel.getWidgetCount();
+	}
+
+	public void removeUpdate(TwitterUpdateWidget updateWidget) {
+		this.contentsPanel.remove(updateWidget);
+
+	}
+
+	public TwitterUpdateWidget getUpdateWidget(int i) {
+
+		return (TwitterUpdateWidget) this.contentsPanel.getWidget(i);
+	}
 
 }

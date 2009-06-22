@@ -8,10 +8,13 @@ import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.Twitte
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaToolsWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
+import org.nideasystems.webtools.zwitrng.client.view.persona.SelectTemplateWindow;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 
 public class PersonaController extends AbstractController<PersonaDTO, PersonaView> implements AutoUpdatable{
@@ -51,25 +54,6 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		return this.twitterUpdatesListController;
 	}
 	
-	
-	
-
-	/**
-	 * Set the Persona DTO
-	 * @param persona
-	 *//*
-	public void setPersona(PersonaDTO persona) {
-		this.persona = persona;
-	}
-
-	*//**
-	 * Get the Persona DTO
-	 * @return
-	 *//*
-	public PersonaDTO getPersona() {
-		return persona;
-	}
-*/
 	
 	
 
@@ -144,6 +128,35 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 
 	public TwitterAccountController getTwitterAccountController() {
 		return this.twitterAccountController;
+		
+	}
+	public void loadTemplates(final SelectTemplateWindow selectTemplatesWindow) {
+		
+		try {
+			getServiceManager().getRPCService().getTemplatesList(this.getModel().getName(), new AsyncCallback<TemplateDTOList>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					getMainController().addException(caught);
+					selectTemplatesWindow.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(TemplateDTOList result) {
+					selectTemplatesWindow.onSucess(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			getMainController().addException(e);
+			selectTemplatesWindow.onError(e);
+		}
+		
+		TemplateDTOList list = null;
 		
 	}
 
