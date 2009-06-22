@@ -14,4 +14,5 @@ public interface IMainController {
 	public List<TwitterAccountDTO> getAllTwitterAccounts(
 			SelectSendingAccountWindow selectSendingAccountWindow);
 	public TwitterAccountController getTwitterAccountController(String userScreenName);
+	public void addInfoMessage(String string);
 }

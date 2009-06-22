@@ -21,7 +21,10 @@ public class PersonaDTO implements IModel{
 	private Date creationDate =null;
 	private String userEmail = null;
 	private List<FilterCriteriaDTO> filters;
+	private long id = 0;
+	
 
+	
 	
 
 	private TwitterAccountDTO twitterAccount = null;
@@ -107,6 +110,14 @@ public class PersonaDTO implements IModel{
 
 	public List<FilterCriteriaDTO> getFilters() {
 		return filters;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public long getId() {
+		return id;
 	}
 
 

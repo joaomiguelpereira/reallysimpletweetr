@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.persona.CreateTemplateWindow;
 import org.nideasystems.webtools.zwitrng.client.view.persona.SelectTemplateWindow;
+import org.nideasystems.webtools.zwitrng.client.view.persona.TemplateList;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
@@ -89,8 +90,8 @@ public class PopupManager {
 		
 	}
 
-	public void showCreateTemplateWindow(PersonaController controller,int left, int top) {
-		CreateTemplateWindow wnd = new CreateTemplateWindow(controller);
+	public void showCreateTemplateWindow(PersonaController controller, TemplateList templateList, int left, int top) {
+		CreateTemplateWindow wnd = new CreateTemplateWindow(controller,templateList);
 		wnd.init();
 		wnd.center();
 		wnd.setPopupPosition(wnd.getAbsoluteLeft(), top);
