@@ -1,57 +1,35 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.jdo.PersistenceManager;
-
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
-import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
-
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
 import twitter4j.Status;
 import twitter4j.User;
 
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-public class TwitterServiceImpl extends RemoteServiceServlet implements
+/*
+ public class TwitterServiceImpl extends RemoteServiceServlet implements
+ TwitterService {
+ */
+public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 		TwitterService {
 
 	private static final long serialVersionUID = -481643127871478064L;
 	private static final Logger log = Logger.getLogger(TwitterServiceImpl.class
 			.getName());
-	private PersistenceManager pm;
-	private long transactionStartTime;
-
-	ThreadLocal<PersonaDAO> personaDao = new ThreadLocal<PersonaDAO>() {
-
-		@Override
-		protected PersonaDAO initialValue() {
-			return new PersonaDAO();
-		}
-
-	};
-
-	private PersonaDAO getPersonaDao() {
-
-		PersonaDAO dao = personaDao.get();
-		dao.setPm(pm);
-		log.fine("Returning DAO " + dao.hashCode());
-		return dao;
-	}
-
+	
 	@Override
 	public List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount,
 			FilterCriteriaDTO filter) throws Exception {
@@ -83,7 +61,7 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 		} finally {
 			endTransaction();
 		}
-		
+
 		return list;
 
 	}
@@ -135,36 +113,16 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 
 		TwitterAccountDO twitterAccountDo = DataUtils
 				.twitterAccountDoFromDto(fullAuthorizeddAccount);
-		getPersonaDao().updatePersonaTwitterAccount(personaDto,
+		
+		getPersonaPojo().updatePersonaTwitterAccount(personaDto,
 				twitterAccountDo);
+		
+		
 		endTransaction();
 		return fullAuthorizeddAccount;
 	}
 
-	private void endTransaction() {
-		long endTransactionTime = new Date().getTime();
-		log.fine("End trasaction in "
-				+ (endTransactionTime - transactionStartTime) + " ms");
-		if (this.pm != null && !this.pm.isClosed()) {
-			try {
-				pm.close();
-			} catch (Exception e) {
-				log.severe("exception: " + e.getMessage());
-				e.printStackTrace();
-			}
-		}
-
-	}
-
-	private void startTransaction(boolean persistenceNeeded) {
-		log.fine("Starting transaction. PersistenceNeeded? "
-				+ persistenceNeeded);
-		if (persistenceNeeded) {
-			this.pm = PMF.get().getPersistenceManager();
-		}
-		this.transactionStartTime = new Date().getTime();
-
-	}
+	
 
 	@Override
 	public TwitterAccountDTO getExtendedUserAccount(
@@ -189,28 +147,27 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 	public void followUser(TwitterAccountDTO account, boolean follow,
 			Integer userId) throws Exception {
 		startTransaction(false);
-		
+
 		try {
 			TwitterServiceAdapter.get().followUser(account, follow, userId);
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 		} finally {
 			endTransaction();
 		}
-		
-		
+
 	}
 
 	@Override
 	public void blockUser(TwitterAccountDTO account, boolean block,
 			Integer userId) throws Exception {
 		startTransaction(false);
-		
+
 		try {
 			TwitterServiceAdapter.get().blockUser(account, block, userId);
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 		} finally {
 			endTransaction();
@@ -232,7 +189,7 @@ public class TwitterServiceImpl extends RemoteServiceServlet implements
 			endTransaction();
 		}
 		return list;
-		
+
 	}
 
 }

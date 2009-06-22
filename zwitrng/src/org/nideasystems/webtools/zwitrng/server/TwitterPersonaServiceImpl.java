@@ -1,16 +1,10 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.jdo.PersistenceManager;
-
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
-import org.nideasystems.webtools.zwitrng.server.domain.AbstractDAO;
-import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TemplateDAO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -21,27 +15,10 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.appengine.api.users.User;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
-public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
+public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet implements
 		TwitterPersonaService {
-
-	private long transactionsStartTime = 0;
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 3805847312414045223L;
-
-	ThreadLocal<PersonaDAO> personaDao = new ThreadLocal<PersonaDAO>() {
-
-		@Override
-		protected PersonaDAO initialValue() {
-			return new PersonaDAO();
-		}
-
-	};
-
-	private PersistenceManager pm = null;
 
 	private static final Logger log = Logger
 			.getLogger(TwitterPersonaServiceImpl.class.getName());
@@ -51,33 +28,6 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 
 	}
 
-	private PersonaDAO getPersonaDao() {
-		
-		PersonaDAO dao = personaDao.get();
-		dao.setPm(pm);
-		log.fine("Returning DAO " + dao.hashCode());
-		return dao;
-	}
-
-	private void startTransaction() {
-		pm = PMF.get().getPersistenceManager();
-		log.fine("Starting transaction...");
-		transactionsStartTime = new Date().getTime();
-	}
-
-	private void endTransaction() throws Exception{
-		long endTime = new Date().getTime();
-		log.fine("Ending transation. Elaplsed millisenconds: "
-				+ (endTime - transactionsStartTime) + " ms");
-		
-		try {
-			pm.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw e;
-			
-		}
-	}
 
 	/**
 	 * Create a new Persona and return the representation
@@ -85,7 +35,7 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
 		log.fine("createPersona...");
-		startTransaction();
+		startTransaction(true);
 
 		try {
 			User currentUser = AuthorizationManager.checkAuthentication();
@@ -116,8 +66,8 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 			PersonaDO personaDo = null;
 			try {
 				log.fine("Creating persona in Datastore");
-
-				personaDo = getPersonaDao().createPersona(persona, currentUser.getEmail());
+				personaDo = getPersonaPojo().createPersona(persona, currentUser.getEmail());
+				//personaDo = getPersonaDao().createPersona(persona, currentUser.getEmail());
 
 			} catch (Exception e) {
 				log.severe(e.getMessage());
@@ -138,10 +88,12 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public String deletePersona(String persona) throws Exception {
 
-		startTransaction();
+		startTransaction(true);
 
 		User user = AuthorizationManager.checkAuthentication();
-		getPersonaDao().deletePersona(persona, user.getEmail());
+		getPersonaPojo().deletePersona(persona, user.getEmail());
+		
+		//getPersonaDao().deletePersona(persona, user.getEmail());
 		endTransaction();
 		return persona;
 	}
@@ -149,14 +101,16 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public PersonaDTOList getPersonas() throws Exception {
 		log.fine("Start getting personas..");
-		startTransaction();
+		startTransaction(true);
+		getPersonaPojo();
 		User user = AuthorizationManager.checkAuthentication();
 		
 		PersonaDTOList returnPersonas = null;
 		if (user != null) {
 			try {
 				
-				returnPersonas = getPersonaDao().findAllPersonas(user.getEmail());
+				//
+				returnPersonas = getPersonaPojo().getAssPersonas(user.getEmail());
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.severe(e.getMessage());
@@ -170,10 +124,13 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		return returnPersonas;
 	}
 
+	
+
+
 	@Override
 	public List<FilterCriteriaDTO> getPersonaFilters(String personaName)
 			throws Exception {
-		startTransaction();
+		startTransaction(true);
 		// get the DAO
 		// Key personaKey = ;
 		User user = AuthorizationManager.checkAuthentication();
@@ -181,8 +138,13 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		List<FilterCriteriaDTO> returnFilters = null;
 		if (user != null) {
 
-			returnFilters = getPersonaDao().findAllPersonaFilters(personaName, user
+			
+			
+			returnFilters = getPersonaPojo().getAllFilters(personaName, user
 					.getEmail());
+
+			
+		
 			// Get all Personas for email: email
 		}
 		endTransaction();
