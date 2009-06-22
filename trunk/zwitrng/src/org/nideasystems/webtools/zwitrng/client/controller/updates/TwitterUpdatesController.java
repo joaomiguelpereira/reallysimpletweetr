@@ -5,13 +5,9 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
-import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
-import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
-import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesView;
-import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -20,11 +16,15 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
+
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterUpdatesController extends
 		AbstractController<TwitterUpdateDTOList, TwitterUpdatesView> implements
 		AutoUpdatable {
+
+	private static final int MORE_RESULTS_PER_PAGE = 10;
 
 	private TwitterAccountDTO twitterAccount;
 
@@ -61,7 +61,7 @@ public class TwitterUpdatesController extends
 		if (currentFilter.getSinceId() >= 1) {
 			addOnTop = true;
 		}
-
+		//Window.alert("Processing "+twitterUpdates.getTwitterUpdatesList().size()+" elements");
 		if (twitterUpdates.getTwitterUpdatesList().size() > 0) {
 			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0)
 					.getId();
@@ -79,7 +79,7 @@ public class TwitterUpdatesController extends
 		}
 
 		if (updateNeeded) {
-			int i = 1;
+			int i = 0;
 
 			for (TwitterUpdateDTO update : twitterUpdates
 					.getTwitterUpdatesList()) {
@@ -109,18 +109,22 @@ public class TwitterUpdatesController extends
 		// updateWidget.init();
 
 		if (pos > -1) {
-			getView().insert(updateWidget, pos);
+			
+			//getView().insert(updateWidget, pos);
+			getView().addUpdate(updateWidget, pos);
 
 		} else {
-			getView().add(updateWidget);
+			//getView().add(updateWidget);
+			getView().addUpdate(updateWidget);
 		}
 
 		updateWidgets.put(update.getId(), updateWidget);
 		updates.put(update.getId(), update);
 	}
 
-	@Override
-	public void reload() {
+	
+	
+	public void reload(FilterCriteriaDTO filter) {
 		
 		if (!isPaused) {
 			startProcessing();
@@ -131,9 +135,15 @@ public class TwitterUpdatesController extends
 			 * filter.setUpdatesType(this.getCurrentFilter().getUpdatesType());
 			 */
 			// Let's update the tweets
+			FilterCriteriaDTO usedfilter = null;
+			if (filter != null ) {
+				usedfilter = filter;
+			} else {
+				usedfilter = currentFilter;
+			}
 			try {
 				getServiceManager().getRPCService().getTwitterUpdates(
-						twitterAccount, this.getCurrentFilter(),
+						twitterAccount, usedfilter,
 						new AsyncCallback<TwitterUpdateDTOList>() {
 
 							@Override
@@ -174,6 +184,7 @@ public class TwitterUpdatesController extends
 	public void changePageSize(int newPageSize) {
 		GWT.log("Changing page size to " + newPageSize, null);
 		updatesPerPage = newPageSize;
+		currentFilter.setResultsPerPage(newPageSize);
 		adjustPageSize();
 	}
 
@@ -200,23 +211,25 @@ public class TwitterUpdatesController extends
 		// TODO Auto-generated method stub
 		// With the subtraction I'm removing the widget that represents the
 		// tools (errrr)
-		int widgetCount = getView().getWidgetCount() - 1;
+		int widgetCount = getView().getUpdateCount();
 		if (widgetCount > updatesPerPage) {
 			// Remove any remaining update
 			// int updatesToRemove = updatesPerPage-newPageSize;
 			for (int i = widgetCount; i > updatesPerPage; i--) {
-				TwitterUpdateWidget updateWidget = (TwitterUpdateWidget) getView()
-						.getWidget(i);
+				
+				TwitterUpdateWidget updateWidget = getView().getUpdateWidget(i-1);
+				
 				updates.remove(updateWidget.getTwitterUpdate().getId());
 				updateWidgets.remove(updateWidget.getTwitterUpdate().getId());
-				getView().remove(i);
-
+				getView().removeUpdate(updateWidget);
 			}
-			// assert (updates.size() == updatesPerPage);
-			// assert ((getView().getWidgetCount() - 1) == updatesPerPage);
-		}
 
-		// updatesPerPage = newPageSize;
+			
+		}
+		
+		//TwitterUpdateWidget updateWidget = getView().getUpdateWidget(getView().getUpdateCount()-1);
+		//currentFilter.setMaxId(updateWidget.getTwitterUpdate().getId());
+
 
 	}
 
@@ -269,7 +282,7 @@ public class TwitterUpdatesController extends
 
 
 		for (TwitterUpdateWidget wid: this.updateWidgets.values() ) {
-			getView().remove(wid);
+			getView().removeUpdate(wid);
 		}
 		this.updates.clear();
 		this.updateWidgets.clear();
@@ -277,60 +290,37 @@ public class TwitterUpdatesController extends
 		
 	}
 
-	/*
-	 * public PersonaController getPersonaController() { return
-	 * (PersonaController)getTwitterAccountController().getParentController(); }
-	 */
+	public void changePage(int page) {
+		currentFilter.reset();
+		currentFilter.setPage(page);
+		clearView();
+		reload();
+	}
 
-	/**
-	 * Delegate this request to parent controller
-	 * 
-	 * @param accountIdorScreenName
-	 * @param callback
-	 */
-	/*
-	 * public void getExtendedUserInfo(String accountIdorScreenName,
-	 * TwitterAccountOperationCallBack callback) {
-	 * 
-	 * 
-	 * getTwitterAccountController().getExtendedUserAccount(accountIdorScreenName
-	 * ,callback);
-	 * 
-	 * }
-	 */
+	public void loadMoreUpdates() {
+		//get the last id
+		TwitterUpdateWidget updateWidget = getView().getUpdateWidget(getView().getUpdateCount()-1);
+		long maxId = updateWidget.getTwitterUpdate().getId();
+		
+		FilterCriteriaDTO filter = new FilterCriteriaDTO();
+		filter.reset();
+		filter.setPage(1);
+		
+		filter.setResultsPerPage(MORE_RESULTS_PER_PAGE);
+		filter.setMaxId(maxId);
+		//filter.setSinceId(currentFilter.getSinceId());
+		reload(filter);
+		//Window.alert("calling reloading");
+		
+		
+		
+	}
 
-	/*
-	*//**
-	 * Delegate followUser to parent controller
-	 * 
-	 * @param follow
-	 * @param id
-	 * @param callback
-	 */
-	/*
-	 * public void followUser(boolean follow, Integer id,
-	 * TwitterAccountOperationCallBack callback) {
-	 * 
-	 * getTwitterAccountController().followUser(follow, id, callback);
-	 * 
-	 * }
-	 */
+	@Override
+	public void reload() {
+		reload(null);
+		
+	}
 
-	/**
-	 * Delegate block user to parent controller
-	 * 
-	 * @param block
-	 * @param id
-	 * @param callback
-	 */
-	/*
-	 * public void blockUser(boolean block, Integer id, TwitterUserInfoWidget
-	 * callback) {
-	 * 
-	 * ((TwitterUpdatesListController)getParentController()).
-	 * getTwitterAccountController().blockUser(block, id, callback);
-	 * 
-	 * }
-	 */
-
+	
 }

@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.utils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
@@ -290,4 +291,28 @@ public class HTMLHelper {
 
 		return returnStr;
 	}
+
+	public String replaceText(String currentStr, Map<String, String> result) {
+		//String currentStr = update.getValue();
+		String newStr = currentStr;
+		
+		for (String longLink : result.keySet()) {
+			// Strinr decoded =
+
+			GWT.log("Replacing link: " + result.get(longLink) + " with "
+					+ longLink, null);
+
+			// String decodedLongLink = URL.decodeComponent(longLink);
+			// GWT.log("Decoded: replacing link: "+result.get(longLink)+" with "+decodedLongLink,
+			// null);
+			// newStr = currentStr.replaceAll(longLink.,result.get(longLink));
+			newStr = currentStr.replace(longLink, result.get(longLink));
+
+		}
+		return newStr;
+		
+		
+
+	}
+
 }

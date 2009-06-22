@@ -8,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -96,6 +97,11 @@ public class RPCService implements IService {
 
 	public void shortLinks(List<String> links,AsyncCallback<Map<String,String>> callback) throws Exception{
 		this.urlService.shortLinks(links, callback);
+	}
+
+	public void getTemplatesList(String name, AsyncCallback<TemplateDTOList> callback) throws Exception{
+		this.personaService.getTemplates(name,callback );
+		
 	}
 
 	

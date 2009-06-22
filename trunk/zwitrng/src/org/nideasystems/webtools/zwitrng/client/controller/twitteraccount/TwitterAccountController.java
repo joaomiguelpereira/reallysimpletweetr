@@ -97,7 +97,9 @@ public class TwitterAccountController extends
 
 	public SendUpdateWidget createSendUpdateWidget(
 			TwitterUpdateDTO inResponseTo, int type, boolean showUserImg) {
+		
 		SendUpdateWidget updateWidget = new SendUpdateWidget();
+		
 		updateWidget.setSendingTwitterAccount(getModel());
 		updateWidget.setInResponseTo(inResponseTo);
 		updateWidget.setType(type);

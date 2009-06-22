@@ -128,4 +128,5 @@ public interface IController<M extends IModel, V extends IView<?>> {
 	}
 
 	public void reload();
+	
 }

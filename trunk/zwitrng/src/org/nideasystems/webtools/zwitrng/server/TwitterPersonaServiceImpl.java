@@ -12,6 +12,8 @@ import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.appengine.api.users.User;
@@ -152,6 +154,29 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 
 		return returnFilters;
 
+	}
+
+	@Override
+	public TemplateDTOList getTemplates(String name) throws Exception {
+		TemplateDTOList list = new TemplateDTOList();
+		for (long i=0; i<2; i++) {
+			TemplateDTO t = new TemplateDTO();
+			TemplateDTO t2 = new TemplateDTO();
+			
+			t.setId(i);
+			t.setTemplateText("This is a template that is somewhat big. Lets try something new here. What-s upda to you"+i);
+			t.addTags("Tag 1");
+			t.addTags("Tag 3");
+			t2.setId(i*100);
+			t2.setTemplateText("This is a template that is somewhat small"+i*100);
+			t2.addTags("Tag 1");
+			t2.addTags("Tag 3");
+			list.addTemplate(t);
+			list.addTemplate(t2);
+			
+		}
+		log.fine("returning "+list.getTemplates().size());
+		return list;
 	}
 
 }

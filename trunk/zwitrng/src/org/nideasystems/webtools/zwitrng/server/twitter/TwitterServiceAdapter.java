@@ -89,8 +89,8 @@ public class TwitterServiceAdapter {
 	 * @return
 	 * @throws Exception
 	 */
-	public User getExtendedUser(
-			TwitterAccountDTO authenticatedTwitterAccount) throws Exception {
+	public User getExtendedUser(TwitterAccountDTO authenticatedTwitterAccount)
+			throws Exception {
 
 		log.info("Calling TWITTER API: "
 				+ authenticatedTwitterAccount.getTwitterScreenName());
@@ -108,11 +108,13 @@ public class TwitterServiceAdapter {
 	public TwitterUpdateDTOList getUpdates(TwitterAccountDTO twitterAccount,
 			FilterCriteriaDTO filter) throws Exception {
 
-		// Get the user twitter account
-		/*
-		 * Twitter twitter = new Twitter(twitterAccount.getTw itterScreenName(),
-		 * twitterAccount.getTwitterPassword());
-		 */
+		log.fine("Loading Updates.");
+		log.fine("Max Id " + filter.getMaxId());
+		log.fine("Since Id " + filter.getSinceId());
+		log.fine("Page " + filter.getPage());
+		log.fine("RPP " + filter.getResultsPerPage());
+		log.fine("SearchText " + filter.getSearchText());
+		log.fine("Status ID" + filter.getStatusId());
 
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
@@ -123,12 +125,7 @@ public class TwitterServiceAdapter {
 		// Create new data structure
 		TwitterUpdateDTOList returnList = new TwitterUpdateDTOList();
 		FilterCriteriaDTO newFilter = new FilterCriteriaDTO();
-		returnList.setFilter(newFilter);
-		
-		
-		
-		
-		
+
 		returnList.setFilter(filter);
 		// if twitter is null, something went wrong
 		assert (twitter != null);
@@ -137,8 +134,20 @@ public class TwitterServiceAdapter {
 		List<Status> statusList = null;
 
 		Paging paging = new Paging();
-		paging.setSinceId(filter.getSinceId());
+
 		paging.setCount(filter.getResultsPerPage());
+		paging.setPage(filter.getPage());
+
+		if (filter.getMaxId() > 1) {
+			paging.setMaxId(filter.getMaxId());
+		} else {
+			paging.setSinceId(filter.getSinceId());
+		}
+
+		log.fine("maxId=" + paging.getMaxId() + "&page=" + paging.getPage()
+				+ "&sinceid=" + paging.getSinceId() + "&count="
+				+ paging.getCount());
+		// paging.setMaxId(filter.getMaxId());
 
 		if (filter.getUpdatesType() == UpdatesType.FRIENDS) {
 			// CAll twitter API
@@ -156,58 +165,61 @@ public class TwitterServiceAdapter {
 
 			}
 		} else if (filter.getUpdatesType() == UpdatesType.SEARCHES) {
-			log.fine("Doing search for text: "+filter.getSearchText());
-			log.fine("Doing search sinceId: "+filter.getSinceId());
-			log.fine("Doing search maxId: "+filter.getMaxId());
-			log.fine("Doing search page: "+filter.getPage());
-			log.fine("Doing search results per page: "+filter.getResultsPerPage());
-			
+			log.fine("Doing search for text: " + filter.getSearchText());
+			log.fine("Doing search sinceId: " + filter.getSinceId());
+			log.fine("Doing search maxId: " + filter.getMaxId());
+			log.fine("Doing search page: " + filter.getPage());
+			log.fine("Doing search results per page: "
+					+ filter.getResultsPerPage());
+			log.fine("Doing search results for page: " + filter.getPage());
+
 			Query query = new Query();
-			
+
 			query.setRpp(filter.getResultsPerPage());
+			query.setPage(filter.getPage());
+
 			/*
-			if (filter.getSearchText().startsWith("from:")) {
-				
-				query.setSinceId(-1);
-			} else {
-				query.setSinceId(filter.getSinceId());
-			}*/
-			
-			//cannot use 1 when doing a search with from:operator
-			if ( filter.getSinceId()==1) {
+			 * if (filter.getSearchText().startsWith("from:")) {
+			 * 
+			 * query.setSinceId(-1); } else {
+			 * query.setSinceId(filter.getSinceId()); }
+			 */
+
+			// cannot use 1 when doing a search with from:operator
+			if (filter.getSinceId() == 1) {
 				filter.setSinceId(-1);
 			}
 			query.setSinceId(filter.getSinceId());
 			query.setQuery(filter.getSearchText().trim());
-			
+
 			QueryResult qResult = twitter.search(query);
-			
-			//TODO: remove these from here. 
+
+			// TODO: remove these from here.
 			newFilter.setRefreshUrl(qResult.getRefreshUrl());
 			newFilter.setCompletedIn(qResult.getCompletedIn());
-			
+
 			newFilter.setMaxId(qResult.getMaxId());
 			newFilter.setPage(qResult.getPage());
 			newFilter.setResultsPerPage(qResult.getResultsPerPage());
 			newFilter.setSinceId(qResult.getSinceId());
 			/*
-			
-			//log.fine("qResult.getCompletedIn " + qResult.getCompletedIn());
-			//log.fine("qResult.getgetMaxId() " + qResult.getMaxId());
-			
-			//log.fine("qResult.qResult.getPage() " + qResult.getPage());
-			//log.fine("qResult.getQuery() " + qResult.getQuery());
-			//log.fine("qResult.getRateLimitLimit() "
-					+ qResult.getRateLimitLimit());
-			//log.fine("qResult.getRateLimitRemaining() "
-					+ qResult.getRateLimitRemaining());
-			log.fine("qResult.getResultsPerPage() "
-					+ qResult.getResultsPerPage());
-			log.fine("qResult.getSinceId() " + qResult.getSinceId());
-			log.fine("qResult.getWarning() " + qResult.getWarning());
-			*/
+			 * 
+			 * //log.fine("qResult.getCompletedIn " + qResult.getCompletedIn());
+			 * //log.fine("qResult.getgetMaxId() " + qResult.getMaxId());
+			 * 
+			 * //log.fine("qResult.qResult.getPage() " + qResult.getPage());
+			 * //log.fine("qResult.getQuery() " + qResult.getQuery());
+			 * //log.fine("qResult.getRateLimitLimit() " +
+			 * qResult.getRateLimitLimit());
+			 * //log.fine("qResult.getRateLimitRemaining() " +
+			 * qResult.getRateLimitRemaining());
+			 * log.fine("qResult.getResultsPerPage() " +
+			 * qResult.getResultsPerPage()); log.fine("qResult.getSinceId() " +
+			 * qResult.getSinceId()); log.fine("qResult.getWarning() " +
+			 * qResult.getWarning());
+			 */
 			List<Tweet> tuites = qResult.getTweets();
-			log.fine("returned: "+tuites.size()+" tuites");
+			log.fine("returned: " + tuites.size() + " tuites");
 			for (Tweet tuite : tuites) {
 				returnList.addTwitterUpdate(DataUtils
 						.createTwitterUpdateDto(tuite));
@@ -215,19 +227,18 @@ public class TwitterServiceAdapter {
 
 		} else if (filter.getUpdatesType() == UpdatesType.SINGLE) {
 			Status status = twitter.showStatus(filter.getStatusId());
-			returnList.addTwitterUpdate(DataUtils
-					.createTwitterUpdateDto(status,true));
+			returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
+					status, true));
 
-		} else if (filter.getUpdatesType() == UpdatesType.CONVERSATION )  {
-			//Load the status
-			
-			
+		} else if (filter.getUpdatesType() == UpdatesType.CONVERSATION) {
+			// Load the status
+
 			long nextId = filter.getStatusId();
-			while ( nextId > 0 ) {
+			while (nextId > 0) {
 				Status status = twitter.showStatus(nextId);
-				returnList.addTwitterUpdate(DataUtils
-						.createTwitterUpdateDto(status,true));
-				
+				returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
+						status, true));
+
 				if (status.getInReplyToStatusId() > 0) {
 					nextId = status.getInReplyToStatusId();
 				} else {
@@ -237,19 +248,19 @@ public class TwitterServiceAdapter {
 		} else if (filter.getUpdatesType() == UpdatesType.DIRECT_RECEIVED) {
 			List<DirectMessage> dms = twitter.getDirectMessages(paging);
 
-			for (DirectMessage dm: dms) {
+			for (DirectMessage dm : dms) {
 				returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
-						dm, true,filter.getUpdatesType()));
+						dm, true, filter.getUpdatesType()));
 			}
-			
+
 		} else if (filter.getUpdatesType() == UpdatesType.DIRECT_SENT) {
 			List<DirectMessage> dms = twitter.getSentDirectMessages(paging);
 
-			for (DirectMessage dm: dms) {
+			for (DirectMessage dm : dms) {
 				returnList.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
-						dm, true,filter.getUpdatesType()));
+						dm, true, filter.getUpdatesType()));
 			}
-			
+
 		}
 
 		// CAll twitter API
@@ -258,10 +269,8 @@ public class TwitterServiceAdapter {
 		// Is something wrong?
 		assert (statusList != null);
 
-
 		return returnList;
 	}
-	
 
 	public Status postUpdate(TwitterUpdateDTO update) throws Exception {
 		log.info("Calling TWITTER API: "
@@ -327,7 +336,8 @@ public class TwitterServiceAdapter {
 	}
 
 	public TwitterAccountDTO authorizeAccount(
-			TwitterAccountDTO preAuthorizedTwitterAccount, String pinCode) throws Exception {
+			TwitterAccountDTO preAuthorizedTwitterAccount, String pinCode)
+			throws Exception {
 		TwitterAccountDTO authorizedTwitterAccount = new TwitterAccountDTO();
 
 		Twitter twitter = new Twitter();
@@ -339,8 +349,7 @@ public class TwitterServiceAdapter {
 			accessToken = twitter.getOAuthAccessToken(
 					preAuthorizedTwitterAccount.getOAuthToken(),
 					preAuthorizedTwitterAccount.getOAuthTokenSecret(), pinCode);
-			
-			
+
 			twitter.setOAuthAccessToken(accessToken);
 
 			twitterUser = twitter.verifyCredentials();
@@ -527,7 +536,7 @@ public class TwitterServiceAdapter {
 	}
 
 	public TwitterAccountListDTO getUsers(TwitterAccountDTO account,
-			TwitterUserFilterDTO currentFilter) throws Exception{
+			TwitterUserFilterDTO currentFilter) throws Exception {
 		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
@@ -538,29 +547,31 @@ public class TwitterServiceAdapter {
 		paging.count(currentFilter.getCount());
 		paging.setCount(currentFilter.getCount());
 		paging.setPage(currentFilter.getPage());
-		
-		log.fine("Paging count is: "+paging.getCount());
-		log.fine("Paging page is: "+paging.getPage());
+
+		log.fine("Paging count is: " + paging.getCount());
+		log.fine("Paging page is: " + paging.getPage());
 		List<User> users = null;
 		try {
-			users = twitter.getFriends(currentFilter.getTwitterUserScreenName(), paging);
+			users = twitter.getFriends(
+					currentFilter.getTwitterUserScreenName(), paging);
 		} catch (TwitterException e) {
 			e.printStackTrace();
-			log.severe("Error: "+e.getMessage());
+			log.severe("Error: " + e.getMessage());
 			throw new Exception(e);
 		}
-		log.fine("returned "+users.size()+" users from twitter");
+		log.fine("returned " + users.size() + " users from twitter");
 		TwitterAccountListDTO ret = new TwitterAccountListDTO();
-		
-		if ( users != null ) {
-			for (User user:users) {
-				
-				TwitterAccountDTO twAccount = DataUtils.createTwitterAccountDto(user);
-				log.fine("Loading user: "+twAccount.getTwitterScreenName());
+
+		if (users != null) {
+			for (User user : users) {
+
+				TwitterAccountDTO twAccount = DataUtils
+						.createTwitterAccountDto(user);
+				log.fine("Loading user: " + twAccount.getTwitterScreenName());
 				ret.add(twAccount);
 			}
 		}
-		
+
 		return ret;
 	}
 
