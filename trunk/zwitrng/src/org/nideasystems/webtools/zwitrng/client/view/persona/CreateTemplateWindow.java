@@ -5,11 +5,9 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.ShortLinksListenerCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
-import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
-import com.google.gwt.event.dom.client.ChangeEvent;
-import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -23,15 +21,17 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class CreateTemplateWindow extends DialogBox implements ShortLinksListenerCallBack{
+public class CreateTemplateWindow extends DialogBox implements ShortLinksListenerCallBack, CreateTemplateCallBack {
 
 	private PersonaController controller;
 	private TextArea templateText = null;
 	private InlineHTML remainingChars = null;
 	private CreateTemplateWindow instance = null;
+	private TemplateList templateList = null;
 
-	public CreateTemplateWindow(PersonaController theController) {
+	public CreateTemplateWindow(PersonaController theController, TemplateList theTemplateList ) {
 		this.setController(theController);
+		this.templateList  = theTemplateList;
 	}
 	
 	public void init() {
@@ -59,7 +59,7 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 		
 		
 		mainPanel.add(new InlineHTML("Add tags separaded by spaces:"));
-		TextBox templateTags = new TextBox();
+		final TextBox templateTags = new TextBox();
 		mainPanel.add(templateTags);
 		
 		HorizontalPanel toolsPanel = new HorizontalPanel();
@@ -81,6 +81,7 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 		toolsPanel.add(closeLink);
 		toolsPanel.add(saveButton);
 		mainPanel.add(toolsPanel);
+		
 		this.add(mainPanel);
 		
 		//Add handlers
@@ -101,7 +102,17 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 			@Override
 			public void onClick(ClickEvent event) {
 				SendUpdateWidget.shortLinks(templateText.getValue(), controller, instance);
-				
+			}
+			
+		});
+		
+		saveButton.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				if ( templateText.getValue().trim().length()>0 ) {
+					controller.createTemplate(templateText.getValue(), templateTags.getValue(), instance);
+				}
 			}
 			
 		});
@@ -127,6 +138,22 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 		templateText.setFocus(true);
 		templateText.setValue(newStr);
 		updateRemainingChars();
+		
+	}
+
+	@Override
+	public void onFailCreateTemplate(Throwable ex) {
+		getController().getMainController().addException(ex);
+		
+	}
+
+	@Override
+	public void onSuccessCreateTemplate(TemplateDTO template) {
+		getController().getMainController().addInfoMessage("Template created with sucess");
+		this.hide(true);
+		if (templateList!=null) {
+			templateList.onNewTemplate(template);
+		}
 		
 	}
 }

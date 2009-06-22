@@ -153,6 +153,13 @@ public class MainController implements IMainController {
 		Window.alert(tr.getLocalizedMessage());
 
 	}
+	
+	@Override
+	public void addInfoMessage(String string) {
+		Window.alert(string);
+		
+	}
+
 
 	/*
 	 * @Override public SelectionHandler<Integer> getSelectionHandler() { //
@@ -198,6 +205,7 @@ public class MainController implements IMainController {
 				.getTwitterAccountController(userScreenName);
 
 	}
+
 
 	/*
 	 * @Override public void reload() { // TODO Auto-generated method stub

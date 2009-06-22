@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.core.client.GWT;
@@ -114,8 +115,26 @@ public class HTMLHelper {
 	private void parse(String text) {
 
 		GWT.log("Testing text: " + text, null);
+		String[] list = StringUtils.splitText(text);
+		
+		for (String word:list ) {
+			if (word.contains("@") && processScreenName(word) != null
+					&& !twitterUserNameArray.contains(itHelper)) {
+				twitterUserNameArray.add(itHelper);
+			}
+
+			if (word.startsWith("http://") && !linksArray.contains(word)) {
+				linksArray.add(word);
+			}
+			if (word.contains("#")) {
+				processHashTag(word);
+			}
+	
+		}
+/*		
 		int position = 0;
 
+		
 		String tmpString = text.trim();
 		boolean process = true;
 		String word = null;
@@ -143,7 +162,7 @@ public class HTMLHelper {
 				processHashTag(word);
 			}
 
-		} while (process);
+		} while (process);*/
 	}
 
 	/**

@@ -32,7 +32,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SelectTemplateWindow extends PopupPanel {
+public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 
 	private Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	private PersonaController controller = null;
@@ -40,6 +40,7 @@ public class SelectTemplateWindow extends PopupPanel {
 	private VerticalPanel contentPanel = null;
 	private SendUpdateWidget updateWidget;
 	private SelectableTemplate activeSelectableTemplateWidget;
+	private TemplateList templateList = null;
 
 	public SelectableTemplate getActiveTemplate() {
 		return activeSelectableTemplateWidget;
@@ -60,7 +61,7 @@ public class SelectTemplateWindow extends PopupPanel {
 	public void init() {
 		this.setAnimationEnabled(true);
 		this.setAutoHideEnabled(true);
-
+		templateList = this;
 		VerticalPanel mainPanel = new VerticalPanel();
 
 		HorizontalPanel searchPanel = new HorizontalPanel();
@@ -102,7 +103,7 @@ public class SelectTemplateWindow extends PopupPanel {
 
 			@Override
 			public void onClick(ClickEvent event) {
-				MainController.getInstance().getPopupManager().showCreateTemplateWindow(controller, newLink.getAbsoluteLeft(),newLink.getAbsoluteTop()-200);
+				MainController.getInstance().getPopupManager().showCreateTemplateWindow(controller, templateList,newLink.getAbsoluteLeft(),newLink.getAbsoluteTop()-200);
 				
 			}
 			
@@ -247,6 +248,16 @@ public class SelectTemplateWindow extends PopupPanel {
 	protected void setActiveSelectableTemplate(SelectableTemplate selTemplate) {
 		this.activeSelectableTemplateWidget = selTemplate;
 
+	}
+
+	@Override
+	public void onNewTemplate(TemplateDTO theTemplate) {
+		Panel templatePanel = new SelectableTemplate(theTemplate, this);
+		contentPanel.insert(templatePanel, 0);
+		//contentPanel.add();
+		
+
+		
 	}
 
 }

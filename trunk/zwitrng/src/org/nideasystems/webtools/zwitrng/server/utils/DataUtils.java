@@ -26,39 +26,14 @@ public class DataUtils {
 		returnPersona.setName(personaDo.getName());
 		returnPersona.setUserEmail(personaDo.getUserEmail());
 		returnPersona.setTwitterAccount(authorizedTwitterAccount);
+		returnPersona.setId(personaDo.getKey().getId());
+		
 
 		return returnPersona;
 
 	}
 
-	/**
-	 * 
-	 * @param twitterUser
-	 * @return
-	 */
-	/*public static TwitterAccountDTO createTwitterAccountDto(User twitterUser) {
-
-		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
-
-		if (twitterUser != null) {
-			twitterAcount.setTwitterDescription(twitterUser.getDescription());
-			twitterAcount.setTwitterFollowers(twitterUser.getFollowersCount());
-
-			twitterAcount.setTwitterImageUrl(twitterUser.getProfileImageURL()
-					.toExternalForm());
-			twitterAcount.setId(twitterUser.getId());
-
-			twitterAcount.setTwitterScreenName(twitterUser.getScreenName());
-			twitterAcount.setTwitterName(twitterUser.getName());
-			twitterAcount.setTwitterLocation(twitterUser.getLocation());
-			twitterAcount
-					.setTwitterWeb(twitterUser.getURL() != null ? twitterUser
-							.getURL().toExternalForm() : "");
-
-		}
-
-		return twitterAcount;
-	}*/
+	
 
 	/**
 	 * 

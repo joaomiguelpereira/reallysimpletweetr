@@ -6,14 +6,15 @@ import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
-import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaToolsWidget;
+import org.nideasystems.webtools.zwitrng.client.view.persona.CreateTemplateCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.SelectTemplateWindow;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HTML;
 
@@ -156,7 +157,42 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 			selectTemplatesWindow.onError(e);
 		}
 		
-		TemplateDTOList list = null;
+		//TemplateDTOList list = null;
+		
+	}
+	public void createTemplate(String templateText, String tags, final CreateTemplateCallBack callback) {
+		
+		TemplateDTO template = new TemplateDTO();
+		template.setTemplateText(templateText);
+		//tags
+		
+		String[] tagsArray = StringUtils.splitText(tags);
+		//end tags
+		for (String tag: tagsArray) {
+			template.addTags(tag);
+		}
+		
+		
+		try {
+			getServiceManager().getRPCService().createTemplate(this.getModel(),template, new AsyncCallback<TemplateDTO>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onFailCreateTemplate(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(TemplateDTO result) {
+					callback.onSuccessCreateTemplate(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			callback.onFailCreateTemplate(e);
+			e.printStackTrace();
+		}
 		
 	}
 

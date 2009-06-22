@@ -39,6 +39,12 @@ public class PersonaDO {
 	
 	@Persistent(mappedBy="persona",defaultFetchGroup="true")
 	private List<FilterDO> filters;
+	
+	
+	@Persistent(mappedBy="persona",defaultFetchGroup="true")
+	private List<TemplateDO> templates;
+	
+	
 
 	public void setName(String name) {
 		this.name = name;
@@ -109,6 +115,14 @@ public class PersonaDO {
 
 	public Key getKey() {
 		return key;
+	}
+
+	public void setTemplates(List<TemplateDO> templates) {
+		this.templates = templates;
+	}
+
+	public List<TemplateDO> getTemplates() {
+		return templates;
 	}
 
 

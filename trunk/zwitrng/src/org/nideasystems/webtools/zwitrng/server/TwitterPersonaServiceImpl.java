@@ -1,12 +1,16 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.jdo.PersistenceManager;
+
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
+import org.nideasystems.webtools.zwitrng.server.domain.AbstractDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDAO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -21,44 +25,67 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 		TwitterPersonaService {
-	
 
-	
-
-	public PersonaDAO getPersonaDao() {
-		return personaDao;
-	}
-
-	public void setPersonaDao(PersonaDAO personaDao) {
-		this.personaDao = personaDao;
-	}
-
+	private long transactionsStartTime = 0;
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 3805847312414045223L;
-	
-	private PersonaDAO personaDao;
+
+	ThreadLocal<PersonaDAO> personaDao = new ThreadLocal<PersonaDAO>() {
+
+		@Override
+		protected PersonaDAO initialValue() {
+			return new PersonaDAO();
+		}
+
+	};
+
+	private PersistenceManager pm = null;
+
 	private static final Logger log = Logger
 			.getLogger(TwitterPersonaServiceImpl.class.getName());
 
 	public TwitterPersonaServiceImpl() {
 		log.fine("Instantiating TwitterPersonaServiceImpl..");
-		
-		this.personaDao = new PersonaDAO();
 
 	}
 
-	
+	private PersonaDAO getPersonaDao() {
+		
+		PersonaDAO dao = personaDao.get();
+		dao.setPm(pm);
+		log.fine("Returning DAO " + dao.hashCode());
+		return dao;
+	}
+
+	private void startTransaction() {
+		pm = PMF.get().getPersistenceManager();
+		log.fine("Starting transaction...");
+		transactionsStartTime = new Date().getTime();
+	}
+
+	private void endTransaction() throws Exception{
+		long endTime = new Date().getTime();
+		log.fine("Ending transation. Elaplsed millisenconds: "
+				+ (endTime - transactionsStartTime) + " ms");
+		
+		try {
+			pm.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+			
+		}
+	}
 
 	/**
 	 * Create a new Persona and return the representation
 	 */
 	@Override
 	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
-
-		log.fine("createPersona");
-		log.fine("persona Name:" + persona.getName());
+		log.fine("createPersona...");
+		startTransaction();
 
 		try {
 			User currentUser = AuthorizationManager.checkAuthentication();
@@ -89,8 +116,9 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 			PersonaDO personaDo = null;
 			try {
 				log.fine("Creating persona in Datastore");
-				personaDo = personaDao.createPersona(persona, currentUser
-						.getEmail());
+
+				personaDo = getPersonaDao().createPersona(persona, currentUser.getEmail());
+
 			} catch (Exception e) {
 				log.severe(e.getMessage());
 				throw e;
@@ -102,56 +130,62 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 			e.printStackTrace();
 			log.severe(e.getMessage());
 			throw new Exception(e);
+		} finally {
+			endTransaction();
 		}
 	}
 
 	@Override
 	public String deletePersona(String persona) throws Exception {
 
+		startTransaction();
+
 		User user = AuthorizationManager.checkAuthentication();
-		
-		personaDao.deletePersona(persona, user.getEmail());
+		getPersonaDao().deletePersona(persona, user.getEmail());
+		endTransaction();
 		return persona;
 	}
 
 	@Override
 	public PersonaDTOList getPersonas() throws Exception {
+		log.fine("Start getting personas..");
+		startTransaction();
 		User user = AuthorizationManager.checkAuthentication();
 		
-		log.fine("Getting personas..");
 		PersonaDTOList returnPersonas = null;
 		if (user != null) {
-
 			try {
-				returnPersonas = personaDao.findAllPersonas(user.getEmail());
+				
+				returnPersonas = getPersonaDao().findAllPersonas(user.getEmail());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				log.severe(e.getMessage());
 				throw new Exception(e);
+			} finally {
+				endTransaction();
 			}
-			// Get all Personas for email: email
 		}
-
+		
+		log.fine("End getting personas..");
 		return returnPersonas;
 	}
 
 	@Override
 	public List<FilterCriteriaDTO> getPersonaFilters(String personaName)
 			throws Exception {
-
+		startTransaction();
 		// get the DAO
 		// Key personaKey = ;
 		User user = AuthorizationManager.checkAuthentication();
-		
+
 		List<FilterCriteriaDTO> returnFilters = null;
 		if (user != null) {
 
-			returnFilters = personaDao.findAllPersonaFilters(personaName, user
+			returnFilters = getPersonaDao().findAllPersonaFilters(personaName, user
 					.getEmail());
 			// Get all Personas for email: email
 		}
-
+		endTransaction();
 		return returnFilters;
 
 	}
@@ -159,24 +193,38 @@ public class TwitterPersonaServiceImpl extends RemoteServiceServlet implements
 	@Override
 	public TemplateDTOList getTemplates(String name) throws Exception {
 		TemplateDTOList list = new TemplateDTOList();
-		for (long i=0; i<2; i++) {
-			TemplateDTO t = new TemplateDTO();
-			TemplateDTO t2 = new TemplateDTO();
-			
-			t.setId(i);
-			t.setTemplateText("This is a template that is somewhat big. Lets try something new here. What-s upda to you"+i);
-			t.addTags("Tag 1");
-			t.addTags("Tag 3");
-			t2.setId(i*100);
-			t2.setTemplateText("This is a template that is somewhat small"+i*100);
-			t2.addTags("Tag 1");
-			t2.addTags("Tag 3");
-			list.addTemplate(t);
-			list.addTemplate(t2);
-			
-		}
-		log.fine("returning "+list.getTemplates().size());
+		/*
+		 * for (long i=0; i<2; i++) { TemplateDTO t = new TemplateDTO();
+		 * TemplateDTO t2 = new TemplateDTO();
+		 * 
+		 * t.setId(i);t.setTemplateText(
+		 * "This is a template that is somewhat big. Lets try something new here. What-s upda to you"
+		 * +i); t.addTags("Tag 1"); t.addTags("Tag 3"); t2.setId(i*100);
+		 * t2.setTemplateText
+		 * ("This is a template that is somewhat small"+i*100);
+		 * t2.addTags("Tag 1"); t2.addTags("Tag 3"); list.addTemplate(t);
+		 * list.addTemplate(t2);
+		 * 
+		 * } log.fine("returning "+list.getTemplates().size());
+		 */
 		return list;
+	}
+
+	@Override
+	public TemplateDTO createTemplate(PersonaDTO model, TemplateDTO template)
+			throws Exception {
+		TemplateDTO t = new TemplateDTO();
+
+		t.setId(1000 + template.hashCode());
+		t.setTemplateText(template.getTemplateText());
+		t.addTags("Tag 1");
+		t.addTags("Tag 3");
+		// PersonaDAO personaDao = new PersonaDAO();
+
+		// TemplateDAO dao = new TemplateDAO();
+		// return dao.createTemplate(model.getName(),template);
+		return t;
+
 	}
 
 }

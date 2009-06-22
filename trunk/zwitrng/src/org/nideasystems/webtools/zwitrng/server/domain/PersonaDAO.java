@@ -20,6 +20,12 @@ import twitter4j.User;
 
 public class PersonaDAO extends BaseDAO {
 
+	
+	private PersistenceManager pm;
+	
+	public PersonaDAO() {
+		
+	}
 	private static final Logger log = Logger.getLogger(PersonaDAO.class.getName());
 	/**
 	 * delete a Persona
@@ -29,7 +35,7 @@ public class PersonaDAO extends BaseDAO {
 	 */
 	public void deletePersona(String personaName, String email) {
 
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query queryPersona = pm.newQuery(PersonaDO.class);
 		queryPersona
 				.setFilter("name==paramPersonaName && userEmail==paramUserEmail");
@@ -42,7 +48,7 @@ public class PersonaDAO extends BaseDAO {
 
 		if (persona != null) {
 			pm.deletePersistent(persona);
-			pm.close();
+			
 		}
 
 	}
@@ -61,9 +67,6 @@ public class PersonaDAO extends BaseDAO {
 	public PersonaDTOList findAllPersonas(String email) throws Exception {
 
 		PersonaDTOList returnList = new PersonaDTOList();
-		
-		PersistenceManager pm = PMF.get().getPersistenceManager();
-		
 		Query queryPersona = pm.newQuery(PersonaDO.class);
 		queryPersona.setFilter("userEmail==paramUserEmail");
 		queryPersona.declareParameters("String paramUserEmail");
@@ -98,7 +101,7 @@ public class PersonaDAO extends BaseDAO {
 				} 
 				
 				
-				//if 
+				
 				if (twitterUser != null ) {
 					authorizedTwitterAccount = DataUtils.mergeTwitterAccount(twitterUser, authorizedTwitterAccount);
 					authorizedTwitterAccount.setIsOAuthenticated(true);
@@ -111,15 +114,15 @@ public class PersonaDAO extends BaseDAO {
 
 			}
 		}
-		pm.close();
-		// PMF.get().getPersistenceManager().close();
+		
+		
 		return returnList;
 		
 	}
 
 	private PersonaDO findPersonaByNameAndEmail(String personaName,
 			String userEmail) {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query queryPersona = pm.newQuery(PersonaDO.class);// PMF.get().getPersistenceManager().newQuery(
 		// PersonaDO.class);
 		queryPersona
@@ -145,7 +148,7 @@ public class PersonaDAO extends BaseDAO {
 	 */
 	public PersonaDO createPersona(PersonaDTO persona, String email)
 			throws Exception {
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//PersistenceManager pm = PMF.get().getPersistenceManager();
 
 		// If it exists, throw an exception
 		if (findPersonaByNameAndEmail(persona.getName(), email) != null) {
@@ -173,10 +176,7 @@ public class PersonaDAO extends BaseDAO {
 			log.severe("Error: "+e.getLocalizedMessage());
 			throw e;
 			
-		} finally {
-			//Close the connection
-			pm.close();
-		}
+		} 
 		
 		sb = new StringBuffer();
 		
@@ -224,7 +224,7 @@ public class PersonaDAO extends BaseDAO {
 
 	public void updatePersonaTwitterAccount(PersonaDTO personaDto, TwitterAccountDO twitterAccountDo) throws Exception {
 		//Find the persona
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		//PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query queryPersona = pm.newQuery(PersonaDO.class);// PMF.get().getPersistenceManager().newQuery(
 		// PersonaDO.class);
 		queryPersona
@@ -249,12 +249,23 @@ public class PersonaDAO extends BaseDAO {
 			persona.setTwitterAccount(twitterAccountDo);
 		}
 		
-		pm.close();
 		
 		
 		
 		
 		
+	}
+
+
+
+	public void setPm(PersistenceManager pm) {
+		this.pm = pm;
+	}
+
+
+
+	public PersistenceManager getPm() {
+		return pm;
 	}
 
 	
