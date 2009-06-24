@@ -14,12 +14,11 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
-import com.google.appengine.api.users.User;
 
-public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet implements
-		TwitterPersonaService {
+public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
+		implements TwitterPersonaService {
 	private static final long serialVersionUID = 3805847312414045223L;
-
+	
 	private static final Logger log = Logger
 			.getLogger(TwitterPersonaServiceImpl.class.getName());
 
@@ -28,9 +27,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 
 	}
 
-
 	/**
-	 * Create a new Persona and return the representation
+	 * Create a new Persona and return its representation
 	 */
 	@Override
 	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
@@ -38,7 +36,6 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 		startTransaction(true);
 
 		try {
-			User currentUser = AuthorizationManager.checkAuthentication();
 
 			if (persona.getTwitterAccount() == null) {
 				throw new Exception("Please provide your twitter information");
@@ -48,7 +45,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 				throw new Exception(
 						"Not all data provided. All field are required");
 			}
-
+			
 			log.fine("preAutorizedTwitterAccount...");
 			// Create a preAuthorized TwitterAccount
 			TwitterAccountDTO preAutorizedTwitterAccount = TwitterServiceAdapter
@@ -66,8 +63,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 			PersonaDO personaDo = null;
 			try {
 				log.fine("Creating persona in Datastore");
-				personaDo = getPersonaPojo().createPersona(persona, currentUser.getEmail());
-				//personaDo = getPersonaDao().createPersona(persona, currentUser.getEmail());
+				personaDo = getBusinessHelper().getPersonaPojo().createPersona(persona,
+						user.getEmail());
+				// personaDo = getPersonaDao().createPersona(persona,
+				// currentUser.getEmail());
 
 			} catch (Exception e) {
 				log.severe(e.getMessage());
@@ -89,11 +88,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 	public String deletePersona(String persona) throws Exception {
 
 		startTransaction(true);
-
-		User user = AuthorizationManager.checkAuthentication();
-		getPersonaPojo().deletePersona(persona, user.getEmail());
-		
-		//getPersonaDao().deletePersona(persona, user.getEmail());
+		getBusinessHelper().getPersonaPojo().deletePersona(persona, user.getEmail());
 		endTransaction();
 		return persona;
 	}
@@ -102,15 +97,15 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 	public PersonaDTOList getPersonas() throws Exception {
 		log.fine("Start getting personas..");
 		startTransaction(true);
-		getPersonaPojo();
-		User user = AuthorizationManager.checkAuthentication();
-		
+				//User user = AuthorizationManager.checkAuthentication();
+
 		PersonaDTOList returnPersonas = null;
 		if (user != null) {
 			try {
-				
+
 				//
-				returnPersonas = getPersonaPojo().getAssPersonas(user.getEmail());
+				returnPersonas = getBusinessHelper().getPersonaPojo().getAllPersonas(
+						user.getEmail());
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.severe(e.getMessage());
@@ -119,13 +114,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 				endTransaction();
 			}
 		}
-		
+
 		log.fine("End getting personas..");
 		return returnPersonas;
 	}
-
-	
-
 
 	@Override
 	public List<FilterCriteriaDTO> getPersonaFilters(String personaName)
@@ -133,18 +125,14 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 		startTransaction(true);
 		// get the DAO
 		// Key personaKey = ;
-		User user = AuthorizationManager.checkAuthentication();
+		//User user = AuthorizationManager.checkAuthentication();
 
 		List<FilterCriteriaDTO> returnFilters = null;
 		if (user != null) {
 
-			
-			
-			returnFilters = getPersonaPojo().getAllFilters(personaName, user
-					.getEmail());
+			returnFilters = getBusinessHelper().getPersonaPojo().getAllFilters(personaName,
+					user.getEmail());
 
-			
-		
 			// Get all Personas for email: email
 		}
 		endTransaction();
@@ -154,39 +142,24 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet impl
 
 	@Override
 	public TemplateDTOList getTemplates(String name) throws Exception {
-		TemplateDTOList list = new TemplateDTOList();
-		/*
-		 * for (long i=0; i<2; i++) { TemplateDTO t = new TemplateDTO();
-		 * TemplateDTO t2 = new TemplateDTO();
-		 * 
-		 * t.setId(i);t.setTemplateText(
-		 * "This is a template that is somewhat big. Lets try something new here. What-s upda to you"
-		 * +i); t.addTags("Tag 1"); t.addTags("Tag 3"); t2.setId(i*100);
-		 * t2.setTemplateText
-		 * ("This is a template that is somewhat small"+i*100);
-		 * t2.addTags("Tag 1"); t2.addTags("Tag 3"); list.addTemplate(t);
-		 * list.addTemplate(t2);
-		 * 
-		 * } log.fine("returning "+list.getTemplates().size());
-		 */
+		startTransaction(true);
+		TemplateDTOList list = null;
+		list = getBusinessHelper().getTemplatePojo().getTemplates(name,user.getEmail());
+		endTransaction();
 		return list;
 	}
 
 	@Override
 	public TemplateDTO createTemplate(PersonaDTO model, TemplateDTO template)
 			throws Exception {
-		TemplateDTO t = new TemplateDTO();
-
-		t.setId(1000 + template.hashCode());
-		t.setTemplateText(template.getTemplateText());
-		t.addTags("Tag 1");
-		t.addTags("Tag 3");
-		// PersonaDAO personaDao = new PersonaDAO();
-
-		// TemplateDAO dao = new TemplateDAO();
-		// return dao.createTemplate(model.getName(),template);
-		return t;
+		startTransaction(true);
+		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo().createTemplate(model.getName(), user.getEmail(),template); 
+		endTransaction();
+		return outTemplate;
+		
 
 	}
+
+	
 
 }

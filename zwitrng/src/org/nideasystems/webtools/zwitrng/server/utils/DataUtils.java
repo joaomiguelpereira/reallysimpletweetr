@@ -1,13 +1,16 @@
 package org.nideasystems.webtools.zwitrng.server.utils;
 
+import java.util.Collection;
 import java.util.Date;
 
 import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
@@ -27,21 +30,17 @@ public class DataUtils {
 		returnPersona.setUserEmail(personaDo.getUserEmail());
 		returnPersona.setTwitterAccount(authorizedTwitterAccount);
 		returnPersona.setId(personaDo.getKey().getId());
-		
 
 		return returnPersona;
 
 	}
-
-	
 
 	/**
 	 * 
 	 * @param twitterUser
 	 * @return
 	 */
-	public static TwitterAccountDTO createTwitterAccountDto(
-			User twitterUser) {
+	public static TwitterAccountDTO createTwitterAccountDto(User twitterUser) {
 
 		assert (twitterUser != null);
 		TwitterAccountDTO twitterAcount = new TwitterAccountDTO();
@@ -107,47 +106,46 @@ public class DataUtils {
 	}
 
 	public static TwitterUpdateDTO createTwitterUpdateDto(DirectMessage dm,
-			boolean copyUserForTwitterAccount,UpdatesType type) {
-		
+			boolean copyUserForTwitterAccount, UpdatesType type) {
+
 		TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
 
-		
 		twitterUpdate.setCreatedAt(dm.getCreatedAt());
 		twitterUpdate.setId(dm.getId());
-		
-		
-		//twitterUpdate.setInReplyToStatusId();
-		
+
+		// twitterUpdate.setInReplyToStatusId();
+
 		twitterUpdate.setInReplyToUserId(dm.getRecipientId());
 		twitterUpdate.setInReplyToScreenName(dm.getRecipientScreenName());
-		
+
 		twitterUpdate.setRateLimitLimit(dm.getRateLimitLimit());
 		twitterUpdate.setRateLimitRemaining(dm.getRateLimitRemaining());
 		twitterUpdate.setRateLimitReset(dm.getRateLimitReset());
-		
+
 		twitterUpdate.setSource("");
 		twitterUpdate.setText(dm.getText());
 		twitterUpdate.setType(type);
 		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
-		
-		if ( type.equals(UpdatesType.DIRECT_SENT)) {
+
+		if (type.equals(UpdatesType.DIRECT_SENT)) {
 			twitterAccount.setTwitterScreenName(dm.getRecipientScreenName());
 			twitterAccount.setId(dm.getRecipientId());
-			//twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
-			
-			twitterAccount.setTwitterImageUrl(dm.getRecipient().getProfileImageURL().toExternalForm());
-			
+			// twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
+
+			twitterAccount.setTwitterImageUrl(dm.getRecipient()
+					.getProfileImageURL().toExternalForm());
+
 		} else {
 			twitterAccount.setTwitterScreenName(dm.getSenderScreenName());
 			twitterAccount.setId(dm.getSenderId());
-			//twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
-			
-			twitterAccount.setTwitterImageUrl(dm.getSender().getProfileImageURL().toExternalForm());
-			
-		}
-		
-		twitterUpdate.setTwitterAccount(twitterAccount);
+			// twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
 
+			twitterAccount.setTwitterImageUrl(dm.getSender()
+					.getProfileImageURL().toExternalForm());
+
+		}
+
+		twitterUpdate.setTwitterAccount(twitterAccount);
 
 		return twitterUpdate;
 
@@ -158,8 +156,8 @@ public class DataUtils {
 
 		twitterUpdate.setCreatedAt(status.getCreatedAt());
 		twitterUpdate.setId(status.getId());
-		
-		//twitterUpdate.setInReplyToStatusId();
+
+		// twitterUpdate.setInReplyToStatusId();
 		twitterUpdate.setInReplyToUserId(status.getToUserId());
 
 		twitterUpdate.setRateLimitLimit(status.getRateLimitLimit());
@@ -171,7 +169,7 @@ public class DataUtils {
 		twitterAccount.setTwitterScreenName(status.getFromUser());
 		twitterAccount.setId(status.getFromUserId());
 		twitterAccount.setTwitterImageUrl(status.getProfileImageUrl());
-		//twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
+		// twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
 		twitterUpdate.setTwitterAccount(twitterAccount);
 		twitterUpdate.setType(UpdatesType.TWEET);
 
@@ -243,8 +241,7 @@ public class DataUtils {
 	 * @return
 	 */
 	public static TwitterAccountDTO mergeTwitterAccount(
-			User authenticatedTwitterUser,
-			TwitterAccountDTO twitterAccount) {
+			User authenticatedTwitterUser, TwitterAccountDTO twitterAccount) {
 		TwitterAccountDTO authenticatedTwitterAccount = new TwitterAccountDTO();
 
 		authenticatedTwitterAccount.setIsOAuthenticated(twitterAccount
@@ -290,9 +287,10 @@ public class DataUtils {
 				.getStatusInReplyToStatusId());
 		twitterUpdateDto.setInReplyToUserId(authenticatedTwitterUser
 				.getStatusInReplyToUserId());
-		
-		twitterUpdateDto.setInReplyToScreenName(authenticatedTwitterUser.getStatusInReplyToScreenName());
-		
+
+		twitterUpdateDto.setInReplyToScreenName(authenticatedTwitterUser
+				.getStatusInReplyToScreenName());
+
 		twitterUpdateDto.setRateLimitLimit(authenticatedTwitterUser
 				.getRateLimitLimit());
 		twitterUpdateDto.setRateLimitRemaining(authenticatedTwitterUser
@@ -337,5 +335,20 @@ public class DataUtils {
 
 	}
 
+	public static TemplateDTO templateDtoFromDom(TemplateDO templateDom) {
+		TemplateDTO templateDto = new TemplateDTO();
+		templateDto.setTemplateText(templateDom.getText());
+		if (templateDom.getTags() != null) {
+			
+			for (String tag : templateDom.getTags()) {
+				templateDto.addTags(tag);
+			}
+		} else {
+			templateDto.addTags("");
+		}
+
+		templateDto.setId(templateDom.getKey().getId());
+		return templateDto;
+	}
 
 }
