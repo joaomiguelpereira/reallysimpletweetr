@@ -9,5 +9,12 @@ public class Constants {
 	public static final String CONTINUE_SIGN_WITH_TWITTER_IMG = "/images/continue-Sign-in-with-Twitter-lighter.png";
 	public static final String USER_IMAGE_MEDIUM_WIDTH = "48px";
 	public static final String USER_IMAGE_MEDIUM_HEIGHT = "48px";
+	
+	
+	public static final String TEMPLATES_ICON_IMAGE = "/images/templates_icon.gif";
+	public static final String CONFIGURATION_PANEL_MAX_HEIGH = "400px";
+	public static final String CONFIGURATION_PANEL_WIDTH = "650px";
+	public static final String EDITABLE_TEMPLATE_WIDTH = "630px";
+	public static final String EDITABLE_TEMPLATE_MIN_HEIGHT = "60px";
 
 }
