@@ -191,24 +191,12 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList {
 		controller.loadTemplates(this);
 	}
 
-	public void onError(Throwable caught) {
-		Window.alert("Error " + caught.getMessage());
+	
 
-	}
 
-	public void onSucess(TemplateDTOList result) {
-		setProcessing(false);
+	
 
-		this.templates = result.getTemplates();
-
-		for (TemplateDTO template : this.templates) {
-			Panel templatePanel = new SelectableTemplate(template, this);
-			contentPanel.insert(templatePanel, 0);
-
-		}
-		searchValue.setFocus(true);
-
-	}
+	
 
 	private class SelectableTemplate extends VerticalPanel implements
 			HasMouseOutHandlers, HasMouseOverHandlers, HasClickHandlers {
@@ -347,6 +335,29 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList {
 	public void show() {
 		// TODO Auto-generated method stub
 		super.show();
+		
+	}
+
+	@Override
+	public void onFailedLoadTemplates(Throwable tr) {
+		Window.alert("Error " + tr.getMessage());
+
+		
+	}
+
+	@Override
+	public void onSuccessLoadTemplates(TemplateDTOList result) {
+		setProcessing(false);
+
+		this.templates = result.getTemplates();
+
+		for (TemplateDTO template : this.templates) {
+			Panel templatePanel = new SelectableTemplate(template, this);
+			contentPanel.insert(templatePanel, 0);
+
+		}
+		searchValue.setFocus(true);
+
 		
 	}
 	

@@ -9,6 +9,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdate
 import org.nideasystems.webtools.zwitrng.client.view.persona.CreateTemplateCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.SelectTemplateWindow;
+import org.nideasystems.webtools.zwitrng.client.view.persona.TemplateList;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
@@ -131,7 +132,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 		return this.twitterAccountController;
 		
 	}
-	public void loadTemplates(final SelectTemplateWindow selectTemplatesWindow) {
+	public void loadTemplates(final TemplateList templateListWindow) {
 		
 		try {
 			getServiceManager().getRPCService().getTemplatesList(this.getModel().getName(), new AsyncCallback<TemplateDTOList>() {
@@ -139,13 +140,13 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 				@Override
 				public void onFailure(Throwable caught) {
 					getMainController().addException(caught);
-					selectTemplatesWindow.onError(caught);
+					templateListWindow.onFailedLoadTemplates(caught);
 					
 				}
 
 				@Override
 				public void onSuccess(TemplateDTOList result) {
-					selectTemplatesWindow.onSucess(result);
+					templateListWindow.onSuccessLoadTemplates(result);
 					
 				}
 				
@@ -154,7 +155,7 @@ public class PersonaController extends AbstractController<PersonaDTO, PersonaVie
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			getMainController().addException(e);
-			selectTemplatesWindow.onError(e);
+			templateListWindow.onFailedLoadTemplates(e);
 		}
 		
 		//TemplateDTOList list = null;
