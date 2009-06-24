@@ -26,4 +26,31 @@ public class TemplateDTO implements IModel {
 	}
 	private String templateText;
 	private List<String> tags = new ArrayList<String>();
+	private String tagsAsString = null;
+	
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer("Template:");
+		sb.append("\nTemplate Text: "+templateText);
+		if (tags != null) {
+			for (String tag: tags) {
+				sb.append("\nTag: "+tag);
+			}
+		} else {
+			sb.append("\nTags are null");
+		}
+		return sb.toString();
+		
+	}
+	public String getTagsAsText() {
+		StringBuffer sb = new StringBuffer();
+		if ( tagsAsString == null && tags != null ) {
+			for (String tag: tags) {
+				sb.append("\nTag: "+tag);
+			}
+		}
+		tagsAsString = sb.toString();
+		return tagsAsString;
+		
+	}
 }
