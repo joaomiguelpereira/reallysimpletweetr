@@ -3,7 +3,6 @@ package org.nideasystems.webtools.zwitrng.server;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
@@ -12,6 +11,7 @@ import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
@@ -49,7 +49,6 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 			throws Exception {
 		startTransaction(false);
 		// Check if is logged in
-		AuthorizationManager.checkAuthentication();
 		TwitterUpdateDTOList list = null;
 		try {
 			list = TwitterServiceAdapter.get().getUpdates(twitterAccount,
@@ -72,7 +71,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 		// Send tweet
 		// Check if is logged in
 		startTransaction(false);
-		AuthorizationManager.checkAuthentication();
+		
 
 		TwitterUpdateDTO lastUpdate = null;
 		Status status = TwitterServiceAdapter.get().postUpdate(update);
@@ -114,7 +113,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 		TwitterAccountDO twitterAccountDo = DataUtils
 				.twitterAccountDoFromDto(fullAuthorizeddAccount);
 		
-		getPersonaPojo().updatePersonaTwitterAccount(personaDto,
+		getBusinessHelper().getPersonaPojo().updatePersonaTwitterAccount(personaDto,
 				twitterAccountDo);
 		
 		

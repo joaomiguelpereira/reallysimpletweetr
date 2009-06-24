@@ -108,6 +108,13 @@ public class PersonaDO {
 			this.filters = new ArrayList<FilterDO>();
 		this.filters.add(filter);
 	}
+	
+	public void addtemplate(TemplateDO template) {
+		if ( this.templates == null) {
+			this.templates = new ArrayList<TemplateDO>();
+		}
+		this.templates.add(template);
+	}
 
 	public void setKey(Key key) {
 		this.key = key;

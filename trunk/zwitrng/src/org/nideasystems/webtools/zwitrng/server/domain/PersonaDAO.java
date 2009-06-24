@@ -120,7 +120,13 @@ public class PersonaDAO extends BaseDAO {
 		
 	}
 
-	private PersonaDO findPersonaByNameAndEmail(String personaName,
+	/**
+	 * Find a persona by its name and email
+	 * @param personaName
+	 * @param userEmail
+	 * @return
+	 */
+	public PersonaDO findPersonaByNameAndEmail(String personaName,
 			String userEmail) {
 		//PersistenceManager pm = PMF.get().getPersistenceManager();
 		Query queryPersona = pm.newQuery(PersonaDO.class);// PMF.get().getPersistenceManager().newQuery(

@@ -1,5 +1,8 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
 import javax.jdo.annotations.PersistenceCapable;
@@ -23,6 +26,8 @@ public class TemplateDO {
 	@Persistent
 	private PersonaDO persona;
 	
+	@Persistent
+	private List<String> tags;
 	
 	
 	public void setKey(Key key) {
@@ -48,6 +53,24 @@ public class TemplateDO {
 	public PersonaDO getPersona() {
 		return persona;
 	}
+
+	public void setTags(List<String> tags) {
+		this.tags = tags;
+	}
+
+	public List<String> getTags() {
+		return tags;
+	}
+	
+	public void addTag(String tag) {
+		if ( tags == null) {
+			tags = new ArrayList<String>();
+			
+		}
+		tags.add(tag);
+	}
+	
+	
 
 
 

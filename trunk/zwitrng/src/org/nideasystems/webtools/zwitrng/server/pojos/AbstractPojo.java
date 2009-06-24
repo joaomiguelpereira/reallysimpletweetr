@@ -10,31 +10,15 @@ public abstract class AbstractPojo {
 
 
 	private final static Logger log = Logger.getLogger(AbstractPojo.class.toString());
-	private PersistenceManager pm;
 	
-	private ThreadLocal<PersonaDAO> personaDao = new ThreadLocal<PersonaDAO>() {
+	protected BusinessHelper businessHelper = null;
 
-		@Override
-		protected PersonaDAO initialValue() {
-			return new PersonaDAO();
-		}
-
-	};
-
-	protected PersonaDAO getPersonaDao() {
-
-		PersonaDAO dao = personaDao.get();
-		dao.setPm(pm);
-		log.fine("Returning DAO " + dao.hashCode());
-		return dao;
+	
+	
+	public void setBusinessHelper(BusinessHelper businessHelper) {
+		this.businessHelper = businessHelper;
+		
 	}
 	
-	public PersistenceManager getPm() {
-		return pm;
-	}
-
-	public void setPm(PersistenceManager pm) {
-		this.pm = pm;
-	}
 	
 }
