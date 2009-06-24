@@ -9,6 +9,7 @@ import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
 
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.PopupPanel;
 
 public class PopupManager {
 
@@ -76,7 +77,7 @@ public class PopupManager {
 
 	}
 
-	public void showSelectTemplateWindow(SendUpdateWidget widget, int left, int top) {
+	public PopupPanel showSelectTemplateWindow(SendUpdateWidget widget, int left, int top) {
 		SelectTemplateWindow wnd = new SelectTemplateWindow(personaController);
 		wnd.setSendTwitterUpdateWidget(widget);
 		wnd.init();
@@ -85,6 +86,7 @@ public class PopupManager {
 		wnd.setPopupPosition(wnd.getAbsoluteLeft(), top);
 		wnd.show();
 		wnd.loadTemplates();
+		return wnd;
 		
 		
 		

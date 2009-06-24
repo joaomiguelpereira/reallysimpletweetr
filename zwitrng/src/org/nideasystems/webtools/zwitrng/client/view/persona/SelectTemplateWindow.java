@@ -1,13 +1,14 @@
 package org.nideasystems.webtools.zwitrng.client.view.persona;
 
+import java.util.Date;
 import java.util.List;
 
-import org.datanucleus.ImplementationCreator;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 
@@ -16,11 +17,14 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -32,7 +36,7 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class SelectTemplateWindow extends PopupPanel implements TemplateList{
+public class SelectTemplateWindow extends PopupPanel implements TemplateList {
 
 	private Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	private PersonaController controller = null;
@@ -41,6 +45,10 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 	private SendUpdateWidget updateWidget;
 	private SelectableTemplate activeSelectableTemplateWidget;
 	private TemplateList templateList = null;
+	private Timer timer = null;
+	private TextBox searchValue = null;
+
+	long lastUpTime = 0;
 
 	public SelectableTemplate getActiveTemplate() {
 		return activeSelectableTemplateWidget;
@@ -58,6 +66,49 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 		return controller;
 	}
 
+	private void startTimer() {
+		if (timer == null) {
+			timer = new Timer() {
+
+				@Override
+				public void run() {
+					// Window.alert("ok");
+					filter();
+				}
+
+			};
+		}
+		timer.cancel();
+		timer.schedule(500);
+
+	}
+
+	private void filter() {
+		// Get all widgets
+		int widgetCount = contentPanel.getWidgetCount();
+		int[] visibleIndexes = new int[widgetCount];
+
+		for (int i = 0; i < widgetCount; i++) {
+			SelectableTemplate template = (SelectableTemplate) contentPanel
+					.getWidget(i);
+			String lookupValue = searchValue.getValue().toLowerCase();
+			String tagText = template.getTemplate().getTagsAsText().toLowerCase(); 
+			if (!template.getTemplate().getTemplateText().toLowerCase().contains(lookupValue)
+					&& !tagText.contains(lookupValue)) {
+				visibleIndexes[i] = 0; // dont show this
+			} else {
+				visibleIndexes[i] = 1;// show this
+			}
+		}
+
+		// remove them	
+		for (int i = 0; i < widgetCount; i++) {
+			SelectableTemplate template = (SelectableTemplate) contentPanel.getWidget(i);
+			template.setVisible(visibleIndexes[i]==1);
+		}
+
+	}
+
 	public void init() {
 		this.setAnimationEnabled(true);
 		this.setAutoHideEnabled(true);
@@ -66,28 +117,39 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 
 		HorizontalPanel searchPanel = new HorizontalPanel();
 		searchPanel.add(new InlineHTML("Search: "));
-		TextBox searchValue = new TextBox();
+		searchValue = new TextBox();
 		searchPanel.add(searchValue);
+
+		searchValue.addKeyUpHandler(new KeyUpHandler() {
+
+			@Override
+			public void onKeyUp(KeyUpEvent event) {
+				lastUpTime = new Date().getTime();
+				startTimer();
+
+			}
+
+		});
 
 		mainPanel.add(searchPanel);
 		mainPanel.add(new HTML("Select one template:"));
 
 		contentPanel = new VerticalPanel();
 		ScrollPanel scrollPannel = new ScrollPanel(contentPanel);
-		scrollPannel.setHeight("150px");
+		scrollPannel.setHeight("200px");
 		mainPanel.add(scrollPannel);
 
 		waitingImage.setVisible(false);
 		mainPanel.add(waitingImage);
 
-		mainPanel.setWidth("600px");
-		
+		mainPanel.setWidth("510px");
+
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		toolsPanel.setSpacing(5);
-		
+
 		HTML closeLink = new InlineHTML("Close");
 		closeLink.addStyleName("link");
-		
+
 		closeLink.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -103,18 +165,19 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 
 			@Override
 			public void onClick(ClickEvent event) {
-				MainController.getInstance().getPopupManager().showCreateTemplateWindow(controller, templateList,newLink.getAbsoluteLeft(),newLink.getAbsoluteTop()-200);
-				
+				MainController.getInstance().getPopupManager()
+						.showCreateTemplateWindow(controller, templateList,
+								newLink.getAbsoluteLeft(),
+								newLink.getAbsoluteTop() - 200);
+
 			}
-			
+
 		});
 		toolsPanel.add(closeLink);
 		toolsPanel.add(newLink);
-		
+
 		mainPanel.add(toolsPanel);
 
-		
-		
 		this.add(mainPanel);
 
 	}
@@ -129,7 +192,7 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 	}
 
 	public void onError(Throwable caught) {
-		Window.alert("Error");
+		Window.alert("Error " + caught.getMessage());
 
 	}
 
@@ -137,12 +200,13 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 		setProcessing(false);
 
 		this.templates = result.getTemplates();
-		
+
 		for (TemplateDTO template : this.templates) {
 			Panel templatePanel = new SelectableTemplate(template, this);
-			contentPanel.add(templatePanel);
+			contentPanel.insert(templatePanel, 0);
 
 		}
+		searchValue.setFocus(true);
 
 	}
 
@@ -157,6 +221,8 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 				SelectTemplateWindow aParentWnd) {
 			this.ensureDebugId("selectable_template_" + aTemplate.getId());
 			this.setWidth("550px");
+			this.setHeight("50px");
+			this.addStyleName("list_item");
 			parentWnd = aParentWnd;
 			instance = this;
 			this.setTemplate(aTemplate);
@@ -167,12 +233,15 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 
 			HorizontalPanel tags = new HorizontalPanel();
 			StringBuffer sb = new StringBuffer();
+			sb.append("Tags: ");
 			for (String tag : aTemplate.getTags()) {
 				sb.append(tag);
 				sb.append(" ");
 			}
+
 			tags.add(new HTML(sb.toString()));
 			tags.addStyleName("tags");
+
 			this.add(textPanel);
 			this.add(tags);
 			this.addMouseOverHandler(new MouseOverHandler() {
@@ -197,18 +266,34 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 
 				@Override
 				public void onClick(ClickEvent event) {
-					updateWidget.setTemplateText(template.getTemplateText());
 					
-					if ( parentWnd.getActiveTemplate()!= null && parentWnd.getActiveTemplate().getTemplate().getId() != template.getId() ) {
-						parentWnd.getActiveTemplate().removeStyleName("list_item_selected");
-						instance.addStyleName("list_item_selected");
-						parentWnd.setActiveSelectableTemplate(instance);
+					String[] userNames = StringUtils.getUserNames(updateWidget.getText());
+					String newTemplateText = template.getTemplateText();
+					
+					
+					if (userNames.length>0) {
+						for ( int i=0; i<userNames.length ;i++ ) {
+							newTemplateText = newTemplateText.replaceAll("\\Q{username_"+i+"}\\E", userNames[i]);
+						}
 						
-					} else if ( parentWnd.getActiveTemplate()== null){
-						instance.addStyleName("list_item_selected");
-						parentWnd.setActiveSelectableTemplate(instance);
 					}
 					
+					
+					updateWidget.setTemplateText(newTemplateText);
+					
+					if (parentWnd.getActiveTemplate() != null
+							&& parentWnd.getActiveTemplate().getTemplate()
+									.getId() != template.getId()) {
+						parentWnd.getActiveTemplate().removeStyleName(
+								"list_item_selected");
+						instance.addStyleName("list_item_selected");
+						parentWnd.setActiveSelectableTemplate(instance);
+
+					} else if (parentWnd.getActiveTemplate() == null) {
+						instance.addStyleName("list_item_selected");
+						parentWnd.setActiveSelectableTemplate(instance);
+						parentWnd.hide(true);
+					}
 
 				}
 
@@ -254,10 +339,17 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList{
 	public void onNewTemplate(TemplateDTO theTemplate) {
 		Panel templatePanel = new SelectableTemplate(theTemplate, this);
 		contentPanel.insert(templatePanel, 0);
-		//contentPanel.add();
-		
+		// contentPanel.add();
 
+	}
+
+	@Override
+	public void show() {
+		// TODO Auto-generated method stub
+		super.show();
 		
 	}
+	
+	
 
 }

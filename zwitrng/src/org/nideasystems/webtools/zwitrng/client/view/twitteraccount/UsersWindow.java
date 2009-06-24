@@ -3,8 +3,8 @@ package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
-import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.client.view.DialogBoxesConstants;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 

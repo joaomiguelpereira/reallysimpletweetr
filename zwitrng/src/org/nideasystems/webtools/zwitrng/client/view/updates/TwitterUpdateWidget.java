@@ -410,6 +410,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		// Parse the update text
 		HTMLHelper helper = HTMLHelper.get();
+		
 		String htmlText = helper.getParsedUpdateHtml(twitterUpdate.getText());
 
 		updateText.setHTML("<span class=\"text\">" + htmlText + "</span>");
