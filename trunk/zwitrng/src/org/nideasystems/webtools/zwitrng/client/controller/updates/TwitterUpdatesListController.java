@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.controller.configuration.ConfigurationController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesListView;
@@ -29,6 +31,9 @@ public class TwitterUpdatesListController extends
 	TwitterUpdatesController mentionsTwitterUpdatesController = null;
 	TwitterUpdatesController searchesTwitterUpdatesController = null;
 	TwitterUpdatesController dmTwitterUpdatesController = null;
+	
+	
+	
 
 	TwitterUpdatesController activeController = null;
 
@@ -116,10 +121,16 @@ public class TwitterUpdatesListController extends
 		this.dmTwitterUpdatesController.setCurrentFilter(dmFlter);
 
 		this.dmTwitterUpdatesController.init();
+		getView().add(this.dmTwitterUpdatesController.getView(),"Direct Messages");
 
-		getView().add(this.dmTwitterUpdatesController.getView(),
-				"Direct Messages");
-
+		
+		ConfigurationController confController = new ConfigurationController();
+		confController.setMainController(getMainController());
+		confController.setParentController(MainController.getInstance().getCurrentPersonaController());
+		confController.setServiceManager(getServiceManager());
+		confController.init();
+		
+		getView().add(confController.getView(),"Configs Con");		
 		// Add change tab handler
 		getView().addSelectionHandler(new SelectionHandler<Integer>() {
 
@@ -160,9 +171,16 @@ public class TwitterUpdatesListController extends
 						loadUpdateList(dmTwitterUpdatesController);
 					}
 					activeController = dmTwitterUpdatesController;
+				} else if (event.getSelectedItem() == 4 ) {
+					if (activeController != null) {
+						activeController.pause();
+					}
+					activeController = null;
 				}
-				activeController.resume();
-
+				if ( activeController != null ) {
+					activeController.resume();
+				}
+				
 			}
 
 		});
@@ -182,8 +200,7 @@ public class TwitterUpdatesListController extends
 
 		updatesController.startProcessing();
 		
-
-		try {
+				try {
 			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
 					updatesController.getCurrentFilter(),
 					new AsyncCallback<TwitterUpdateDTOList>() {

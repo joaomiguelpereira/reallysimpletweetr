@@ -55,6 +55,7 @@ public class TwitterUpdatesController extends
 
 	public void handleDataLoaded(TwitterUpdateDTOList twitterUpdates) {
 
+		setModel(twitterUpdates);
 		assert (twitterUpdates != null);
 		boolean addOnTop = false;
 		boolean updateNeeded = false;

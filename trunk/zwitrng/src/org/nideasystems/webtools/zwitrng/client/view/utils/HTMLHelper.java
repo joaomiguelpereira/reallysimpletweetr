@@ -56,31 +56,42 @@ public class HTMLHelper {
 	 * @return
 	 */
 	public String getParsedUpdateHtml(String text) {
-		parse(text);
+		//parse(text);
 
-		String newString = text;
-
-		for (String twitterScreenName : this.twitterUserNameArray) {
-			twitterScreenName = twitterScreenName.substring(1);
+		//get the names
+		String[] uNames = StringUtils.getUserNames(text);
+		
+		String newText = text;
+		//for (String twitterScreenName : this.twitterUserNameArray) {
+		for (String twitterScreenName : uNames ) {
+			//twitterScreenName = twitterScreenName.substring(1);
 			String twitterId = String.valueOf(++nextId) + twitterScreenName;
 
-			newString = newString.replaceAll(twitterScreenName, "<a id=\""
+			
+			newText = newText.replaceAll("\\Q"+twitterScreenName+"\\E", "<a id=\""
 					+ twitterId + "\" href=\"javascript:showUserPanel('"
 					+ twitterScreenName + "','" + twitterId + "')\">"
 					+ twitterScreenName + "</a>");
-
+			
+				}
+		String[] hashtags = StringUtils.getHashTags(text);
+		for ( String hashTag : hashtags) {
+			newText = newText.replaceAll("\\Q"+hashTag+"\\E", "<a href=\"javascript:processHashTag('" + hashTag + "')\">"
+							+ hashTag + "</a>");
 		}
-
-		for (String hashTag : this.hashTags) {
+		
+		/*for (String hashTag : this.hashTags) {
 			newString = newString.replaceAll(hashTag,
 					"<a href=\"javascript:processHashTag('" + hashTag + "')\">"
 							+ hashTag + "</a>");
-		}
-		for (String url : this.linksArray) {
-			newString = newString.replace((CharSequence) url, "<a href=\""
+		}*/
+		String[] links = StringUtils.getLinks(text);
+		
+		for (String url : links) {
+			newText = newText.replaceAll("\\Q"+url+"\\E", "<a href=\""
 					+ url + "\" target=\"_blank\">" + url + "</a>");
 		}
-		return newString;
+		return newText;
 	}
 
 	/**
@@ -117,7 +128,9 @@ public class HTMLHelper {
 		GWT.log("Testing text: " + text, null);
 		String[] list = StringUtils.splitText(text);
 		
+		
 		for (String word:list ) {
+			
 			if (word.contains("@") && processScreenName(word) != null
 					&& !twitterUserNameArray.contains(itHelper)) {
 				twitterUserNameArray.add(itHelper);
