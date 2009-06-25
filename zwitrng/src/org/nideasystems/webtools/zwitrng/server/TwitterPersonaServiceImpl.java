@@ -160,6 +160,15 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 
 	}
 
+	@Override
+	public TemplateDTO deleteTemplate(PersonaDTO model, TemplateDTO template)
+			throws Exception {
+		startTransaction(true);
+		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo().deleteTemplate(model.getName(), user.getEmail(),template);
+		endTransaction();
+		return outTemplate;
+	}
+
 	
 
 }

@@ -21,7 +21,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class CreateTemplateWindow extends DialogBox implements ShortLinksListenerCallBack, CreateTemplateCallBack {
+public class CreateTemplateWindow extends DialogBox implements ShortLinksListenerCallBack, TemplateOperationsCallBack {
 
 	private PersonaController controller;
 	private TextArea templateText = null;

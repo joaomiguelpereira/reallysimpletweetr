@@ -20,6 +20,8 @@ public interface TwitterPersonaServiceAsync {
 	void getTemplates(String name, AsyncCallback<TemplateDTOList> callback) throws Exception;
 	void createTemplate(PersonaDTO model, TemplateDTO template,
 			AsyncCallback<TemplateDTO> asyncCallback) throws Exception;
+	void deleteTemplate(PersonaDTO model, TemplateDTO template,
+			AsyncCallback<TemplateDTO> asyncCallback) throws Exception;
 	
 
 	

@@ -16,5 +16,8 @@ public class Constants {
 	public static final String CONFIGURATION_PANEL_WIDTH = "650px";
 	public static final String EDITABLE_TEMPLATE_WIDTH = "630px";
 	public static final String EDITABLE_TEMPLATE_MIN_HEIGHT = "60px";
-
+	public static final String MINI_TOOLBAR_ICON_WIDTH = "24px";
+	public static final String MINI_TOOLBAR_ICON_HEIGHT = "24px";
+	public static final String REMOVE_ICON = "/images/remove_icon.gif";;
+	public static final String EDIT_ICON = "/images/edit_icon.gif";;
 }

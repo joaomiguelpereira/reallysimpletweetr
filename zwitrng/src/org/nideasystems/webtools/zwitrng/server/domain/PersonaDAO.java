@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.jdo.PersistenceManager;
+
 import javax.jdo.Query;
 
-import org.nideasystems.webtools.zwitrng.server.PMF;
+
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -21,8 +21,7 @@ import twitter4j.User;
 public class PersonaDAO extends BaseDAO {
 
 	
-	private PersistenceManager pm;
-	
+
 	public PersonaDAO() {
 		
 	}
@@ -264,15 +263,7 @@ public class PersonaDAO extends BaseDAO {
 
 
 
-	public void setPm(PersistenceManager pm) {
-		this.pm = pm;
-	}
-
-
-
-	public PersistenceManager getPm() {
-		return pm;
-	}
+	
 
 	
 }

@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import javax.jdo.PersistenceManager;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDAO;
 
 public class BusinessHelper {
 
@@ -30,12 +31,23 @@ public class BusinessHelper {
 
 	};
 	
+	//Persona DAO
+	
 	private ThreadLocal<PersonaDAO> personaDao = new ThreadLocal<PersonaDAO>() {
 		@Override
 		protected PersonaDAO initialValue() {
 			return new PersonaDAO();
 		}
 	};
+	
+	//template DAO
+	private ThreadLocal<TemplateDAO> templateDao = new ThreadLocal<TemplateDAO>() {
+		@Override
+		protected TemplateDAO initialValue() {
+			return new TemplateDAO();
+		}
+	};
+
 
 	public void setPm(PersistenceManager pm) {
 		this.pm = pm;
@@ -69,8 +81,23 @@ public class BusinessHelper {
 	
 	
 	
-	protected PersonaDAO getPersonaDao() {
 
+	/**
+	 * Get the template DAO
+	 * @return
+	 */
+	protected TemplateDAO getTemplateDao() {
+		TemplateDAO dao = templateDao.get();
+		dao.setPm(pm);
+		log.fine("Returning DAO " + dao.hashCode());
+		return dao;
+	}
+	
+	/**
+	 * Get the Persona DAO
+	 * @return
+	 */
+	protected PersonaDAO getPersonaDao() {
 		PersonaDAO dao = personaDao.get();
 		dao.setPm(pm);
 		log.fine("Returning DAO " + dao.hashCode());
