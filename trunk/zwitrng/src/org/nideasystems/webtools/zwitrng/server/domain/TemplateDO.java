@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -28,6 +29,12 @@ public class TemplateDO {
 	
 	@Persistent
 	private List<String> tags;
+	
+	@Persistent
+	private Date created;
+	
+	@Persistent
+	private Date modified;
 	
 	
 	public void setKey(Key key) {
@@ -68,6 +75,22 @@ public class TemplateDO {
 			
 		}
 		tags.add(tag);
+	}
+
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+
+	public Date getCreated() {
+		return created;
+	}
+
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	public Date getModified() {
+		return modified;
 	}
 	
 	

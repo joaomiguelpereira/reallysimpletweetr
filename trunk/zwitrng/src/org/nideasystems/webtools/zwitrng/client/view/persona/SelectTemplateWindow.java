@@ -353,11 +353,23 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList {
 
 		for (TemplateDTO template : this.templates) {
 			Panel templatePanel = new SelectableTemplate(template, this);
-			contentPanel.insert(templatePanel, 0);
+			contentPanel.add(templatePanel);
 
 		}
 		searchValue.setFocus(true);
 
+		
+	}
+
+	@Override
+	public void onFailedDeleteTemplate(Throwable tr) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSuccessDeleteTemplates(TemplateDTO result) {
+		// TODO Auto-generated method stub
 		
 	}
 	

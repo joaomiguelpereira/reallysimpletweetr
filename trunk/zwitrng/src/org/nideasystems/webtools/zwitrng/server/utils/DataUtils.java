@@ -338,6 +338,9 @@ public class DataUtils {
 	public static TemplateDTO templateDtoFromDom(TemplateDO templateDom) {
 		TemplateDTO templateDto = new TemplateDTO();
 		templateDto.setTemplateText(templateDom.getText());
+		templateDto.setCreated(templateDom.getCreated());
+		templateDto.setModified(templateDom.getModified());
+		
 		if (templateDom.getTags() != null) {
 			
 			for (String tag : templateDom.getTags()) {

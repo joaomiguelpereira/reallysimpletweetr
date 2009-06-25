@@ -4,7 +4,9 @@ import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationView;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget.EditableTemplate;
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
 public class ConfigurationController extends AbstractController<IModel, ConfigurationView>{
 
@@ -26,7 +28,7 @@ public class ConfigurationController extends AbstractController<IModel, Configur
 
 	@Override
 	public void reload() {
-		// TODO Auto-generated method stub
+		
 		
 	}
 	
@@ -34,11 +36,16 @@ public class ConfigurationController extends AbstractController<IModel, Configur
 
 	public void getTemplates(
 			TemplatesConfigurationWidget templatesConfigurationWidget) {
-		
 			PersonaController controller = (PersonaController)getParentController();
 			controller.loadTemplates(templatesConfigurationWidget);
 		
 		
+	}
+
+
+	public void removeTemplate(TemplateDTO template,
+			TemplatesConfigurationWidget templatesConfigurationWidget) {
+		((PersonaController)getParentController()).removeTemplate(template,templatesConfigurationWidget);		
 	}
 
 }

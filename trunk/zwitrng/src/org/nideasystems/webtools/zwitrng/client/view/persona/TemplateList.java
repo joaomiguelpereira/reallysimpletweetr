@@ -7,5 +7,8 @@ public interface TemplateList {
 
 	public void onNewTemplate(TemplateDTO tmplate);
 	public void onFailedLoadTemplates(Throwable tr);
+	public void onFailedDeleteTemplate(Throwable tr);
+	public void onSuccessDeleteTemplates(TemplateDTO result);
 	public void onSuccessLoadTemplates(TemplateDTOList result);
+	
 }

@@ -7,8 +7,10 @@ import java.util.List;
 
 
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -42,6 +44,7 @@ public class PersonaDO {
 	
 	
 	@Persistent(mappedBy="persona",defaultFetchGroup="true")
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
 	private List<TemplateDO> templates;
 	
 	

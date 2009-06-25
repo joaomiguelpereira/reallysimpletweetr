@@ -24,5 +24,6 @@ public interface TwitterPersonaService extends RemoteService {
 	List<FilterCriteriaDTO> getPersonaFilters(String  personaKey)  throws Exception;
 	TemplateDTOList getTemplates(String name) throws Exception;
 	TemplateDTO createTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
+	TemplateDTO deleteTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
 	
 }
