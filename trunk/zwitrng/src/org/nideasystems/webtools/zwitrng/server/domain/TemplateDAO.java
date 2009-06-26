@@ -1,9 +1,10 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.util.Date;
 import java.util.logging.Logger;
 
-import javax.jdo.Query;
 
+import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
 import com.google.appengine.api.datastore.Key;
@@ -32,6 +33,38 @@ public class TemplateDAO extends BaseDAO {
 
 		//find the template
 		
+		
+	}
+
+	public TemplateDTO saveTemplate(PersonaDO persona, TemplateDTO template) throws Exception {
+		log.fine("Saving template: "+template.getTemplateText());
+		Key key = KeyFactory.createKey(persona.getKey(), TemplateDO.class.getSimpleName(), template.getId());
+		log.fine("Key constructed is: "+key.toString());
+		
+		TemplateDO templateDo = pm.getObjectById(TemplateDO.class, key);
+		TemplateDTO returnTemplateDto = null;
+		if ( templateDo == null ) {
+			log.severe("Error: The Template does not exists");
+		} else {
+			log.fine("Template found. Going to modify");
+			
+			//persona.getTemplates().remove(templateDo);
+			templateDo.setModified(new Date());
+			templateDo.setText(template.getTemplateText());
+			
+			//Tags
+			if ( templateDo.getTags() != null ) {
+				templateDo.getTags().clear();
+			}
+			
+			
+			for (String tag: template.getTags() ) {
+				templateDo.addTag(tag);
+			}
+					
+			returnTemplateDto = DataUtils.templateDtoFromDom(templateDo);
+		}
+		return returnTemplateDto;
 		
 	}
 	

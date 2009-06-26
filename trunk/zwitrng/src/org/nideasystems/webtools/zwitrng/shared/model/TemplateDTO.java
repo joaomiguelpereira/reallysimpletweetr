@@ -62,7 +62,8 @@ public class TemplateDTO implements IModel {
 		StringBuffer sb = new StringBuffer();
 		if ( tagsAsString == null && tags != null ) {
 			for (String tag: tags) {
-				sb.append("\nTag: "+tag);
+				sb.append(tag);
+				sb.append(" ");
 			}
 		}
 		tagsAsString = sb.toString();

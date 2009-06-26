@@ -16,6 +16,7 @@ public class TemplatePojo extends AbstractPojo {
 
 	/**
 	 * Create a new Template
+	 * 
 	 * @param name
 	 * @param email
 	 * @param template
@@ -50,7 +51,7 @@ public class TemplatePojo extends AbstractPojo {
 		}
 		templateDom.setCreated(new Date());
 		templateDom.setModified(new Date());
-		
+
 		// Save it
 		persona.addtemplate(templateDom);
 		// convert to DOM
@@ -61,10 +62,14 @@ public class TemplatePojo extends AbstractPojo {
 
 	/**
 	 * Get all templates
-	 * @param name Name of the person
-	 * @param email Email of the User
+	 * 
+	 * @param name
+	 *            Name of the person
+	 * @param email
+	 *            Email of the User
 	 * @return A list with all templates
-	 * @throws Exception If something do wrong
+	 * @throws Exception
+	 *             If something do wrong
 	 */
 	public TemplateDTOList getTemplates(String name, String email)
 			throws Exception {
@@ -79,10 +84,11 @@ public class TemplatePojo extends AbstractPojo {
 		TemplateDTOList list = new TemplateDTOList();
 		if (persona.getTemplates() != null) {
 			for (TemplateDO templateDom : persona.getTemplates()) {
-				TemplateDTO templateDto = DataUtils.templateDtoFromDom(templateDom);
-				log.fine("Adding Template DTO:"+templateDto);
-				log.fine("Adding Template KEy:"+templateDom.getKey());
-				
+				TemplateDTO templateDto = DataUtils
+						.templateDtoFromDom(templateDom);
+				log.fine("Adding Template DTO:" + templateDto);
+				log.fine("Adding Template KEy:" + templateDom.getKey());
+
 				list.addTemplate(templateDto);
 			}
 		}
@@ -101,26 +107,49 @@ public class TemplatePojo extends AbstractPojo {
 	 * @return the deleted template
 	 */
 	public TemplateDTO deleteTemplate(String name, String email,
-			TemplateDTO template) throws Exception{
+			TemplateDTO template) throws Exception {
 
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
-		
-		if (persona==null) {
+
+		if (persona == null) {
 			throw new Exception("Persona not found");
 		}
-		
+
 		try {
-			businessHelper.getTemplateDao().deleteTemplate(persona,template);
+			businessHelper.getTemplateDao().deleteTemplate(persona, template);
 		} catch (Exception e) {
 			log.severe("Error trying to delete the Template");
 			e.printStackTrace();
 			throw e;
-			
+
 		}
 
-		//Just return was was given
+		// Just return was was given
 		return template;
+	}
+
+	public TemplateDTO saveTemplate(String name, String email,
+			TemplateDTO template) throws Exception{
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
+
+		TemplateDTO retTemplate = null;
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
+
+		try {
+			retTemplate = businessHelper.getTemplateDao().saveTemplate(persona, template);
+		} catch (Exception e) {
+			log.severe("Error trying to saving the Template");
+			e.printStackTrace();
+			throw e;
+
+		}
+
+		// Just return was was given
+		return retTemplate;
 	}
 
 }
