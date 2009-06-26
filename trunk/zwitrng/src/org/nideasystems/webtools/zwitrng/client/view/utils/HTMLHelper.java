@@ -51,46 +51,46 @@ public class HTMLHelper {
 
 	/**
 	 * Get a parsed text
-	 * 
+	 * @deprecated user StringUtil.jsParse instead 
 	 * @param text
 	 * @return
 	 */
+	
 	public String getParsedUpdateHtml(String text) {
-		//parse(text);
+		// parse(text);
 
-		//get the names
-		String[] uNames = StringUtils.getUserNames(text);
-		
+		// get the names
+	
 		String newText = text;
-		//for (String twitterScreenName : this.twitterUserNameArray) {
-		for (String twitterScreenName : uNames ) {
-			//twitterScreenName = twitterScreenName.substring(1);
-			String twitterId = String.valueOf(++nextId) + twitterScreenName;
-
-			
-			newText = newText.replaceAll("\\Q"+twitterScreenName+"\\E", "<a id=\""
-					+ twitterId + "\" href=\"javascript:showUserPanel('"
-					+ twitterScreenName + "','" + twitterId + "')\">"
-					+ twitterScreenName + "</a>");
-			
-				}
-		String[] hashtags = StringUtils.getHashTags(text);
-		for ( String hashTag : hashtags) {
-			newText = newText.replaceAll("\\Q"+hashTag+"\\E", "<a href=\"javascript:processHashTag('" + hashTag + "')\">"
-							+ hashTag + "</a>");
-		}
-		
-		/*for (String hashTag : this.hashTags) {
-			newString = newString.replaceAll(hashTag,
-					"<a href=\"javascript:processHashTag('" + hashTag + "')\">"
-							+ hashTag + "</a>");
-		}*/
+		String[] uNames = StringUtils.getUserNames(text);		
 		String[] links = StringUtils.getLinks(text);
+		String[] hashtags = StringUtils.getHashTags(text);
 		
 		for (String url : links) {
-			newText = newText.replaceAll("\\Q"+url+"\\E", "<a href=\""
+			GWT.log("Replacing URL: "+url+" - Old Text: "+newText, null);
+			newText = newText.replaceAll("\\Q" + url + "\\E", "<a href=\""
 					+ url + "\" target=\"_blank\">" + url + "</a>");
+			GWT.log("Replaced: "+newText, null);
 		}
+		
+		for (String twitterScreenName : uNames) {
+			// twitterScreenName = twitterScreenName.substring(1);
+			String twitterId = String.valueOf(++nextId) + twitterScreenName;
+
+			newText = newText.replaceAll("\\Q" + twitterScreenName + "\\E",
+					"<a id=\"" + twitterId
+							+ "\" href=\"javascript:showUserPanel('"
+							+ twitterScreenName + "','" + twitterId + "')\">"
+							+ twitterScreenName + "</a>");
+
+		}
+		
+		for (String hashTag : hashtags) {
+			newText = newText.replaceAll("\\Q" + hashTag + "\\E",
+					"<a href=\"javascript:processHashTag('" + hashTag + "')\">"
+							+ hashTag + "</a>");
+		}
+
 		return newText;
 	}
 
@@ -127,10 +127,9 @@ public class HTMLHelper {
 
 		GWT.log("Testing text: " + text, null);
 		String[] list = StringUtils.splitText(text);
-		
-		
-		for (String word:list ) {
-			
+
+		for (String word : list) {
+
 			if (word.contains("@") && processScreenName(word) != null
 					&& !twitterUserNameArray.contains(itHelper)) {
 				twitterUserNameArray.add(itHelper);
@@ -142,40 +141,30 @@ public class HTMLHelper {
 			if (word.contains("#")) {
 				processHashTag(word);
 			}
-	
+
 		}
-/*		
-		int position = 0;
-
-		
-		String tmpString = text.trim();
-		boolean process = true;
-		String word = null;
-		do {
-
-			if (tmpString.contains(" ")) {
-				word = tmpString.substring(0, tmpString.indexOf(" "));
-				position += word.length() + 1;
-				tmpString = text.substring(position).trim();
-			} else {
-				word = tmpString;
-				word = word.trim();
-				process = false;
-			}
-
-			if (word.contains("@") && processScreenName(word) != null
-					&& !twitterUserNameArray.contains(itHelper)) {
-				twitterUserNameArray.add(itHelper);
-			}
-
-			if (word.startsWith("http://") && !linksArray.contains(word)) {
-				linksArray.add(word);
-			}
-			if (word.contains("#")) {
-				processHashTag(word);
-			}
-
-		} while (process);*/
+		/*
+		 * int position = 0;
+		 * 
+		 * 
+		 * String tmpString = text.trim(); boolean process = true; String word =
+		 * null; do {
+		 * 
+		 * if (tmpString.contains(" ")) { word = tmpString.substring(0,
+		 * tmpString.indexOf(" ")); position += word.length() + 1; tmpString =
+		 * text.substring(position).trim(); } else { word = tmpString; word =
+		 * word.trim(); process = false; }
+		 * 
+		 * if (word.contains("@") && processScreenName(word) != null &&
+		 * !twitterUserNameArray.contains(itHelper)) {
+		 * twitterUserNameArray.add(itHelper); }
+		 * 
+		 * if (word.startsWith("http://") && !linksArray.contains(word)) {
+		 * linksArray.add(word); } if (word.contains("#")) {
+		 * processHashTag(word); }
+		 * 
+		 * } while (process);
+		 */
 	}
 
 	/**
@@ -236,7 +225,8 @@ public class HTMLHelper {
 		return itHelper;
 	}
 
-	public String getParsedMetaDataHtml(TwitterUpdateDTO twitterUpdate, boolean showConversationOptions) {
+	public String getParsedMetaDataHtml(TwitterUpdateDTO twitterUpdate,
+			boolean showConversationOptions) {
 		GWT.log("Parsing date:" + twitterUpdate.getCreatedAt(), null);
 		GWT.log("Parsing Source:" + twitterUpdate.getSource(), null);
 		GWT.log("Parsing date:" + twitterUpdate.getCreatedAt(), null);
@@ -248,15 +238,15 @@ public class HTMLHelper {
 
 		String inReplyTo = "";
 
-		if (twitterUpdate.getInReplyToStatusId() > 0 && showConversationOptions ) {
+		if (twitterUpdate.getInReplyToStatusId() > 0 && showConversationOptions) {
 			String elId = "update_" + twitterUpdate.getId();
-			
+
 			inReplyTo = "<a id=\"" + elId + "\" href=\"javascript:showStatus('"
 					+ twitterUpdate.getInReplyToStatusId() + "','" + elId
 					+ "')\">in reply to "
 					+ twitterUpdate.getInReplyToScreenName() + "</a>";
-			
-			//Window.alert(inReplyTo);
+
+			// Window.alert(inReplyTo);
 		}
 
 		String returnString = "<span class=\"createdAt\">"
@@ -325,9 +315,9 @@ public class HTMLHelper {
 	}
 
 	public String replaceText(String currentStr, Map<String, String> result) {
-		//String currentStr = update.getValue();
+		// String currentStr = update.getValue();
 		String newStr = currentStr;
-		
+
 		for (String longLink : result.keySet()) {
 			// Strinr decoded =
 
@@ -342,8 +332,6 @@ public class HTMLHelper {
 
 		}
 		return newStr;
-		
-		
 
 	}
 

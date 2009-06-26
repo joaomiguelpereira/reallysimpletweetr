@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
@@ -68,7 +69,9 @@ public class TwitterAccountInfoWidget extends VerticalPanel {
 			});
 
 			if (twitterAccount.getTwitterUpdateDto().getText() != null ) {
-				this.lastStatus = new InlineHTML(HTMLHelper.get().getParsedUpdateHtml(twitterAccount.getTwitterUpdateDto().getText()));
+				
+				this.lastStatus = new InlineHTML(StringUtils.jsParseText(twitterAccount.getTwitterUpdateDto().getText()));
+				//this.lastStatus = new InlineHTML(HTMLHelper.get().getParsedUpdateHtml(twitterAccount.getTwitterUpdateDto().getText()));
 				tweetMetadata  = new HTML(HTMLHelper.get().getParsedMetaDataHtml(twitterAccount.getTwitterUpdateDto(),true));
 			} else {
 				this.lastStatus = new InlineHTML("huum, it seems you have no activity on twitter yet :)");

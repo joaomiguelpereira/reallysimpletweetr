@@ -6,6 +6,7 @@ import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateMessageWindow;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -411,8 +412,10 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		// Parse the update text
 		HTMLHelper helper = HTMLHelper.get();
 		
-		String htmlText = helper.getParsedUpdateHtml(twitterUpdate.getText());
+		
+		/*String htmlText = helper.getParsedUpdateHtml(twitterUpdate.getText());*/
 
+		String htmlText = StringUtils.jsParseText(twitterUpdate.getText());
 		updateText.setHTML("<span class=\"text\">" + htmlText + "</span>");
 
 		// updateText.addStyleName("html-noBlock");
