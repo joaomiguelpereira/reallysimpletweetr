@@ -56,7 +56,7 @@ public class HTMLHelper {
 	 * @return
 	 */
 	
-	public String getParsedUpdateHtml(String text) {
+	/*public String getParsedUpdateHtml(String text) {
 		// parse(text);
 
 		// get the names
@@ -93,7 +93,7 @@ public class HTMLHelper {
 
 		return newText;
 	}
-
+*/
 	/**
 	 * Helper method to remove any trailing trash from the screenname.
 	 * 

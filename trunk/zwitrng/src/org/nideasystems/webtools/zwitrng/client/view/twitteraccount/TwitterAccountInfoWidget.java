@@ -97,7 +97,7 @@ public class TwitterAccountInfoWidget extends VerticalPanel {
 	public void updateLastStatus(TwitterUpdateDTO update) {
 		if (update != null ) {
 			
-			this.lastStatus.setHTML(HTMLHelper.get().getParsedUpdateHtml(update.getText()));
+			this.lastStatus.setHTML(StringUtils.jsParseText(update.getText()));
 			assert(this.tweetMetadata!=null);
 			assert(update.getCreatedAt()!=null);
 			assert(this.tweetMetadata!=null);

@@ -503,7 +503,7 @@ public class TemplatesConfigurationWidget extends ConfigurationWidget implements
 
 		private void refresh() {
 
-			textHtml.setHTML(HTMLHelper.get().getParsedUpdateHtml(
+			textHtml.setHTML(StringUtils.jsParseText(
 					template.getTemplateText()));
 
 			StringBuffer sb = new StringBuffer();

@@ -216,7 +216,7 @@ public class SelectTemplateWindow extends PopupPanel implements TemplateList {
 			this.setTemplate(aTemplate);
 			HorizontalPanel textPanel = new HorizontalPanel();
 
-			textPanel.add(new HTML(HTMLHelper.get().getParsedUpdateHtml(
+			textPanel.add(new HTML(StringUtils.jsParseText(
 					aTemplate.getTemplateText())));
 
 			HorizontalPanel tags = new HorizontalPanel();

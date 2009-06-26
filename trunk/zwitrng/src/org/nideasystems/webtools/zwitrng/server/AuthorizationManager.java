@@ -19,7 +19,7 @@ public class AuthorizationManager {
 		whiteListEmails.add("joao");
 		whiteListEmails.add("joaomiguel.pereira@gmail.com");
 		whiteListEmails.add("marco.pais@gmail.com");
-		whiteListEmails.add("vitoratavares@googlemail.com");
+		whiteListEmails.add("vitoratavares@gmail.com");
 		whiteListEmails.add("amalheiro@gmail.com");
 		whiteListEmails.add("cmsrodrigues@gmail.com");
 		whiteListEmails.add("jpearson.us@googlemail.com");
@@ -36,7 +36,7 @@ public class AuthorizationManager {
 		log.info("Checking authentication for user: "+currentUser);
 		// do some validations...
 		if (currentUser == null
-				|| !whiteListEmails.contains(currentUser.getEmail())) {
+				|| !whiteListEmails.contains(currentUser.getEmail().toLowerCase())) {
 			throw new Exception("You must be logged in. "+currentUser.getEmail());
 
 		}
