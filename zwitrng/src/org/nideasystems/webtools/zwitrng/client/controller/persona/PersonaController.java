@@ -224,4 +224,10 @@ public class PersonaController extends
 
 	}
 
+	public void saveTemplate(TemplateDTO template,
+			AsyncCallback<TemplateDTO> asyncCallback) throws Exception {
+		getServiceManager().getRPCService().saveTemplate(getModel(),template, asyncCallback);
+		
+	}
+
 }

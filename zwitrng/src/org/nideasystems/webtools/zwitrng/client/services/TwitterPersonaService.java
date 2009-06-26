@@ -26,4 +26,6 @@ public interface TwitterPersonaService extends RemoteService {
 	TemplateDTO createTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
 	TemplateDTO deleteTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
 	
+	TemplateDTO saveTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
+	
 }

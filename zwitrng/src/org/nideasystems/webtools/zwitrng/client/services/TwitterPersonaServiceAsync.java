@@ -22,6 +22,8 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<TemplateDTO> asyncCallback) throws Exception;
 	void deleteTemplate(PersonaDTO model, TemplateDTO template,
 			AsyncCallback<TemplateDTO> asyncCallback) throws Exception;
+	void saveTemplate(PersonaDTO model, TemplateDTO template,
+			AsyncCallback<TemplateDTO> asyncCallback);
 	
 
 	
