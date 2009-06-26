@@ -18,6 +18,12 @@ public class AuthorizationManager {
 	static {
 		whiteListEmails.add("joao");
 		whiteListEmails.add("joaomiguel.pereira@gmail.com");
+		whiteListEmails.add("marco.pais@gmail.com");
+		whiteListEmails.add("vitoratavares@googlemail.com");
+		whiteListEmails.add("amalheiro@gmail.com");
+		whiteListEmails.add("cmsrodrigues@gmail.com");
+		whiteListEmails.add("jpearson.us@googlemail.com");
+		
 		//whiteListEmails.add("marco.pais@gmail.com");
 
 	}
@@ -27,10 +33,11 @@ public class AuthorizationManager {
 		// Check if the user is logged in with a
 		User currentUser = userService.getCurrentUser();
 		log.fine("checkAuthentication...");
+		log.info("Checking authentication for user: "+currentUser);
 		// do some validations...
 		if (currentUser == null
 				|| !whiteListEmails.contains(currentUser.getEmail())) {
-			throw new Exception("You must be logged in");
+			throw new Exception("You must be logged in. "+currentUser.getEmail());
 
 		}
 		return currentUser;
