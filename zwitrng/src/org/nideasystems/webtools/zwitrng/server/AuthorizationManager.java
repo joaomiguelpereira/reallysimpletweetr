@@ -10,9 +10,8 @@ import com.google.appengine.api.users.UserServiceFactory;
 
 public class AuthorizationManager {
 
-	
 	private static final Logger log = Logger
-	.getLogger(AuthorizationManager.class.getName());
+			.getLogger(AuthorizationManager.class.getName());
 
 	private static final List<String> whiteListEmails = new ArrayList<String>();
 	static {
@@ -23,21 +22,24 @@ public class AuthorizationManager {
 		whiteListEmails.add("amalheiro@gmail.com");
 		whiteListEmails.add("cmsrodrigues@gmail.com");
 		whiteListEmails.add("jpearson.us@googlemail.com");
-		
-		//whiteListEmails.add("marco.pais@gmail.com");
+
+		// whiteListEmails.add("marco.pais@gmail.com");
 
 	}
-	
+
 	public static User checkAuthentication() throws Exception {
 		UserService userService = UserServiceFactory.getUserService();
 		// Check if the user is logged in with a
 		User currentUser = userService.getCurrentUser();
 		log.fine("checkAuthentication...");
-		log.info("Checking authentication for user: "+currentUser);
+		log.info("Checking authentication for user: " + currentUser);
+		if (currentUser == null) {
+			throw new Exception("Please Log in");
+		}
 		// do some validations...
-		if (currentUser == null
-				|| !whiteListEmails.contains(currentUser.getEmail().toLowerCase())) {
-			throw new Exception("You must be logged in. "+currentUser.getEmail());
+		if (!whiteListEmails.contains(currentUser.getEmail().toLowerCase())) {
+			throw new Exception(
+					"You are not allowed to play with this app. Send a email to info@nideasystems.com if you want to try this app.");
 
 		}
 		return currentUser;

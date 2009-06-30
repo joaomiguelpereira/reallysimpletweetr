@@ -4,15 +4,19 @@ import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.TemplateOperationsCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.SelectTemplateWindow;
-import org.nideasystems.webtools.zwitrng.client.view.persona.TemplateList;
+import org.nideasystems.webtools.zwitrng.client.view.persona.ObjectList;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -128,7 +132,7 @@ public class PersonaController extends
 
 	}
 
-	public void loadTemplates(final TemplateList templateListWindow) {
+	public void loadTemplates(final AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> templatesConfigurationWidget) {
 
 		try {
 			getServiceManager().getRPCService().getTemplatesList(
@@ -138,13 +142,13 @@ public class PersonaController extends
 						@Override
 						public void onFailure(Throwable caught) {
 							getMainController().addException(caught);
-							templateListWindow.onFailedLoadTemplates(caught);
+							templatesConfigurationWidget.onFailedLoadObjects(caught);
 
 						}
 
 						@Override
 						public void onSuccess(TemplateDTOList result) {
-							templateListWindow.onSuccessLoadTemplates(result);
+							templatesConfigurationWidget.onSuccessLoadObjects(result);
 
 						}
 
@@ -153,7 +157,7 @@ public class PersonaController extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			getMainController().addException(e);
-			templateListWindow.onFailedLoadTemplates(e);
+			templatesConfigurationWidget.onFailedLoadObjects(e);
 		}
 
 		// TemplateDTOList list = null;
@@ -161,7 +165,7 @@ public class PersonaController extends
 	}
 
 	public void createTemplate(String templateText, String tags,
-			final TemplateOperationsCallBack callback) {
+			final ConfigurationEditListener<TemplateDTO> callback) {
 
 		TemplateDTO template = new TemplateDTO();
 		template.setTemplateText(templateText);
@@ -179,25 +183,25 @@ public class PersonaController extends
 
 						@Override
 						public void onFailure(Throwable caught) {
-							callback.onFailCreateTemplate(caught);
+							callback.onError(caught);
 
 						}
 
 						@Override
 						public void onSuccess(TemplateDTO result) {
-							callback.onSuccessCreateTemplate(result);
+							callback.onObjectCreated(result);
 
 						}
 
 					});
 		} catch (Exception e) {
-			callback.onFailCreateTemplate(e);
+			callback.onError(e);
 			e.printStackTrace();
 		}
 
 	}
 
-	public void removeTemplate(TemplateDTO template, final TemplateList callback) {
+	public void removeTemplate(TemplateDTO template, final ConfigurationEditListener<TemplateDTO> callBack) {
 		// callback.onSuccessDeleteTemplates(template);
 
 		try {
@@ -206,27 +210,79 @@ public class PersonaController extends
 
 						@Override
 						public void onFailure(Throwable caught) {
-							callback.onFailedDeleteTemplate(caught);
+							callBack.onError(caught);
 
 						}
 
 						@Override
 						public void onSuccess(TemplateDTO result) {
-							callback.onSuccessDeleteTemplates(result);
+							//callback.onSuccessDeleteObject(result);
+							callBack.onObjectRemoved(result);
 
 						}
 
 					});
 		} catch (Exception e) {
-			callback.onFailedDeleteTemplate(e);
+			callBack.onError(e);
 			e.printStackTrace();
 		}
 
 	}
 
 	public void saveTemplate(TemplateDTO template,
-			AsyncCallback<TemplateDTO> asyncCallback) throws Exception {
-		getServiceManager().getRPCService().saveTemplate(getModel(),template, asyncCallback);
+			final ConfigurationEditListener<TemplateDTO> callBack) {
+		
+		//ConfigurationEditListener
+		
+		try {
+			getServiceManager().getRPCService().saveTemplate(getModel(),template, new AsyncCallback<TemplateDTO>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callBack.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(TemplateDTO result) {
+					callBack.onObjectSaved(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			callBack.onError(e);		}
+		
+	}
+
+	public void getTemplateFragments(
+			final TemplateFragmentsConfigurationWidget templateFragmentsConfigurationWidget) {
+		try {
+			getServiceManager().getRPCService().getTemplateFragmentList(
+					this.getModel(),
+					new AsyncCallback<TemplateFragmentDTOList>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							getMainController().addException(caught);
+							templateFragmentsConfigurationWidget.onFailedLoadTemplateFragments(caught);
+
+						}
+
+						@Override
+						public void onSuccess(TemplateFragmentDTOList result) {
+							templateFragmentsConfigurationWidget.onSuccessLoadTemplateFragments(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			getMainController().addException(e);
+			templateFragmentsConfigurationWidget.onFailedLoadTemplateFragments(e);
+		}
+
 		
 	}
 

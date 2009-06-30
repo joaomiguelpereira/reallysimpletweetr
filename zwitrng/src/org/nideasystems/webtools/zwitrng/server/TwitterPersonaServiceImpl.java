@@ -12,6 +12,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 
@@ -172,9 +173,21 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	@Override
 	public TemplateDTO saveTemplate(PersonaDTO model, TemplateDTO template) throws Exception {
 		startTransaction(true);
-		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo().saveTemplate(model.getName(), user.getEmail(),template);
+		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo()
+				.saveTemplate(model.getName(), user.getEmail(), template);
 		endTransaction();
-		return outTemplate;	}
+		return outTemplate;
+	}
+
+	@Override
+	public TemplateFragmentDTOList getTemplateFragments(PersonaDTO personaDto)
+			throws Exception {
+		startTransaction(true);
+		TemplateFragmentDTOList outTemplateFragList = getBusinessHelper().getTemplatePojo()
+				.getTemplateFragments(personaDto.getName(), user.getEmail());
+		endTransaction();
+		return outTemplateFragList;
+	}
 
 	
 

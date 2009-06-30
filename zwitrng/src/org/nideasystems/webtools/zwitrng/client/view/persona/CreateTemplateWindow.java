@@ -27,9 +27,9 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 	private TextArea templateText = null;
 	private InlineHTML remainingChars = null;
 	private CreateTemplateWindow instance = null;
-	private TemplateList templateList = null;
+	private ObjectList templateList = null;
 
-	public CreateTemplateWindow(PersonaController theController, TemplateList theTemplateList ) {
+	public CreateTemplateWindow(PersonaController theController, ObjectList theTemplateList ) {
 		this.setController(theController);
 		this.templateList  = theTemplateList;
 	}
@@ -111,7 +111,7 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 			@Override
 			public void onClick(ClickEvent event) {
 				if ( templateText.getValue().trim().length()>0 ) {
-					controller.createTemplate(templateText.getValue(), templateTags.getValue(), instance);
+					//controller.createTemplate(templateText.getValue(), templateTags.getValue(), instance);
 				}
 			}
 			
@@ -152,7 +152,7 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 		getController().getMainController().addInfoMessage("Template created with sucess");
 		this.hide(true);
 		if (templateList!=null) {
-			templateList.onNewTemplate(template);
+			//templateList.onNewObject(template);
 		}
 		
 	}

@@ -9,6 +9,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -120,6 +121,13 @@ public class RPCService implements IService {
 	public void saveTemplate(PersonaDTO model, TemplateDTO template,
 			AsyncCallback<TemplateDTO> asyncCallback) throws Exception {
 		this.personaService.saveTemplate(model, template, asyncCallback);
+		
+	}
+
+
+	public void getTemplateFragmentList(PersonaDTO model,
+			AsyncCallback<TemplateFragmentDTOList> asyncCallback) throws Exception {
+		this.personaService.getTemplateFragments(model,asyncCallback);
 		
 	}
 

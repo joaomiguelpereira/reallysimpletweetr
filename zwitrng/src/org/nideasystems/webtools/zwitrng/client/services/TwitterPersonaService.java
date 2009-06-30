@@ -10,6 +10,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
@@ -27,5 +28,8 @@ public interface TwitterPersonaService extends RemoteService {
 	TemplateDTO deleteTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
 	
 	TemplateDTO saveTemplate(PersonaDTO model, TemplateDTO template) throws Exception;
+	
+	TemplateFragmentDTOList getTemplateFragments(PersonaDTO personaDto) throws Exception;
+
 	
 }
