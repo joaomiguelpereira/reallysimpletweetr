@@ -297,7 +297,7 @@ public class TemplatesConfigurationWidget extends
 			tags = new HorizontalPanel();
 			tagsHtml = new HTML();
 			tags.add(tagsHtml);
-			tags.addStyleName("tags");
+			tagsHtml.addStyleName("tags");
 
 			content.add(textPanel);
 			content.add(tags);

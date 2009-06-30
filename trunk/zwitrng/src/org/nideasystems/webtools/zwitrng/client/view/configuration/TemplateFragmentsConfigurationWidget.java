@@ -76,7 +76,7 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 	@Override
 	protected void removeItem(
 			SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> item) {
-		// TODO Auto-generated method stub
+		MainController.getInstance().getCurrentPersonaController().removeTemplateFragment(item.dataObject, item);
 		
 	}
 
@@ -99,7 +99,6 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 	}
 
 	private void saveNewTemplateFragment(TemplateFragmentDTO object) {
-		isProcessing(true);
 		MainController.getInstance().getCurrentPersonaController().createTemplateFragment(object, this);
 		
 	}

@@ -146,6 +146,13 @@ public class RPCService implements IService {
 		
 	}
 
+	public void deleteTemplateFragment(PersonaDTO model,
+			TemplateFragmentDTO dataObject,
+			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception{
+		this.personaService.deleteTemplateFragment(model, dataObject, asyncCallback);
+		
+	}
+
 	
 
 }

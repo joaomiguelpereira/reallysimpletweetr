@@ -219,4 +219,14 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		return returnFrag;
 	}
 
+	@Override
+	public TemplateFragmentDTO deleteTemplateFragment(PersonaDTO model,
+			TemplateFragmentDTO dataObject) throws Exception {
+		startTransaction(true);
+		TemplateFragmentDTO outTemplateFrag = getBusinessHelper().getTemplatePojo()
+				.deleteTemplateFragment(model.getName(), user.getEmail(), dataObject);
+		endTransaction();
+		return outTemplateFrag;
+	}
+
 }
