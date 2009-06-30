@@ -135,6 +135,7 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 			public void onClick(ClickEvent event) {
 				if (Window
 						.confirm("Are you sure you want to delete this item?")) {
+					parent.isProcessing(true);
 					parent.removeItem(instance);
 				}
 
@@ -274,7 +275,9 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 	@Override
 	public void onObjectRemoved(T object) {
 		parent.contentPanel.remove(this);
+		parent.isProcessing(false);
 		parent.onSelect(null);
+		
 		// this.removeFromParent();
 
 	}

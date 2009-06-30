@@ -210,9 +210,31 @@ public class TemplatePojo extends AbstractPojo {
 		if (persona == null) {
 			throw new Exception("Persona not found");
 		}
-		
-		
-		return businessHelper.getTemplateDao().saveTemplateFragment(persona, object);
+
+		return businessHelper.getTemplateDao().saveTemplateFragment(persona,
+				object);
+	}
+
+	public TemplateFragmentDTO deleteTemplateFragment(String name,
+			String email, TemplateFragmentDTO dataObject) throws Exception{
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
+
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
+
+		try {
+			businessHelper.getTemplateDao().deleteTemplateFragment(persona, dataObject);
+		} catch (Exception e) {
+			log.severe("Error trying to delete the Template");
+			e.printStackTrace();
+			throw e;
+
+		}
+
+		// Just return was was given
+		return dataObject;
 	}
 
 }

@@ -6,6 +6,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.Twitte
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.SelectableItem;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
@@ -336,6 +337,35 @@ public class PersonaController extends
 			callback.onError(e);
 			e.printStackTrace();
 		}
+		
+	}
+
+	public void removeTemplateFragment(TemplateFragmentDTO dataObject,
+			final SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> callbak) {
+		try {
+			getServiceManager().getRPCService().deleteTemplateFragment(this.getModel(),
+					dataObject, new AsyncCallback<TemplateFragmentDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callbak.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(TemplateFragmentDTO result) {
+							//callback.onSuccessDeleteObject(result);
+							callbak.onObjectRemoved(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callbak.onError(e);
+			e.printStackTrace();
+		}
+
+		
 		
 	}
 

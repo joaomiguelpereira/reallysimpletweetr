@@ -138,4 +138,26 @@ public class TemplateDAO extends BaseDAO {
 		return DataUtils.templateFragmentDtoFromDom(domFrag);
 	}
 
+	public void deleteTemplateFragment(PersonaDO persona,
+			TemplateFragmentDTO dataObject) {
+		log.fine("Deleting template: " + dataObject.getList());
+		
+		Key key = KeyFactory.createKey(persona.getKey(), TemplateFragmentDO.class
+				.getSimpleName(), dataObject.getId());
+		
+		log.fine("Key constructed is: " + key.toString());
+
+		TemplateFragmentDO templateDo = pm.getObjectById(TemplateFragmentDO.class, key);
+
+		if (templateDo == null) {
+			log.severe("Error: The Template does not exists");
+		} else {
+			log.fine("Template found");
+			// deleting
+			persona.getTemplateFragments().remove(templateDo);
+		}
+
+		
+	}
+
 }

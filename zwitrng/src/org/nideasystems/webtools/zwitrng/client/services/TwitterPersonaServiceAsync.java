@@ -32,6 +32,9 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception;
 	void saveTemplateFragment(PersonaDTO model, TemplateFragmentDTO object,
 			AsyncCallback<TemplateFragmentDTO> asyncCallback);
+	void deleteTemplateFragment(PersonaDTO model,
+			TemplateFragmentDTO dataObject,
+			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception;
 	
 
 	
