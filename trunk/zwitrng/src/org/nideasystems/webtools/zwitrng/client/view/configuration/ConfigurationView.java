@@ -25,16 +25,16 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		templates.setTitleText("Configure Templates");
 		
 		TemplatesConfigurationWidget templatesConfWidget = new TemplatesConfigurationWidget();
-		templatesConfWidget.setController(getController());
+		//templatesConfWidget.setController(getController());
 		templates.setConfigWidget(templatesConfWidget);
 		this.add(templates);
 		
 		
 		ExpandablePanel recommendations = new ExpandablePanel();
-		recommendations.setTitleText("Recommended users");
-		RecomendationsConfigurationWidget recomendationsConfigWidget = new RecomendationsConfigurationWidget();
-		recomendationsConfigWidget.setController(getController());
-		recommendations.setConfigWidget(recomendationsConfigWidget);
+		recommendations.setTitleText("Configure template fragments");
+		TemplateFragmentsConfigurationWidget templatesFragmentsConfigWidget = new TemplateFragmentsConfigurationWidget();
+		//templatesFragmentsConfigWidget.setController(getController());
+		recommendations.setConfigWidget(templatesFragmentsConfigWidget);
 		this.add(recommendations);
 		
 		
@@ -47,7 +47,7 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 	}
 	
 	private class ExpandablePanel extends VerticalPanel  {
-		ConfigurationWidget configWidget = null;
+		AbstractListConfigurationWidget configWidget = null;
 		HorizontalPanel header = null;
 		String headerText = "";
 		InlineHTML headerTextHtml = null;
@@ -98,15 +98,13 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		}
 		
 		public void setConfigWidget(
-				ConfigurationWidget configurationWidget) {
+				AbstractListConfigurationWidget configurationWidget) {
 			this.configWidget = configurationWidget;
 			
 		}
 
 		private void selectPanel() {
-			if (selectedPanel!= null && selectedPanel!=this) {
-				selectedPanel.selectPanel();
-			}
+			
 			if ( !isInitialized) {
 				init();
 			}
@@ -117,7 +115,7 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 				addStyleName("expandable_panel");
 				header.addStyleName("expandable_panel_header_selected");
 				selectedPanel = this;
-				configWidget.onSelect();
+				configWidget.loadData();
 				
 			} else {
 				removeStyleName("expandable_panel");

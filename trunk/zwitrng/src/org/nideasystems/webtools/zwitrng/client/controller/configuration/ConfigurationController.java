@@ -2,11 +2,15 @@ package org.nideasystems.webtools.zwitrng.client.controller.configuration;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationView;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget.SelectableTemplate;
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 
 public class ConfigurationController extends AbstractController<IModel, ConfigurationView>{
 
@@ -33,19 +37,27 @@ public class ConfigurationController extends AbstractController<IModel, Configur
 	}
 	
 
-
+/*
 	public void getTemplates(
-			TemplatesConfigurationWidget templatesConfigurationWidget) {
+			AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> templatesConfigurationWidget) {
 			PersonaController controller = (PersonaController)getParentController();
 			controller.loadTemplates(templatesConfigurationWidget);
 		
 		
 	}
-
+*/
 
 	public void removeTemplate(TemplateDTO template,
-			TemplatesConfigurationWidget templatesConfigurationWidget) {
-		((PersonaController)getParentController()).removeTemplate(template,templatesConfigurationWidget);		
+			ConfigurationEditListener<TemplateDTO> callBack) {
+		
+		((PersonaController)getParentController()).removeTemplate(template,callBack);		
+	}
+
+	public void getTemplateFragments(
+			TemplateFragmentsConfigurationWidget templateFragmentsConfigurationWidget) {
+		
+		((PersonaController)getParentController()).getTemplateFragments(templateFragmentsConfigurationWidget);		
+		
 	}
 
 }

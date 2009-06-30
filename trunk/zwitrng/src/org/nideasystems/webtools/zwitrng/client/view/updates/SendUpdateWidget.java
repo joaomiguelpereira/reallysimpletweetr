@@ -333,6 +333,8 @@ public class SendUpdateWidget extends
 				controller.getMainController().addException(e);
 			}
 
+		} else {
+			callback.onLinksShortened(null);
 		}
 
 	}

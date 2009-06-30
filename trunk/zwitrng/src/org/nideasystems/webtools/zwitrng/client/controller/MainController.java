@@ -35,6 +35,11 @@ public class MainController implements IMainController {
 
 	}
 
+	static {
+		publishJsMethods();
+	}
+	
+
 	public static MainController getInstance() {
 		if (instance == null) {
 			instance = new MainController();
@@ -141,6 +146,44 @@ public class MainController implements IMainController {
 		 */
 
 	}
+	public native static void publishJsMethods() /*-{
+	var nextTweetId = 0;
+	String.prototype.parseURL = function() {
+		
+		return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&\?\/.=]+/g, function(url) {
+			newText = "<a href=\""+ url + "\" target=\"_blank\">" + url + "</a>";
+			return newText;
+			
+		});
+	};
+
+	String.prototype.parseUsername = function() {
+		return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {
+			var username = u.replace("@","")
+			
+			tweetId = "tweet_id_"+(++nextTweetId);
+			
+			newtext = "<a id=\"" + tweetId
+						+ "\" href=\"javascript:showUserPanel('"
+						+ username + "','" + tweetId + "')\">@"
+						+ username + "</a>";
+			
+			return newtext;
+		});
+	};
+
+	String.prototype.parseHashtag = function() {
+		return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {
+			var tag = t.replace("#","");
+			newText = "<a href=\"javascript:processHashTag('#" + tag + "')\">#"+ tag + "</a>";
+			return newText;
+		});
+	};
+}-*/;
+
+public native static String jsParseText(String text) /*-{
+	return text.parseURL().parseHashtag().parseUsername();
+}-*/;
 
 	@Override
 	public void addError(String errorMsg) {

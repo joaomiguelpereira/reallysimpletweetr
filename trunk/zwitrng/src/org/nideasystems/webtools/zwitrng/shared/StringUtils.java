@@ -3,11 +3,9 @@ package org.nideasystems.webtools.zwitrng.shared;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StringUtils {
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 
-	static {
-		publishJsMethods();
-	}
+public class StringUtils {
 
 	public static String[] splitText(String tags) {
 		List<String> list = new ArrayList<String>();
@@ -46,45 +44,6 @@ public class StringUtils {
 		return list.toArray(new String[list.size()]);
 	}
 
-	public native static void publishJsMethods() /*-{
-		var nextTweetId = 0;
-		String.prototype.parseURL = function() {
-			
-			return this.replace(/[A-Za-z]+:\/\/[A-Za-z0-9-_]+\.[A-Za-z0-9-_:%&\?\/.=]+/g, function(url) {
-				newText = "<a href=\""+ url + "\" target=\"_blank\">" + url + "</a>";
-				return newText;
-				
-			});
-		};
-
-		String.prototype.parseUsername = function() {
-			return this.replace(/[@]+[A-Za-z0-9-_]+/g, function(u) {
-				var username = u.replace("@","")
-				
-				tweetId = "tweet_id_"+(++nextTweetId);
-				
-				newtext = "<a id=\"" + tweetId
-							+ "\" href=\"javascript:showUserPanel('"
-							+ username + "','" + tweetId + "')\">@"
-							+ username + "</a>";
-				
-				return newtext;
-			});
-		};
-
-		String.prototype.parseHashtag = function() {
-			return this.replace(/[#]+[A-Za-z0-9-_]+/g, function(t) {
-				var tag = t.replace("#","");
-				newText = "<a href=\"javascript:processHashTag('#" + tag + "')\">#"+ tag + "</a>";
-				return newText;
-			});
-		};
-	}-*/;
-
-	public native static String jsParseText(String text) /*-{
-		return text.parseURL().parseHashtag().parseUsername();
-	}-*/;
-	
 	public static String[] getUserNames(String text) {
 
 		String splittedText[] = text.split("\\B@[\\w\\d_]{1,15}");
@@ -113,7 +72,8 @@ public class StringUtils {
 
 	public static String replace(String sourceText, String what,
 			String replacement) {
-		String newStr = sourceText.replaceAll(what, replacement);
+		String newStr = sourceText
+				.replaceAll("\\Q" + what + "\\E", replacement);
 		return newStr;
 	}
 
@@ -176,6 +136,56 @@ public class StringUtils {
 		 * String[list.size()]);
 		 */
 
+	}
+
+	public static String jsParseText(String templateText) {
+
+		return MainController.jsParseText(templateText);
+	}
+
+	public static String randomizeString(String templateText) {
+		// String templateText =
+		// "this is a [smart|very smart|trully smart] tweet :)";
+		String randomizedString = templateText;
+		// find all occurrences like [xxx|xxx|xxx|]
+		int startIndex = templateText.indexOf("[");
+		System.out.println("Chechink: " + templateText);
+
+
+			if (startIndex >= 0) {
+				int endIndex = templateText.indexOf("]", startIndex);
+
+				if (endIndex > 0) {
+					String tmpWord = templateText.substring(startIndex + 1,
+							endIndex);
+					String otherWord = templateText.substring(startIndex,
+							endIndex + 1);
+					System.out.println("Foudn " + tmpWord);
+					String replacement = getOneOf(tmpWord);
+					System.out.println("Other word " + otherWord);
+					System.out.println("Random: " + replacement);
+
+					randomizedString = randomizedString.replace(otherWord,
+							replacement);
+					
+					randomizedString = randomizeString(randomizedString);
+
+			}
+		}
+		System.out.println("returning : " + randomizedString);
+		return randomizedString;
+
+	}
+
+	private static String getOneOf(String tmpWord) {
+		// one|two|three
+
+		String[] splitedText = tmpWord.split("[|]");
+
+		double rand = Math.random();
+		int index = (int) Math.round(rand * (splitedText.length - 1));
+
+		return splitedText[index];
 	}
 
 }
