@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
@@ -132,7 +133,7 @@ public class TemplatePojo extends AbstractPojo {
 	}
 
 	public TemplateDTO saveTemplate(String name, String email,
-			TemplateDTO template) throws Exception{
+			TemplateDTO template) throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
@@ -142,7 +143,8 @@ public class TemplatePojo extends AbstractPojo {
 		}
 
 		try {
-			retTemplate = businessHelper.getTemplateDao().saveTemplate(persona, template);
+			retTemplate = businessHelper.getTemplateDao().saveTemplate(persona,
+					template);
 		} catch (Exception e) {
 			log.severe("Error trying to saving the Template");
 			e.printStackTrace();
@@ -155,36 +157,62 @@ public class TemplatePojo extends AbstractPojo {
 	}
 
 	public TemplateFragmentDTOList getTemplateFragments(String name,
-			String email) throws Exception{
-		//Find the persona
-		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(name, email);
+			String email) throws Exception {
+		// Find the persona
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
 		if (persona == null) {
 			throw new Exception("Persona not found");
 		}
-		TemplateFragmentDTO templateFrag = new TemplateFragmentDTO();
-		templateFrag.setName("Name");
-		templateFrag.setId(new Long(10));
-		templateFrag.setList("123|123|123");
-		templateFrag.addTag("Tag1");
-		templateFrag.addTag("Tag2");
-		templateFrag.setCreated(new Date());
-		templateFrag.setModified(new Date());
+
+		TemplateFragmentDTOList retList = new TemplateFragmentDTOList();
+		if (persona.getTemplateFragments() != null) {
+			for (TemplateFragmentDO frag : persona.getTemplateFragments()) {
+				retList.addTemplateFragmentList(DataUtils
+						.templateFragmentDtoFromDom(frag));
+				log.fine("Adding template frag");
+			}
+		}
+
+		return retList;
+	}
+
+	public TemplateFragmentDTO createTemplateFragment(
+			TemplateFragmentDTO object, String name, String email)
+			throws Exception {
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
+
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
+		// Check if exists any fragment with the same name
+		TemplateFragmentDO domFrag = businessHelper.getTemplateDao()
+				.findTemplateFragmentByName(persona, object.getName());
+		TemplateFragmentDTO returnDto = null;
+		if (domFrag != null) {
+			throw new Exception("A Template Fragment exists with the Same name");
+		} else {
+			log.fine("Creating a new Template Fragment");
+			returnDto = businessHelper.getTemplateDao().createTemplateFragment(
+					persona, object);
+
+		}
+
+		return returnDto;
+	}
+
+	public TemplateFragmentDTO saveTemplateFragment(TemplateFragmentDTO object,
+			String name, String email) throws Exception {
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
+
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
 		
-		TemplateFragmentDTO templateFrag1 = new TemplateFragmentDTO();
-		templateFrag1.setName("Name 1");
-		templateFrag1.setId(new Long(10));
-		templateFrag1.setList("123|123|123");
-		templateFrag1.addTag("Tag3");
-		templateFrag1.addTag("Tag4");
-		templateFrag1.setCreated(new Date());
-		templateFrag1.setModified(new Date());
 		
-		TemplateFragmentDTOList ret =new TemplateFragmentDTOList();
-		ret.addTemplateFragmentList(templateFrag);
-		ret.addTemplateFragmentList(templateFrag1);
-		
-		
-		return ret;
+		return businessHelper.getTemplateDao().saveTemplateFragment(persona, object);
 	}
 
 }
