@@ -10,7 +10,7 @@ public class TemplateFragmentDTO implements IModel {
 	private String name = null;
 	private String list = null;
 	private List<String> tags = null;
-	private Long id;
+	private long id = -1;
 	private Date created;
 	private Date modified;
 	
@@ -39,10 +39,10 @@ public class TemplateFragmentDTO implements IModel {
 	public void setTags(List<String> tags) {
 		this.tags = tags;
 	}
-	public Long getId() {
+	public long getId() {
 		return id;
 	}
-	public void setId(Long id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 	public Date getCreated() {

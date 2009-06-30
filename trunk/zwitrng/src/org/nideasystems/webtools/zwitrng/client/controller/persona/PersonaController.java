@@ -12,6 +12,7 @@ import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
 import com.google.gwt.core.client.GWT;
@@ -281,6 +282,60 @@ public class PersonaController extends
 			templateFragmentsConfigurationWidget.onError(e);
 		}
 
+		
+	}
+
+	public void createTemplateFragment(
+			TemplateFragmentDTO object,
+			final TemplateFragmentsConfigurationWidget callback) {
+		try {
+			getServiceManager().getRPCService().createTemplateFragment(this.getModel(), object, new AsyncCallback<TemplateFragmentDTO>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(TemplateFragmentDTO result) {
+					callback.onObjectCreated(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			
+			callback.onError(e);
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void saveTemplateFragment(
+			TemplateFragmentDTO object,
+			final ConfigurationEditListener<TemplateFragmentDTO> callback) {
+		try {
+			getServiceManager().getRPCService().saveTemplateFragment(this.getModel(), object, new AsyncCallback<TemplateFragmentDTO>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(TemplateFragmentDTO result) {
+					callback.onObjectSaved(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			
+			callback.onError(e);
+			e.printStackTrace();
+		}
 		
 	}
 

@@ -40,6 +40,8 @@ public abstract class AbstractListConfigurationWidget<T extends IModel, L extend
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
 	protected boolean isCreatingNew = false;
 	private String maxHeight = null;
+	
+	private EditableItem<T, L> editableItemNew = null;
 
 	private List<ConfigurationListSelectListener<T>> selectListeners = new ArrayList<ConfigurationListSelectListener<T>>();
 
@@ -163,6 +165,7 @@ public abstract class AbstractListConfigurationWidget<T extends IModel, L extend
 			toolBar.setVisible(true);
 			searchPanel.setVisible(true);
 			contentPanel.remove(0);
+			editableItemNew = null;
 			isCreatingNew = false;
 		}
 		// check if is the same
@@ -242,15 +245,16 @@ public abstract class AbstractListConfigurationWidget<T extends IModel, L extend
 	private void showNewItem() {
 		// Get a editableItem instance
 		isCreatingNew = true;
-		EditableItem<T, L> editableItem = createEditableItem();
-		contentPanel.insert(editableItem, 0);
-		editableItem.setNew(true);
-		editableItem.setTitle("Create New");
+		editableItemNew = createEditableItem();
+		contentPanel.insert(editableItemNew, 0);
+		
+		editableItemNew.setNew(true);
+		editableItemNew.setTitle("Create New");
 		searchPanel.setVisible(false);
 		toolBar.setVisible(false);
 
-		editableItem.focus();
-		editableItem.addEditListener(this);
+		editableItemNew.focus();
+		editableItemNew.addEditListener(this);
 
 		if (selectedItem != null) {
 			selectedItem.onUnSelected();
@@ -279,6 +283,10 @@ public abstract class AbstractListConfigurationWidget<T extends IModel, L extend
 
 	@Override
 	public void onError(Throwable error) {
+		isProcessing(false);
+		if ( editableItemNew!= null) {
+			editableItemNew.setUpdating(false);
+		}
 		MainController.getInstance().addException(error);
 
 	}

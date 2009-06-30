@@ -47,6 +47,10 @@ public class PersonaDO {
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
 	private List<TemplateDO> templates;
 	
+	@Persistent(mappedBy="persona",defaultFetchGroup="true")
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+	private List<TemplateFragmentDO> templateFragments;
+	
 	
 
 	public void setName(String name) {
@@ -133,6 +137,22 @@ public class PersonaDO {
 
 	public List<TemplateDO> getTemplates() {
 		return templates;
+	}
+
+	public void setTemplateFragments(List<TemplateFragmentDO> templateFragments) {
+		this.templateFragments = templateFragments;
+	}
+
+	public List<TemplateFragmentDO> getTemplateFragments() {
+		return templateFragments;
+	}
+
+	public void addtemplateFragment(TemplateFragmentDO fragDo) {
+		if ( this.templateFragments == null ) {
+			this.templateFragments = new ArrayList<TemplateFragmentDO>();
+		}
+		this.templateFragments.add(fragDo);
+		
 	}
 
 

@@ -1,16 +1,20 @@
 package org.nideasystems.webtools.zwitrng.server.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 
 import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
@@ -352,6 +356,38 @@ public class DataUtils {
 
 		templateDto.setId(templateDom.getKey().getId());
 		return templateDto;
+	}
+
+	public static TemplateFragmentDTO templateFragmentDtoFromDom(
+			TemplateFragmentDO fragDo) {
+		TemplateFragmentDTO fragDto = new TemplateFragmentDTO();
+		fragDto.setCreated(fragDo.getCreated());
+		fragDto.setModified(fragDo.getModified());
+		fragDto.setName(fragDo.getName());
+		fragDto.setList(fragDo.getText());
+		if ( fragDo.getTags() != null ) {
+			for (String tag: fragDo.getTags()) {
+				fragDto.addTag(tag);
+			}
+		} else {
+			fragDto.addTag("");
+		}
+		fragDto.setId(fragDo.getKey().getId());
+		
+		return fragDto;
+	}
+
+	public static String encodeString(String str) {
+		
+		String encoded = str;
+		try {
+			encoded = URLEncoder.encode(str, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			
+			e.printStackTrace();
+		}
+		
+		return encoded;
 	}
 
 }

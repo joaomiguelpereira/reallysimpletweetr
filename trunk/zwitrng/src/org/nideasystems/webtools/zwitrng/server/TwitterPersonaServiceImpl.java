@@ -12,14 +12,14 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-
 
 public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		implements TwitterPersonaService {
 	private static final long serialVersionUID = 3805847312414045223L;
-	
+
 	private static final Logger log = Logger
 			.getLogger(TwitterPersonaServiceImpl.class.getName());
 
@@ -46,7 +46,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 				throw new Exception(
 						"Not all data provided. All field are required");
 			}
-			
+
 			log.fine("preAutorizedTwitterAccount...");
 			// Create a preAuthorized TwitterAccount
 			TwitterAccountDTO preAutorizedTwitterAccount = TwitterServiceAdapter
@@ -64,8 +64,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			PersonaDO personaDo = null;
 			try {
 				log.fine("Creating persona in Datastore");
-				personaDo = getBusinessHelper().getPersonaPojo().createPersona(persona,
-						user.getEmail());
+				personaDo = getBusinessHelper().getPersonaPojo().createPersona(
+						persona, user.getEmail());
 				// personaDo = getPersonaDao().createPersona(persona,
 				// currentUser.getEmail());
 
@@ -89,7 +89,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public String deletePersona(String persona) throws Exception {
 
 		startTransaction(true);
-		getBusinessHelper().getPersonaPojo().deletePersona(persona, user.getEmail());
+		getBusinessHelper().getPersonaPojo().deletePersona(persona,
+				user.getEmail());
 		endTransaction();
 		return persona;
 	}
@@ -98,15 +99,15 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public PersonaDTOList getPersonas() throws Exception {
 		log.fine("Start getting personas..");
 		startTransaction(true);
-				//User user = AuthorizationManager.checkAuthentication();
+		// User user = AuthorizationManager.checkAuthentication();
 
 		PersonaDTOList returnPersonas = null;
 		if (user != null) {
 			try {
 
 				//
-				returnPersonas = getBusinessHelper().getPersonaPojo().getAllPersonas(
-						user.getEmail());
+				returnPersonas = getBusinessHelper().getPersonaPojo()
+						.getAllPersonas(user.getEmail());
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.severe(e.getMessage());
@@ -126,13 +127,13 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		startTransaction(true);
 		// get the DAO
 		// Key personaKey = ;
-		//User user = AuthorizationManager.checkAuthentication();
+		// User user = AuthorizationManager.checkAuthentication();
 
 		List<FilterCriteriaDTO> returnFilters = null;
 		if (user != null) {
 
-			returnFilters = getBusinessHelper().getPersonaPojo().getAllFilters(personaName,
-					user.getEmail());
+			returnFilters = getBusinessHelper().getPersonaPojo().getAllFilters(
+					personaName, user.getEmail());
 
 			// Get all Personas for email: email
 		}
@@ -145,7 +146,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public TemplateDTOList getTemplates(String name) throws Exception {
 		startTransaction(true);
 		TemplateDTOList list = null;
-		list = getBusinessHelper().getTemplatePojo().getTemplates(name,user.getEmail());
+		list = getBusinessHelper().getTemplatePojo().getTemplates(name,
+				user.getEmail());
 		endTransaction();
 		return list;
 	}
@@ -154,10 +156,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public TemplateDTO createTemplate(PersonaDTO model, TemplateDTO template)
 			throws Exception {
 		startTransaction(true);
-		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo().createTemplate(model.getName(), user.getEmail(),template); 
+		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo()
+				.createTemplate(model.getName(), user.getEmail(), template);
 		endTransaction();
 		return outTemplate;
-		
 
 	}
 
@@ -165,13 +167,15 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public TemplateDTO deleteTemplate(PersonaDTO model, TemplateDTO template)
 			throws Exception {
 		startTransaction(true);
-		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo().deleteTemplate(model.getName(), user.getEmail(),template);
+		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo()
+				.deleteTemplate(model.getName(), user.getEmail(), template);
 		endTransaction();
 		return outTemplate;
 	}
 
 	@Override
-	public TemplateDTO saveTemplate(PersonaDTO model, TemplateDTO template) throws Exception {
+	public TemplateDTO saveTemplate(PersonaDTO model, TemplateDTO template)
+			throws Exception {
 		startTransaction(true);
 		TemplateDTO outTemplate = getBusinessHelper().getTemplatePojo()
 				.saveTemplate(model.getName(), user.getEmail(), template);
@@ -183,12 +187,36 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public TemplateFragmentDTOList getTemplateFragments(PersonaDTO personaDto)
 			throws Exception {
 		startTransaction(true);
-		TemplateFragmentDTOList outTemplateFragList = getBusinessHelper().getTemplatePojo()
-				.getTemplateFragments(personaDto.getName(), user.getEmail());
+		TemplateFragmentDTOList outTemplateFragList = getBusinessHelper()
+				.getTemplatePojo().getTemplateFragments(personaDto.getName(),
+						user.getEmail());
 		endTransaction();
 		return outTemplateFragList;
 	}
 
-	
+	@Override
+	public TemplateFragmentDTO createTemplateFragment(PersonaDTO model,
+			TemplateFragmentDTO object) throws Exception {
+
+		startTransaction(true);
+		
+		TemplateFragmentDTO returnFrag = getBusinessHelper().getTemplatePojo()
+				.createTemplateFragment(object, model.getName(),
+						user.getEmail());
+		endTransaction();
+		return returnFrag;
+	}
+
+	@Override
+	public TemplateFragmentDTO saveTemplateFragment(PersonaDTO model,
+			TemplateFragmentDTO object) throws Exception {
+		startTransaction(true);
+		TemplateFragmentDTO returnFrag = getBusinessHelper().getTemplatePojo()
+		.saveTemplateFragment(object, model.getName(),
+				user.getEmail());
+
+		endTransaction();
+		return returnFrag;
+	}
 
 }

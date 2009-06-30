@@ -6,6 +6,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
@@ -15,7 +16,6 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasDoubleClickHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -82,10 +82,28 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 
 	@Override
 	public void saveObject(TemplateFragmentDTO object) {
-		// TODO Auto-generated method stub
+		
+		if (object.getId() == -1) {
+			saveNewTemplateFragment(object);
+			
+		} else {
+			saveExistingTemplatefragment(object);
+		}
+		
 		
 	}
 	
+	private void saveExistingTemplatefragment(TemplateFragmentDTO object) {
+		MainController.getInstance().getCurrentPersonaController().saveTemplateFragment(object, getSelectedItem());
+		
+	}
+
+	private void saveNewTemplateFragment(TemplateFragmentDTO object) {
+		isProcessing(true);
+		MainController.getInstance().getCurrentPersonaController().createTemplateFragment(object, this);
+		
+	}
+
 	private class EditableTemplateFragment extends EditableItem<TemplateFragmentDTO, TemplateFragmentDTOList> {
 
 		private TextBox nameText = null;
@@ -141,15 +159,39 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 
 		@Override
 		public void refresh() {
+			
 			this.nameText.setValue(dataObject.getName());
 			this.templateFragmentText.setValue(dataObject.getList());
 			this.templateTags.setValue(dataObject.getTagsAsString());
-			
+			if ( dataObject.getId()!=-1) {
+				this.nameText.setEnabled(false);
+			}
+			this.templateFragmentText.setFocus(true);
 		}
 
 		@Override
 		protected void save() {
-			Window.alert("Save");
+			if ( nameText.getValue().trim().isEmpty() ) {
+				MainController.getInstance().addError("Provide a name for the Fragment");
+			} else if (templateFragmentText.getValue().trim().isEmpty() ) {
+				MainController.getInstance().addError("Provide content for the Fragment");
+			} else {
+				
+				TemplateFragmentDTO tDto = new TemplateFragmentDTO();
+				tDto.setList(templateFragmentText.getValue());
+				tDto.setName(nameText.getValue());
+				
+				String[] tags = StringUtils.splitText(templateTags.getValue());
+				for (String tag : tags) {
+					tDto.addTag(tag);
+				}
+				
+				if ( dataObject != null ) {
+					tDto.setId(dataObject.getId());
+				}
+				setUpdating(true);
+				parent.saveObject(tDto);
+			}
 			
 		}
 
@@ -218,8 +260,8 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		@Override
 		protected void refresh() {
 			this.name.setHTML(dataObject.getName());
-			this.textHtml.setHTML(dataObject.getList());
-			this.tagsHtml.setHTML(dataObject.getTagsAsString());
+			this.textHtml.setHTML(StringUtils.jsParseText(dataObject.getList()));
+			this.tagsHtml.setHTML("Tags: "+dataObject.getTagsAsString());
 			
 		}
 
