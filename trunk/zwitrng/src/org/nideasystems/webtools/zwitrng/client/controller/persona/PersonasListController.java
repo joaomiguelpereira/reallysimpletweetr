@@ -1,12 +1,10 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
-
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;

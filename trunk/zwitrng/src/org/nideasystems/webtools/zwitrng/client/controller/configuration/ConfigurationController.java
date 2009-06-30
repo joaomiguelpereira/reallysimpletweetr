@@ -4,13 +4,9 @@ import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationView;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplatesConfigurationWidget.SelectableTemplate;
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 
 public class ConfigurationController extends AbstractController<IModel, ConfigurationView>{
 

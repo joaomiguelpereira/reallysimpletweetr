@@ -23,7 +23,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends

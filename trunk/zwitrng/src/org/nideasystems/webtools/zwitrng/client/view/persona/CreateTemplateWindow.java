@@ -101,7 +101,7 @@ public class CreateTemplateWindow extends DialogBox implements ShortLinksListene
 
 			@Override
 			public void onClick(ClickEvent event) {
-				SendUpdateWidget.shortLinks(templateText.getValue(), controller, instance);
+				SendUpdateWidget.shortLinks(templateText.getValue(), instance);
 			}
 			
 		});

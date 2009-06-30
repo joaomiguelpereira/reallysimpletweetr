@@ -8,7 +8,6 @@ import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserI
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.PopupPanel;
 
 public class PopupManager {
