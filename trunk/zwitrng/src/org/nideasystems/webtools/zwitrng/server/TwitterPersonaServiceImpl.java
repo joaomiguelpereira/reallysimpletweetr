@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
@@ -227,6 +228,15 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 				.deleteTemplateFragment(model.getName(), user.getEmail(), dataObject);
 		endTransaction();
 		return outTemplateFrag;
+	}
+
+	@Override
+	public Map<String, String> getTemplateFragmentsLists(PersonaDTO model,
+			List<String> lists) throws Exception {
+		startTransaction(true);
+		Map<String, String> ret = getBusinessHelper().getTemplatePojo().getFragmentsLists(model.getName(), user.getEmail(), lists);
+		endTransaction();
+		return ret;
 	}
 
 }

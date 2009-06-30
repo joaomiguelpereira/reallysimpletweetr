@@ -1,6 +1,9 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
@@ -11,6 +14,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+
+import sun.security.action.GetBooleanAction;
 
 public class TemplatePojo extends AbstractPojo {
 
@@ -216,7 +221,7 @@ public class TemplatePojo extends AbstractPojo {
 	}
 
 	public TemplateFragmentDTO deleteTemplateFragment(String name,
-			String email, TemplateFragmentDTO dataObject) throws Exception{
+			String email, TemplateFragmentDTO dataObject) throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
@@ -225,7 +230,8 @@ public class TemplatePojo extends AbstractPojo {
 		}
 
 		try {
-			businessHelper.getTemplateDao().deleteTemplateFragment(persona, dataObject);
+			businessHelper.getTemplateDao().deleteTemplateFragment(persona,
+					dataObject);
 		} catch (Exception e) {
 			log.severe("Error trying to delete the Template");
 			e.printStackTrace();
@@ -235,6 +241,31 @@ public class TemplatePojo extends AbstractPojo {
 
 		// Just return was was given
 		return dataObject;
+	}
+
+	public Map<String, String> getFragmentsLists(String name, String email,
+			List<String> lists) throws Exception {
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
+		Map<String, String> ret = new HashMap<String, String>();
+
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
+
+		// Get the templateFrag
+		for (String listName : lists) {
+			TemplateFragmentDO tFrag = businessHelper.getTemplateDao()
+					.findTemplateFragmentByName(persona, listName);
+			if (tFrag != null) {
+				ret.put(listName, tFrag.getText());
+			} else {
+				ret.put(listName, "NOT_FOUND");
+			}
+		}
+
+		return ret;
+
 	}
 
 }

@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.services;
 
 
 import java.util.List;
+import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -35,6 +36,8 @@ public interface TwitterPersonaServiceAsync {
 	void deleteTemplateFragment(PersonaDTO model,
 			TemplateFragmentDTO dataObject,
 			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception;
+	void getTemplateFragmentsLists(PersonaDTO model, List<String> lists,
+			AsyncCallback<Map<String, String>> asyncCallback) throws Exception;
 	
 
 	
