@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.services;
 
 import java.util.List;
+import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -10,6 +11,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -46,5 +48,8 @@ public interface TwitterPersonaService extends RemoteService {
 
 	TemplateFragmentDTO deleteTemplateFragment(PersonaDTO model,
 			TemplateFragmentDTO dataObject) throws Exception;
+
+	Map<String, String> getTemplateFragmentsLists(PersonaDTO model,
+			List<String> lists) throws Exception;
 
 }

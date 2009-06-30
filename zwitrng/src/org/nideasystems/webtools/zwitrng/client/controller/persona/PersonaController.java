@@ -1,5 +1,8 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
+import java.util.List;
+import java.util.Map;
+
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
@@ -366,6 +369,13 @@ public class PersonaController extends
 		}
 
 		
+		
+	}
+
+	public void loadTemplateFragmentsLists(List<String> lists,
+			AsyncCallback<Map<String, String>> asyncCallback)  throws Exception {
+		getServiceManager().getRPCService().getTemplateFragmentsLists(getModel(),lists,
+				asyncCallback);
 		
 	}
 

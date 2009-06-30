@@ -153,6 +153,13 @@ public class RPCService implements IService {
 		
 	}
 
+	public void getTemplateFragmentsLists(PersonaDTO model, List<String> lists,
+			AsyncCallback<Map<String, String>> asyncCallback) throws Exception{
+		this.personaService.getTemplateFragmentsLists(model, lists,
+				asyncCallback);
+		
+	}
+
 	
 
 }
