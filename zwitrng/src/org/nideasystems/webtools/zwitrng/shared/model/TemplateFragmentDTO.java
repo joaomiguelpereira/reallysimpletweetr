@@ -57,6 +57,15 @@ public class TemplateFragmentDTO implements IModel {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
+	public String getTagsAsString() {
+		StringBuffer sb = new StringBuffer();
+		for (String tag:tags) {
+			sb.append(tag);
+			sb.append(" ");
+			
+		}
+		return sb.toString();
+	}
 	
 	
 	

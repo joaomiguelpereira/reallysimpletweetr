@@ -261,13 +261,15 @@ public class PersonaController extends
 						@Override
 						public void onFailure(Throwable caught) {
 							getMainController().addException(caught);
-							templateFragmentsConfigurationWidget.onFailedLoadTemplateFragments(caught);
+							templateFragmentsConfigurationWidget.onError(caught);
 
 						}
 
 						@Override
 						public void onSuccess(TemplateFragmentDTOList result) {
-							templateFragmentsConfigurationWidget.onSuccessLoadTemplateFragments(result);
+							templateFragmentsConfigurationWidget.onSuccessLoadObjects(result);
+							
+							
 
 						}
 
@@ -276,7 +278,7 @@ public class PersonaController extends
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			getMainController().addException(e);
-			templateFragmentsConfigurationWidget.onFailedLoadTemplateFragments(e);
+			templateFragmentsConfigurationWidget.onError(e);
 		}
 
 		

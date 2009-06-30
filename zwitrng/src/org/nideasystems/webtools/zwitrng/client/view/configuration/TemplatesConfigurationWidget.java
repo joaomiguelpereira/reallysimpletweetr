@@ -38,6 +38,7 @@ public class TemplatesConfigurationWidget extends
 	// ////////
 	@Override
 	public void loadData() {
+		isCreatingNew = false;
 		loadTemplates();
 
 	}
@@ -207,7 +208,7 @@ public class TemplatesConfigurationWidget extends
 				}
 				
 				
-				String[] tags = StringUtils.splitText(getTags());
+				String[] tags = StringUtils.splitText(templateTags.getValue());
 				for (String tag : tags) {
 					template.addTags(tag);
 				}
@@ -231,19 +232,7 @@ public class TemplatesConfigurationWidget extends
 
 		
 
-		public TemplateDTO getTemplate() {
-			return dataObject;
-		}
-
-		public String getTemplateText() {
-			// TODO Auto-generated method stub
-			return templateText.getValue();
-		}
-
-		public String getTags() {
-			return templateTags.getValue();
-
-		}
+		
 
 		@Override
 		public void onLinksShortened(Map<String, String> result) {
@@ -335,15 +324,11 @@ public class TemplatesConfigurationWidget extends
 		}
 
 
-		protected void select(SelectableTemplate templwidget) {
-			parent.onSelect(this);
-		}
+		//protected void select(SelectableTemplate templwidget) {
+		//	parent.onSelect(this);
+		//}
 
-		@Override
-		public void onEditCancel() {
-			setEditing(false);
-
-		}
+		
 
 
 		@Override
@@ -352,10 +337,6 @@ public class TemplatesConfigurationWidget extends
 					+ dataObject.getTemplateText();
 		}
 
-		@Override
-		protected EditableItem<TemplateDTO, TemplateDTOList> createEditableItem() {
-			return new EditableTemplate(parent);
-		}
 		
 
 	}
