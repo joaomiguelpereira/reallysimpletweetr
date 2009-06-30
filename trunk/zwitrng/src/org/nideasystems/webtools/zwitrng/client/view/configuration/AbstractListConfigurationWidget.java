@@ -8,7 +8,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -18,7 +18,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
-import org.nideasystems.webtools.zwitrng.client.controller.configuration.ConfigurationController;
 
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
@@ -39,7 +38,7 @@ public abstract class AbstractListConfigurationWidget<T extends IModel, L extend
 	// protected ConfigurationController controller = null;
 
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
-	private boolean isCreatingNew = false;
+	protected boolean isCreatingNew = false;
 	private String maxHeight = null;
 
 	private List<ConfigurationListSelectListener<T>> selectListeners = new ArrayList<ConfigurationListSelectListener<T>>();

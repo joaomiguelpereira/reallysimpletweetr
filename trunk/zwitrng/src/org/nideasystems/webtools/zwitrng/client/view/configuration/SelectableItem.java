@@ -25,7 +25,7 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 public abstract class SelectableItem<T extends IModel, L extends IModel>
 		extends VerticalPanel implements HasMouseOutHandlers,
 		HasMouseOverHandlers, HasDoubleClickHandlers, HasClickHandlers,
-		ConfigurationEditListener<T>{
+		ConfigurationEditListener<T> {
 
 	boolean isEditable = true;
 	boolean isEditing = false;
@@ -41,7 +41,8 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 	 * 
 	 * @param theParent
 	 */
-	public SelectableItem(AbstractListConfigurationWidget<T, L> theParent, boolean aIsEditable) {
+	public SelectableItem(AbstractListConfigurationWidget<T, L> theParent,
+			boolean aIsEditable) {
 		parent = theParent;
 		instance = this;
 		this.isEditable = aIsEditable;
@@ -72,10 +73,9 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				if ( isEditable && !isEditing ) {
+				if (isEditable && !isEditing) {
 					setEditing(true);
 				}
-				
 
 			}
 
@@ -97,8 +97,7 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 	 * 
 	 * @return
 	 */
-	//protected abstract HorizontalPanel createMenuOptions();
-
+	// protected abstract HorizontalPanel createMenuOptions();
 	protected HorizontalPanel createMenuOptions() {
 
 		HorizontalPanel panel = new HorizontalPanel();
@@ -172,24 +171,38 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 	}
 
 	protected void setEditing(boolean editing) {
-		if (editableInstance == null) {
-			editableInstance = createEditableItem();
-			editableInstance.addEditListener(this);
-			this.add(editableInstance);
+		
+			if (editableInstance == null) {
+				editableInstance = createEditableItem();
+				if ( editableInstance!= null ) {
+					editableInstance.addEditListener(this);
+					this.add(editableInstance);		
+				}
+			}
+			if (editableInstance!=null) {
+				editableInstance.setDataObject(this.dataObject);
+				editableInstance.refresh();
+				content.setVisible(!editing);
+				editableInstance.setVisible(editing);
 			
-
-		}
-		editableInstance.setDataObject(this.dataObject);
-		editableInstance.refresh();
-		content.setVisible(!editing);
-		editableInstance.setVisible(editing);
-		isEditing = editing;
-
+			}
+			
 	}
 
-	protected abstract EditableItem<T, L> createEditableItem();
+	
+
+	protected EditableItem<T, L> createEditableItem() {
+		return parent.createEditableItem();
+	}
 
 	
+	//protected abstract EditableItem<T, L> createEditableItem();
+
+	@Override
+	public void onEditCancel() {
+		setEditing(false);
+
+	}
 
 	protected void setDataObject(T obj) {
 		dataObject = obj;
@@ -231,42 +244,39 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 
 	@Override
 	public void onObjectSaved(T object) {
-		if (editableInstance != null ) {
+		if (editableInstance != null) {
 			editableInstance.setUpdating(false);
 		}
 		this.dataObject = object;
 		refresh();
 		onUnSelected();
 		onSelected();
-		
+
 	}
-	
+
 	@Override
 	public void saveObject(T object) {
 		// TODO Auto-generated method stub
 	}
-	
 
 	@Override
 	public void onError(Throwable tr) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onObjectCreated(T object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void onObjectRemoved(T object) {
 		parent.contentPanel.remove(this);
 		parent.onSelect(null);
-		//this.removeFromParent();
-		
+		// this.removeFromParent();
+
 	}
-
-
 
 }
