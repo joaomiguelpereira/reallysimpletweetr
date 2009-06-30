@@ -53,8 +53,7 @@ public class StringUtils {
 			for (int i = 0; i < splittedText.length; i++) {
 				if (splittedText[i].length() > 0) {
 
-					newText = newText.replaceAll("\\Q" + splittedText[i]
-							+ "\\E", ",");
+					newText = newText.replace(splittedText[i], ",");
 				}
 
 			}
@@ -70,14 +69,15 @@ public class StringUtils {
 
 	}
 
-	public static String replace(String sourceText, String what,
+	
+	/*private static String replace(String sourceText, String what,
 			String replacement) {
 		String newStr = sourceText
 				.replaceAll("\\Q" + what + "\\E", replacement);
 		return newStr;
-	}
+	}*/
 
-	public static String[] getHashTags(String text) {
+	/*private static String[] getHashTags(String text) {
 		String splittedText[] = text.split("[#]+[A-Za-z0-9-_]+");
 
 		String newText = text;
@@ -119,7 +119,7 @@ public class StringUtils {
 
 		return list.toArray(new String[list.size()]);
 
-		/*
+		
 		 * String splittedText[] = text.split(
 		 * "(@)?(href=\")?(http://)?[A-Za-z]+(\\.\\w+)+(/[&\\n=?\\+\\%/\\.\\w]+)?"
 		 * );
@@ -134,9 +134,9 @@ public class StringUtils {
 		 * ArrayList<String>(); for (String str : ret) { if (str.trim().length()
 		 * > 0) { list.add(str); } } return list.toArray(new
 		 * String[list.size()]);
-		 */
+		 
 
-	}
+	}*/
 
 	public static String jsParseText(String templateText) {
 

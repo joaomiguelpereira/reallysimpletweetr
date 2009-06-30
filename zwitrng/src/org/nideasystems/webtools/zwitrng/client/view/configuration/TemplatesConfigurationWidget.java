@@ -52,7 +52,7 @@ public class TemplatesConfigurationWidget extends
 
 	@Override
 	public void saveObject(TemplateDTO object) {
-
+	
 		if (object.getId() == -1) {
 			saveNewTemplate(object);
 			
@@ -63,13 +63,14 @@ public class TemplatesConfigurationWidget extends
 	}
 	
 	private void saveExistingTemplate(TemplateDTO object) {
-
+		
 		MainController.getInstance().getCurrentPersonaController().saveTemplate(object, getSelectedItem());
 
 		
 	}
 
 	private void saveNewTemplate(TemplateDTO template) {
+		
 		isProcessing(true);
 		MainController.getInstance().getCurrentPersonaController().createTemplate(template.getTemplateText(), template.getTagsAsText(), this);
 	}
@@ -178,8 +179,7 @@ public class TemplatesConfigurationWidget extends
 				@Override
 				public void onClick(ClickEvent event) {
 					setUpdating(true);
-					SendUpdateWidget.shortLinks(templateText.getValue(),
-							MainController.getInstance().getCurrentPersonaController(), instance);
+					SendUpdateWidget.shortLinks(templateText.getValue(), instance);
 
 				}
 			});
@@ -202,11 +202,16 @@ public class TemplatesConfigurationWidget extends
 			} else {
 				TemplateDTO template = new TemplateDTO();
 				template.setTemplateText(templateText.getValue());
+				if (dataObject != null ) {
+					template.setId(dataObject.getId());
+				}
+				
+				
 				String[] tags = StringUtils.splitText(getTags());
 				for (String tag : tags) {
 					template.addTags(tag);
 				}
-				isProcessing(true);
+				setUpdating(true);
 				parent.saveObject(template);
 				
 			}
@@ -224,14 +229,7 @@ public class TemplatesConfigurationWidget extends
 
 		}
 
-		/*public void setTemplate(TemplateDTO template) {
-			dataObject = template;
-			// update fields
-			templateText.setValue(template.getTemplateText());
-			templateTags.setValue(template.getTagsAsText());
-			updateRemainingChars();
-
-		}*/
+		
 
 		public TemplateDTO getTemplate() {
 			return dataObject;

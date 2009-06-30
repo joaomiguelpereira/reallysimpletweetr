@@ -6,7 +6,6 @@ import org.nideasystems.webtools.zwitrng.client.view.IView;
 
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
-import com.google.gwt.user.client.Window;
 
 
 

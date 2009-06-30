@@ -71,8 +71,8 @@ public class SelectTemplateWindow extends PopupPanel implements
 
 		if (userNames.length > 0) {
 			for (int i = 0; i < userNames.length; i++) {
-				newTemplateText = newTemplateText.replaceAll("\\Q{username_"
-						+ i + "}\\E", userNames[i]);
+				newTemplateText = newTemplateText.replace("{username_"
+						+ i + "}", userNames[i]);
 			}
 
 		}

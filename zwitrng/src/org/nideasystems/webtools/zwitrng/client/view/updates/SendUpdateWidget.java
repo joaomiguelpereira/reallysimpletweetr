@@ -268,7 +268,8 @@ public class SendUpdateWidget extends
 
 			@Override
 			public void onClick(ClickEvent event) {
-				SendUpdateWidget.shortLinks(update.getValue(), getController(),
+				isUpdating(true);
+				SendUpdateWidget.shortLinks(update.getValue(),
 						instance);
 
 			}
@@ -306,18 +307,17 @@ public class SendUpdateWidget extends
 	 */
 
 	public static void shortLinks(String updateText,
-			final IController controller,
 			final ShortLinksListenerCallBack callback) {
 		// Get the links
 		List<String> links = HTMLHelper.get().getLinks(updateText);
 		if (links.size() > 0) {
 			try {
-				controller.getServiceManager().getRPCService().shortLinks(
+				MainController.getInstance().getCurrentPersonaController().getServiceManager().getRPCService().shortLinks(
 						links, new AsyncCallback<Map<String, String>>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
-								controller.getMainController().addException(
+								MainController.getInstance().addException(
 										caught);
 
 							}
@@ -330,7 +330,7 @@ public class SendUpdateWidget extends
 
 						});
 			} catch (Exception e) {
-				controller.getMainController().addException(e);
+				MainController.getInstance().addException(e);
 			}
 
 		} else {
@@ -505,12 +505,14 @@ public class SendUpdateWidget extends
 
 	public void setTemplateText(String templateText) {
 		this.update.setValue(templateText);
+		
 		this.updateRemainingChars();
 
 	}
 
 	@Override
 	public void onLinksShortened(Map<String, String> result) {
+		isUpdating(false);
 		String currentStr = update.getValue();
 		String newStr = HTMLHelper.get().replaceText(currentStr, result);
 		update.setFocus(true);
