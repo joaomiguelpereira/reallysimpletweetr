@@ -84,18 +84,20 @@ public class SelectTemplateWindow extends PopupPanel implements
 
 	private void loadListsContents(final TemplateDTO obj,List<String> lists) {
 		//call server
+		this.updateWidget.isUpdating(true);
 		try {
 			MainController.getInstance().getCurrentPersonaController().loadTemplateFragmentsLists(lists, new AsyncCallback<Map<String, String>>() {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					
+					updateWidget.isUpdating(false);
 					MainController.getInstance().addException(caught);
 					updateTemplateText(obj);
 				}
 
 				@Override
 				public void onSuccess(Map<String, String> result) {
+					updateWidget.isUpdating(false);
 					replaceLoadedLists(obj,result);
 					
 				}
@@ -104,7 +106,9 @@ public class SelectTemplateWindow extends PopupPanel implements
 				
 			});
 		} catch (Exception e) {
+			updateWidget.isUpdating(false);
 			MainController.getInstance().addException(e);
+			updateTemplateText(obj);
 			e.printStackTrace();
 		}
 		updateTemplateText(obj);
