@@ -13,10 +13,11 @@ public class CampaignDTO implements IModel {
 	private FilterOperator filterOperator;
 	private Date startDate;
 	private Date endDate;
-	private int minutesBetweenTweets;
+	private int timeBetweenTweets;
 	private int maxTweetsPerTemplate;
 	private CampaignStatus status;
 	private int tweetsSent;
+	private TimeUnits timeUnit;
 	public long getId() {
 		return id;
 	}
@@ -54,11 +55,11 @@ public class CampaignDTO implements IModel {
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
-	public int getMinutesBetweenTweets() {
-		return minutesBetweenTweets;
+	public int getTimeBetweenTweets() {
+		return timeBetweenTweets;
 	}
-	public void setMinutesBetweenTweets(int minutesBetweenTweets) {
-		this.minutesBetweenTweets = minutesBetweenTweets;
+	public void setTimeBetweenTweets(int timeBetweenTweets) {
+		this.timeBetweenTweets = timeBetweenTweets;
 	}
 	public int getMaxTweetsPerTemplate() {
 		return maxTweetsPerTemplate;
@@ -86,6 +87,12 @@ public class CampaignDTO implements IModel {
 	}
 	public void setFilterOperator(FilterOperator filterOperator) {
 		this.filterOperator = filterOperator;
+	}
+	public void setTimeUnit(TimeUnits timeUnit) {
+		this.timeUnit = timeUnit;
+	}
+	public TimeUnits getTimeUnit() {
+		return timeUnit;
 	}
 	
 	

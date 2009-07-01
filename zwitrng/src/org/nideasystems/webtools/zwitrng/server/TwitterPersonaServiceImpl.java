@@ -20,6 +20,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
@@ -251,11 +252,12 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		c1.setId(1);
 		c1.setName("name");
 		c1.setFilterByTemplateTags("Atgs to filter with");
-		c1.setFilterByTemplateText("Atgs to filter with");
+		//c1.setFilterByTemplateText("Atgs to filter with");
 		c1.setFilterOperator(FilterOperator.OR);
 		c1.setStartDate(new Date());
 		c1.setEndDate(new Date());
-		c1.setMinutesBetweenTweets(10);//minutes
+		c1.setTimeBetweenTweets(10);//minutes
+		c1.setTimeUnit(TimeUnits.DAYS);
 		c1.setMaxTweetsPerTemplate(6);
 		c1.setStatus(CampaignStatus.RUNNING);
 		c1.setTweetsSent(10);
@@ -270,7 +272,9 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		c2.setFilterOperator(FilterOperator.AND);
 		c2.setStartDate(new Date());
 		c2.setEndDate(new Date());
-		c2.setMinutesBetweenTweets(10);//minutes
+		
+		c2.setTimeBetweenTweets(10);
+		c2.setTimeUnit(TimeUnits.MINUTES);
 		c2.setMaxTweetsPerTemplate(6);
 		c2.setStatus(CampaignStatus.RUNNING);
 		c2.setTweetsSent(10);

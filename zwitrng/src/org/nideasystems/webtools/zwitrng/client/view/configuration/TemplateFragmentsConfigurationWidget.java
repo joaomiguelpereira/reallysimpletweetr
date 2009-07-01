@@ -116,6 +116,7 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			
 			
 			InlineHTML nameLabel = new InlineHTML("Name: ");
+			
 			nameText = new TextBox();
 			contentPanel.add(nameLabel);
 			contentPanel.add(nameText);
@@ -230,6 +231,7 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			setDataObject(templateFragment);
 			HorizontalPanel namePanel = new HorizontalPanel();
 			InlineHTML namelabel = new InlineHTML("Name: ");
+			namelabel.addStyleName("label");
 			name = new InlineHTML("");
 			namePanel.add(namelabel);
 			namePanel.add(name);
