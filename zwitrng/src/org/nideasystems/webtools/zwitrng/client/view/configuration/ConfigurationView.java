@@ -38,6 +38,12 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		this.add(recommendations);
 		
 		
+		ExpandablePanel campaingns = new ExpandablePanel();
+		campaingns.setTitleText("Configure campaigns");
+		CampaignsConfigurationWidget ccw = new CampaignsConfigurationWidget();
+		campaingns.setConfigWidget(ccw);
+		this.add(campaingns);
+		
 	}
 
 	@Override

@@ -8,11 +8,14 @@ import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.CampaignsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.SelectableItem;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
@@ -376,6 +379,33 @@ public class PersonaController extends
 			AsyncCallback<Map<String, String>> asyncCallback)  throws Exception {
 		getServiceManager().getRPCService().getTemplateFragmentsLists(getModel(),lists,
 				asyncCallback);
+		
+	}
+
+	public void loadCampaigns(
+			final AbstractListConfigurationWidget<CampaignDTO,CampaignDTODTOList> callback) {
+		try {
+			getServiceManager().getRPCService().getCampaigns(this.getModel(), new AsyncCallback<CampaignDTODTOList>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(CampaignDTODTOList result) {
+							//callback.onSuccessDeleteObject(result);
+							callback.onSuccessLoadObjects(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
 		
 	}
 
