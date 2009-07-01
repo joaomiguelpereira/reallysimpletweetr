@@ -409,4 +409,58 @@ public class PersonaController extends
 		
 	}
 
+	public void createCampaign(CampaignDTO object,
+			final AbstractListConfigurationWidget<CampaignDTO,CampaignDTODTOList> callback) {
+		try {
+			getServiceManager().getRPCService().createCampaign(this.getModel(), object, new AsyncCallback<CampaignDTO>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(CampaignDTO result) {
+					callback.onObjectCreated(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			
+			callback.onError(e);
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	public void saveCampaign(CampaignDTO object,
+			final ConfigurationEditListener<CampaignDTO> callback) {
+		try {
+			getServiceManager().getRPCService().saveCampaign(this.getModel(), object, new AsyncCallback<CampaignDTO>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					callback.onError(caught);
+					
+				}
+
+				@Override
+				public void onSuccess(CampaignDTO result) {
+					callback.onObjectSaved(result);
+					
+				}
+				
+			});
+		} catch (Exception e) {
+			
+			callback.onError(e);
+			e.printStackTrace();
+		}
+		
+		
+	}
+
 }

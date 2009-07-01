@@ -5,12 +5,15 @@ import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Date;
 
+import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
@@ -388,6 +391,25 @@ public class DataUtils {
 		}
 		
 		return encoded;
+	}
+
+	public static CampaignDTO campaignDtoFromDo(CampaignDO dom) {
+		CampaignDTO  dto = new CampaignDTO();
+		dto.setId(dom.getKey().getId());
+		dto.setCreated(dom.getCreated());
+		dto.setEndDate(dom.getEndDate());
+		dto.setFilterByTemplateTags(dom.getFilterByTemplateTags());
+		dto.setFilterByTemplateText(dom.getFilterByTemplateText());
+		dto.setFilterOperator(dom.getFilterOperator());
+		dto.setMaxTweetsPerTemplate(dom.getMaxTweetsPerTemplate());
+		dto.setModified(dom.getModified());
+		dto.setName(dom.getName());
+		dto.setStartDate(dom.getStartDate());
+		dto.setTimeBetweenTweets(dom.getTimeBetweenTweets());
+		dto.setTimeUnit(dom.getTimeUnit());
+		dto.setStatus(dom.getStatus());
+		
+		return dto;
 	}
 
 }

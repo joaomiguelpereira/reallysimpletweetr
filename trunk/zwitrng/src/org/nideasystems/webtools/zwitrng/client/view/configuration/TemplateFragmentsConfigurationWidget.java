@@ -122,7 +122,7 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			contentPanel.add(nameText);
 			contentPanel.add(new InlineHTML("Template Fragment Text"));
 			templateFragmentText = new TextArea();
-			templateFragmentText.setWidth("620px");
+			templateFragmentText.setWidth("580px");
 			// update.setHeight("35px");
 			templateFragmentText.addStyleName("input");
 			templateFragmentText.setVisibleLines(2);

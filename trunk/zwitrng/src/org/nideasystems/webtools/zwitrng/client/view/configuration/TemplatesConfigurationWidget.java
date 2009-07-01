@@ -145,7 +145,7 @@ public class TemplatesConfigurationWidget extends
 
 			// Create the TextArea where the template text is
 			templateText = new TextArea();
-			templateText.setWidth("620px");
+			templateText.setWidth("580px");
 			// update.setHeight("35px");
 			templateText.addStyleName("input");
 			templateText.setVisibleLines(2);
