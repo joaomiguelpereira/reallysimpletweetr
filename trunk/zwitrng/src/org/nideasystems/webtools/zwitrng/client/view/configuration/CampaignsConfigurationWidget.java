@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
+import java.util.Date;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
@@ -10,6 +11,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterOperator;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -17,6 +20,7 @@ import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.datepicker.client.DateBox;
 
 public class CampaignsConfigurationWidget extends
 		AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> {
@@ -37,7 +41,8 @@ public class CampaignsConfigurationWidget extends
 
 	@Override
 	public void loadData() {
-		isCreatingNew = false;
+
+		setCreatingNew(false);
 		loadCampaingns();
 
 	}
@@ -83,174 +88,344 @@ public class CampaignsConfigurationWidget extends
 
 	}
 
-	
 	/**
 	 * 
 	 * @author jpereira
-	 *
+	 * 
 	 */
-	private class EditableCampaign extends EditableItem<CampaignDTO, CampaignDTODTOList> {
-	
-		private TextBox campaignName; 
-		private TextBox filterByTags; 
+	private class EditableCampaign extends
+			EditableItem<CampaignDTO, CampaignDTODTOList> {
+
+		private TextBox campaignName;
+		private TextBox filterByTags;
 		private ListBox filterOperator;
 		private TextBox filterByText;
-		private TextBox startDate;
-		private TextBox endDate;
+		private DateBox startDate;
+		private DateBox endDate;
 		private TextBox timeBetweenTweets;
 		private ListBox timeUnits;
 		private TextBox maxUsageOfTemplate;
-		
-		public EditableCampaign(AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent) {
+		private InlineHTML runningDays;
+
+		public EditableCampaign(
+				AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent) {
 			super(theParent);
-			
-			
+
 			InlineHTML textLabel = new InlineHTML("Name: ");
 			campaignName = new TextBox();
 			contentPanel.add(textLabel);
 			contentPanel.add(campaignName);
-			
+
 			FlexTable table = new FlexTable();
-			
-			InlineHTML containingTagsLabel = new InlineHTML("Use templates containing tags:");
+
+			InlineHTML containingTagsLabel = new InlineHTML(
+					"Use templates containing tags:");
 			filterByTags = new TextBox();
 			table.setWidget(0, 0, containingTagsLabel);
 			table.setWidget(1, 0, filterByTags);
 			InlineHTML operatorLabel = new InlineHTML();
 			filterOperator = new ListBox();
-			filterOperator.addItem(FilterOperator.AND.toString(), FilterOperator.AND.name());
-			filterOperator.addItem(FilterOperator.OR.toString(), FilterOperator.OR.name());
-			
+			filterOperator.addItem(FilterOperator.AND.toString(),
+					FilterOperator.AND.name());
+			filterOperator.addItem(FilterOperator.OR.toString(),
+					FilterOperator.OR.name());
+
 			table.setWidget(0, 1, operatorLabel);
 			table.setWidget(1, 1, filterOperator);
-			
-	
-			InlineHTML filterByTextLabel = new InlineHTML("Templates containing text:");
+
+			InlineHTML filterByTextLabel = new InlineHTML(
+					"Templates containing text:");
 			filterByText = new TextBox();
 			table.setWidget(0, 2, filterByTextLabel);
 			table.setWidget(1, 2, filterByText);
 			filterByText.setWidth("220px");
 			filterByTags.setWidth("220px");
-			
 
 			contentPanel.add(table);
-			/////////
-			
-			InlineHTML startDateLabel = new  InlineHTML("Start date:");
-			startDate = new TextBox();
+			// ///////
+
+			InlineHTML startDateLabel = new InlineHTML("Start date:");
+			// startDate = new TextBox();
+			startDate = new DateBox();
 			startDate.setWidth("220px");
 			table.setWidget(2, 0, startDateLabel);
 			table.setWidget(3, 0, startDate);
-			
-			
-			InlineHTML endDateLabel = new  InlineHTML("Start date:");
-			endDate = new TextBox();
+
+			InlineHTML endDateLabel = new InlineHTML("Start date:");
+			endDate = new DateBox();
 			endDate.setWidth("220px");
 			table.setWidget(2, 2, endDateLabel);
 			table.setWidget(3, 2, endDate);
-						
-			
-			
-			
-			///////////////
-			
-			
-			
+			runningDays = new InlineHTML();
+			runningDays.addStyleName("inline-form-inline-help");
+			contentPanel.add(runningDays);
+
+			// /////////////
+
 			FlexTable limitsTable = new FlexTable();
-			FlexCellFormatter formatterLimitsTable = limitsTable.getFlexCellFormatter();
-			InlineHTML timeBetweenTweetsLabel = new InlineHTML("Wait time between tweets");
+			FlexCellFormatter formatterLimitsTable = limitsTable
+					.getFlexCellFormatter();
+			InlineHTML timeBetweenTweetsLabel = new InlineHTML(
+					"Wait time between tweets");
 			timeBetweenTweets = new TextBox();
 			timeBetweenTweets.setWidth("50px");
 			limitsTable.setWidget(0, 0, timeBetweenTweetsLabel);
 			formatterLimitsTable.setColSpan(0, 0, 2);
 			timeUnits = new ListBox();
-			timeUnits.addItem(TimeUnits.MINUTES.toString(),TimeUnits.MINUTES.name());
-			timeUnits.addItem(TimeUnits.HOURS.toString(),TimeUnits.HOURS.name());
-			timeUnits.addItem(TimeUnits.DAYS.toString(),TimeUnits.DAYS.name());
+			timeUnits.addItem(TimeUnits.MINUTES.toString(), TimeUnits.MINUTES
+					.name());
+			timeUnits.addItem(TimeUnits.HOURS.toString(), TimeUnits.HOURS
+					.name());
+			timeUnits.addItem(TimeUnits.DAYS.toString(), TimeUnits.DAYS.name());
 			limitsTable.setWidget(1, 0, timeBetweenTweets);
 			limitsTable.setWidget(1, 1, timeUnits);
-			
+
 			contentPanel.add(limitsTable);
-			
-			
+
 			FlexTable maximumTweetsTable = new FlexTable();
-			InlineHTML maxUsageOfTemplateLabel = new InlineHTML("Use each template maximum times");
+			InlineHTML maxUsageOfTemplateLabel = new InlineHTML(
+					"Use each template maximum times");
 			maxUsageOfTemplate = new TextBox();
 			maxUsageOfTemplate.setWidth("50px");
-			
+
 			maximumTweetsTable.setWidget(0, 0, maxUsageOfTemplateLabel);
 
-			maximumTweetsTable.setWidget(1,0,maxUsageOfTemplate);
-			
+			maximumTweetsTable.setWidget(1, 0, maxUsageOfTemplate);
+
 			contentPanel.add(maximumTweetsTable);
-			
-			
+
+			this.startDate.setFormat(new DateFormatter());
+			this.endDate.setFormat(new DateFormatter());
+
+			this.startDate
+					.addValueChangeHandler(new ValueChangeHandler<Date>() {
+
+						@Override
+						public void onValueChange(ValueChangeEvent<Date> event) {
+							updateRunningDays();
+
+						}
+
+					});
+
+			this.endDate.addValueChangeHandler(new ValueChangeHandler<Date>() {
+
+				@Override
+				public void onValueChange(ValueChangeEvent<Date> event) {
+					updateRunningDays();
+
+				}
+
+			});
+
+		}
+
+		private void updateRunningDays() {
+			StringBuffer sb = new StringBuffer();
+			// "Running for: xx days";
+			if (this.startDate.getValue().after(this.endDate.getValue())) {
+
+				this.runningDays
+						.setText("Error: End date is greater than start date");
+			} else if (this.startDate.getValue().compareTo(
+					this.endDate.getValue()) == 0) {
+				this.runningDays
+						.setText("Error: End date and start date are the same");
+			} else {
+				long iDays = this.endDate.getValue().getTime()
+						- this.startDate.getValue().getTime();
+
+				long days = iDays / (60 * 60 * 24 * 1000);
+				sb.append("Run during ");
+				sb.append(days);
+				sb.append(" days");
+
+				this.runningDays.setText(sb.toString());
+
+			}
+
+		}
+
+		private class DateFormatter implements DateBox.Format {
+			@Override
+			public String format(DateBox dateBox, Date date) {
+				DateTimeFormat dtf = DateTimeFormat
+						.getFormat(Constants.DATE_FORMAT);
+				String retValue = "";
+				if (date != null) {
+					retValue = dtf.format(date);
+				}
+				return retValue;
+
+			}
+
+			@Override
+			public Date parse(DateBox dateBox, String text, boolean reportError) {
+				return new DateBox.DefaultFormat().parse(dateBox, text,
+						reportError);
+
+			}
+
+			@Override
+			public void reset(DateBox dateBox, boolean abandon) {
+				new DateBox.DefaultFormat().reset(dateBox, abandon);
+
+			}
 		}
 
 		@Override
 		public void focus() {
-			// TODO Auto-generated method stub
-			
+			this.filterByTags.setFocus(true);
+		}
+
+		@Override
+		protected void save() {
+			boolean isValid = true;
+			if (this.filterByTags.getValue().trim().isEmpty()
+					&& this.filterByText.getValue().trim().isEmpty()) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide some tags and/or some text so we can find your templates");
+				isValid = false;
+			}
+
+			if (startDate.getValue() == null || endDate.getValue() == null) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide a start and end date for the campaign.");
+				isValid = false;
+
+			}
+
+			if (this.startDate.getValue() == null
+					|| this.endDate.getValue() == null
+					|| this.startDate.getValue().after(this.endDate.getValue())
+					|| (this.startDate.getValue().compareTo(
+							this.endDate.getValue()) == 0)) {
+				MainController.getInstance().addError(
+						"Please provide a end date later than the start date.");
+				isValid = false;
+			}
+
+			if (this.timeBetweenTweets.getValue().trim().isEmpty()) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide the time we should wait between your tweets.");
+				isValid = false;
+			} else {
+
+				try {
+					Integer.valueOf(this.maxUsageOfTemplate.getValue());
+				} catch (NumberFormatException e) {
+					MainController
+							.getInstance()
+							.addError(
+									"Please provide a valid number for the time we should wait between tweets!");
+					isValid = false;
+
+				}
+
+			}
+
+			if (this.maxUsageOfTemplate.getValue().trim().isEmpty()) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide the number of times we should reuse each of the templates.");
+				isValid = false;
+			} else {
+
+				try {
+					Integer.valueOf(this.maxUsageOfTemplate.getValue());
+				} catch (NumberFormatException e) {
+					MainController
+							.getInstance()
+							.addError(
+									"Please provide a valid number for the usage of each template!");
+					isValid = false;
+
+				}
+
+			}
+
+			if ((this.timeUnits.getValue(this.timeUnits.getSelectedIndex()))
+					.equals(TimeUnits.MINUTES.name())) {
+				// Validate multiple of 10
+
+				Integer val = 10;
+				try {
+					val = Integer.valueOf(this.timeBetweenTweets.getValue());
+				} catch (NumberFormatException e) {
+					
+					//validated before
+					isValid = false;
+
+				}
+
+				if ((val % 10) > 0) {
+					MainController
+							.getInstance()
+							.addError(
+									"The interval in minutes we use to send tweets is allways multiples of 10.\nProvide a multiple of 10. Eg. 10, 20, 30, 40, 50, 60,...");
+					isValid = false;
+
+				}
+			}
+
 		}
 
 		@Override
 		public void refresh() {
 			this.campaignName.setValue(dataObject.getName());
-			
-			if ( dataObject.getId()!=-1) {
+
+			if (dataObject.getId() != -1) {
 				this.campaignName.setEnabled(false);
 			}
-			
-			DateTimeFormat dtf = DateTimeFormat.getFormat(Constants.DATE_FORMAT);
-			this.endDate.setValue(dtf.format(dataObject.getEndDate()));
-			this.startDate.setValue(dtf.format(dataObject.getStartDate()));
-			this.timeBetweenTweets.setValue(dataObject.getTimeBetweenTweets()+"");
+
+			this.endDate.setValue(dataObject.getEndDate());
+			this.startDate.setValue(dataObject.getStartDate());
+			this.timeBetweenTweets.setValue(dataObject.getTimeBetweenTweets()
+					+ "");
 			this.filterByTags.setValue(dataObject.getFilterByTemplateTags());
 			this.filterByText.setValue(dataObject.getFilterByTemplateText());
-			this.maxUsageOfTemplate.setValue(dataObject.getMaxTweetsPerTemplate()+"");
-			
-			//Operator & timeunits hack
-			if ( dataObject.getFilterOperator().equals(FilterOperator.OR)) {
-				
-				this.filterOperator.setSelectedIndex(1);	
+			this.maxUsageOfTemplate.setValue(dataObject
+					.getMaxTweetsPerTemplate()
+					+ "");
+
+			// Operator & timeunits hack
+			if (dataObject.getFilterOperator().equals(FilterOperator.OR)) {
+
+				this.filterOperator.setSelectedIndex(1);
 			} else {
-				this.filterOperator.setSelectedIndex(0);	
+				this.filterOperator.setSelectedIndex(0);
 			}
-			
-			if ( dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
+
+			if (dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
 				this.timeUnits.setSelectedIndex(2);
 			} else if (dataObject.getTimeUnit().equals(TimeUnits.HOURS)) {
 				this.timeUnits.setSelectedIndex(1);
 			} else {
 				this.timeUnits.setSelectedIndex(0);
 			}
-			
-			
-			
-			
-			
-			
-		
-		}
 
-		@Override
-		protected void save() {
-			// TODO Auto-generated method stub
-			
+			updateRunningDays();
+
 		}
 
 		@Override
 		public void onLinksShortened(Map<String, String> result) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
-	
-	
+
 	/**
 	 * 
 	 * @author jpereira
-	 *
+	 * 
 	 */
 	private class SelectableCampaign extends
 			SelectableItem<CampaignDTO, CampaignDTODTOList> {
@@ -260,7 +435,6 @@ public class CampaignsConfigurationWidget extends
 		private InlineHTML scheduleText;
 		private InlineHTML limitsText;
 		private InlineHTML statusText;
-		
 
 		public SelectableCampaign(
 				CampaignDTO theCampaign,
@@ -319,17 +493,17 @@ public class CampaignsConfigurationWidget extends
 			sb.append("Status: ");
 			sb.append("<span class=\"label\">");
 			sb.append(dataObject.getStatus().toString());
-			sb.append("</span>. " );
-			
+			sb.append("</span>. ");
+
 			if (!dataObject.getStatus().equals(CampaignStatus.NOT_STARTED)) {
 				sb.append(" Sent: ");
 				sb.append("<span class=\"label\">");
 				sb.append(dataObject.getTweetsSent());
 				sb.append("</span> tweets");
-					
+
 			}
 			return sb.toString();
-			
+
 		}
 
 		private String getCampaignLimitsText(CampaignDTO dataObject) {
@@ -339,16 +513,16 @@ public class CampaignsConfigurationWidget extends
 			sb.append("<span class=\"label\">");
 			sb.append(dataObject.getTimeBetweenTweets());
 			sb.append(" </span> ");
-			if ( dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
+			if (dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
 				sb.append("days");
 			} else if (dataObject.getTimeUnit().equals(TimeUnits.HOURS)) {
 				sb.append("hours");
 			} else {
 				sb.append("minutes");
 			}
-			
+
 			sb.append("between tweets. ");
-			
+
 			sb.append(" Use each template a maximum of  ");
 			sb.append("<span class=\"label\">");
 			sb.append(dataObject.getMaxTweetsPerTemplate());
@@ -398,8 +572,9 @@ public class CampaignsConfigurationWidget extends
 		private String getCampaignScheduleText(CampaignDTO dataObject) {
 
 			StringBuffer sb = new StringBuffer();
-			
-			DateTimeFormat sdf = DateTimeFormat.getFormat(Constants.DATE_FORMAT);
+
+			DateTimeFormat sdf = DateTimeFormat
+					.getFormat(Constants.DATE_FORMAT);
 			// new DateTimeFormat("EEE, MMM d, yyyy");
 			sb.append("Starts  ");
 			sb.append("<span class=\"label\">");

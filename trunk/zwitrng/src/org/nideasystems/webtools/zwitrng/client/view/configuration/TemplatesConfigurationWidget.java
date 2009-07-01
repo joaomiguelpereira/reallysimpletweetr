@@ -38,7 +38,7 @@ public class TemplatesConfigurationWidget extends
 	// ////////
 	@Override
 	public void loadData() {
-		isCreatingNew = false;
+		setCreatingNew(false);
 		loadTemplates();
 
 	}

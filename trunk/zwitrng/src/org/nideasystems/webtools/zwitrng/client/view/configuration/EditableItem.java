@@ -36,6 +36,7 @@ public abstract class EditableItem<T extends IModel, L extends IModel> extends
 		this.addStyleName("list_item_selected");
 		contentPanel = new VerticalPanel();
 		this.add(contentPanel);
+		contentPanel.setWidth(Constants.EDITABLE_TEMPLATE_WIDTH);
 
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		toolsPanel.setSpacing(5);
