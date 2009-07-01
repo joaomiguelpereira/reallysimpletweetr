@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
+
+import sun.security.action.GetBooleanAction;
 
 public class PersonaPojo extends AbstractPojo {
 
@@ -37,6 +40,8 @@ public class PersonaPojo extends AbstractPojo {
 				twitterAccountDo);
 		
 	}
+
+	
 
 	
 

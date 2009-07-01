@@ -84,8 +84,23 @@ public class CampaignsConfigurationWidget extends
 
 	@Override
 	public void saveObject(CampaignDTO object) {
-		// TODO Auto-generated method stub
+		if (object.getId()==-1) {
+			createNewCampaign(object);
+		} else {
+			saveCampaign(object);
+		}
+	
 
+	}
+
+	private void saveCampaign(CampaignDTO object) {
+		MainController.getInstance().getCurrentPersonaController().saveCampaign(object,getSelectedItem());
+		
+	}
+
+	private void createNewCampaign(CampaignDTO object) {
+		MainController.getInstance().getCurrentPersonaController().createCampaign(object,this);
+		
 	}
 
 	/**
@@ -223,6 +238,10 @@ public class CampaignsConfigurationWidget extends
 		private void updateRunningDays() {
 			StringBuffer sb = new StringBuffer();
 			// "Running for: xx days";
+			if(this.startDate== null || this.endDate==null) {
+				this.runningDays
+				.setText("");
+			}
 			if (this.startDate.getValue().after(this.endDate.getValue())) {
 
 				this.runningDays
@@ -281,12 +300,28 @@ public class CampaignsConfigurationWidget extends
 		@Override
 		protected void save() {
 			boolean isValid = true;
+
+			if (this.campaignName.getValue().trim().isEmpty()) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide a name for the campaign");
+				isValid = false;
+			}
+
 			if (this.filterByTags.getValue().trim().isEmpty()
 					&& this.filterByText.getValue().trim().isEmpty()) {
 				MainController
 						.getInstance()
 						.addError(
 								"Please provide some tags and/or some text so we can find your templates");
+				isValid = false;
+			}
+			if (this.campaignName.getValue().trim().isEmpty()) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide a name for the campaign.");
 				isValid = false;
 			}
 
@@ -348,6 +383,15 @@ public class CampaignsConfigurationWidget extends
 					isValid = false;
 
 				}
+				
+				if (isValid) {
+					CampaignDTO campaign = new CampaignDTO();
+					if (dataObject!=null) {
+						campaign.setId(dataObject.getId());
+					}
+					campaign.setName(this.campaignName.getValue());
+					
+				}
 
 			}
 
@@ -373,6 +417,25 @@ public class CampaignsConfigurationWidget extends
 					isValid = false;
 
 				}
+			}
+			if (isValid) {
+				CampaignDTO campaign = new CampaignDTO();
+				if (dataObject!=null) {
+					campaign.setId(dataObject.getId());
+				}
+				campaign.setName(this.campaignName.getValue());
+				campaign.setEndDate(this.endDate.getValue());
+				campaign.setFilterByTemplateTags(this.filterByTags.getValue());
+				campaign.setFilterByTemplateText(this.filterByText.getValue());
+				campaign.setFilterOperator(FilterOperator.valueOf(this.filterOperator.getValue(this.filterOperator.getSelectedIndex())));
+				campaign.setMaxTweetsPerTemplate(Integer.valueOf(this.maxUsageOfTemplate.getValue()));
+				campaign.setStartDate(this.startDate.getValue());
+				//campaign.setStatus(status)
+				campaign.setTimeBetweenTweets(Integer.valueOf(this.timeBetweenTweets.getValue()));
+				campaign.setTimeUnit(TimeUnits.valueOf(this.timeUnits.getValue(this.timeUnits.getSelectedIndex())));
+				setUpdating(true);
+				parent.saveObject(campaign);
+				
 			}
 
 		}
@@ -514,14 +577,14 @@ public class CampaignsConfigurationWidget extends
 			sb.append(dataObject.getTimeBetweenTweets());
 			sb.append(" </span> ");
 			if (dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
-				sb.append("days");
+				sb.append("days ");
 			} else if (dataObject.getTimeUnit().equals(TimeUnits.HOURS)) {
-				sb.append("hours");
+				sb.append("hours ");
 			} else {
-				sb.append("minutes");
+				sb.append("minutes ");
 			}
 
-			sb.append("between tweets. ");
+			sb.append(" between tweets. ");
 
 			sb.append(" Use each template a maximum of  ");
 			sb.append("<span class=\"label\">");

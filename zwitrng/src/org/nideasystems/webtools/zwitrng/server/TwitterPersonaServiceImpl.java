@@ -247,40 +247,36 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 
 	@Override
 	public CampaignDTODTOList getCampaigns(PersonaDTO model) throws Exception {
-		CampaignDTODTOList retList = new CampaignDTODTOList();
-		CampaignDTO c1 = new CampaignDTO();
-		c1.setId(1);
-		c1.setName("name");
-		c1.setFilterByTemplateTags("Atgs to filter with");
-		//c1.setFilterByTemplateText("Atgs to filter with");
-		c1.setFilterOperator(FilterOperator.OR);
-		c1.setStartDate(new Date());
-		c1.setEndDate(new Date());
-		c1.setTimeBetweenTweets(10);//minutes
-		c1.setTimeUnit(TimeUnits.DAYS);
-		c1.setMaxTweetsPerTemplate(6);
-		c1.setStatus(CampaignStatus.RUNNING);
-		c1.setTweetsSent(10);
-		
-		retList.addCampaign(c1);
-		
-		CampaignDTO c2 = new CampaignDTO();
-		c2.setId(1);
-		c2.setName("name2");
-		c2.setFilterByTemplateTags("campaign1010");
-		c2.setFilterByTemplateText("what's up?");
-		c2.setFilterOperator(FilterOperator.AND);
-		c2.setStartDate(new Date());
-		c2.setEndDate(new Date());
-		
-		c2.setTimeBetweenTweets(10);
-		c2.setTimeUnit(TimeUnits.MINUTES);
-		c2.setMaxTweetsPerTemplate(6);
-		c2.setStatus(CampaignStatus.RUNNING);
-		c2.setTweetsSent(10);
-		
-		retList.addCampaign(c2);
+		CampaignDTODTOList retList = null;
+		startTransaction(true);
+		retList = getBusinessHelper().getCampaignPojo().findCampaigns(model.getName(),user.getEmail());
+		endTransaction();
 		return retList;
+	}
+
+	@Override
+	public CampaignDTO createCampaign(PersonaDTO model, CampaignDTO object)
+			throws Exception {
+		CampaignDTO campaign = null;
+		startTransaction(true);
+		try {
+			campaign = getBusinessHelper().getCampaignPojo().createCampaign(model.getName(),user.getEmail(),object);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+			
+		} finally {
+			endTransaction();
+		}
+		
+		return campaign;
+	}
+
+	@Override
+	public CampaignDTO saveCampaign(PersonaDTO model, CampaignDTO object)
+			throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

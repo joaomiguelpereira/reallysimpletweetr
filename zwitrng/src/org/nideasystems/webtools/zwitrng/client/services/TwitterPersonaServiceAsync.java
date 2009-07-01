@@ -4,6 +4,7 @@ package org.nideasystems.webtools.zwitrng.client.services;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -41,6 +42,10 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<Map<String, String>> asyncCallback) throws Exception;
 	void getCampaigns(PersonaDTO model,
 			AsyncCallback<CampaignDTODTOList> asyncCallback) throws Exception;
+	void createCampaign(PersonaDTO model, CampaignDTO object,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
+	void saveCampaign(PersonaDTO model, CampaignDTO object,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
 	
 
 	

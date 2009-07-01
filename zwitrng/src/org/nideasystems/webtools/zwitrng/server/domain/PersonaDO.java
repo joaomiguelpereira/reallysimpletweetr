@@ -42,7 +42,12 @@ public class PersonaDO {
 	@Persistent(mappedBy="persona",defaultFetchGroup="true")
 	private List<FilterDO> filters;
 	
+
 	
+	@Persistent(mappedBy="persona",defaultFetchGroup="true")
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+	private List<CampaignDO> campaigns;
+
 	@Persistent(mappedBy="persona",defaultFetchGroup="true")
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
 	private List<TemplateDO> templates;
@@ -147,12 +152,27 @@ public class PersonaDO {
 		return templateFragments;
 	}
 
+	
+	public void addCampaign(CampaignDO campaign) {
+		if (this.campaigns == null) {
+			this.campaigns = new ArrayList<CampaignDO>();
+		}
+		this.campaigns.add(campaign);
+	}
 	public void addtemplateFragment(TemplateFragmentDO fragDo) {
 		if ( this.templateFragments == null ) {
 			this.templateFragments = new ArrayList<TemplateFragmentDO>();
 		}
 		this.templateFragments.add(fragDo);
 		
+	}
+
+	public void setCampaigns(List<CampaignDO> campaigns) {
+		this.campaigns = campaigns;
+	}
+
+	public List<CampaignDO> getCampaigns() {
+		return campaigns;
 	}
 
 
