@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
@@ -157,6 +158,12 @@ public class RPCService implements IService {
 			AsyncCallback<Map<String, String>> asyncCallback) throws Exception{
 		this.personaService.getTemplateFragmentsLists(model, lists,
 				asyncCallback);
+		
+	}
+
+	public void getCampaigns(PersonaDTO model,
+			AsyncCallback<CampaignDTODTOList> asyncCallback) throws Exception {
+		this.personaService.getCampaigns(model,asyncCallback);
 		
 	}
 

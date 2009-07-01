@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -8,7 +9,11 @@ import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.FilterOperator;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
@@ -237,6 +242,41 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		Map<String, String> ret = getBusinessHelper().getTemplatePojo().getFragmentsLists(model.getName(), user.getEmail(), lists);
 		endTransaction();
 		return ret;
+	}
+
+	@Override
+	public CampaignDTODTOList getCampaigns(PersonaDTO model) throws Exception {
+		CampaignDTODTOList retList = new CampaignDTODTOList();
+		CampaignDTO c1 = new CampaignDTO();
+		c1.setId(1);
+		c1.setName("name");
+		c1.setFilterByTemplateTags("Atgs to filter with");
+		c1.setFilterByTemplateText("Atgs to filter with");
+		c1.setFilterOperator(FilterOperator.OR);
+		c1.setStartDate(new Date());
+		c1.setEndDate(new Date());
+		c1.setMinutesBetweenTweets(10);//minutes
+		c1.setMaxTweetsPerTemplate(6);
+		c1.setStatus(CampaignStatus.RUNNING);
+		c1.setTweetsSent(10);
+		
+		retList.addCampaign(c1);
+		
+		CampaignDTO c2 = new CampaignDTO();
+		c2.setId(1);
+		c2.setName("name2");
+		c2.setFilterByTemplateTags("campaign1010");
+		c2.setFilterByTemplateText("what's up?");
+		c2.setFilterOperator(FilterOperator.AND);
+		c2.setStartDate(new Date());
+		c2.setEndDate(new Date());
+		c2.setMinutesBetweenTweets(10);//minutes
+		c2.setMaxTweetsPerTemplate(6);
+		c2.setStatus(CampaignStatus.RUNNING);
+		c2.setTweetsSent(10);
+		
+		retList.addCampaign(c2);
+		return retList;
 	}
 
 }

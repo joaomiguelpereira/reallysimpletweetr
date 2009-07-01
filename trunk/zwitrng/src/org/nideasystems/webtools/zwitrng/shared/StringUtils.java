@@ -167,7 +167,7 @@ public class StringUtils {
 		// one|two|three
 
 		String[] splitedText = tmpWord.split("[|]");
-
+		
 		double rand = Math.random();
 		int index = (int) Math.round(rand * (splitedText.length - 1));
 

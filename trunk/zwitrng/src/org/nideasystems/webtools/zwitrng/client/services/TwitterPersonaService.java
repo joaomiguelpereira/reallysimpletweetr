@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.services;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
@@ -51,5 +52,7 @@ public interface TwitterPersonaService extends RemoteService {
 
 	Map<String, String> getTemplateFragmentsLists(PersonaDTO model,
 			List<String> lists) throws Exception;
+	
+	CampaignDTODTOList getCampaigns(PersonaDTO model) throws Exception;
 
 }
