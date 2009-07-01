@@ -327,4 +327,16 @@ public abstract class AbstractListConfigurationWidget<T extends IModel, L extend
 
 	}
 
+	public boolean isCreatingNew() {
+		return isCreatingNew;
+	}
+
+	public void setCreatingNew(boolean isCreatingNew) {
+		this.isCreatingNew = isCreatingNew;
+		if (!this.isCreatingNew && isEditable) {
+			toolBar.setVisible(true);
+		}
+	}
+
+
 }

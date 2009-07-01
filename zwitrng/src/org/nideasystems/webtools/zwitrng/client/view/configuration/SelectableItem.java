@@ -73,9 +73,10 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 
 			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
-				if (isEditable && !isEditing) {
+				if (!isEditing) {
 					setEditing(true);
 				}
+				
 
 			}
 
@@ -181,6 +182,7 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 				}
 			}
 			if (editableInstance!=null) {
+				isEditing = editing;
 				editableInstance.setDataObject(this.dataObject);
 				editableInstance.refresh();
 				content.setVisible(!editing);

@@ -37,7 +37,7 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 	@Override
 	public void loadData() {
 		
-		isCreatingNew = false;
+		setCreatingNew(false);
 		loadTemplateFragments();
 
 	}
