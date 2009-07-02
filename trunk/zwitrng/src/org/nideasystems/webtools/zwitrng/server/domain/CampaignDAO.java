@@ -42,6 +42,12 @@ public class CampaignDAO extends BaseDAO {
 		dom.setFilterOperator(object.getFilterOperator());
 		dom.setMaxTweetsPerTemplate(object.getMaxTweetsPerTemplate());
 		dom.setModified(new Date());
+		
+		
+		dom.setStartHourOfTheDay(object.getStartHourOfTheDay());
+		dom.setEndHourOfTheDay(object.getEndHourOfTheDay());
+
+		
 		dom.setName(object.getName());
 		dom.setPersona(persona);
 		dom.setStartDate(object.getStartDate());
@@ -71,6 +77,10 @@ public class CampaignDAO extends BaseDAO {
 		dom.setStartDate(object.getStartDate());
 		dom.setTimeBetweenTweets(object.getTimeBetweenTweets());
 		dom.setTimeUnit(object.getTimeUnit());
+		
+		dom.setStartHourOfTheDay(object.getStartHourOfTheDay());
+		dom.setEndHourOfTheDay(object.getEndHourOfTheDay());
+		
 		if (new Date().after(object.getStartDate())) {
 			dom.setStatus(CampaignStatus.RUNNING);
 		} else {

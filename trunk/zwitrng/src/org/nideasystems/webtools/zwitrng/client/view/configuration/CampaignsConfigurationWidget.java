@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -78,31 +80,32 @@ public class CampaignsConfigurationWidget extends
 	@Override
 	protected void removeItem(
 			SelectableItem<CampaignDTO, CampaignDTODTOList> item) {
-	
-		MainController.getInstance().getCurrentPersonaController().removeCampaign(item.dataObject, item);
-				
+
+		MainController.getInstance().getCurrentPersonaController()
+				.removeCampaign(item.dataObject, item);
 
 	}
 
 	@Override
 	public void saveObject(CampaignDTO object) {
-		if (object.getId()==-1) {
+		if (object.getId() == -1) {
 			createNewCampaign(object);
 		} else {
 			saveCampaign(object);
 		}
-	
 
 	}
 
 	private void saveCampaign(CampaignDTO object) {
-		MainController.getInstance().getCurrentPersonaController().saveCampaign(object,getSelectedItem());
-		
+		MainController.getInstance().getCurrentPersonaController()
+				.saveCampaign(object, getSelectedItem());
+
 	}
 
 	private void createNewCampaign(CampaignDTO object) {
-		MainController.getInstance().getCurrentPersonaController().createCampaign(object,this);
-		
+		MainController.getInstance().getCurrentPersonaController()
+				.createCampaign(object, this);
+
 	}
 
 	/**
@@ -123,6 +126,8 @@ public class CampaignsConfigurationWidget extends
 		private ListBox timeUnits;
 		private TextBox maxUsageOfTemplate;
 		private InlineHTML runningDays;
+		private ListBox endHourOfTheDay;
+		private ListBox startHourOfTheDay;
 
 		public EditableCampaign(
 				AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent) {
@@ -197,6 +202,20 @@ public class CampaignsConfigurationWidget extends
 			limitsTable.setWidget(1, 0, timeBetweenTweets);
 			limitsTable.setWidget(1, 1, timeUnits);
 
+			limitsTable.setWidget(0, 1, new InlineHTML(
+					"Run between hours of Day"));
+			formatterLimitsTable.setColSpan(0, 1, 2);
+			startHourOfTheDay = new ListBox();
+			for (int i = 0; i < 24; i++) {
+				startHourOfTheDay.addItem(i + ":00", i + "");
+			}
+			endHourOfTheDay = new ListBox();
+			for (int i = 1; i < 24; i++) {
+				endHourOfTheDay.addItem(i + ":59", i + "");
+			}
+
+			limitsTable.setWidget(1, 2, startHourOfTheDay);
+			limitsTable.setWidget(1, 3, endHourOfTheDay);
 			contentPanel.add(limitsTable);
 
 			FlexTable maximumTweetsTable = new FlexTable();
@@ -240,9 +259,8 @@ public class CampaignsConfigurationWidget extends
 		private void updateRunningDays() {
 			StringBuffer sb = new StringBuffer();
 			// "Running for: xx days";
-			if(this.startDate== null || this.endDate==null) {
-				this.runningDays
-				.setText("");
+			if (this.startDate == null || this.endDate == null) {
+				this.runningDays.setText("");
 			}
 			if (this.startDate.getValue().after(this.endDate.getValue())) {
 
@@ -304,10 +322,8 @@ public class CampaignsConfigurationWidget extends
 			boolean isValid = true;
 
 			if (this.campaignName.getValue().trim().isEmpty()) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide a name for the campaign");
+				MainController.getInstance().addError(
+						"Please provide a name for the campaign");
 				isValid = false;
 			}
 
@@ -320,10 +336,8 @@ public class CampaignsConfigurationWidget extends
 				isValid = false;
 			}
 			if (this.campaignName.getValue().trim().isEmpty()) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide a name for the campaign.");
+				MainController.getInstance().addError(
+						"Please provide a name for the campaign.");
 				isValid = false;
 			}
 
@@ -385,14 +399,14 @@ public class CampaignsConfigurationWidget extends
 					isValid = false;
 
 				}
-				
+
 				if (isValid) {
 					CampaignDTO campaign = new CampaignDTO();
-					if (dataObject!=null) {
+					if (dataObject != null) {
 						campaign.setId(dataObject.getId());
 					}
 					campaign.setName(this.campaignName.getValue());
-					
+
 				}
 
 			}
@@ -405,13 +419,14 @@ public class CampaignsConfigurationWidget extends
 				try {
 					val = Integer.valueOf(this.timeBetweenTweets.getValue());
 				} catch (NumberFormatException e) {
-					
-					//validated before
+
+					// validated before
 					isValid = false;
 
 				}
 
 				if ((val % 10) > 0) {
+
 					MainController
 							.getInstance()
 							.addError(
@@ -420,24 +435,48 @@ public class CampaignsConfigurationWidget extends
 
 				}
 			}
+
+			if (Integer.valueOf(this.startHourOfTheDay
+					.getValue(this.startHourOfTheDay.getSelectedIndex())) > Integer
+					.valueOf(this.endHourOfTheDay.getValue(this.endHourOfTheDay
+							.getSelectedIndex()))) {
+				isValid = false;
+				MainController
+						.getInstance()
+						.addError(
+								"The start hour of the day is later than the end hour. This Campaign will not run.");
+
+			}
 			if (isValid) {
 				CampaignDTO campaign = new CampaignDTO();
-				if (dataObject!=null) {
+				if (dataObject != null) {
 					campaign.setId(dataObject.getId());
 				}
 				campaign.setName(this.campaignName.getValue());
 				campaign.setEndDate(this.endDate.getValue());
 				campaign.setFilterByTemplateTags(this.filterByTags.getValue());
 				campaign.setFilterByTemplateText(this.filterByText.getValue());
-				campaign.setFilterOperator(FilterOperator.valueOf(this.filterOperator.getValue(this.filterOperator.getSelectedIndex())));
-				campaign.setMaxTweetsPerTemplate(Integer.valueOf(this.maxUsageOfTemplate.getValue()));
+				campaign.setFilterOperator(FilterOperator
+						.valueOf(this.filterOperator
+								.getValue(this.filterOperator
+										.getSelectedIndex())));
+				campaign.setMaxTweetsPerTemplate(Integer
+						.valueOf(this.maxUsageOfTemplate.getValue()));
 				campaign.setStartDate(this.startDate.getValue());
-				//campaign.setStatus(status)
-				campaign.setTimeBetweenTweets(Integer.valueOf(this.timeBetweenTweets.getValue()));
-				campaign.setTimeUnit(TimeUnits.valueOf(this.timeUnits.getValue(this.timeUnits.getSelectedIndex())));
+				// campaign.setStatus(status)
+				campaign.setTimeBetweenTweets(Integer
+						.valueOf(this.timeBetweenTweets.getValue()));
+				campaign.setTimeUnit(TimeUnits.valueOf(this.timeUnits
+						.getValue(this.timeUnits.getSelectedIndex())));
+				
+				campaign.setStartHourOfTheDay(Integer.valueOf(this.startHourOfTheDay
+					.getValue(this.startHourOfTheDay.getSelectedIndex())));
+				campaign.setEndHourOfTheDay(Integer
+					.valueOf(this.endHourOfTheDay.getValue(this.endHourOfTheDay
+							.getSelectedIndex())));
 				setUpdating(true);
 				parent.saveObject(campaign);
-				
+
 			}
 
 		}
@@ -476,6 +515,8 @@ public class CampaignsConfigurationWidget extends
 				this.timeUnits.setSelectedIndex(0);
 			}
 
+			this.startHourOfTheDay.setSelectedIndex(dataObject.getStartHourOfTheDay());
+			this.endHourOfTheDay.setSelectedIndex(dataObject.getEndHourOfTheDay()-1);
 			updateRunningDays();
 
 		}
@@ -649,8 +690,19 @@ public class CampaignsConfigurationWidget extends
 			sb.append("<span class=\"label\">");
 
 			sb.append(sdf.format(dataObject.getEndDate()));
-			sb.append("</span>");
+			sb.append("</span>. ");
 
+			// If it have hours
+			sb.append("Run from <span class=\"label\">");
+
+			// Calendar.getInstance().DAY_OF_WEEK
+			sb.append(dataObject.getStartHourOfTheDay());
+
+			sb.append(":00</span> to <span class=\"label\"> ");
+
+			sb.append(dataObject.getEndHourOfTheDay());
+
+			sb.append(":59</span> hours");
 			return sb.toString();
 
 		}

@@ -409,6 +409,11 @@ public class DataUtils {
 		dto.setTimeUnit(dom.getTimeUnit());
 		dto.setStatus(dom.getStatus());
 		
+		dto.setStartHourOfTheDay(dom.getStartHourOfTheDay()!=null?dom.getStartHourOfTheDay():0);
+		dto.setEndHourOfTheDay(dom.getEndHourOfTheDay()!=null?dom.getEndHourOfTheDay():22);
+
+		
+		
 		return dto;
 	}
 
