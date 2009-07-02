@@ -59,4 +59,8 @@ public interface TwitterPersonaService extends RemoteService {
 	CampaignDTO createCampaign(PersonaDTO model, CampaignDTO object) throws Exception;
 	
 	CampaignDTO saveCampaign(PersonaDTO model, CampaignDTO object) throws Exception;
+	CampaignDTO deleteCampaign(PersonaDTO model, CampaignDTO dataObject) throws Exception;
+
+	
 }
+

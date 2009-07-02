@@ -46,6 +46,8 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
 	void saveCampaign(PersonaDTO model, CampaignDTO object,
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
+	void deleteCampaign(PersonaDTO model, CampaignDTO dataObject,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
 	
 
 	

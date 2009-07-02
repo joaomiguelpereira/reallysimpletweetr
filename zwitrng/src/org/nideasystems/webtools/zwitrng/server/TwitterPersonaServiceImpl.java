@@ -257,6 +257,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	@Override
 	public CampaignDTO createCampaign(PersonaDTO model, CampaignDTO object)
 			throws Exception {
+		
 		CampaignDTO campaign = null;
 		startTransaction(true);
 		try {
@@ -275,8 +276,35 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	@Override
 	public CampaignDTO saveCampaign(PersonaDTO model, CampaignDTO object)
 			throws Exception {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		CampaignDTO campaign = null;
+		startTransaction(true);
+		try {
+			campaign = getBusinessHelper().getCampaignPojo().saveCampaign(model.getName(),user.getEmail(),object);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+			
+		} finally {
+			endTransaction();
+		}
+		
+		return campaign;	}
+
+	@Override
+	public CampaignDTO deleteCampaign(PersonaDTO model, CampaignDTO object)
+			throws Exception {
+		CampaignDTO campaign = null;
+		startTransaction(true);
+		try {
+			campaign = getBusinessHelper().getCampaignPojo().deleteCampaign(model.getName(),user.getEmail(),object);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+			
+		} finally {
+			endTransaction();
+		}
+		
+		return campaign;		}
 
 }

@@ -78,7 +78,9 @@ public class CampaignsConfigurationWidget extends
 	@Override
 	protected void removeItem(
 			SelectableItem<CampaignDTO, CampaignDTODTOList> item) {
-		// TODO Auto-generated method stub
+	
+		MainController.getInstance().getCurrentPersonaController().removeCampaign(item.dataObject, item);
+				
 
 	}
 
