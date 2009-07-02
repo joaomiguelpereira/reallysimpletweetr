@@ -20,6 +20,22 @@ public class CampaignDTO implements IModel {
 	private TimeUnits timeUnit;
 	private Date created;
 	private Date modified;
+	private int startHourOfTheDay=0;
+	private int endHourOfTheDay=22;
+	
+	
+	public int getStartHourOfTheDay() {
+		return startHourOfTheDay;
+	}
+	public void setStartHourOfTheDay(int startHourOfTheDay) {
+		this.startHourOfTheDay = startHourOfTheDay;
+	}
+	public int getEndHourOfTheDay() {
+		return endHourOfTheDay;
+	}
+	public void setEndHourOfTheDay(int endHourOfTheDay) {
+		this.endHourOfTheDay = endHourOfTheDay;
+	}
 	public long getId() {
 		return id;
 	}
@@ -110,7 +126,7 @@ public class CampaignDTO implements IModel {
 	public Date getModified() {
 		return modified;
 	}
-	
+		
 	
 	
 	

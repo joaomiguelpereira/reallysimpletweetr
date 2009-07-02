@@ -48,6 +48,12 @@ public class CampaignDO {
 	@Persistent
 	private Date created;
 
+	@Persistent
+	private Date modified;
+	private Integer endHourOfTheDay=0;
+	@Persistent
+	private Integer startHourOfTheDay=22;
+
 	public Date getCreated() {
 		return created;
 	}
@@ -63,9 +69,6 @@ public class CampaignDO {
 	public void setModified(Date modified) {
 		this.modified = modified;
 	}
-
-	@Persistent
-	private Date modified;
 
 	public Key getKey() {
 		return key;
@@ -169,6 +172,24 @@ public class CampaignDO {
 
 	public void setPersona(PersonaDO persona) {
 		this.persona = persona;
+	}
+
+	public void setEndHourOfTheDay(Integer endHourOfTheDay) {
+		this.endHourOfTheDay = endHourOfTheDay;
+		
+	}
+
+	public void setStartHourOfTheDay(Integer startHourOfTheDay) {
+		this.startHourOfTheDay = startHourOfTheDay;
+		
+	}
+
+	public Integer getEndHourOfTheDay() {
+		return endHourOfTheDay;
+	}
+
+	public Integer getStartHourOfTheDay() {
+		return startHourOfTheDay;
 	}
 
 }
