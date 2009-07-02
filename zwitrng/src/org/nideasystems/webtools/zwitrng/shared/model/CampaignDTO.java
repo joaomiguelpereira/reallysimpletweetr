@@ -22,6 +22,8 @@ public class CampaignDTO implements IModel {
 	private Date modified;
 	private int startHourOfTheDay=0;
 	private int endHourOfTheDay=22;
+	private Date nextRun;
+	private Date lastRun;
 	
 	
 	public int getStartHourOfTheDay() {
@@ -125,6 +127,18 @@ public class CampaignDTO implements IModel {
 	}
 	public Date getModified() {
 		return modified;
+	}
+	public void setLastRun(Date lastRun) {
+		this.lastRun = lastRun;
+	}
+	public Date getLastRun() {
+		return lastRun;
+	}
+	public void setNextRun(Date nextRun) {
+		this.nextRun = nextRun;
+	}
+	public Date getNextRun() {
+		return nextRun;
 	}
 		
 	

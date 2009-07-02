@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
-import java.util.Calendar;
+
 import java.util.Date;
 import java.util.Map;
 
@@ -11,11 +11,10 @@ import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterOperator;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
-
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -128,6 +127,7 @@ public class CampaignsConfigurationWidget extends
 		private InlineHTML runningDays;
 		private ListBox endHourOfTheDay;
 		private ListBox startHourOfTheDay;
+		
 
 		public EditableCampaign(
 				AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent) {
@@ -169,6 +169,7 @@ public class CampaignsConfigurationWidget extends
 			InlineHTML startDateLabel = new InlineHTML("Start date:");
 			// startDate = new TextBox();
 			startDate = new DateBox();
+			startDate.setValue(new Date());
 			startDate.setWidth("220px");
 			table.setWidget(2, 0, startDateLabel);
 			table.setWidget(3, 0, startDate);
@@ -176,6 +177,7 @@ public class CampaignsConfigurationWidget extends
 			InlineHTML endDateLabel = new InlineHTML("Start date:");
 			endDate = new DateBox();
 			endDate.setWidth("220px");
+			endDate.setValue(new Date());
 			table.setWidget(2, 2, endDateLabel);
 			table.setWidget(3, 2, endDate);
 			runningDays = new InlineHTML();
@@ -190,6 +192,7 @@ public class CampaignsConfigurationWidget extends
 			InlineHTML timeBetweenTweetsLabel = new InlineHTML(
 					"Wait time between tweets");
 			timeBetweenTweets = new TextBox();
+			timeBetweenTweets.setValue("20");
 			timeBetweenTweets.setWidth("50px");
 			limitsTable.setWidget(0, 0, timeBetweenTweetsLabel);
 			formatterLimitsTable.setColSpan(0, 0, 2);
@@ -204,7 +207,7 @@ public class CampaignsConfigurationWidget extends
 
 			limitsTable.setWidget(0, 1, new InlineHTML(
 					"Run between hours of Day"));
-			formatterLimitsTable.setColSpan(0, 1, 2);
+			formatterLimitsTable.setColSpan(0, 1, 3);
 			startHourOfTheDay = new ListBox();
 			for (int i = 0; i < 24; i++) {
 				startHourOfTheDay.addItem(i + ":00", i + "");
@@ -213,9 +216,14 @@ public class CampaignsConfigurationWidget extends
 			for (int i = 1; i < 24; i++) {
 				endHourOfTheDay.addItem(i + ":59", i + "");
 			}
+			
+			startHourOfTheDay.setSelectedIndex(0);
+			endHourOfTheDay.setSelectedIndex(22);
+			
 
 			limitsTable.setWidget(1, 2, startHourOfTheDay);
 			limitsTable.setWidget(1, 3, endHourOfTheDay);
+			
 			contentPanel.add(limitsTable);
 
 			FlexTable maximumTweetsTable = new FlexTable();
@@ -223,6 +231,7 @@ public class CampaignsConfigurationWidget extends
 					"Use each template maximum times");
 			maxUsageOfTemplate = new TextBox();
 			maxUsageOfTemplate.setWidth("50px");
+			maxUsageOfTemplate.setValue("10");
 
 			maximumTweetsTable.setWidget(0, 0, maxUsageOfTemplateLabel);
 
@@ -259,7 +268,7 @@ public class CampaignsConfigurationWidget extends
 		private void updateRunningDays() {
 			StringBuffer sb = new StringBuffer();
 			// "Running for: xx days";
-			if (this.startDate == null || this.endDate == null) {
+			if (this.startDate.getValue() == null || this.endDate.getValue() == null) {
 				this.runningDays.setText("");
 			}
 			if (this.startDate.getValue().after(this.endDate.getValue())) {
@@ -314,7 +323,12 @@ public class CampaignsConfigurationWidget extends
 
 		@Override
 		public void focus() {
-			this.filterByTags.setFocus(true);
+			if ( dataObject!= null) {
+				this.filterByTags.setFocus(true);
+			} else {
+				this.campaignName.setFocus(true);
+			}
+			
 		}
 
 		@Override
@@ -605,7 +619,19 @@ public class CampaignsConfigurationWidget extends
 				sb.append(" Sent: ");
 				sb.append("<span class=\"label\">");
 				sb.append(dataObject.getTweetsSent());
-				sb.append("</span> tweets");
+				sb.append("</span> tweets.");
+				DateTimeFormat dtf = DateTimeFormat.getFormat(Constants.DATE_TIME_FORMAT);
+				if ( dataObject.getLastRun()!=null) {
+					
+
+					sb.append(" Last tweet sent at: "+ dtf.format(dataObject.getLastRun()));
+				}
+				
+				if ( dataObject.getNextRun()!=null) {
+					sb.append(" Next tweet will be sent at: "+dtf.format(dataObject.getNextRun()));
+				}
+				
+				
 
 			}
 			return sb.toString();

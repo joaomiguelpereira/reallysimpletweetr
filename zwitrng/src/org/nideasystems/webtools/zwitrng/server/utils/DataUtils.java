@@ -408,7 +408,9 @@ public class DataUtils {
 		dto.setTimeBetweenTweets(dom.getTimeBetweenTweets());
 		dto.setTimeUnit(dom.getTimeUnit());
 		dto.setStatus(dom.getStatus());
-		
+		dto.setTweetsSent(dom.getTweetsSent());
+		dto.setNextRun(dom.getNextRun());
+		dto.setLastRun(dom.getLastRun());
 		dto.setStartHourOfTheDay(dom.getStartHourOfTheDay()!=null?dom.getStartHourOfTheDay():0);
 		dto.setEndHourOfTheDay(dom.getEndHourOfTheDay()!=null?dom.getEndHourOfTheDay():22);
 

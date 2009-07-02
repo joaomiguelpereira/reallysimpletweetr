@@ -1,6 +1,5 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -11,16 +10,13 @@ import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.FilterOperator;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
@@ -206,7 +202,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			TemplateFragmentDTO object) throws Exception {
 
 		startTransaction(true);
-		
+
 		TemplateFragmentDTO returnFrag = getBusinessHelper().getTemplatePojo()
 				.createTemplateFragment(object, model.getName(),
 						user.getEmail());
@@ -219,8 +215,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			TemplateFragmentDTO object) throws Exception {
 		startTransaction(true);
 		TemplateFragmentDTO returnFrag = getBusinessHelper().getTemplatePojo()
-		.saveTemplateFragment(object, model.getName(),
-				user.getEmail());
+				.saveTemplateFragment(object, model.getName(), user.getEmail());
 
 		endTransaction();
 		return returnFrag;
@@ -230,8 +225,9 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public TemplateFragmentDTO deleteTemplateFragment(PersonaDTO model,
 			TemplateFragmentDTO dataObject) throws Exception {
 		startTransaction(true);
-		TemplateFragmentDTO outTemplateFrag = getBusinessHelper().getTemplatePojo()
-				.deleteTemplateFragment(model.getName(), user.getEmail(), dataObject);
+		TemplateFragmentDTO outTemplateFrag = getBusinessHelper()
+				.getTemplatePojo().deleteTemplateFragment(model.getName(),
+						user.getEmail(), dataObject);
 		endTransaction();
 		return outTemplateFrag;
 	}
@@ -240,7 +236,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public Map<String, String> getTemplateFragmentsLists(PersonaDTO model,
 			List<String> lists) throws Exception {
 		startTransaction(true);
-		Map<String, String> ret = getBusinessHelper().getTemplatePojo().getFragmentsLists(model.getName(), user.getEmail(), lists);
+		Map<String, String> ret = getBusinessHelper().getTemplatePojo()
+				.getFragmentsLists(model.getName(), user.getEmail(), lists);
 		endTransaction();
 		return ret;
 	}
@@ -249,7 +246,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public CampaignDTODTOList getCampaigns(PersonaDTO model) throws Exception {
 		CampaignDTODTOList retList = null;
 		startTransaction(true);
-		retList = getBusinessHelper().getCampaignPojo().findCampaigns(model.getName(),user.getEmail());
+		retList = getBusinessHelper().getCampaignPojo().findCampaigns(
+				model.getName(), user.getEmail());
 		endTransaction();
 		return retList;
 	}
@@ -257,19 +255,20 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	@Override
 	public CampaignDTO createCampaign(PersonaDTO model, CampaignDTO object)
 			throws Exception {
-		
+
 		CampaignDTO campaign = null;
 		startTransaction(true);
 		try {
-			campaign = getBusinessHelper().getCampaignPojo().createCampaign(model.getName(),user.getEmail(),object);
+			campaign = getBusinessHelper().getCampaignPojo().createCampaign(
+					model.getName(), user.getEmail(), object);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);
-			
+
 		} finally {
 			endTransaction();
 		}
-		
+
 		return campaign;
 	}
 
@@ -279,16 +278,18 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		CampaignDTO campaign = null;
 		startTransaction(true);
 		try {
-			campaign = getBusinessHelper().getCampaignPojo().saveCampaign(model.getName(),user.getEmail(),object);
+			campaign = getBusinessHelper().getCampaignPojo().saveCampaign(
+					model.getName(), user.getEmail(), object);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);
-			
+
 		} finally {
 			endTransaction();
 		}
-		
-		return campaign;	}
+
+		return campaign;
+	}
 
 	@Override
 	public CampaignDTO deleteCampaign(PersonaDTO model, CampaignDTO object)
@@ -296,15 +297,17 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		CampaignDTO campaign = null;
 		startTransaction(true);
 		try {
-			campaign = getBusinessHelper().getCampaignPojo().deleteCampaign(model.getName(),user.getEmail(),object);
+			campaign = getBusinessHelper().getCampaignPojo().deleteCampaign(
+					model.getName(), user.getEmail(), object);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);
-			
+
 		} finally {
 			endTransaction();
 		}
-		
-		return campaign;		}
+
+		return campaign;
+	}
 
 }
