@@ -5,34 +5,65 @@
 
 <web-app>
 
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
-  </welcome-file-list>
-  
-  <!-- Servlets -->
-  <servlet>
-    <servlet-name>twitterService</servlet-name>
-    <servlet-class>org.nideasystems.webtools.zwitrng.server.TwitterServiceImpl</servlet-class>
-  </servlet>
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>twitterService</servlet-name>
+		<servlet-class>org.nideasystems.webtools.zwitrng.server.TwitterServiceImpl</servlet-class>
+	</servlet>
 
 
-  <servlet-mapping>
-    <servlet-name>twitterService</servlet-name>
-    <url-pattern>/zwitrng/twitterService</url-pattern>
-  </servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>twitterService</servlet-name>
+		<url-pattern>/zwitrng/twitterService</url-pattern>
+	</servlet-mapping>
 
 
 
-  <servlet>
-    <servlet-name>personaService</servlet-name>
-    <servlet-class>org.nideasystems.webtools.zwitrng.server.TwitterPersonaServiceImpl</servlet-class>
-  </servlet>
-  
-  <servlet-mapping>
-    <servlet-name>personaService</servlet-name>
-    <url-pattern>/zwitrng/personaService</url-pattern>
-  </servlet-mapping>
+	<servlet>
+		<servlet-name>personaService</servlet-name>
+		<servlet-class>org.nideasystems.webtools.zwitrng.server.TwitterPersonaServiceImpl</servlet-class>
+	</servlet>
 
+	<servlet-mapping>
+		<servlet-name>personaService</servlet-name>
+		<url-pattern>/zwitrng/personaService</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>urlService</servlet-name>
+		<servlet-class>org.nideasystems.webtools.zwitrng.server.UrlServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>urlService</servlet-name>
+		<url-pattern>/zwitrng/urlService</url-pattern>
+	</servlet-mapping>
+
+
+	<servlet>
+		<servlet-name>campaignsJobs</servlet-name>
+		<servlet-class>org.nideasystems.webtools.zwitrng.server.jobs.RunCampaignsJobServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>campaignsJobs</servlet-name>
+		<url-pattern>/cron/runcampaigns</url-pattern>
+	</servlet-mapping>
+<!-- 
+	<security-constraint>
+		<web-resource-collection>
+			<url-pattern>/cron/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+ -->
 
 </web-app>
