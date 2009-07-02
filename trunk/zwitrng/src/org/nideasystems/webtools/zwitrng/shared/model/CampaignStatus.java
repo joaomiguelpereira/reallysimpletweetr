@@ -4,7 +4,7 @@ public enum CampaignStatus {
 	RUNNING,
 	NOT_STARTED,
 	FINISHED,
-	CANCELED;
+	CANCELED, RESCHEDULED;
 
 	public String toString() {
 		String statusStr = "";
@@ -16,8 +16,10 @@ public enum CampaignStatus {
 			statusStr = "Finished";
 		} else if (this.equals(CANCELED)){
 			statusStr ="Canceled";
+		} else if (this.equals(RESCHEDULED)){
+			statusStr = "Rescheduled";
 		} else {
-			statusStr = "Unknow";
+			statusStr = "unknown";
 		}
 		return statusStr;
 	}

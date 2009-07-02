@@ -16,7 +16,7 @@ public class CampaignDAO extends BaseDAO {
 
 	public CampaignDO findByPersonaNameAndcampaignName(PersonaDO persona,
 			String name) {
-		
+
 		log.fine("trying to find a Campaign by Name");
 		Query queryTemplateFrag = pm.newQuery(CampaignDO.class);
 
@@ -26,8 +26,8 @@ public class CampaignDAO extends BaseDAO {
 				.declareParameters("String tempCampName, PersonaDO personaObj");
 		queryTemplateFrag.setUnique(true);
 
-		CampaignDO templateFragment = (CampaignDO) queryTemplateFrag
-				.execute(name, persona);
+		CampaignDO templateFragment = (CampaignDO) queryTemplateFrag.execute(
+				name, persona);
 
 		return templateFragment;
 
@@ -52,10 +52,45 @@ public class CampaignDAO extends BaseDAO {
 		} else {
 			dom.setStatus(CampaignStatus.NOT_STARTED);
 		}
-		
+
 		persona.addCampaign(dom);
 		return DataUtils.campaignDtoFromDo(dom);
 	}
 
+	public CampaignDTO save(PersonaDO persona, CampaignDTO object,
+			CampaignDO dom) {
+
+		dom.setEndDate(object.getEndDate());
+		dom.setFilterByTemplateTags(object.getFilterByTemplateTags());
+		dom.setFilterByTemplateText(object.getFilterByTemplateText());
+		dom.setFilterOperator(object.getFilterOperator());
+		dom.setMaxTweetsPerTemplate(object.getMaxTweetsPerTemplate());
+		dom.setModified(new Date());
+		// dom.setName(object.getName());
+		// dom.setPersona(persona);
+		dom.setStartDate(object.getStartDate());
+		dom.setTimeBetweenTweets(object.getTimeBetweenTweets());
+		dom.setTimeUnit(object.getTimeUnit());
+		if (new Date().after(object.getStartDate())) {
+			dom.setStatus(CampaignStatus.RUNNING);
+		} else {
+			if (dom.getStatus().equals(CampaignStatus.RUNNING)) {
+				dom.setStatus(CampaignStatus.RESCHEDULED);
+			} else if ( !dom.getStatus().equals(CampaignStatus.RESCHEDULED)){
+				dom.setStatus(CampaignStatus.NOT_STARTED);
+			}
+
+			//persona.addCampaign(dom);
+		}
+		return DataUtils.campaignDtoFromDo(dom);
+
+	}
+
+	public void deleteCampaign(PersonaDO persona, CampaignDO campaignDom) {
+		
+		persona.getCampaigns().remove(campaignDom);
+		
+		
+	}
 
 }

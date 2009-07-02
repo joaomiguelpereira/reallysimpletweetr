@@ -463,4 +463,32 @@ public class PersonaController extends
 		
 	}
 
+	public void removeCampaign(CampaignDTO dataObject,
+			final SelectableItem<CampaignDTO, CampaignDTODTOList> callback) {
+		try {
+			getServiceManager().getRPCService().deleteCampaign(this.getModel(),
+					dataObject, new AsyncCallback<CampaignDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(CampaignDTO result) {
+							//callback.onSuccessDeleteObject(result);
+							callback.onObjectRemoved(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
+		
+	}
+
 }

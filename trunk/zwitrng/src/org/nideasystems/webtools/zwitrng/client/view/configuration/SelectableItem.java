@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.shared.model.IModel;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -259,12 +260,13 @@ public abstract class SelectableItem<T extends IModel, L extends IModel>
 
 	@Override
 	public void saveObject(T object) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public void onError(Throwable tr) {
-		// TODO Auto-generated method stub
+		MainController.getInstance().addException(tr);
+		
 
 	}
 

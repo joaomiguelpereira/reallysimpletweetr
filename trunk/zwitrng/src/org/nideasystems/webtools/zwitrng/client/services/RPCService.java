@@ -180,6 +180,12 @@ public class RPCService implements IService {
 		
 	}
 
+	public void deleteCampaign(PersonaDTO model, CampaignDTO dataObject,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception{
+		this.personaService.deleteCampaign(model, dataObject, asyncCallback);
+		
+	}
+
 	
 
 }
