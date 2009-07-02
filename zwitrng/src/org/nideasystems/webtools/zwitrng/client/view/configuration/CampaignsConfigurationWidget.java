@@ -580,7 +580,7 @@ public class CampaignsConfigurationWidget extends
 
 			return dataObject.getName() + " "
 					+ dataObject.getFilterByTemplateTags() + " "
-					+ dataObject.getFilterByTemplateText();
+					+ dataObject.getFilterByTemplateText()+ " "+dataObject.getStatus().toString();
 		}
 
 		@Override
