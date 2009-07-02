@@ -1,26 +1,27 @@
-package org.nideasystems.webtools.zwitrng.server;
+package org.nideasystems.webtools.zwitrng.server.servlets;
 
 import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
+import javax.servlet.http.HttpServlet;
 
+import org.nideasystems.webtools.zwitrng.server.AbstractRemoteServiceServlet;
+import org.nideasystems.webtools.zwitrng.server.AuthorizationManager;
+import org.nideasystems.webtools.zwitrng.server.PMF;
 import org.nideasystems.webtools.zwitrng.server.pojos.BusinessHelper;
 
-
-import com.google.appengine.api.users.User;
-import com.google.gwt.user.server.rpc.RemoteServiceServlet;
-
-public abstract class AbstractRemoteServiceServlet extends RemoteServiceServlet{
+public abstract class AbstractHttpServlet extends HttpServlet{
 
 	private static final Logger log = Logger
-	.getLogger(AbstractRemoteServiceServlet.class.getName());
+	.getLogger(AbstractHttpServlet.class.getName());
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5809211370732315676L;
+
 	
 	
-	//SerialVersionId
-	private static final long serialVersionUID = -5536799464897873496L;
-	//Logged user
-	protected User user = null;
 	//Start time when the transaction started
 	private long transactionStartTime;
 	//The current Persistence Manager
@@ -70,10 +71,9 @@ public abstract class AbstractRemoteServiceServlet extends RemoteServiceServlet{
 		if (persistenceNeeded) {
 			this.pm = PMF.get().getPersistenceManager();
 		}
-		this.user = AuthorizationManager.checkAuthentication();
+		//this.user = AuthorizationManager.checkAuthentication();
 		this.transactionStartTime = new Date().getTime();
 
 	}
-
 
 }

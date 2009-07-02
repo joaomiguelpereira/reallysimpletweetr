@@ -47,7 +47,13 @@ public class CampaignDO {
 	private PersonaDO persona;
 	@Persistent
 	private Date created;
-
+	
+	@Persistent 
+	private Date lastRun;
+	
+	@Persistent 
+	private Date nextRun;
+	
 	@Persistent
 	private Date modified;
 	private Integer endHourOfTheDay=0;
@@ -190,6 +196,22 @@ public class CampaignDO {
 
 	public Integer getStartHourOfTheDay() {
 		return startHourOfTheDay;
+	}
+
+	public void setLastRun(Date lastRun) {
+		this.lastRun = lastRun;
+	}
+
+	public Date getLastRun() {
+		return lastRun;
+	}
+
+	public void setNextRun(Date nextRun) {
+		this.nextRun = nextRun;
+	}
+
+	public Date getNextRun() {
+		return nextRun;
 	}
 
 }

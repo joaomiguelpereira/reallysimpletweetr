@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
@@ -7,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 
 import sun.security.action.GetBooleanAction;
 
@@ -95,6 +97,11 @@ public class CampaignPojo extends AbstractPojo {
 		businessHelper.getCampaignDao().deleteCampaign(persona, campaignDom);
 
 		return object;
+	}
+
+	public List<CampaignDO> getCandidateCampaignsToRun(CampaignStatus status) {
+		
+		return businessHelper.getCampaignDao().findCandidateCampaignsToRun(status);
 	}
 
 }
