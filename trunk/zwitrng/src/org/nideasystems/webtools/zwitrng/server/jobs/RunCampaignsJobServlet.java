@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
@@ -30,6 +33,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 	private Date now = new Date();
 
 	private int hour = 0;
+	private static boolean TESTING = true;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -42,7 +46,6 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 		cal.setTime(now);
 		hour = cal.get(Calendar.HOUR_OF_DAY);
 
-		
 		sb.append("now is " + now);
 		sb.append("Hour is " + hour);
 		try {
@@ -55,7 +58,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 							CampaignStatus.RUNNING);
 
 			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns in RUNNING status: </h1>");
+				sb.append("<h1>Campaigns RUNNING</h1>");
 				for (CampaignDO campaign : runningCampaigns) {
 					// run
 					run(campaign);
@@ -67,7 +70,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 					.getCandidateCampaignsToRun(CampaignStatus.RESCHEDULED);
 
 			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns in RESCHEDULED status: </h1>");
+				sb.append("<h1>Campaigns RESCHEDULED </h1>");
 				for (CampaignDO campaign : runningCampaigns) {
 					run(campaign);
 					sb.append(getCampaignDesc(campaign));
@@ -79,7 +82,17 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 					.getCandidateCampaignsToRun(CampaignStatus.NOT_STARTED);
 
 			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns in Not Started status: </h1>");
+				sb.append("<h1>Campaigns Not Started</h1>");
+				for (CampaignDO campaign : runningCampaigns) {
+					run(campaign);
+					sb.append(getCampaignDesc(campaign));
+				}
+			}
+			runningCampaigns = getBusinessHelper().getCampaignPojo()
+					.getCandidateCampaignsToRun(CampaignStatus.FINISHED);
+
+			if (runningCampaigns != null) {
+				sb.append("<h1>Campaigns Fnished </h1>");
 				for (CampaignDO campaign : runningCampaigns) {
 					run(campaign);
 					sb.append(getCampaignDesc(campaign));
@@ -100,93 +113,160 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
 	private void run(CampaignDO campaign) {
 		log.fine("RUN==============");
-		
-		if ( canRun(campaign)) {
-			log.info("Sending a Tweet for Campaign: "+campaign.getName());
-			long time = new Date().getTime();
-			campaign.setLastRun(new Date(time));
-			campaign.setTweetsSent(campaign.getTweetsSent()+1);
-			campaign.setNextRun(new Date( time+ (getAllowedElapsedMinutes(campaign)*60*1000) ));
-			log.info("Next Tweet to send at "+campaign.getNextRun());
+
+		if (canRun(campaign)) {
+			log.info("*******************Sending a Tweet for Campaign: "
+					+ campaign.getName());
+
+			PersonaDO persona = campaign.getPersona();
+			// Get sending account
+			TwitterAccountDO twitterAccount = persona.getTwitterAccount();
+
+			TemplateDO template = getBusinessHelper().getTemplatePojo()
+					.getRandomTemplateForCampaign(campaign);
+
+			if (template != null) {
+				// Send it
+				// update used times
+				template.setUsedTimes(template.getUsedTimes() + 1);
+
+				long time = new Date().getTime();
+				campaign.setLastRun(new Date(time));
+				campaign.setTweetsSent(campaign.getTweetsSent() + 1);
+				campaign.setNextRun(new Date(time
+						+ (getAllowedElapsedMinutes(campaign) * 60 * 1000)));
+				log.info("Next Tweet to send at " + campaign.getNextRun());
+			}
+
 		}
 	}
 
+	private boolean maxTweetsReached(CampaignDO campaign) {
+		return campaign.getTweetsSent() >= campaign.getMaxTweets();
+	}
+
+	private boolean isCampaignRunning(CampaignDO campaign) {
+		// TODO Auto-generated method stub
+		long offsetMilis = 1000 * 60 * 60 * 23 + 1000 * 60 * 59;
+		return now.after(campaign.getStartDate())
+				&& now.before(new Date(campaign.getEndDate().getTime()
+						+ offsetMilis));
+
+	}
+
+	private boolean isHourToRun(CampaignDO campaign) {
+		boolean run = false;
+
+		if (campaign.getStartHourOfTheDay() != null
+				&& campaign.getEndHourOfTheDay() != null) {
+
+			if (hour >= campaign.getStartHourOfTheDay()
+					&& hour <= campaign.getEndHourOfTheDay()) {
+				log.fine("Send a TWEET");
+				run = true;
+			}
+		} else {
+			run = true;// Run all day
+		}
+		return run;
+	}
+
+	private boolean isTimeSinceLastTweetElapsed(CampaignDO campaign) {
+
+		boolean run = false;
+		if (campaign.getLastRun() == null) {
+			run = true;
+		} else {
+			long timeElapsed = now.getTime() - campaign.getLastRun().getTime();
+			long elapsedMinutes = timeElapsed / (60 * 1000);
+
+			long allowedElapsedMinutes = getAllowedElapsedMinutes(campaign);
+			if (TESTING) {
+				allowedElapsedMinutes = 0;
+			}
+
+			if (elapsedMinutes >= allowedElapsedMinutes) {
+
+				run = true;
+			}
+
+		}
+		return run;
+	}
+
+	public void updateCampaignStatus(CampaignDO campaign) {
+		if (isCampaignRunning(campaign)) {
+			campaign.setStatus(CampaignStatus.RUNNING);
+		} else {
+			// UpdateStatus
+			if (now.after(campaign.getEndDate())) {
+				campaign.setStatus(CampaignStatus.FINISHED);
+			}
+		}
+		if (maxTweetsReached(campaign)) {
+			campaign.setStatus(CampaignStatus.FINISHED);
+		}
+
+	}
+
 	private boolean canRun(CampaignDO campaign) {
-		log.info("======Running campaign " + campaign.getName() + " for User: "
-				+ campaign.getPersona().getName() + "/"
-				+ campaign.getPersona().getUserEmail());
+		log.info("======Can Running campaign " + campaign.getName()
+				+ " for User: " + campaign.getPersona().getName() + "/"
+				+ campaign.getPersona().getUserEmail() + "?");
 
 		boolean send = false;
-		// Check if the current date is greater than the campaign start date
-		//The end date must be the last hour 23:59
-		//Ofset 
-		long offsetMilis = 1000*60*60*23+1000*60*59;
-		
-		if (now.after(campaign.getStartDate())
-				&& now.before(new Date(campaign.getEndDate().getTime()+offsetMilis))) {
-			// Ok, it's time to run
-			// Change the status to RUNNIN
-			campaign.setStatus(CampaignStatus.RUNNING);
-			// Check if it's a good hour to run
-			if ( campaign.getStartHourOfTheDay()!= null && campaign.getEndHourOfTheDay()!= null ) {
-				log.fine("===Start hour is: "+campaign.getStartHourOfTheDay());
-				log.fine("===End hour is: "+campaign.getEndHourOfTheDay());
-				if ( hour>=campaign.getStartHourOfTheDay() && hour < campaign.getEndHourOfTheDay() ) {
-					log.fine("Send a TWEET");
-					send = true;
-				} else {
-					log.fine("It's Not the hour to send a TWEEET");
-				}
-			} else {
-				//Hours not set, the ignore
-				send = true;
-			}
-			
-			//Check the last time it runned
-			if (send) {
-				if ( campaign.getLastRun()!=null) {
-					long timeElapsed = now.getTime()-campaign.getLastRun().getTime();
-					long elapsedMinutes = timeElapsed / (60*1000);
-					log.fine("===ELAPSED Minutes:"+elapsedMinutes);
-					
-					long allowedElapsedMinutes = getAllowedElapsedMinutes(campaign);/*campaign.getTimeBetweenTweets();
-					if ( campaign.getTimeUnit().equals(TimeUnits.HOURS)) {
-						allowedElapsedMinutes = allowedElapsedMinutes*60;
-					} else if (campaign.getTimeUnit().equals(TimeUnits.DAYS)) {
-						allowedElapsedMinutes = allowedElapsedMinutes*60*24;
-					}*/
-					log.fine("ALLOWED ELAPSED Minutes: "+allowedElapsedMinutes);
-					
-					if ( elapsedMinutes < allowedElapsedMinutes ) {
-						log.fine("WILL NOT TWEET");
-						send=false;
-					} 
-				} 
-			}
-			log.fine("==It's Time to run");
-		} else if (now.after(campaign.getEndDate())) {
-			log.fine("==The campaign is ended.");
-			campaign.setStatus(CampaignStatus.FINISHED);
-		} else {
-			if ( !campaign.getStatus().equals(CampaignStatus.RESCHEDULED) ) {
-				campaign.setStatus(CampaignStatus.NOT_STARTED);
-			}
-			log.fine("==The campaign does not started yet");
-		}
-		log.fine("====End running Campaign===");
+		send = !campaign.getStatus().equals(CampaignStatus.CANCELED)
+				&& !campaign.getStatus().equals(CampaignStatus.FINISHED)
+				&& !maxTweetsReached(campaign) && isCampaignRunning(campaign)
+				&& isHourToRun(campaign)
+				&& isTimeSinceLastTweetElapsed(campaign);
+		updateCampaignStatus(campaign);
+
+		log.fine("Returning " + send);
 		return send;
+		/*
+		 * 
+		 * // Check if the current date is greater than the campaign start date
+		 * // The end date must be the last hour 23:59 // Ofset
+		 * 
+		 * if (campaign.getTweetsSent() >= campaign.getMaxTweets()) {
+		 * log.fine("Max tweets limit reached"); } else if
+		 * (now.after(campaign.getStartDate()) && now.before(new
+		 * Date(campaign.getEndDate().getTime() + offsetMilis))) { // Ok, it's
+		 * time to run // Change the status to RUNNIN
+		 * campaign.setStatus(CampaignStatus.RUNNING); // Check if it's a good
+		 * hour to run
+		 * 
+		 * if (campaign.getStartHourOfTheDay() != null &&
+		 * campaign.getEndHourOfTheDay() != null) { log
+		 * .fine("===Start hour is: " + campaign.getStartHourOfTheDay());
+		 * log.fine("===End hour is: " + campaign.getEndHourOfTheDay()); if
+		 * (hour >= campaign.getStartHourOfTheDay() && hour <=
+		 * campaign.getEndHourOfTheDay()) { log.fine("Send a TWEET"); send =
+		 * true; } else { log.fine("It's Not the hour to send a TWEEET"); } }
+		 * else if (campaign.getLastRun() != null) { // Hours not set, the
+		 * ignore // send = true;
+		 * 
+		 * } } else else { if
+		 * (!campaign.getStatus().equals(CampaignStatus.RESCHEDULED)) {
+		 * campaign.setStatus(CampaignStatus.NOT_STARTED); }
+		 * log.fine("==The campaign does not started yet"); }
+		 * 
+		 * log.fine("====End running Campaign=== Send " + send); return send;
+		 */
 
 	}
 
 	private long getAllowedElapsedMinutes(CampaignDO campaign) {
 		long allowedElapsedMinutes = campaign.getTimeBetweenTweets();
-		if ( campaign.getTimeUnit().equals(TimeUnits.HOURS)) {
-			allowedElapsedMinutes = allowedElapsedMinutes*60;
+		if (campaign.getTimeUnit().equals(TimeUnits.HOURS)) {
+			allowedElapsedMinutes = allowedElapsedMinutes * 60;
 		} else if (campaign.getTimeUnit().equals(TimeUnits.DAYS)) {
-			allowedElapsedMinutes = allowedElapsedMinutes*60*24;
+			allowedElapsedMinutes = allowedElapsedMinutes * 60 * 24;
 		}
 		return allowedElapsedMinutes;
 	}
+
 	private String getCampaignDesc(CampaignDO campaign) {
 		StringBuffer sb = new StringBuffer();
 		sb.append("<hr>");

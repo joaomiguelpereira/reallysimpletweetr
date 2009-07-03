@@ -9,12 +9,12 @@ public class CampaignDTO implements IModel {
 	private long id = -1;
 	private String Name;
 	private String filterByTemplateTags;
-	private String filterByTemplateText;
-	private FilterOperator filterOperator;
+	//private String filterByTemplateText;
+	//private FilterOperator filterOperator;
 	private Date startDate;
 	private Date endDate;
 	private int timeBetweenTweets;
-	private int maxTweetsPerTemplate;
+	private int maxTweets;
 	private CampaignStatus status;
 	private int tweetsSent;
 	private TimeUnits timeUnit;
@@ -56,12 +56,12 @@ public class CampaignDTO implements IModel {
 	public void setFilterByTemplateTags(String filterByTemplateTags) {
 		this.filterByTemplateTags = filterByTemplateTags;
 	}
-	public String getFilterByTemplateText() {
+	/*public String getFilterByTemplateText() {
 		return filterByTemplateText;
 	}
 	public void setFilterByTemplateText(String filterByTemplateText) {
 		this.filterByTemplateText = filterByTemplateText;
-	}
+	}*/
 	
 	public Date getStartDate() {
 		return startDate;
@@ -81,11 +81,11 @@ public class CampaignDTO implements IModel {
 	public void setTimeBetweenTweets(int timeBetweenTweets) {
 		this.timeBetweenTweets = timeBetweenTweets;
 	}
-	public int getMaxTweetsPerTemplate() {
-		return maxTweetsPerTemplate;
+	public int getMaxTweets() {
+		return maxTweets;
 	}
-	public void setMaxTweetsPerTemplate(int maxTweetsPerTemplate) {
-		this.maxTweetsPerTemplate = maxTweetsPerTemplate;
+	public void setMaxTweets(int maxTweets) {
+		this.maxTweets = maxTweets;
 	}
 	public CampaignStatus getStatus() {
 		return status;
@@ -99,7 +99,7 @@ public class CampaignDTO implements IModel {
 	public void setTweetsSent(int tweetsSent) {
 		this.tweetsSent = tweetsSent;
 	}
-	public String getFilterOperatorAsText() {
+/*	public String getFilterOperatorAsText() {
 		return filterOperator.equals(FilterOperator.AND)?"and":"or";
 	}
 	public FilterOperator getFilterOperator() {
@@ -107,7 +107,7 @@ public class CampaignDTO implements IModel {
 	}
 	public void setFilterOperator(FilterOperator filterOperator) {
 		this.filterOperator = filterOperator;
-	}
+	}*/
 	public void setTimeUnit(TimeUnits timeUnit) {
 		this.timeUnit = timeUnit;
 	}

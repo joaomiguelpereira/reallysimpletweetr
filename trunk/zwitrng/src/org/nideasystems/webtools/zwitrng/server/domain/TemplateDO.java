@@ -36,6 +36,8 @@ public class TemplateDO {
 	@Persistent
 	private Date modified;
 	
+	@Persistent
+	private Long usedTimes;
 	
 	public void setKey(Key key) {
 		this.key = key;
@@ -91,6 +93,15 @@ public class TemplateDO {
 
 	public Date getModified() {
 		return modified;
+	}
+
+	public void setUsedTimes(Long usedTimes) {
+		this.usedTimes = usedTimes;
+	
+	}
+
+	public Long getUsedTimes() {
+		return usedTimes;
 	}
 	
 	

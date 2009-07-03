@@ -1,11 +1,14 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.jdo.Query;
 
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 
@@ -56,6 +59,9 @@ public class TemplateDAO extends BaseDAO {
 			templateDo.setModified(new Date());
 			templateDo.setText(template.getTemplateText());
 
+			if (templateDo.getUsedTimes()==null) {
+				templateDo.setUsedTimes(new Long(0));
+			}
 			// Tags
 			if (templateDo.getTags() != null) {
 				templateDo.getTags().clear();
@@ -157,6 +163,48 @@ public class TemplateDAO extends BaseDAO {
 			persona.getTemplateFragments().remove(templateDo);
 		}
 
+		
+	}
+
+	public List<TemplateDO> findTemplate(CampaignDO campaign) throws Exception{
+		log.fine("__________________FIND TEMPLATES FOR CAMPAIGN: "+campaign.getName());
+		
+		//Get the tags
+		String[] tags = StringUtils.splitText(campaign.getFilterByTemplateTags());
+		log.fine("Tags to find: ");
+		StringBuffer sb = new StringBuffer();
+		for (String tag: tags ) {
+			log.fine("Using Tag: "+tag);
+			sb.append(" && tags.contains(\""+tag.trim()+"\")");
+			
+		}
+		Query queryTemplate = pm.newQuery(TemplateDO.class);
+		
+		queryTemplate.setFilter("persona==thePersona"+sb.toString());
+		
+		queryTemplate.setOrdering("usedTimes asc");
+		queryTemplate.declareParameters("PersonaDO thePersona");
+		log.fine("QUERY: "+queryTemplate.toString());
+		
+		
+		//List<TemplateDO> templates = (List<TemplateDO>)queryTemplate.execute(campaign.getPersona());
+		List<TemplateDO> templates = (List<TemplateDO>)queryTemplate.execute(campaign.getPersona());
+		
+		if (templates==null) {
+			log.severe("No Templates found for Campaign"+campaign.getName()+" for user "+campaign.getPersona().getUserEmail());
+			//templates = new ArrayList<TemplateDO>();
+			throw new Exception("No Tamplates found for Campaign"+campaign.getName()+" for user "+campaign.getPersona().getUserEmail());
+		} 
+		
+		/*for (TemplateDO template: template ) {
+			//Find a template with tag or text
+			//if ( template.getTags().contains(tag))
+			log.fine("Template: "+template.getText());
+		}*/
+		
+		return templates;
+		//Find the templates for the filter
+		
 		
 	}
 

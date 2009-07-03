@@ -358,6 +358,7 @@ public class DataUtils {
 		}
 
 		templateDto.setId(templateDom.getKey().getId());
+		templateDto.setUsedTimes(templateDom.getUsedTimes());
 		return templateDto;
 	}
 
@@ -399,9 +400,12 @@ public class DataUtils {
 		dto.setCreated(dom.getCreated());
 		dto.setEndDate(dom.getEndDate());
 		dto.setFilterByTemplateTags(dom.getFilterByTemplateTags());
-		dto.setFilterByTemplateText(dom.getFilterByTemplateText());
-		dto.setFilterOperator(dom.getFilterOperator());
-		dto.setMaxTweetsPerTemplate(dom.getMaxTweetsPerTemplate());
+		//dto.setFilterByTemplateText(dom.getFilterByTemplateText());
+		//dto.setFilterOperator(dom.getFilterOperator());
+		if ( dom.getMaxTweets() != null ) {
+			dto.setMaxTweets(dom.getMaxTweets());
+		}
+		
 		dto.setModified(dom.getModified());
 		dto.setName(dom.getName());
 		dto.setStartDate(dom.getStartDate());

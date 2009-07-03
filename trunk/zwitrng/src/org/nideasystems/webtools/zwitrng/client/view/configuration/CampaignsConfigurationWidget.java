@@ -1,6 +1,5 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
-
 import java.util.Date;
 import java.util.Map;
 
@@ -117,17 +116,16 @@ public class CampaignsConfigurationWidget extends
 
 		private TextBox campaignName;
 		private TextBox filterByTags;
-		private ListBox filterOperator;
-		private TextBox filterByText;
+		// private ListBox filterOperator;
+		// private TextBox filterByText;
 		private DateBox startDate;
 		private DateBox endDate;
 		private TextBox timeBetweenTweets;
 		private ListBox timeUnits;
-		private TextBox maxUsageOfTemplate;
+		private TextBox maxTweets;
 		private InlineHTML runningDays;
 		private ListBox endHourOfTheDay;
 		private ListBox startHourOfTheDay;
-		
 
 		public EditableCampaign(
 				AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent) {
@@ -145,22 +143,22 @@ public class CampaignsConfigurationWidget extends
 			filterByTags = new TextBox();
 			table.setWidget(0, 0, containingTagsLabel);
 			table.setWidget(1, 0, filterByTags);
-			InlineHTML operatorLabel = new InlineHTML();
-			filterOperator = new ListBox();
-			filterOperator.addItem(FilterOperator.AND.toString(),
-					FilterOperator.AND.name());
-			filterOperator.addItem(FilterOperator.OR.toString(),
-					FilterOperator.OR.name());
+			// InlineHTML operatorLabel = new InlineHTML();
+			// filterOperator = new ListBox();
+			// filterOperator.addItem(FilterOperator.AND.toString(),
+			// FilterOperator.AND.name());
+			// filterOperator.addItem(FilterOperator.OR.toString(),
+			// FilterOperator.OR.name());
 
-			table.setWidget(0, 1, operatorLabel);
-			table.setWidget(1, 1, filterOperator);
+			// table.setWidget(0, 1, operatorLabel);
+			// table.setWidget(1, 1, filterOperator);
 
-			InlineHTML filterByTextLabel = new InlineHTML(
-					"Templates containing text:");
-			filterByText = new TextBox();
-			table.setWidget(0, 2, filterByTextLabel);
-			table.setWidget(1, 2, filterByText);
-			filterByText.setWidth("220px");
+			// InlineHTML filterByTextLabel = new InlineHTML(
+			// "Templates containing text:");
+			// filterByText = new TextBox();
+			// table.setWidget(0, 2, filterByTextLabel);
+			// table.setWidget(1, 2, filterByText);
+			// filterByText.setWidth("220px");
 			filterByTags.setWidth("220px");
 
 			contentPanel.add(table);
@@ -216,26 +214,25 @@ public class CampaignsConfigurationWidget extends
 			for (int i = 1; i < 24; i++) {
 				endHourOfTheDay.addItem(i + ":59", i + "");
 			}
-			
+
 			startHourOfTheDay.setSelectedIndex(0);
 			endHourOfTheDay.setSelectedIndex(22);
-			
 
 			limitsTable.setWidget(1, 2, startHourOfTheDay);
 			limitsTable.setWidget(1, 3, endHourOfTheDay);
-			
+
 			contentPanel.add(limitsTable);
 
 			FlexTable maximumTweetsTable = new FlexTable();
 			InlineHTML maxUsageOfTemplateLabel = new InlineHTML(
-					"Use each template maximum times");
-			maxUsageOfTemplate = new TextBox();
-			maxUsageOfTemplate.setWidth("50px");
-			maxUsageOfTemplate.setValue("10");
+					"Send max of Tweets");
+			maxTweets = new TextBox();
+			maxTweets.setWidth("50px");
+			maxTweets.setValue("10");
 
 			maximumTweetsTable.setWidget(0, 0, maxUsageOfTemplateLabel);
 
-			maximumTweetsTable.setWidget(1, 0, maxUsageOfTemplate);
+			maximumTweetsTable.setWidget(1, 0, maxTweets);
 
 			contentPanel.add(maximumTweetsTable);
 
@@ -268,7 +265,8 @@ public class CampaignsConfigurationWidget extends
 		private void updateRunningDays() {
 			StringBuffer sb = new StringBuffer();
 			// "Running for: xx days";
-			if (this.startDate.getValue() == null || this.endDate.getValue() == null) {
+			if (this.startDate.getValue() == null
+					|| this.endDate.getValue() == null) {
 				this.runningDays.setText("");
 			}
 			if (this.startDate.getValue().after(this.endDate.getValue())) {
@@ -323,12 +321,12 @@ public class CampaignsConfigurationWidget extends
 
 		@Override
 		public void focus() {
-			if ( dataObject!= null) {
+			if (dataObject != null) {
 				this.filterByTags.setFocus(true);
 			} else {
 				this.campaignName.setFocus(true);
 			}
-			
+
 		}
 
 		@Override
@@ -342,11 +340,11 @@ public class CampaignsConfigurationWidget extends
 			}
 
 			if (this.filterByTags.getValue().trim().isEmpty()
-					&& this.filterByText.getValue().trim().isEmpty()) {
+			/* && this.filterByText.getValue().trim().isEmpty() */) {
 				MainController
 						.getInstance()
 						.addError(
-								"Please provide some tags and/or some text so we can find your templates");
+								"Please provide some tags so we can find your templates");
 				isValid = false;
 			}
 			if (this.campaignName.getValue().trim().isEmpty()) {
@@ -383,7 +381,7 @@ public class CampaignsConfigurationWidget extends
 			} else {
 
 				try {
-					Integer.valueOf(this.maxUsageOfTemplate.getValue());
+					Integer.valueOf(this.maxTweets.getValue());
 				} catch (NumberFormatException e) {
 					MainController
 							.getInstance()
@@ -395,7 +393,7 @@ public class CampaignsConfigurationWidget extends
 
 			}
 
-			if (this.maxUsageOfTemplate.getValue().trim().isEmpty()) {
+			if (this.maxTweets.getValue().trim().isEmpty()) {
 				MainController
 						.getInstance()
 						.addError(
@@ -404,7 +402,7 @@ public class CampaignsConfigurationWidget extends
 			} else {
 
 				try {
-					Integer.valueOf(this.maxUsageOfTemplate.getValue());
+					Integer.valueOf(this.maxTweets.getValue());
 				} catch (NumberFormatException e) {
 					MainController
 							.getInstance()
@@ -469,25 +467,29 @@ public class CampaignsConfigurationWidget extends
 				campaign.setName(this.campaignName.getValue());
 				campaign.setEndDate(this.endDate.getValue());
 				campaign.setFilterByTemplateTags(this.filterByTags.getValue());
-				campaign.setFilterByTemplateText(this.filterByText.getValue());
-				campaign.setFilterOperator(FilterOperator
-						.valueOf(this.filterOperator
-								.getValue(this.filterOperator
-										.getSelectedIndex())));
-				campaign.setMaxTweetsPerTemplate(Integer
-						.valueOf(this.maxUsageOfTemplate.getValue()));
+				// campaign.setFilterByTemplateText(this.filterByText.getValue());
+				/*
+				 * campaign.setFilterOperator(FilterOperator
+				 * .valueOf(this.filterOperator .getValue(this.filterOperator
+				 * .getSelectedIndex())));
+				 */
+				campaign.setMaxTweets(Integer
+						.valueOf(this.maxTweets.getValue()));
 				campaign.setStartDate(this.startDate.getValue());
 				// campaign.setStatus(status)
 				campaign.setTimeBetweenTweets(Integer
 						.valueOf(this.timeBetweenTweets.getValue()));
 				campaign.setTimeUnit(TimeUnits.valueOf(this.timeUnits
 						.getValue(this.timeUnits.getSelectedIndex())));
-				
-				campaign.setStartHourOfTheDay(Integer.valueOf(this.startHourOfTheDay
-					.getValue(this.startHourOfTheDay.getSelectedIndex())));
+
+				campaign.setStartHourOfTheDay(Integer
+						.valueOf(this.startHourOfTheDay
+								.getValue(this.startHourOfTheDay
+										.getSelectedIndex())));
 				campaign.setEndHourOfTheDay(Integer
-					.valueOf(this.endHourOfTheDay.getValue(this.endHourOfTheDay
-							.getSelectedIndex())));
+						.valueOf(this.endHourOfTheDay
+								.getValue(this.endHourOfTheDay
+										.getSelectedIndex())));
 				setUpdating(true);
 				parent.saveObject(campaign);
 
@@ -508,18 +510,16 @@ public class CampaignsConfigurationWidget extends
 			this.timeBetweenTweets.setValue(dataObject.getTimeBetweenTweets()
 					+ "");
 			this.filterByTags.setValue(dataObject.getFilterByTemplateTags());
-			this.filterByText.setValue(dataObject.getFilterByTemplateText());
-			this.maxUsageOfTemplate.setValue(dataObject
-					.getMaxTweetsPerTemplate()
-					+ "");
+			// this.filterByText.setValue(dataObject.getFilterByTemplateText());
+			this.maxTweets.setValue(dataObject.getMaxTweets() + "");
 
 			// Operator & timeunits hack
-			if (dataObject.getFilterOperator().equals(FilterOperator.OR)) {
-
-				this.filterOperator.setSelectedIndex(1);
-			} else {
-				this.filterOperator.setSelectedIndex(0);
-			}
+			/*
+			 * if (dataObject.getFilterOperator().equals(FilterOperator.OR)) {
+			 * 
+			 * this.filterOperator.setSelectedIndex(1); } else {
+			 * this.filterOperator.setSelectedIndex(0); }
+			 */
 
 			if (dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
 				this.timeUnits.setSelectedIndex(2);
@@ -529,8 +529,10 @@ public class CampaignsConfigurationWidget extends
 				this.timeUnits.setSelectedIndex(0);
 			}
 
-			this.startHourOfTheDay.setSelectedIndex(dataObject.getStartHourOfTheDay());
-			this.endHourOfTheDay.setSelectedIndex(dataObject.getEndHourOfTheDay()-1);
+			this.startHourOfTheDay.setSelectedIndex(dataObject
+					.getStartHourOfTheDay());
+			this.endHourOfTheDay.setSelectedIndex(dataObject
+					.getEndHourOfTheDay() - 1);
 			updateRunningDays();
 
 		}
@@ -594,7 +596,7 @@ public class CampaignsConfigurationWidget extends
 
 			return dataObject.getName() + " "
 					+ dataObject.getFilterByTemplateTags() + " "
-					+ dataObject.getFilterByTemplateText()+ " "+dataObject.getStatus().toString();
+					+ dataObject.getStatus().toString();
 		}
 
 		@Override
@@ -620,18 +622,18 @@ public class CampaignsConfigurationWidget extends
 				sb.append("<span class=\"label\">");
 				sb.append(dataObject.getTweetsSent());
 				sb.append("</span> tweets.");
-				DateTimeFormat dtf = DateTimeFormat.getFormat(Constants.DATE_TIME_FORMAT);
-				if ( dataObject.getLastRun()!=null) {
-					
+				DateTimeFormat dtf = DateTimeFormat
+						.getFormat(Constants.DATE_TIME_FORMAT);
+				if (dataObject.getLastRun() != null) {
 
-					sb.append(" Last tweet sent at: "+ dtf.format(dataObject.getLastRun()));
+					sb.append(" Last tweet sent at: "
+							+ dtf.format(dataObject.getLastRun()));
 				}
-				
-				if ( dataObject.getNextRun()!=null) {
-					sb.append(" Next tweet will be sent at: "+dtf.format(dataObject.getNextRun()));
+
+				if (dataObject.getNextRun() != null) {
+					sb.append(" Next tweet will be sent at: "
+							+ dtf.format(dataObject.getNextRun()));
 				}
-				
-				
 
 			}
 			return sb.toString();
@@ -655,10 +657,13 @@ public class CampaignsConfigurationWidget extends
 
 			sb.append(" between tweets. ");
 
-			sb.append(" Use each template a maximum of  ");
+			sb.append(" Don't send more than ");
 			sb.append("<span class=\"label\">");
-			sb.append(dataObject.getMaxTweetsPerTemplate());
-			sb.append("</span> times.");
+			//
+
+			sb.append(dataObject.getMaxTweets());
+
+			sb.append("</span> tweets.");
 
 			return sb.toString();
 
@@ -675,29 +680,28 @@ public class CampaignsConfigurationWidget extends
 				sb.append(theCampaign.getFilterByTemplateTags());
 				sb.append("\"</span> ");
 
-				if (theCampaign.getFilterByTemplateText() != null
-						&& !theCampaign.getFilterByTemplateText().trim()
-								.isEmpty()) {
-					sb.append(theCampaign.getFilterOperatorAsText());
-				}
+				/*
+				 * if (theCampaign.getFilterByTemplateText() != null &&
+				 * !theCampaign.getFilterByTemplateText().trim() .isEmpty()) {
+				 * sb.append(theCampaign.getFilterOperatorAsText()); }
+				 */
 			}
 
-			if (theCampaign.getFilterByTemplateText() != null
-					&& !theCampaign.getFilterByTemplateText().trim().isEmpty()) {
-
-				if (theCampaign.getFilterByTemplateTags() != null
-						&& !theCampaign.getFilterByTemplateTags().trim()
-								.isEmpty()) {
-					sb.append(" containing text: \"");
-				} else {
-					sb.append("Use templates containing text: \"");
-				}
-
-				sb.append("<span class=\"label\">");
-				sb.append(theCampaign.getFilterByTemplateText());
-				sb.append("\"</span>");
-
-			}
+			/*
+			 * if (theCampaign.getFilterByTemplateText() != null &&
+			 * !theCampaign.getFilterByTemplateText().trim().isEmpty()) {
+			 * 
+			 * if (theCampaign.getFilterByTemplateTags() != null &&
+			 * !theCampaign.getFilterByTemplateTags().trim() .isEmpty()) {
+			 * sb.append(" containing text: \""); } else {
+			 * sb.append("Use templates containing text: \""); }
+			 * 
+			 * sb.append("<span class=\"label\">");
+			 * sb.append(theCampaign.getFilterByTemplateText());
+			 * sb.append("\"</span>");
+			 * 
+			 * }
+			 */
 			return sb.toString();
 		}
 

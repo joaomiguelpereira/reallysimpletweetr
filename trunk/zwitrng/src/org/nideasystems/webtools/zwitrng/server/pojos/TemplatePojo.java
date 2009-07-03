@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
@@ -48,6 +49,7 @@ public class TemplatePojo extends AbstractPojo {
 		TemplateDO templateDom = new TemplateDO();
 		templateDom.setPersona(persona);
 		templateDom.setText(template.getTemplateText());
+		templateDom.setUsedTimes(new Long(0));
 
 		// Create the Tags
 		if (template.getTags() != null) {
@@ -266,6 +268,24 @@ public class TemplatePojo extends AbstractPojo {
 
 		return ret;
 
+	}
+
+	public TemplateDO getRandomTemplateForCampaign(CampaignDO campaign) {
+		TemplateDO template = null;
+		List<TemplateDO> templates = null;
+		try {
+			templates = businessHelper.getTemplateDao().findTemplate(campaign);
+		} catch (Exception e) {
+			log.warning("Could not find any template for campaign: "+campaign.getName());
+			e.printStackTrace();
+		}
+		if ( templates.size()>0) {
+			template = templates.get(0);
+		}
+		
+		//Only need one, and since I'm ordering for the least used, return the first in the list and discart others
+		return template;
+		
 	}
 
 }
