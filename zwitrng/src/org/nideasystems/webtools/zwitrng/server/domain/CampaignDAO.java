@@ -39,9 +39,9 @@ public class CampaignDAO extends BaseDAO {
 		dom.setCreated(new Date());
 		dom.setEndDate(object.getEndDate());
 		dom.setFilterByTemplateTags(object.getFilterByTemplateTags());
-		dom.setFilterByTemplateText(object.getFilterByTemplateText());
-		dom.setFilterOperator(object.getFilterOperator());
-		dom.setMaxTweetsPerTemplate(object.getMaxTweetsPerTemplate());
+		//dom.setFilterByTemplateText(object.getFilterByTemplateText());
+		//dom.setFilterOperator(object.getFilterOperator());
+		dom.setMaxTweets(object.getMaxTweets());
 		dom.setModified(new Date());
 
 		dom.setStartHourOfTheDay(object.getStartHourOfTheDay());
@@ -52,6 +52,7 @@ public class CampaignDAO extends BaseDAO {
 		dom.setStartDate(object.getStartDate());
 		dom.setTimeBetweenTweets(object.getTimeBetweenTweets());
 		dom.setTimeUnit(object.getTimeUnit());
+		
 		if (new Date().after(object.getStartDate())) {
 			dom.setStatus(CampaignStatus.RUNNING);
 		} else {
@@ -59,6 +60,7 @@ public class CampaignDAO extends BaseDAO {
 		}
 
 		persona.addCampaign(dom);
+		
 		return DataUtils.campaignDtoFromDo(dom);
 	}
 
@@ -67,9 +69,9 @@ public class CampaignDAO extends BaseDAO {
 
 		dom.setEndDate(object.getEndDate());
 		dom.setFilterByTemplateTags(object.getFilterByTemplateTags());
-		dom.setFilterByTemplateText(object.getFilterByTemplateText());
-		dom.setFilterOperator(object.getFilterOperator());
-		dom.setMaxTweetsPerTemplate(object.getMaxTweetsPerTemplate());
+		//dom.setFilterByTemplateText(object.getFilterByTemplateText());
+		//dom.setFilterOperator(object.getFilterOperator());
+		dom.setMaxTweets(object.getMaxTweets());
 		dom.setModified(new Date());
 		// dom.setName(object.getName());
 		// dom.setPersona(persona);

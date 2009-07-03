@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 
-import com.google.gwt.user.client.Window;
 
 public class StringUtils {
 
@@ -31,16 +30,6 @@ public class StringUtils {
 			if (word.trim().length() > 0) {
 				list.add(word.trim());
 			}
-
-			/*
-			 * if (word.contains("@") && processScreenName(word) != null &&
-			 * !twitterUserNameArray.contains(itHelper)) {
-			 * twitterUserNameArray.add(itHelper); }
-			 * 
-			 * if (word.startsWith("http://") && !linksArray.contains(word)) {
-			 * linksArray.add(word); } if (word.contains("#")) {
-			 * processHashTag(word); }
-			 */
 
 		} while (process);
 

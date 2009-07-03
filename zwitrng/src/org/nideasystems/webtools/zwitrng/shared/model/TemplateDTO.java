@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.user.client.Window;
 
 public class TemplateDTO implements IModel {
 
 	private long id = -1;
 	private Date created;
 	private Date modified;
+	private long usedTimes = 0;
 
 	public long getId() {
 		return id;
@@ -94,5 +94,13 @@ public class TemplateDTO implements IModel {
 
 	public Date getModified() {
 		return modified;
+	}
+
+	public void setUsedTimes(long usedTimes) {
+		this.usedTimes = usedTimes;
+	}
+
+	public long getUsedTimes() {
+		return usedTimes;
 	}
 }

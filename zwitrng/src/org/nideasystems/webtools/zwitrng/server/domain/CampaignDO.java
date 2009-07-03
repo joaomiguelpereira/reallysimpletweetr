@@ -24,10 +24,10 @@ public class CampaignDO {
 	private String name;
 	@Persistent
 	private String filterByTemplateTags;
-	@Persistent
-	private String filterByTemplateText;
-	@Persistent
-	private FilterOperator filterOperator;
+	/*@Persistent
+	private String filterByTemplateText;*/
+/*	@Persistent
+	private FilterOperator filterOperator;*/
 	@Persistent
 	private Date startDate;
 	@Persistent
@@ -35,7 +35,7 @@ public class CampaignDO {
 	@Persistent
 	private int timeBetweenTweets;
 	@Persistent
-	private int maxTweetsPerTemplate;
+	private Integer maxTweets;
 	@Persistent
 	private CampaignStatus status;
 	@Persistent
@@ -100,7 +100,7 @@ public class CampaignDO {
 		this.filterByTemplateTags = filterByTemplateTags;
 	}
 
-	public String getFilterByTemplateText() {
+	/*public String getFilterByTemplateText() {
 		return filterByTemplateText;
 	}
 
@@ -114,7 +114,7 @@ public class CampaignDO {
 
 	public void setFilterOperator(FilterOperator filterOperator) {
 		this.filterOperator = filterOperator;
-	}
+	}*/
 
 	public Date getStartDate() {
 		return startDate;
@@ -140,12 +140,12 @@ public class CampaignDO {
 		this.timeBetweenTweets = timeBetweenTweets;
 	}
 
-	public int getMaxTweetsPerTemplate() {
-		return maxTweetsPerTemplate;
+	public Integer getMaxTweets() {
+		return maxTweets;
 	}
 
-	public void setMaxTweetsPerTemplate(int maxTweetsPerTemplate) {
-		this.maxTweetsPerTemplate = maxTweetsPerTemplate;
+	public void setMaxTweets(Integer maxTweets) {
+		this.maxTweets = maxTweets;
 	}
 
 	public CampaignStatus getStatus() {

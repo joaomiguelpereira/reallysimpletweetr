@@ -319,6 +319,7 @@ public class TemplatesConfigurationWidget extends
 				sb.append(tag);
 				sb.append(" ");
 			}
+			sb.append("<div>[template used "+dataObject.getUsedTimes()+" times]</div>");
 
 			tagsHtml.setHTML(sb.toString());
 		}
