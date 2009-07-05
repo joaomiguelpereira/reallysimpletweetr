@@ -441,9 +441,22 @@ public class DataUtils {
 	public static FeedSetDTO feedSetDtoFromDo(FeedSetDO dom) {
 		FeedSetDTO dto = new FeedSetDTO();
 		dto.setName(dom.getName());
-		dto.setFeedUrls(dom.getFeedUrls());
-		dto.setFilter(dom.getFilter());
+		
+		for (String feed: dom.getFeedUrls()) {
+			dto.addFeedUrl(feed);
+			
+		}
+		
+		
+		for (String filter: dom.getFilter()) {
+			dto.addFilter(filter);
+			
+		}
+		
+		
+		
 		dto.setId(dom.getKey().getId());
+		
 		dto.setModified(dom.getModified());
 		dto.setCreated(dom.getCreated());
 		return dto;

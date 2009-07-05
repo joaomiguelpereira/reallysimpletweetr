@@ -21,9 +21,9 @@ public class FeedSetPojo extends AbstractPojo {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
-		log.fine("findCampaigns");
+		log.fine("Finding FeedSets");
 		if (persona == null) {
-			throw new Exception();
+			throw new Exception("Persona not found");
 		}
 		FeedSetDTOList retList = new FeedSetDTOList();
 
@@ -48,11 +48,11 @@ public class FeedSetPojo extends AbstractPojo {
 		}
 
 		// Check if the campaign name alreadey exists
-		FeedSetDO feedSetDom = businessHelper.getFeedSetDao().find(persona,
-				object.getId());
+		FeedSetDO feedSetDom = businessHelper.getFeedSetDao().findByName(persona,
+				object.getName());
 
 		if (feedSetDom != null) {
-			throw new Exception("A FeedSe with the same name already exixts");
+			throw new Exception("A FeedSet with the same name already exixts");
 		}
 
 		return businessHelper.getFeedSetDao().create(persona, object);
@@ -68,8 +68,8 @@ public class FeedSetPojo extends AbstractPojo {
 		}
 
 		// Check if the campaign name alreadey exists
-		FeedSetDO feedSetDom = businessHelper.getFeedSetDao().find(persona,
-				object.getId());
+		FeedSetDO feedSetDom = businessHelper.getFeedSetDao().findByName(persona,
+				object.getName());
 
 		if (feedSetDom == null) {
 			throw new Exception("The feed does not exists.");
@@ -86,8 +86,8 @@ public class FeedSetPojo extends AbstractPojo {
 		}
 
 		// Check if the campaign name alreadey exists
-		FeedSetDO feedSetDom = businessHelper.getFeedSetDao().find(persona,
-				object.getId());
+		FeedSetDO feedSetDom = businessHelper.getFeedSetDao().findByName(persona,
+				object.getName());
 
 		if (feedSetDom == null) {
 			throw new Exception("The feed does not exists.");
