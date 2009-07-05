@@ -5,7 +5,7 @@ import java.util.List;
 
 public class FeedSetDTOList implements IDTO {
 	
-	private List<FeedSetDTO> feedSets;
+	private List<FeedSetDTO> feedSets = new ArrayList<FeedSetDTO>();;
 
 	public void setFeedSets(List<FeedSetDTO> feedSets) {
 		this.feedSets = feedSets;
@@ -16,9 +16,6 @@ public class FeedSetDTOList implements IDTO {
 	}
 	
 	public void addFeedSet(FeedSetDTO feedSet) {
-		if (this.feedSets==null) {
-			this.feedSets = new ArrayList<FeedSetDTO>();	
-		}
 		this.feedSets.add(feedSet);
 	}
 	

@@ -1,18 +1,38 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.util.Date;
+import java.util.logging.Logger;
+
+import javax.jdo.Query;
 
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.KeyFactory;
+
 
 public class FeedSetDAO extends BaseDAO{
 
-	public FeedSetDO find(PersonaDO persona, long id) {
-		Key feedSetKey = KeyFactory.createKey(persona.getKey(), FeedSetDO.class.getSimpleName(), id);
-		return  pm.getObjectById(FeedSetDO.class, feedSetKey);
+	private final static Logger log = Logger.getLogger(FeedSetDAO.class.getName());
+	
+	public FeedSetDO findByName(PersonaDO persona, String name) {
+		
+		log.fine("trying to find a FeedSetDO  by Name");
+		Query queryTemplateFrag = pm.newQuery(FeedSetDO .class);
+
+		queryTemplateFrag
+				.setFilter("name==feedSetName && persona==personaObj");
+		queryTemplateFrag
+				.declareParameters("String feedSetName, PersonaDO personaObj");
+		queryTemplateFrag.setUnique(true);
+
+		FeedSetDO feedSet = (FeedSetDO) queryTemplateFrag
+				.execute(name, persona);
+
+		return feedSet;
+
+		
+		
+		
 		
 		
 		
@@ -23,7 +43,7 @@ public class FeedSetDAO extends BaseDAO{
 		
 		feedSetDom.setModified(new Date());
 		feedSetDom.setFeedUrls(object.getFeedUrls());
-		feedSetDom.setFeedUrls(object.getFilter());
+		feedSetDom.setFilter(object.getFilter());
 		
 		
 		return DataUtils.feedSetDtoFromDo(feedSetDom);
@@ -39,6 +59,7 @@ public class FeedSetDAO extends BaseDAO{
 		dom.setFeedUrls(object.getFeedUrls());
 		dom.setFilter(object.getFilter());
 		dom.setPersona(persona);
+		persona.addFeedSet(dom);
 		
 		return DataUtils.feedSetDtoFromDo(dom);
 	

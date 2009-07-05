@@ -176,6 +176,13 @@ public class PersonaDO implements Serializable{
 		this.templateFragments.add(fragDo);
 		
 	}
+	
+	public void addFeedSet(FeedSetDO feed) {
+		if (this.feedSets==null) {
+			this.feedSets = new ArrayList<FeedSetDO>();
+		}
+		this.feedSets.add(feed);
+	}
 
 	public void setCampaigns(List<CampaignDO> campaigns) {
 		this.campaigns = campaigns;
