@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-public class ExtendedTwitterAccountDTO implements IModel {
+public class ExtendedTwitterAccountDTO implements IDTO {
 	
 	private boolean imFollowing = false;
 	private boolean imBlocking = false;

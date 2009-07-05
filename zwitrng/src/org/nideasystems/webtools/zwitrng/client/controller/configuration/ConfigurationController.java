@@ -5,10 +5,10 @@ import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaContro
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationView;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
-public class ConfigurationController extends AbstractController<IModel, ConfigurationView>{
+public class ConfigurationController extends AbstractController<IDTO, ConfigurationView>{
 
 	@Override
 	public void handleAction(String action, Object... args) {

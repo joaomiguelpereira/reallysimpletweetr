@@ -2,7 +2,7 @@ package org.nideasystems.webtools.zwitrng.shared.model;
 
 
 
-public class TwitterAccountDTO implements IModel {
+public class TwitterAccountDTO implements IDTO {
 
 	private String twitterScreenName;
 	private String twitterPassword;

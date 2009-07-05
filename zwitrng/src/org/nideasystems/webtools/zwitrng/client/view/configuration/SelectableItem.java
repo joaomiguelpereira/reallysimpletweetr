@@ -2,7 +2,7 @@ package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class SelectableItem<T extends IModel, L extends IModel>
+public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		extends VerticalPanel implements HasMouseOutHandlers,
 		HasMouseOverHandlers, HasDoubleClickHandlers, HasClickHandlers,
 		ConfigurationEditListener<T> {

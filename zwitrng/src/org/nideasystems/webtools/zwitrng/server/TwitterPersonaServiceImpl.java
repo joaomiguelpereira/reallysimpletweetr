@@ -10,6 +10,8 @@ import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
@@ -310,4 +312,80 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		return campaign;
 	}
 
+	
+	//FeedSets
+	@Override
+	public FeedSetDTOList getFeedSets(PersonaDTO model) throws Exception {
+		FeedSetDTOList returnList = null;
+		startTransaction(true);
+		try {
+			returnList = getBusinessHelper().getFeedSetPojo().findFeedSets(
+					model.getName(), user.getEmail());
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+
+		} finally {
+			endTransaction();
+		}
+		return returnList;
+	}
+
+	@Override
+	public FeedSetDTO createFeedSet(PersonaDTO model, FeedSetDTO object)
+			throws Exception {
+		FeedSetDTO feedSet = null;
+		startTransaction(true);
+		try {
+			feedSet = getBusinessHelper().getFeedSetPojo().createFeedSet(
+					model.getName(), user.getEmail(),object);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+
+		} finally {
+			endTransaction();
+		}
+		return feedSet;
+		
+		
+	}
+
+	@Override
+	public FeedSetDTO deleteFeedSet(PersonaDTO model, FeedSetDTO object)
+			throws Exception {
+		FeedSetDTO feedSet = object;
+		startTransaction(true);
+		try {
+			getBusinessHelper().getFeedSetPojo().deleteFeedSet(
+					model.getName(), user.getEmail(),object);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+
+		} finally {
+			endTransaction();
+		}
+		return feedSet;
+	}
+
+	@Override
+	public FeedSetDTO saveFeedSet(PersonaDTO model, FeedSetDTO object)
+			throws Exception {
+		FeedSetDTO feedSet = null;
+		startTransaction(true);
+		try {
+			feedSet = getBusinessHelper().getFeedSetPojo().saveFeedSet(
+					model.getName(), user.getEmail(),object);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception(e);
+
+		} finally {
+			endTransaction();
+		}
+		return feedSet;
+		
+		
+	}
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TemplateFragmentDTO implements IModel {
+public class TemplateFragmentDTO implements IDTO {
 
 	
 	private String name = null;

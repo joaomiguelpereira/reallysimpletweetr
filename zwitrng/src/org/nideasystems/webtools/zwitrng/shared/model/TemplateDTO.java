@@ -5,7 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class TemplateDTO implements IModel {
+public class TemplateDTO implements IDTO {
 
 	private long id = -1;
 	private Date created;

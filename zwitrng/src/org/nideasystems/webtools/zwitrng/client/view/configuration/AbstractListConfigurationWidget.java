@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
-public abstract class AbstractListConfigurationWidget<T extends IModel, L extends IModel>
+public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends IDTO>
 		extends VerticalPanel implements IConfigurationWidget,
 		ConfigurationEditListener<T> {
 

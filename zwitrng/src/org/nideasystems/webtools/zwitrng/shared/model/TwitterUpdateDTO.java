@@ -5,7 +5,7 @@ import java.util.Date;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 
 
-public class TwitterUpdateDTO implements IModel{
+public class TwitterUpdateDTO implements IDTO{
 
 	//When was Update create
 	private Date createdAt;

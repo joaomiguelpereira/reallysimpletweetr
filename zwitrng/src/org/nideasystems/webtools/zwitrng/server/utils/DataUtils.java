@@ -2,10 +2,11 @@ package org.nideasystems.webtools.zwitrng.server.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.Collection;
+
 import java.util.Date;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
+import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
@@ -13,7 +14,8 @@ import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
+
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
@@ -433,6 +435,17 @@ public class DataUtils {
 
 		
 		
+		return dto;
+	}
+
+	public static FeedSetDTO feedSetDtoFromDo(FeedSetDO dom) {
+		FeedSetDTO dto = new FeedSetDTO();
+		dto.setName(dom.getName());
+		dto.setFeedUrls(dom.getFeedUrls());
+		dto.setFilter(dom.getFilter());
+		dto.setId(dom.getKey().getId());
+		dto.setModified(dom.getModified());
+		dto.setCreated(dom.getCreated());
 		return dto;
 	}
 

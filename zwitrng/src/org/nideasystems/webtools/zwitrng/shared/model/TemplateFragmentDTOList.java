@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.shared.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemplateFragmentDTOList implements IModel {
+public class TemplateFragmentDTOList implements IDTO {
 
 	private List<TemplateFragmentDTO> templateFragmentList = null;
 

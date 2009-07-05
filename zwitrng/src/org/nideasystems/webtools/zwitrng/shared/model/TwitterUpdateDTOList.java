@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.shared.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TwitterUpdateDTOList implements IModel{
+public class TwitterUpdateDTOList implements IDTO{
 	
 	private List<TwitterUpdateDTO> twitterUpdatesList = new ArrayList<TwitterUpdateDTO>();
 	

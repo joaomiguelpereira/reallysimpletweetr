@@ -5,6 +5,8 @@ import java.util.logging.Logger;
 import javax.jdo.PersistenceManager;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDAO;
 
@@ -19,6 +21,15 @@ public class BusinessHelper {
 		@Override
 		protected PersonaPojo initialValue() {
 			return new PersonaPojo();
+		}
+
+	};
+
+	// Feeds Pojos
+	private ThreadLocal<FeedSetPojo> feedSetPojo = new ThreadLocal<FeedSetPojo>() {
+		@Override
+		protected FeedSetPojo initialValue() {
+			return new FeedSetPojo();
 		}
 
 	};
@@ -49,6 +60,14 @@ public class BusinessHelper {
 		@Override
 		protected PersonaDAO initialValue() {
 			return new PersonaDAO();
+		}
+	};
+
+	//FeedSet
+	private ThreadLocal<FeedSetDAO> feedSetDao = new ThreadLocal<FeedSetDAO>() {
+		@Override
+		protected FeedSetDAO initialValue() {
+			return new FeedSetDAO();
 		}
 	};
 
@@ -140,5 +159,16 @@ public class BusinessHelper {
 		pojo.setBusinessHelper(this);
 		return pojo;
 	}
+
+	public FeedSetPojo getFeedSetPojo() {
+		FeedSetPojo pojo = feedSetPojo.get();
+		pojo.setBusinessHelper(this);
+		return pojo;	}
+
+	public FeedSetDAO getFeedSetDao() {
+		FeedSetDAO dao = feedSetDao.get();
+		dao.setPm(pm);
+		log.fine("Returning DAO " + dao.hashCode());
+		return dao;	}
 
 }

@@ -4,12 +4,12 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
 import org.nideasystems.webtools.zwitrng.client.view.IView;
 
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
 
 
 
-public abstract class AbstractController<M extends IModel, V extends IView<?>>
+public abstract class AbstractController<M extends IDTO, V extends IView<?>>
 		implements IController<M, V> {
 
 	private static int controllerCount = 0;

@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view;
 
 import org.nideasystems.webtools.zwitrng.client.controller.IController;
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
 
 

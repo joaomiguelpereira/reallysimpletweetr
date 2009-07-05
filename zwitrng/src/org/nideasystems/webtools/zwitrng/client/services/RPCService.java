@@ -6,6 +6,8 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
@@ -183,6 +185,30 @@ public class RPCService implements IService {
 	public void deleteCampaign(PersonaDTO model, CampaignDTO dataObject,
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception{
 		this.personaService.deleteCampaign(model, dataObject, asyncCallback);
+		
+	}
+
+	public void getFeedSets(PersonaDTO model,
+			AsyncCallback<FeedSetDTOList> asyncCallback) throws Exception{
+		this.personaService.getFeedSets(model, asyncCallback);
+		
+	}
+
+	public void createFeedSet(PersonaDTO model, FeedSetDTO object,
+			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception{
+		this.personaService.createFeedSet(model,object, asyncCallback);
+		
+	}
+
+	public void saveFeedSet(PersonaDTO model, FeedSetDTO object,
+			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception {
+		this.personaService.saveFeedSet(model,object, asyncCallback);
+		
+	}
+
+	public void deleteFeedSet(PersonaDTO model, FeedSetDTO dataObject,
+			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception {
+		this.personaService.deleteFeedSet(model, dataObject, asyncCallback);
 		
 	}
 
