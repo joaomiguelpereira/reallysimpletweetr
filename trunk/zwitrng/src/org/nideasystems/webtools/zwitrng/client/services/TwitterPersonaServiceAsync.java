@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
@@ -48,6 +50,15 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
 	void deleteCampaign(PersonaDTO model, CampaignDTO dataObject,
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
+	void getFeedSets(PersonaDTO model,
+			AsyncCallback<FeedSetDTOList> asyncCallback) throws Exception;
+	void createFeedSet(PersonaDTO model, FeedSetDTO object,
+			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception;
+	void saveFeedSet(PersonaDTO model, FeedSetDTO object,
+			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception;
+
+	void deleteFeedSet(PersonaDTO model, FeedSetDTO dataObject,
+			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception;
 	
 
 	

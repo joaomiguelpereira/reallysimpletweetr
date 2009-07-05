@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TemplateDTOList implements IModel {
+public class TemplateDTOList implements IDTO {
 
 	private  List<TemplateDTO> templates = new ArrayList<TemplateDTO>();;
 

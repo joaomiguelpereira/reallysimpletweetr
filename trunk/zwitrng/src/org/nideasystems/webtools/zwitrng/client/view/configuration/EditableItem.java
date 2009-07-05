@@ -6,7 +6,7 @@ import java.util.List;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.ShortLinksListenerCallBack;
 
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class EditableItem<T extends IModel, L extends IModel> extends
+public abstract class EditableItem<T extends IDTO, L extends IDTO> extends
 		VerticalPanel implements ShortLinksListenerCallBack {
 	protected T dataObject;
 	protected boolean isNew = false;

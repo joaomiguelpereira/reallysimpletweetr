@@ -11,7 +11,7 @@ import com.google.gwt.json.client.JSONValue;
 
 
 
-public class PersonaDTO implements IModel{
+public class PersonaDTO implements IDTO{
 	
 	/**
 	 * 

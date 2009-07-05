@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TwitterAccountListDTO implements IModel {
+public class TwitterAccountListDTO implements IDTO {
 	
 	private  List<TwitterAccountDTO> accounts = null;
 	

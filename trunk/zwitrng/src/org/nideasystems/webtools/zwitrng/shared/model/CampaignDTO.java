@@ -4,7 +4,7 @@ import java.util.Date;
 
 
 
-public class CampaignDTO implements IModel {
+public class CampaignDTO implements IDTO {
 
 	private long id = -1;
 	private String Name;

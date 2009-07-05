@@ -4,7 +4,7 @@ import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 
 
 
-public class FilterCriteriaDTO implements IModel{
+public class FilterCriteriaDTO implements IDTO{
 	
 	private String searchText = null;
 	private String key = null;

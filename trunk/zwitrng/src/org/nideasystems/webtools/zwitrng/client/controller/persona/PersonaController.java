@@ -10,12 +10,16 @@ import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdate
 import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.CampaignsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.FeedSetConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.SelectableItem;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
+import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
@@ -136,7 +140,8 @@ public class PersonaController extends
 
 	}
 
-	public void loadTemplates(final AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> templatesConfigurationWidget) {
+	public void loadTemplates(
+			final AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> templatesConfigurationWidget) {
 
 		try {
 			getServiceManager().getRPCService().getTemplatesList(
@@ -146,13 +151,15 @@ public class PersonaController extends
 						@Override
 						public void onFailure(Throwable caught) {
 							getMainController().addException(caught);
-							templatesConfigurationWidget.onFailedLoadObjects(caught);
+							templatesConfigurationWidget
+									.onFailedLoadObjects(caught);
 
 						}
 
 						@Override
 						public void onSuccess(TemplateDTOList result) {
-							templatesConfigurationWidget.onSuccessLoadObjects(result);
+							templatesConfigurationWidget
+									.onSuccessLoadObjects(result);
 
 						}
 
@@ -205,7 +212,8 @@ public class PersonaController extends
 
 	}
 
-	public void removeTemplate(TemplateDTO template, final ConfigurationEditListener<TemplateDTO> callBack) {
+	public void removeTemplate(TemplateDTO template,
+			final ConfigurationEditListener<TemplateDTO> callBack) {
 		// callback.onSuccessDeleteTemplates(template);
 
 		try {
@@ -220,7 +228,7 @@ public class PersonaController extends
 
 						@Override
 						public void onSuccess(TemplateDTO result) {
-							//callback.onSuccessDeleteObject(result);
+							// callback.onSuccessDeleteObject(result);
 							callBack.onObjectRemoved(result);
 
 						}
@@ -235,28 +243,30 @@ public class PersonaController extends
 
 	public void saveTemplate(TemplateDTO template,
 			final ConfigurationEditListener<TemplateDTO> callBack) {
-		
-		//ConfigurationEditListener
-		
+
+		// ConfigurationEditListener
+
 		try {
-			getServiceManager().getRPCService().saveTemplate(getModel(),template, new AsyncCallback<TemplateDTO>() {
+			getServiceManager().getRPCService().saveTemplate(getModel(),
+					template, new AsyncCallback<TemplateDTO>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					callBack.onError(caught);
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							callBack.onError(caught);
 
-				@Override
-				public void onSuccess(TemplateDTO result) {
-					callBack.onObjectSaved(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(TemplateDTO result) {
+							callBack.onObjectSaved(result);
+
+						}
+
+					});
 		} catch (Exception e) {
-			callBack.onError(e);		}
-		
+			callBack.onError(e);
+		}
+
 	}
 
 	public void getTemplateFragments(
@@ -269,15 +279,15 @@ public class PersonaController extends
 						@Override
 						public void onFailure(Throwable caught) {
 							getMainController().addException(caught);
-							templateFragmentsConfigurationWidget.onError(caught);
+							templateFragmentsConfigurationWidget
+									.onError(caught);
 
 						}
 
 						@Override
 						public void onSuccess(TemplateFragmentDTOList result) {
-							templateFragmentsConfigurationWidget.onSuccessLoadObjects(result);
-							
-							
+							templateFragmentsConfigurationWidget
+									.onSuccessLoadObjects(result);
 
 						}
 
@@ -289,68 +299,71 @@ public class PersonaController extends
 			templateFragmentsConfigurationWidget.onError(e);
 		}
 
-		
 	}
 
-	public void createTemplateFragment(
-			TemplateFragmentDTO object,
+	public void createTemplateFragment(TemplateFragmentDTO object,
 			final TemplateFragmentsConfigurationWidget callback) {
 		try {
-			getServiceManager().getRPCService().createTemplateFragment(this.getModel(), object, new AsyncCallback<TemplateFragmentDTO>() {
+			getServiceManager().getRPCService().createTemplateFragment(
+					this.getModel(), object,
+					new AsyncCallback<TemplateFragmentDTO>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onError(caught);
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
 
-				@Override
-				public void onSuccess(TemplateFragmentDTO result) {
-					callback.onObjectCreated(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(TemplateFragmentDTO result) {
+							callback.onObjectCreated(result);
+
+						}
+
+					});
 		} catch (Exception e) {
-			
+
 			callback.onError(e);
 			e.printStackTrace();
 		}
-		
+
 	}
 
-	public void saveTemplateFragment(
-			TemplateFragmentDTO object,
+	public void saveTemplateFragment(TemplateFragmentDTO object,
 			final ConfigurationEditListener<TemplateFragmentDTO> callback) {
 		try {
-			getServiceManager().getRPCService().saveTemplateFragment(this.getModel(), object, new AsyncCallback<TemplateFragmentDTO>() {
+			getServiceManager().getRPCService().saveTemplateFragment(
+					this.getModel(), object,
+					new AsyncCallback<TemplateFragmentDTO>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onError(caught);
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
 
-				@Override
-				public void onSuccess(TemplateFragmentDTO result) {
-					callback.onObjectSaved(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(TemplateFragmentDTO result) {
+							callback.onObjectSaved(result);
+
+						}
+
+					});
 		} catch (Exception e) {
-			
+
 			callback.onError(e);
 			e.printStackTrace();
 		}
-		
+
 	}
 
-	public void removeTemplateFragment(TemplateFragmentDTO dataObject,
+	public void removeTemplateFragment(
+			TemplateFragmentDTO dataObject,
 			final SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> callbak) {
 		try {
-			getServiceManager().getRPCService().deleteTemplateFragment(this.getModel(),
-					dataObject, new AsyncCallback<TemplateFragmentDTO>() {
+			getServiceManager().getRPCService().deleteTemplateFragment(
+					this.getModel(), dataObject,
+					new AsyncCallback<TemplateFragmentDTO>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -360,7 +373,7 @@ public class PersonaController extends
 
 						@Override
 						public void onSuccess(TemplateFragmentDTO result) {
-							//callback.onSuccessDeleteObject(result);
+							// callback.onSuccessDeleteObject(result);
 							callbak.onObjectRemoved(result);
 
 						}
@@ -371,21 +384,20 @@ public class PersonaController extends
 			e.printStackTrace();
 		}
 
-		
-		
 	}
 
 	public void loadTemplateFragmentsLists(List<String> lists,
-			AsyncCallback<Map<String, String>> asyncCallback)  throws Exception {
-		getServiceManager().getRPCService().getTemplateFragmentsLists(getModel(),lists,
-				asyncCallback);
-		
+			AsyncCallback<Map<String, String>> asyncCallback) throws Exception {
+		getServiceManager().getRPCService().getTemplateFragmentsLists(
+				getModel(), lists, asyncCallback);
+
 	}
 
 	public void loadCampaigns(
-			final AbstractListConfigurationWidget<CampaignDTO,CampaignDTODTOList> callback) {
+			final AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> callback) {
 		try {
-			getServiceManager().getRPCService().getCampaigns(this.getModel(), new AsyncCallback<CampaignDTODTOList>() {
+			getServiceManager().getRPCService().getCampaigns(this.getModel(),
+					new AsyncCallback<CampaignDTODTOList>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -395,7 +407,7 @@ public class PersonaController extends
 
 						@Override
 						public void onSuccess(CampaignDTODTOList result) {
-							//callback.onSuccessDeleteObject(result);
+							// callback.onSuccessDeleteObject(result);
 							callback.onSuccessLoadObjects(result);
 
 						}
@@ -406,61 +418,61 @@ public class PersonaController extends
 			e.printStackTrace();
 		}
 
-		
 	}
 
-	public void createCampaign(CampaignDTO object,
-			final AbstractListConfigurationWidget<CampaignDTO,CampaignDTODTOList> callback) {
+	public void createCampaign(
+			CampaignDTO object,
+			final AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> callback) {
 		try {
-			getServiceManager().getRPCService().createCampaign(this.getModel(), object, new AsyncCallback<CampaignDTO>() {
+			getServiceManager().getRPCService().createCampaign(this.getModel(),
+					object, new AsyncCallback<CampaignDTO>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onError(caught);
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
 
-				@Override
-				public void onSuccess(CampaignDTO result) {
-					callback.onObjectCreated(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(CampaignDTO result) {
+							callback.onObjectCreated(result);
+
+						}
+
+					});
 		} catch (Exception e) {
-			
+
 			callback.onError(e);
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	public void saveCampaign(CampaignDTO object,
 			final ConfigurationEditListener<CampaignDTO> callback) {
 		try {
-			getServiceManager().getRPCService().saveCampaign(this.getModel(), object, new AsyncCallback<CampaignDTO>() {
+			getServiceManager().getRPCService().saveCampaign(this.getModel(),
+					object, new AsyncCallback<CampaignDTO>() {
 
-				@Override
-				public void onFailure(Throwable caught) {
-					callback.onError(caught);
-					
-				}
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
 
-				@Override
-				public void onSuccess(CampaignDTO result) {
-					callback.onObjectSaved(result);
-					
-				}
-				
-			});
+						}
+
+						@Override
+						public void onSuccess(CampaignDTO result) {
+							callback.onObjectSaved(result);
+
+						}
+
+					});
 		} catch (Exception e) {
-			
+
 			callback.onError(e);
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 	public void removeCampaign(CampaignDTO dataObject,
@@ -477,7 +489,117 @@ public class PersonaController extends
 
 						@Override
 						public void onSuccess(CampaignDTO result) {
-							//callback.onSuccessDeleteObject(result);
+							// callback.onSuccessDeleteObject(result);
+							callback.onObjectRemoved(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
+	}
+
+	public void loadFeedSets(
+			final AbstractListConfigurationWidget<FeedSetDTO, FeedSetDTOList> callback) {
+		try {
+			getServiceManager().getRPCService().getFeedSets(this.getModel(),
+					new AsyncCallback<FeedSetDTOList>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(FeedSetDTOList result) {
+							// callback.onSuccessDeleteObject(result);
+							callback.onSuccessLoadObjects(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
+	}
+
+	public void createFeedSet(FeedSetDTO object,
+			final FeedSetConfigurationWidget callback) {
+		try {
+			getServiceManager().getRPCService().createFeedSet(
+					this.getModel(), object,
+					new AsyncCallback<FeedSetDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(FeedSetDTO result) {
+							callback.onObjectCreated(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
+	}
+
+	public void saveFeedSet(FeedSetDTO object,
+			final SelectableItem<FeedSetDTO, FeedSetDTOList> callback) {
+		try {
+			getServiceManager().getRPCService().saveFeedSet(this.getModel(),
+					object, new AsyncCallback<FeedSetDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(FeedSetDTO result) {
+							callback.onObjectSaved(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
+		
+	}
+
+	public void removeFeedSet(FeedSetDTO dataObject,
+			final SelectableItem<FeedSetDTO, FeedSetDTOList> callback) {
+		try {
+			getServiceManager().getRPCService().deleteFeedSet(this.getModel(),
+					dataObject, new AsyncCallback<FeedSetDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(FeedSetDTO result) {
+							// callback.onSuccessDeleteObject(result);
 							callback.onObjectRemoved(result);
 
 						}

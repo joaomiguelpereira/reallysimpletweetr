@@ -62,6 +62,10 @@ public class PersonaDO implements Serializable{
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
 	private List<TemplateFragmentDO> templateFragments;
 	
+	@Persistent(mappedBy="persona",defaultFetchGroup="true")
+	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+	private List<FeedSetDO> feedSets;
+	
 	
 
 	public void setName(String name) {
@@ -179,6 +183,14 @@ public class PersonaDO implements Serializable{
 
 	public List<CampaignDO> getCampaigns() {
 		return campaigns;
+	}
+
+	public void setFeedSets(List<FeedSetDO> feedSets) {
+		this.feedSets = feedSets;
+	}
+
+	public List<FeedSetDO> getFeedSets() {
+		return feedSets;
 	}
 
 

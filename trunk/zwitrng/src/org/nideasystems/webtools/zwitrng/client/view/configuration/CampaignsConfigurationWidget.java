@@ -8,7 +8,6 @@ import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
-import org.nideasystems.webtools.zwitrng.shared.model.FilterOperator;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;

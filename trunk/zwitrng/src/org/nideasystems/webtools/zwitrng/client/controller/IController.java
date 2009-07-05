@@ -2,11 +2,11 @@ package org.nideasystems.webtools.zwitrng.client.controller;
 
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
 import org.nideasystems.webtools.zwitrng.client.view.IView;
-import org.nideasystems.webtools.zwitrng.shared.model.IModel;
+import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
 
 
-public interface IController<M extends IModel, V extends IView<?>> {
+public interface IController<M extends IDTO, V extends IView<?>> {
 	
 	
 	

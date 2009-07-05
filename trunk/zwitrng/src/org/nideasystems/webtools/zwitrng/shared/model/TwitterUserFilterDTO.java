@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-public class TwitterUserFilterDTO implements IModel{
+public class TwitterUserFilterDTO implements IDTO{
 
 
 	private TwitterUserType type = TwitterUserType.FRIENDS;

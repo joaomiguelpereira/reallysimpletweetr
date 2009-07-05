@@ -43,7 +43,14 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		CampaignsConfigurationWidget ccw = new CampaignsConfigurationWidget();
 		campaingns.setConfigWidget(ccw);
 		this.add(campaingns);
+
 		
+		ExpandablePanel feedSet = new ExpandablePanel();
+		feedSet.setTitleText("Configure Feeds");
+		FeedSetConfigurationWidget feedSetcw = new FeedSetConfigurationWidget();
+		feedSet.setConfigWidget(feedSetcw);
+		this.add(feedSet);
+
 	}
 
 	@Override
