@@ -16,6 +16,8 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasDoubleClickHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
+
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -108,6 +110,8 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		private TextBox nameText = null;
 		private TextArea templateFragmentText = null;
 		private TextBox templateTags = null;
+		//private CheckBox repeatInCampaignAndTemplate;
+		//private CheckBox maintainOrder;
 		
 		public EditableTemplateFragment(
 				AbstractListConfigurationWidget<TemplateFragmentDTO, TemplateFragmentDTOList> parent) {
@@ -132,6 +136,10 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			shortLinksLink.addStyleName("link");
 			contentPanel.add(shortLinksLink);
 
+			//repeatInCampaignAndTemplate = new CheckBox("Repeat in the same template and campaign");
+			//contentPanel.add(repeatInCampaignAndTemplate);
+			//maintainOrder = new CheckBox("Maintain the order");
+			//contentPanel.add(maintainOrder);
 			contentPanel.add(new InlineHTML("Add tags separaded by spaces:"));
 			templateTags = new TextBox();
 			contentPanel.add(templateTags);
@@ -159,6 +167,8 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 
 		@Override
 		public void refresh() {
+			//this.maintainOrder.setValue(dataObject.getMaintainOrder());
+			//this.repeatInCampaignAndTemplate.setValue(dataObject.getRepeatInCampaignAndTemplate());
 			
 			this.nameText.setValue(dataObject.getName());
 			this.templateFragmentText.setValue(dataObject.getList());
@@ -180,6 +190,8 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 				TemplateFragmentDTO tDto = new TemplateFragmentDTO();
 				tDto.setList(templateFragmentText.getValue());
 				tDto.setName(nameText.getValue());
+				//tDto.setMaintainOrder(this.maintainOrder.getValue());
+				//tDto.setRepeatInCampaignAndTemplate(this.repeatInCampaignAndTemplate.getValue());
 				
 				String[] tags = StringUtils.splitText(templateTags.getValue());
 				for (String tag : tags) {
@@ -224,12 +236,14 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		private InlineHTML textHtml;
 		private HTML tagsHtml;
 		private InlineHTML name;
+		//private InlineHTML moreInfoText; 
 		
 				
 		public SelectableTemplateFragment(TemplateFragmentDTO templateFragment, AbstractListConfigurationWidget<TemplateFragmentDTO, TemplateFragmentDTOList> theParent, boolean aIsEditable) {
 			super(theParent, aIsEditable);
 			setDataObject(templateFragment);
 			HorizontalPanel namePanel = new HorizontalPanel();
+			namePanel.setSpacing(3);
 			InlineHTML namelabel = new InlineHTML("Name: ");
 			namelabel.addStyleName("label");
 			name = new InlineHTML("");
@@ -238,6 +252,10 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			content.add(namePanel);
 			textHtml = new InlineHTML();
 			content.add(textHtml);
+		//	moreInfoText = new InlineHTML();
+		//	moreInfoText.addStyleName("tags");
+		//	content.add(moreInfoText);
+			
 			tagsHtml = new InlineHTML();
 			tagsHtml.addStyleName("tags");
 			content.add(tagsHtml);
@@ -263,6 +281,15 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			this.name.setHTML(dataObject.getName());
 			this.textHtml.setHTML(StringUtils.jsParseText(dataObject.getList()));
 			this.tagsHtml.setHTML("Tags: "+dataObject.getTagsAsString());
+			StringBuffer sb = new StringBuffer();
+			if ( dataObject.getRepeatInCampaignAndTemplate() ) {
+				sb.append("Repeat in same template and campaign. ");
+			}
+			if ( dataObject.getMaintainOrder() ) {
+				sb.append("Maintain order.");
+			}
+			
+			//this.moreInfoText.setText(sb.toString());
 			
 		}
 

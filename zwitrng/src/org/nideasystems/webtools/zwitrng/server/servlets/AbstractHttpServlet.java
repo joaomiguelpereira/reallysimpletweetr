@@ -6,8 +6,7 @@ import java.util.logging.Logger;
 import javax.jdo.PersistenceManager;
 import javax.servlet.http.HttpServlet;
 
-import org.nideasystems.webtools.zwitrng.server.AbstractRemoteServiceServlet;
-import org.nideasystems.webtools.zwitrng.server.AuthorizationManager;
+
 import org.nideasystems.webtools.zwitrng.server.PMF;
 import org.nideasystems.webtools.zwitrng.server.pojos.BusinessHelper;
 

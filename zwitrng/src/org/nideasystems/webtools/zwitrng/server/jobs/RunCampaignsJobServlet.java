@@ -1,11 +1,11 @@
 package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -15,10 +15,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
+import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
+import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
@@ -31,71 +37,85 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			.getLogger(RunCampaignsJobServlet.class.getName());
 
 	private Date now = new Date();
+	// private StringBuffer outBuffer;
 
 	private int hour = 0;
-	private static boolean TESTING = true;
+	private static boolean TESTING = false;
+	StringBuffer outBuffer = null;
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		log.info("=============Running Job: Run campaigns=============");
-		StringBuffer sb = new StringBuffer();
+		// Check headers
+		outBuffer = new StringBuffer();
+
+		if (!TESTING) {
+			if (req.getHeader("X-AppEngine-Cron") == null
+					|| !req.getHeader("X-AppEngine-Cron").equals("true")) {
+				log.severe("Job called outside of a cron context");
+				throw new ServletException(
+						"Job called outside of a cron context");
+
+			}
+
+		}
 
 		now = new Date();
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(now);
 		hour = cal.get(Calendar.HOUR_OF_DAY);
 
-		sb.append("now is " + now);
-		sb.append("Hour is " + hour);
+		outBuffer.append("now is " + now);
+		outBuffer.append("Hour is " + hour);
 		try {
-			sb.append("<br/>");
+			outBuffer.append("<br/>");
 			// Get all campaigns with status == RUNNING, RESCHEDULE or
 			// NOT_STARTED
 			startTransaction(true);
 			List<CampaignDO> runningCampaigns = getBusinessHelper()
-					.getCampaignPojo().getCandidateCampaignsToRun(
-							CampaignStatus.RUNNING);
+					.getCampaignPojo().getCampaigns(CampaignStatus.RUNNING);
 
 			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns RUNNING</h1>");
+				outBuffer.append("<h1>Campaigns RUNNING</h1>");
 				for (CampaignDO campaign : runningCampaigns) {
 					// run
+					outBuffer.append(getCampaignDesc(campaign));
 					run(campaign);
-					sb.append(getCampaignDesc(campaign));
-				}
-			}
-
-			runningCampaigns = getBusinessHelper().getCampaignPojo()
-					.getCandidateCampaignsToRun(CampaignStatus.RESCHEDULED);
-
-			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns RESCHEDULED </h1>");
-				for (CampaignDO campaign : runningCampaigns) {
-					run(campaign);
-					sb.append(getCampaignDesc(campaign));
 
 				}
 			}
 
 			runningCampaigns = getBusinessHelper().getCampaignPojo()
-					.getCandidateCampaignsToRun(CampaignStatus.NOT_STARTED);
+					.getCampaigns(CampaignStatus.RESCHEDULED);
 
 			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns Not Started</h1>");
+				outBuffer.append("<h1>Campaigns RESCHEDULED </h1>");
 				for (CampaignDO campaign : runningCampaigns) {
-					run(campaign);
-					sb.append(getCampaignDesc(campaign));
+					// run(campaign);
+					outBuffer.append(getCampaignDesc(campaign));
+
+				}
+			}
+
+			runningCampaigns = getBusinessHelper().getCampaignPojo()
+					.getCampaigns(CampaignStatus.NOT_STARTED);
+
+			if (runningCampaigns != null) {
+				outBuffer.append("<h1>Campaigns Not Started</h1>");
+				for (CampaignDO campaign : runningCampaigns) {
+					// run(campaign);
+					outBuffer.append(getCampaignDesc(campaign));
 				}
 			}
 			runningCampaigns = getBusinessHelper().getCampaignPojo()
-					.getCandidateCampaignsToRun(CampaignStatus.FINISHED);
+					.getCampaigns(CampaignStatus.FINISHED);
 
 			if (runningCampaigns != null) {
-				sb.append("<h1>Campaigns Fnished </h1>");
+				outBuffer.append("<h1>Campaigns Fnished </h1>");
 				for (CampaignDO campaign : runningCampaigns) {
 					run(campaign);
-					sb.append(getCampaignDesc(campaign));
+					outBuffer.append(getCampaignDesc(campaign));
 				}
 			}
 
@@ -108,11 +128,15 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 		}
 
 		resp.setContentType("text/html");
-		resp.getWriter().println(sb.toString());
+		if (TESTING) {
+			resp.getWriter().println(outBuffer.toString());
+		} else {
+			resp.getWriter().println("200 OK");
+		}
+
 	}
 
 	private void run(CampaignDO campaign) {
-		log.fine("RUN==============");
 
 		if (canRun(campaign)) {
 			log.info("*******************Sending a Tweet for Campaign: "
@@ -120,13 +144,114 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
 			PersonaDO persona = campaign.getPersona();
 			// Get sending account
-			TwitterAccountDO twitterAccount = persona.getTwitterAccount();
+			TwitterAccountDO accountDo = persona.getTwitterAccount();
+
+			TwitterAccountDTO accountDto = DataUtils
+					.twitterAccountDtoFromDo(accountDo);
 
 			TemplateDO template = getBusinessHelper().getTemplatePojo()
 					.getRandomTemplateForCampaign(campaign);
 
 			if (template != null) {
 				// Send it
+				// Get the text to send in the Tweet
+				String updateStatus = template.getText();
+
+				// Check if it has a list to load
+				List<String> lists = StringUtils.getFragmentLists(updateStatus);
+
+				/*for (String listName: lists) {
+					//If it have a list, check if the campaign has run before with this template
+					String fragText = campaign.getTempData().get("__frag:::"+listName+":::"+template.getKey());
+					//Haven't loaded it yest
+					if (fragText == null) {
+						//Load it
+						try {
+							TemplateFragmentDO fragment = getBusinessHelper()
+									.getTemplateDao().findTemplateFragmentByName(
+											persona, listName);
+							if ( fragment != null ) {
+								campaign.addTempData("__frag:::"+listName+":::"+template.getKey(), fragment.getText());
+								campaign.addTempData("__nextFragIndex:::"+listName+":::"+template.getKey(),"0");
+							}
+						} catch (Exception e) {
+							log.severe("Error getting the Template Fragment: "
+									+ e.getMessage());
+							e.printStackTrace();
+						}
+
+						//check if order is to maintain
+					}
+				}
+				
+				//Now we have the lists loaded for template for list
+				
+				// now do your magic
+
+				// only if has order
+				// check if tempData of campaign has template key in
+
+				// Get the Lists
+				List<TemplateFragmentDO> fragments = new ArrayList<TemplateFragmentDO>();
+				
+				//Do I have any fragment loaded here?
+				for (TemplateFragmentDO tFrag: fragments ) {
+					campaign.addTempData("__frag:::"+tFrag.getName()+":::"+template.getKey(),tFrag.getText());
+					
+				}*/
+				// campaign.getRandomListForTemplate(list+"_"template.getKey());
+				// campaign.getNextIndexForListTemplate(list+"_"+template.getKey());
+
+				Map<String, String> mappedValues = null;
+				try {
+					mappedValues = getBusinessHelper()
+							.getTemplatePojo()
+							.getFragmentsLists(campaign.getPersona().getName(),
+									campaign.getPersona().getUserEmail(), lists);
+				} catch (Exception e) {
+					log
+							.warning("Error getting template lists"
+									+ e.getMessage());
+					e.printStackTrace();
+					// Continue
+				}
+
+				if (mappedValues != null) {
+
+					updateStatus = StringUtils.replaceFragmentsLists(
+							updateStatus, mappedValues);
+
+				}
+
+				updateStatus = StringUtils.randomizeString(updateStatus);
+
+				TwitterUpdateDTO update = new TwitterUpdateDTO();
+				update.setTwitterAccount(accountDto);
+				update.setText(updateStatus);
+
+				try {
+					// Don't send if in testing mode
+					if (!TESTING) {
+						TwitterServiceAdapter.get().postUpdate(update);
+					}
+
+					outBuffer.append("<div>Tweet Sent: " + update.getText()
+							+ "</div>");
+				} catch (Exception e) {
+					log.warning("Could not send the tweet" + updateStatus
+							+ " for campaign " + campaign.getName()
+							+ " blonging to user "
+							+ campaign.getPersona().getName() + " "
+							+ e.getMessage());
+					e.printStackTrace();
+					outBuffer.append("Could not send the tweet" + updateStatus
+							+ " for campaign " + campaign.getName()
+							+ " blonging to user "
+							+ campaign.getPersona().getName() + " "
+							+ e.getMessage());
+
+				}
+
 				// update used times
 				template.setUsedTimes(template.getUsedTimes() + 1);
 
@@ -224,36 +349,6 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
 		log.fine("Returning " + send);
 		return send;
-		/*
-		 * 
-		 * // Check if the current date is greater than the campaign start date
-		 * // The end date must be the last hour 23:59 // Ofset
-		 * 
-		 * if (campaign.getTweetsSent() >= campaign.getMaxTweets()) {
-		 * log.fine("Max tweets limit reached"); } else if
-		 * (now.after(campaign.getStartDate()) && now.before(new
-		 * Date(campaign.getEndDate().getTime() + offsetMilis))) { // Ok, it's
-		 * time to run // Change the status to RUNNIN
-		 * campaign.setStatus(CampaignStatus.RUNNING); // Check if it's a good
-		 * hour to run
-		 * 
-		 * if (campaign.getStartHourOfTheDay() != null &&
-		 * campaign.getEndHourOfTheDay() != null) { log
-		 * .fine("===Start hour is: " + campaign.getStartHourOfTheDay());
-		 * log.fine("===End hour is: " + campaign.getEndHourOfTheDay()); if
-		 * (hour >= campaign.getStartHourOfTheDay() && hour <=
-		 * campaign.getEndHourOfTheDay()) { log.fine("Send a TWEET"); send =
-		 * true; } else { log.fine("It's Not the hour to send a TWEEET"); } }
-		 * else if (campaign.getLastRun() != null) { // Hours not set, the
-		 * ignore // send = true;
-		 * 
-		 * } } else else { if
-		 * (!campaign.getStatus().equals(CampaignStatus.RESCHEDULED)) {
-		 * campaign.setStatus(CampaignStatus.NOT_STARTED); }
-		 * log.fine("==The campaign does not started yet"); }
-		 * 
-		 * log.fine("====End running Campaign=== Send " + send); return send;
-		 */
 
 	}
 

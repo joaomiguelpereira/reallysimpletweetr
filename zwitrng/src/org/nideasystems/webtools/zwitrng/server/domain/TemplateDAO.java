@@ -68,7 +68,7 @@ public class TemplateDAO extends BaseDAO {
 			}
 
 			for (String tag : template.getTags()) {
-				templateDo.addTag(tag);
+				templateDo.addTag(tag.trim());
 			}
 
 			returnTemplateDto = DataUtils.templateDtoFromDom(templateDo);
@@ -121,7 +121,10 @@ public class TemplateDAO extends BaseDAO {
 		fragDo.setCreated(new Date());
 		fragDo.setModified(new Date());
 		fragDo.setPersona(persona);
+		fragDo.setMaintainOrder(object.getMaintainOrder());
+		fragDo.setRepeatInCampaignAndTemplate(object.getRepeatInCampaignAndTemplate());
 		persona.addtemplateFragment(fragDo);
+		
 		return DataUtils.templateFragmentDtoFromDom(fragDo);
 	}
 
@@ -136,10 +139,15 @@ public class TemplateDAO extends BaseDAO {
 		
 		//domFrag.setName(object.getName());
 		domFrag.setText(object.getList());
+		if (domFrag.getTags()!=null) {
+			domFrag.getTags().clear();
+		}
+
 		for (String tag : object.getTags()) {
 			domFrag.addTag(tag);
 		}
-		
+		domFrag.setMaintainOrder(object.getMaintainOrder());
+		domFrag.setRepeatInCampaignAndTemplate(object.getRepeatInCampaignAndTemplate());
 		domFrag.setModified(new Date());
 		return DataUtils.templateFragmentDtoFromDom(domFrag);
 	}
@@ -174,13 +182,14 @@ public class TemplateDAO extends BaseDAO {
 		log.fine("Tags to find: ");
 		StringBuffer sb = new StringBuffer();
 		for (String tag: tags ) {
-			log.fine("Using Tag: "+tag);
+			log.fine("Using Tag: "+tag.trim());
 			sb.append(" && tags.contains(\""+tag.trim()+"\")");
 			
 		}
 		Query queryTemplate = pm.newQuery(TemplateDO.class);
 		
-		queryTemplate.setFilter("persona==thePersona"+sb.toString());
+		//queryTemplate.setFilter("persona==thePersona"+sb.toString());
+		queryTemplate.setFilter("persona==thePersona");
 		
 		queryTemplate.setOrdering("usedTimes asc");
 		queryTemplate.declareParameters("PersonaDO thePersona");
@@ -195,14 +204,28 @@ public class TemplateDAO extends BaseDAO {
 			//templates = new ArrayList<TemplateDO>();
 			throw new Exception("No Tamplates found for Campaign"+campaign.getName()+" for user "+campaign.getPersona().getUserEmail());
 		} 
-		
-		/*for (TemplateDO template: template ) {
-			//Find a template with tag or text
+
+		//Optimization
+		List<TemplateDO> retTemplates = new ArrayList<TemplateDO>();
+		for (TemplateDO template: templates ) {
+			//Find a template with tag 
 			//if ( template.getTags().contains(tag))
-			log.fine("Template: "+template.getText());
-		}*/
+			boolean add = false;
+			for (String tag:tags) {
+				log.fine("Template: "+template.getText());
+				add = false;
+				if ( template.getTags().contains(tag)) {
+					add = true;
+				}
+				if ( add ) {
+					retTemplates.add(template);
+				}
+				
+			}
+		}
 		
-		return templates;
+		//return templates;
+		return retTemplates;
 		//Find the templates for the filter
 		
 		

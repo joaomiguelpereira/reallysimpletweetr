@@ -1,22 +1,26 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheManager;
+
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
-
-import sun.security.action.GetBooleanAction;
 
 public class TemplatePojo extends AbstractPojo {
 
@@ -273,19 +277,57 @@ public class TemplatePojo extends AbstractPojo {
 	public TemplateDO getRandomTemplateForCampaign(CampaignDO campaign) {
 		TemplateDO template = null;
 		List<TemplateDO> templates = null;
+		// Try the cache
+		Cache cache = null;
 		try {
-			templates = businessHelper.getTemplateDao().findTemplate(campaign);
-		} catch (Exception e) {
-			log.warning("Could not find any template for campaign: "+campaign.getName());
-			e.printStackTrace();
+			cache = CacheManager.getInstance().getCacheFactory().createCache(
+					Collections.emptyMap());
+		} catch (CacheException e1) {
+			// TODO Auto-generated catch block
+			log.warning("Could not get a Cache instance " + cache);
+			e1.printStackTrace();
 		}
-		if ( templates.size()>0) {
-			template = templates.get(0);
+		if (cache != null) {
+			templates = (List<TemplateDO>) cache.get(campaign.getKey());
+			log.fine("using Cache");
 		}
-		
-		//Only need one, and since I'm ordering for the least used, return the first in the list and discart others
+
+		if (templates == null) {
+
+			try {
+
+				templates = businessHelper.getTemplateDao().findTemplate(
+						campaign);
+			} catch (Exception e) {
+				log.warning("Could not find any template for campaign: "
+						+ campaign.getName());
+				e.printStackTrace();
+			}
+
+			// add to cache
+			if (cache != null && templates != null) {
+				log.fine("Adding templates for campaign "+campaign.getName()+" to cache");
+				cache.put(campaign.getKey(), templates);
+			}
+
+		}
+		if (templates != null) {
+			// /Select a random one
+
+			if (templates.size() > 0) {
+				double rand = Math.random();
+				int index = (int) Math.round(rand * (templates.size() - 1));
+				template = templates.get(index);
+
+			}
+
+		}
+
+		// Only need one, and since I'm ordering for the least used, return the
+		// first in the list and discart others
 		return template;
-		
 	}
+	
+	
 
 }

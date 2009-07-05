@@ -125,7 +125,7 @@ public class StringUtils {
 		String randomizedString = templateText;
 		// find all occurrences like [xxx|xxx|xxx|]
 		int startIndex = templateText.indexOf("[");
-		System.out.println("Chechink: " + templateText);
+		
 
 		if (startIndex >= 0) {
 			int endIndex = templateText.indexOf("]", startIndex);
@@ -135,11 +135,9 @@ public class StringUtils {
 						endIndex);
 				String otherWord = templateText.substring(startIndex,
 						endIndex + 1);
-				System.out.println("Foudn " + tmpWord);
+				
 				String replacement = getOneOf(tmpWord);
-				System.out.println("Other word " + otherWord);
-				System.out.println("Random: " + replacement);
-
+				
 				randomizedString = randomizedString.replace(otherWord,
 						replacement);
 
@@ -147,7 +145,7 @@ public class StringUtils {
 
 			}
 		}
-		System.out.println("returning : " + randomizedString);
+		
 		return randomizedString;
 
 	}

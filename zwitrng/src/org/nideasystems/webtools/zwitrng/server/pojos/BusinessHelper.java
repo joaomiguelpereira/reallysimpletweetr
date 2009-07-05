@@ -104,7 +104,7 @@ public class BusinessHelper {
 	 * 
 	 * @return
 	 */
-	protected TemplateDAO getTemplateDao() {
+	public TemplateDAO getTemplateDao() {
 		TemplateDAO dao = templateDao.get();
 		dao.setPm(pm);
 		log.fine("Returning DAO " + dao.hashCode());
@@ -116,7 +116,7 @@ public class BusinessHelper {
 	 * 
 	 * @return
 	 */
-	protected CampaignDAO getCampaignDao() {
+	public CampaignDAO getCampaignDao() {
 		CampaignDAO dao = campaignDao.get();
 		dao.setPm(pm);
 		log.fine("Returning DAO " + dao.hashCode());
@@ -128,7 +128,7 @@ public class BusinessHelper {
 	 * 
 	 * @return
 	 */
-	protected PersonaDAO getPersonaDao() {
+	public PersonaDAO getPersonaDao() {
 		PersonaDAO dao = personaDao.get();
 		dao.setPm(pm);
 		log.fine("Returning DAO " + dao.hashCode());

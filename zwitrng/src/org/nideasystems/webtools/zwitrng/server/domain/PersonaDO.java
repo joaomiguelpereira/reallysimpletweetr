@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import java.util.Date;
@@ -19,7 +20,12 @@ import com.google.appengine.api.datastore.Key;
 
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class PersonaDO {
+public class PersonaDO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -1562556253020519454L;
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)

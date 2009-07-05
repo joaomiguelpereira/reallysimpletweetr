@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,8 +15,13 @@ import com.google.appengine.api.datastore.Key;
 
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class TemplateDO {
+public class TemplateDO implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2090679994164138030L;
+
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;

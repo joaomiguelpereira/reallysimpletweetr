@@ -1,6 +1,10 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -9,14 +13,17 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
-import org.nideasystems.webtools.zwitrng.shared.model.FilterOperator;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class CampaignDO {
+public class CampaignDO implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 387081705474081349L;
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
@@ -24,10 +31,6 @@ public class CampaignDO {
 	private String name;
 	@Persistent
 	private String filterByTemplateTags;
-	/*@Persistent
-	private String filterByTemplateText;*/
-/*	@Persistent
-	private FilterOperator filterOperator;*/
 	@Persistent
 	private Date startDate;
 	@Persistent
@@ -59,7 +62,7 @@ public class CampaignDO {
 	private Integer endHourOfTheDay=0;
 	@Persistent
 	private Integer startHourOfTheDay=22;
-
+	
 	public Date getCreated() {
 		return created;
 	}
@@ -213,5 +216,8 @@ public class CampaignDO {
 	public Date getNextRun() {
 		return nextRun;
 	}
+
+	
+
 
 }
