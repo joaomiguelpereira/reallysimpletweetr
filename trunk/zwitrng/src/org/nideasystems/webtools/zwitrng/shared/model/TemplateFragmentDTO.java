@@ -13,6 +13,8 @@ public class TemplateFragmentDTO implements IModel {
 	private long id = -1;
 	private Date created;
 	private Date modified;
+	private boolean maintainOrder;
+	private boolean repeatInCampaignAndTemplate;
 	
 	
 	public TemplateFragmentDTO() {
@@ -65,6 +67,18 @@ public class TemplateFragmentDTO implements IModel {
 			
 		}
 		return sb.toString();
+	}
+	public boolean getMaintainOrder() {
+		return this.maintainOrder;
+	}
+	public boolean getRepeatInCampaignAndTemplate() {
+		return this.repeatInCampaignAndTemplate;
+	}
+	public void setMaintainOrder(boolean maintainOrder) {
+		this.maintainOrder = maintainOrder;
+	}
+	public void setRepeatInCampaignAndTemplate(boolean repeatInCampaignAndTemplate) {
+		this.repeatInCampaignAndTemplate = repeatInCampaignAndTemplate;
 	}
 	
 	

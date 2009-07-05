@@ -348,6 +348,7 @@ public class DataUtils {
 		templateDto.setCreated(templateDom.getCreated());
 		templateDto.setModified(templateDom.getModified());
 		
+		
 		if (templateDom.getTags() != null) {
 			
 			for (String tag : templateDom.getTags()) {
@@ -358,7 +359,12 @@ public class DataUtils {
 		}
 
 		templateDto.setId(templateDom.getKey().getId());
-		templateDto.setUsedTimes(templateDom.getUsedTimes());
+		if ( templateDom.getUsedTimes()!= null ) {
+			templateDto.setUsedTimes(templateDom.getUsedTimes());
+		} else { 
+			templateDto.setUsedTimes(0);
+		}
+		
 		return templateDto;
 	}
 
@@ -375,6 +381,13 @@ public class DataUtils {
 			}
 		} else {
 			fragDto.addTag("");
+		}
+		
+		if (fragDo.getMaintainOrder()!=null) {
+			fragDto.setMaintainOrder(fragDo.getMaintainOrder());
+		}
+		if (fragDo.getRepeatInCampaignAndTemplate()!=null) {
+			fragDto.setRepeatInCampaignAndTemplate(fragDo.getRepeatInCampaignAndTemplate());
 		}
 		fragDto.setId(fragDo.getKey().getId());
 		

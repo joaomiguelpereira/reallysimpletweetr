@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -14,7 +15,12 @@ import com.google.appengine.api.datastore.Key;
 
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class TemplateFragmentDO {
+public class TemplateFragmentDO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5185806069980166654L;
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
@@ -36,6 +42,10 @@ public class TemplateFragmentDO {
 	@Persistent
 	private Date created;
 	
+	@Persistent
+	private Boolean maintainOrder;
+	@Persistent
+	private Boolean repeatInCampaignAndTemplate;
 	@Persistent
 	private Date modified;
 
@@ -101,6 +111,23 @@ public class TemplateFragmentDO {
 		}
 		this.tags.add(tag);
 		
+	}
+
+	public void setMaintainOrder(Boolean maintainOrder) {
+		this.maintainOrder = maintainOrder;
+	}
+
+	public Boolean getMaintainOrder() {
+		return maintainOrder;
+	}
+
+	public void setRepeatInCampaignAndTemplate(
+			Boolean repeatInCampaignAndTemplate) {
+		this.repeatInCampaignAndTemplate = repeatInCampaignAndTemplate;
+	}
+
+	public Boolean getRepeatInCampaignAndTemplate() {
+		return repeatInCampaignAndTemplate;
 	}
 	
 	
