@@ -187,4 +187,22 @@ public class StringUtils {
 		}
 		return templateText;
 	}
+
+	public static List<String> getFeedSetLists(String updateStatus) {
+		
+		
+		// Find all occurences of {{xxx}} and return xxx
+		int startIndex = updateStatus.indexOf("((");
+		List<String> returnList = new ArrayList<String>();
+		if (startIndex >= 0) {
+			int endIndex = updateStatus.indexOf("))");
+			if (endIndex > 2) {
+				String listName = updateStatus.substring(startIndex + 2,
+						endIndex);
+				returnList.add(listName);
+				returnList.addAll(getFeedSetLists(updateStatus.substring(endIndex+1,updateStatus.length())));
+			}
+		}
+		return returnList;
+	}
 }
