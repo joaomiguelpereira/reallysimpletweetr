@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -15,8 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.server.rss.RSS;
+import org.nideasystems.webtools.zwitrng.server.rss.RSSItem;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
@@ -40,7 +41,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 	// private StringBuffer outBuffer;
 
 	private int hour = 0;
-	private static boolean TESTING = false;
+	private static boolean TESTING = true;
 	StringBuffer outBuffer = null;
 
 	@Override
@@ -160,48 +161,27 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 				// Check if it has a list to load
 				List<String> lists = StringUtils.getFragmentLists(updateStatus);
 
-				/*for (String listName: lists) {
-					//If it have a list, check if the campaign has run before with this template
-					String fragText = campaign.getTempData().get("__frag:::"+listName+":::"+template.getKey());
-					//Haven't loaded it yest
-					if (fragText == null) {
-						//Load it
-						try {
-							TemplateFragmentDO fragment = getBusinessHelper()
-									.getTemplateDao().findTemplateFragmentByName(
-											persona, listName);
-							if ( fragment != null ) {
-								campaign.addTempData("__frag:::"+listName+":::"+template.getKey(), fragment.getText());
-								campaign.addTempData("__nextFragIndex:::"+listName+":::"+template.getKey(),"0");
-							}
-						} catch (Exception e) {
-							log.severe("Error getting the Template Fragment: "
-									+ e.getMessage());
-							e.printStackTrace();
-						}
-
-						//check if order is to maintain
-					}
-				}
-				
-				//Now we have the lists loaded for template for list
-				
-				// now do your magic
-
-				// only if has order
-				// check if tempData of campaign has template key in
-
-				// Get the Lists
-				List<TemplateFragmentDO> fragments = new ArrayList<TemplateFragmentDO>();
-				
-				//Do I have any fragment loaded here?
-				for (TemplateFragmentDO tFrag: fragments ) {
-					campaign.addTempData("__frag:::"+tFrag.getName()+":::"+template.getKey(),tFrag.getText());
+				// Start get feedSet lists
+				List<String> feedSetLists = StringUtils
+						.getFeedSetLists(updateStatus);
+				for (String feedSetName : feedSetLists) {
+					this.outBuffer.append("<div>Found feedSetName :" + feedSetName+"<div>");
+					String randomUrl = getBusinessHelper().getFeedSetPojo().getRandomUrl(persona,feedSetName);
+					this.outBuffer.append("<div>URL :" + randomUrl+"<div>");
+					//now get some content....
 					
-				}*/
-				// campaign.getRandomListForTemplate(list+"_"template.getKey());
-				// campaign.getNextIndexForListTemplate(list+"_"+template.getKey());
+					RSSItem item = RSS.get().getRandomRssItem(randomUrl);
+					if ( item!= null) {
+						outBuffer.append("<div>RSSTitle:" +item.getTitle()+"</div>");
+						outBuffer.append("<div>RSSLink:" +item.getLink()+"</div>");
+						
+					} else {
+						outBuffer.append("<div>NO RSS ITEM FOUND</div>");
+					}
+					
+				}
 
+				// End get feedSet lists
 				Map<String, String> mappedValues = null;
 				try {
 					mappedValues = getBusinessHelper()

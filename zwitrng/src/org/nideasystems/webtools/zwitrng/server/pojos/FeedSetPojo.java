@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
@@ -95,6 +96,26 @@ public class FeedSetPojo extends AbstractPojo {
 
 		businessHelper.getFeedSetDao().remove(persona,feedSetDom);
 
+	}
+
+	public String getRandomUrl(PersonaDO persona, String feedSetName) {
+		String retVal = feedSetName;
+		//Get the persona feed name
+		FeedSetDO feedSetList = businessHelper.getFeedSetDao().findByName(persona, feedSetName);
+
+		if (feedSetList!=null&&feedSetList.getFeedUrls()!=null) {
+			
+			double rand = Math.random();
+			int index = (int) Math.round(rand * (feedSetList.getFeedUrls().size() - 1));
+			retVal = feedSetList.getFeedUrls().get(index);
+		}
+		return retVal;
+		
+		
+
+		
+		
+		
 	}
 
 }
