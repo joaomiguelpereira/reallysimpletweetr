@@ -65,7 +65,7 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 		this.add(searchPanel);
 
 		contentPanel = new VerticalPanel();
-		ScrollPanel scrollPanel = new ScrollPanel(contentPanel);
+		/*ScrollPanel scrollPanel = new ScrollPanel(contentPanel);
 		if (maxHeight == null) {
 			scrollPanel.setHeight(Constants.CONFIGURATION_PANEL_MAX_HEIGH);
 		} else {
@@ -73,7 +73,8 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 		}
 
 		this.add(scrollPanel);
-
+*/
+		this.add(contentPanel);
 		searchValue.addKeyUpHandler(new KeyUpHandler() {
 
 			@Override
@@ -287,6 +288,7 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 		if ( editableItemNew!= null) {
 			editableItemNew.setUpdating(false);
 		}
+		
 		MainController.getInstance().addException(error);
 
 	}

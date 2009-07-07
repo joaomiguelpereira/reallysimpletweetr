@@ -38,6 +38,12 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		this.add(recommendations);
 		
 		
+		ExpandablePanel feedSet = new ExpandablePanel();
+		feedSet.setTitleText("Configure Feeds");
+		FeedSetConfigurationWidget feedSetcw = new FeedSetConfigurationWidget();
+		feedSet.setConfigWidget(feedSetcw);
+		this.add(feedSet);
+		
 		ExpandablePanel campaingns = new ExpandablePanel();
 		campaingns.setTitleText("Configure campaigns");
 		CampaignsConfigurationWidget ccw = new CampaignsConfigurationWidget();
@@ -45,11 +51,7 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		this.add(campaingns);
 
 		
-		ExpandablePanel feedSet = new ExpandablePanel();
-		feedSet.setTitleText("Configure Feeds");
-		FeedSetConfigurationWidget feedSetcw = new FeedSetConfigurationWidget();
-		feedSet.setConfigWidget(feedSetcw);
-		this.add(feedSet);
+		
 
 	}
 

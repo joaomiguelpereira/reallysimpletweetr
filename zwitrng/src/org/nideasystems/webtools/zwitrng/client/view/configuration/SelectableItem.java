@@ -265,6 +265,9 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 	@Override
 	public void onError(Throwable tr) {
+		if (editableInstance!=null) {
+			editableInstance.setUpdating(false);
+		}
 		MainController.getInstance().addException(tr);
 		
 

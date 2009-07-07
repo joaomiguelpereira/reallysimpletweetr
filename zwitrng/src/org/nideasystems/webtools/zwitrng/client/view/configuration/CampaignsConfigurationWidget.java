@@ -142,22 +142,7 @@ public class CampaignsConfigurationWidget extends
 			filterByTags = new TextBox();
 			table.setWidget(0, 0, containingTagsLabel);
 			table.setWidget(1, 0, filterByTags);
-			// InlineHTML operatorLabel = new InlineHTML();
-			// filterOperator = new ListBox();
-			// filterOperator.addItem(FilterOperator.AND.toString(),
-			// FilterOperator.AND.name());
-			// filterOperator.addItem(FilterOperator.OR.toString(),
-			// FilterOperator.OR.name());
-
-			// table.setWidget(0, 1, operatorLabel);
-			// table.setWidget(1, 1, filterOperator);
-
-			// InlineHTML filterByTextLabel = new InlineHTML(
-			// "Templates containing text:");
-			// filterByText = new TextBox();
-			// table.setWidget(0, 2, filterByTextLabel);
-			// table.setWidget(1, 2, filterByText);
-			// filterByText.setWidth("220px");
+		
 			filterByTags.setWidth("220px");
 
 			contentPanel.add(table);
@@ -426,7 +411,7 @@ public class CampaignsConfigurationWidget extends
 					.equals(TimeUnits.MINUTES.name())) {
 				// Validate multiple of 10
 
-				Integer val = 10;
+				Integer val = 5;
 				try {
 					val = Integer.valueOf(this.timeBetweenTweets.getValue());
 				} catch (NumberFormatException e) {
@@ -436,12 +421,12 @@ public class CampaignsConfigurationWidget extends
 
 				}
 
-				if ((val % 10) > 0) {
+				if ((val % 5) > 0) {
 
 					MainController
 							.getInstance()
 							.addError(
-									"The interval in minutes we use to send tweets is allways multiples of 10.\nProvide a multiple of 10. Eg. 10, 20, 30, 40, 50, 60,...");
+									"The interval in minutes we use to send tweets is allways multiples of 5.\nProvide a multiple of 5!");
 					isValid = false;
 
 				}
