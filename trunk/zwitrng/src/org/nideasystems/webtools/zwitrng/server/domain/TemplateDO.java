@@ -12,6 +12,7 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.Text;
 
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -29,6 +30,7 @@ public class TemplateDO implements Serializable{
 	@Persistent
 	private String text;
 
+	
 	//Parent Persona
 	@Persistent
 	private PersonaDO persona;

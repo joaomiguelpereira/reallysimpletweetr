@@ -198,8 +198,8 @@ public class TemplatesConfigurationWidget extends
 
 		protected void save() {
 
-			if ( templateText.getValue().trim().isEmpty() ) {
-				MainController.getInstance().addError("Provide a template Text");
+			if ( templateText.getValue().trim().isEmpty() ||  templateText.getValue().length()>500) {
+				MainController.getInstance().addError("Provide a template Text with no more than 500 chars");
 			} else {
 				TemplateDTO template = new TemplateDTO();
 				template.setTemplateText(templateText.getValue());

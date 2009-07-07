@@ -30,6 +30,7 @@ public class FeedSetPojo extends AbstractPojo {
 
 		if (persona.getFeedSets() != null) {
 			for (FeedSetDO dom : persona.getFeedSets()) {
+				log.fine("Found feed: "+dom.getName());
 				retList.addFeedSet(DataUtils.feedSetDtoFromDo(dom));
 				log.fine("adding Feed Set:");
 			}
@@ -99,7 +100,7 @@ public class FeedSetPojo extends AbstractPojo {
 	}
 
 	public String getRandomUrl(PersonaDO persona, String feedSetName) {
-		String retVal = feedSetName;
+		String retVal = "";
 		//Get the persona feed name
 		FeedSetDO feedSetList = businessHelper.getFeedSetDao().findByName(persona, feedSetName);
 

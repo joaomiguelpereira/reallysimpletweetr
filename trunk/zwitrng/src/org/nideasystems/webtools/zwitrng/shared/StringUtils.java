@@ -188,6 +188,9 @@ public class StringUtils {
 		return templateText;
 	}
 
+	public static String replaceRSSItem(String templateText, String name, String rssItemText) {
+		return templateText.replace("(("+name+"))", rssItemText);
+	}
 	public static List<String> getFeedSetLists(String updateStatus) {
 		
 		

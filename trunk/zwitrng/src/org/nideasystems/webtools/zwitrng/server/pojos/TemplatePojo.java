@@ -22,6 +22,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
+import com.google.appengine.api.datastore.Text;
+
 public class TemplatePojo extends AbstractPojo {
 
 	private static final Logger log = Logger.getLogger(TemplatePojo.class

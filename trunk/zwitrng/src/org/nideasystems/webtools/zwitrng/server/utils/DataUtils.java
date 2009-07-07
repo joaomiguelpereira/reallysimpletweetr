@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import java.util.Date;
+import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
@@ -30,6 +31,7 @@ import twitter4j.User;
 
 public class DataUtils {
 
+	private final static Logger log = Logger.getLogger(DataUtils.class.getName());
 	public static PersonaDTO createPersonaDto(PersonaDO personaDo,
 			TwitterAccountDTO authorizedTwitterAccount) {
 
@@ -440,24 +442,30 @@ public class DataUtils {
 
 	public static FeedSetDTO feedSetDtoFromDo(FeedSetDO dom) {
 		FeedSetDTO dto = new FeedSetDTO();
+		log.fine("Addign name");
 		dto.setName(dom.getName());
 		
+		log.fine("Adding feedsUrls");
 		for (String feed: dom.getFeedUrls()) {
 			dto.addFeedUrl(feed);
 			
 		}
-		
-		
-		for (String filter: dom.getFilter()) {
-			dto.addFilter(filter);
-			
+		log.fine("Adding filters");
+		if ( dom.getFilter()!= null) {
+			for (String filter: dom.getFilter()) {
+				dto.addFilter(filter);
+				
+			}
+
 		}
 		
 		
-		
+		log.fine("Adding ID");
 		dto.setId(dom.getKey().getId());
 		
+		log.fine("Adding modified");
 		dto.setModified(dom.getModified());
+		log.fine("Adding created");
 		dto.setCreated(dom.getCreated());
 		return dto;
 	}

@@ -14,6 +14,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
+import com.google.appengine.api.datastore.Text;
 
 public class TemplateDAO extends BaseDAO {
 
@@ -57,6 +58,7 @@ public class TemplateDAO extends BaseDAO {
 
 			// persona.getTemplates().remove(templateDo);
 			templateDo.setModified(new Date());
+			
 			templateDo.setText(template.getTemplateText());
 
 			if (templateDo.getUsedTimes()==null) {

@@ -281,10 +281,11 @@ public class TwitterServiceAdapter {
 				update.getTwitterAccount().getOAuthTokenSecret());
 
 		// twitter.updateStatus(update.getText());
-
+		//twitter.setSource("web");
 		// ExtendedUser user = null;
 		Status latestStatus = null;
 		log.fine("Updating status: " + update.getText());
+		
 
 		try {
 			if (update.getInReplyToUserId() > -1) {

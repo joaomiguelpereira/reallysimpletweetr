@@ -9,7 +9,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextArea;
@@ -149,7 +149,9 @@ public class FeedSetConfigurationWidget extends
 		@Override
 		public void refresh() {
 			this.feedSetName.setValue(dataObject.getName());
-
+			if ( dataObject!=null) {
+				this.feedSetName.setEnabled(false);
+			}
 			StringBuffer sb = new StringBuffer();
 			for (String url : dataObject.getFeedUrls()) {
 				sb.append(url);
@@ -158,11 +160,14 @@ public class FeedSetConfigurationWidget extends
 			this.urlList.setValue(sb.toString());
 
 			sb = new StringBuffer();
-			for (String filter : dataObject.getFilter()) {
-				sb.append(filter);
-				sb.append("\n");
+			if ( dataObject.getFilter()!=null){
+				for (String filter : dataObject.getFilter()) {
+					sb.append(filter);
+					sb.append("\n");
+				}
+				this.filter.setValue(sb.toString());			
 			}
-			this.filter.setValue(sb.toString());
+	
 
 		}
 
@@ -270,6 +275,7 @@ public class FeedSetConfigurationWidget extends
 			String nameText = "<span class=\"label\">Name:</span> "
 					+ dataObject.getName();
 			nameHtml.setHTML(nameText);
+			
 
 			StringBuffer sb = new StringBuffer();
 			for (String feedUrl : this.dataObject.getFeedUrls()) {
@@ -281,12 +287,15 @@ public class FeedSetConfigurationWidget extends
 
 			sb = new StringBuffer();
 			sb.append("Post links with words in title:");
-			for (String filter : this.dataObject.getFilter()) {
-				sb.append(filter);
-				sb.append(",");
+			if ( this.dataObject.getFilter()!=null) {
+				for (String filter : this.dataObject.getFilter()) {
+					sb.append(filter);
+					sb.append(",");
+				}
+				this.filterHtml.setHTML(sb.toString());
+			
 			}
-			this.filterHtml.setHTML(sb.toString());
-
+	
 		}
 
 		private String getTruncatedUrl(String feedUrl) {

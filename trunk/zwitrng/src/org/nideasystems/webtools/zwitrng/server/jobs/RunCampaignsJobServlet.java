@@ -41,7 +41,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 	// private StringBuffer outBuffer;
 
 	private int hour = 0;
-	private static boolean TESTING = true;
+	private static boolean TESTING = false;
 	StringBuffer outBuffer = null;
 
 	@Override
@@ -82,7 +82,16 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 				for (CampaignDO campaign : runningCampaigns) {
 					// run
 					outBuffer.append(getCampaignDesc(campaign));
-					run(campaign);
+					try {
+						run(campaign);
+					} catch (Exception e) {
+						log.severe("Error running the campaign"
+								+ e.getMessage());
+						log.info("Failing safe");
+						e.printStackTrace();
+						outBuffer.append("Excpetion in running the campaign: "
+								+ e.getMessage());
+					}
 
 				}
 			}
@@ -137,7 +146,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
 	}
 
-	private void run(CampaignDO campaign) {
+	private void run(CampaignDO campaign) throws Exception {
 
 		if (canRun(campaign)) {
 			log.info("*******************Sending a Tweet for Campaign: "
@@ -153,95 +162,112 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			TemplateDO template = getBusinessHelper().getTemplatePojo()
 					.getRandomTemplateForCampaign(campaign);
 
-			if (template != null) {
-				// Send it
-				// Get the text to send in the Tweet
-				String updateStatus = template.getText();
-
-				// Check if it has a list to load
-				List<String> lists = StringUtils.getFragmentLists(updateStatus);
-
-				// Start get feedSet lists
-				List<String> feedSetLists = StringUtils
-						.getFeedSetLists(updateStatus);
-				for (String feedSetName : feedSetLists) {
-					this.outBuffer.append("<div>Found feedSetName :" + feedSetName+"<div>");
-					String randomUrl = getBusinessHelper().getFeedSetPojo().getRandomUrl(persona,feedSetName);
-					this.outBuffer.append("<div>URL :" + randomUrl+"<div>");
-					//now get some content....
-					
-					RSSItem item = RSS.get().getRandomRssItem(randomUrl);
-					if ( item!= null) {
-						outBuffer.append("<div>RSSTitle:" +item.getTitle()+"</div>");
-						outBuffer.append("<div>RSSLink:" +item.getLink()+"</div>");
-						
-					} else {
-						outBuffer.append("<div>NO RSS ITEM FOUND</div>");
-					}
-					
-				}
-
-				// End get feedSet lists
-				Map<String, String> mappedValues = null;
-				try {
-					mappedValues = getBusinessHelper()
-							.getTemplatePojo()
-							.getFragmentsLists(campaign.getPersona().getName(),
-									campaign.getPersona().getUserEmail(), lists);
-				} catch (Exception e) {
-					log
-							.warning("Error getting template lists"
-									+ e.getMessage());
-					e.printStackTrace();
-					// Continue
-				}
-
-				if (mappedValues != null) {
-
-					updateStatus = StringUtils.replaceFragmentsLists(
-							updateStatus, mappedValues);
-
-				}
-
-				updateStatus = StringUtils.randomizeString(updateStatus);
-
-				TwitterUpdateDTO update = new TwitterUpdateDTO();
-				update.setTwitterAccount(accountDto);
-				update.setText(updateStatus);
-
-				try {
-					// Don't send if in testing mode
-					if (!TESTING) {
-						TwitterServiceAdapter.get().postUpdate(update);
-					}
-
-					outBuffer.append("<div>Tweet Sent: " + update.getText()
-							+ "</div>");
-				} catch (Exception e) {
-					log.warning("Could not send the tweet" + updateStatus
-							+ " for campaign " + campaign.getName()
-							+ " blonging to user "
-							+ campaign.getPersona().getName() + " "
-							+ e.getMessage());
-					e.printStackTrace();
-					outBuffer.append("Could not send the tweet" + updateStatus
-							+ " for campaign " + campaign.getName()
-							+ " blonging to user "
-							+ campaign.getPersona().getName() + " "
-							+ e.getMessage());
-
-				}
-
-				// update used times
-				template.setUsedTimes(template.getUsedTimes() + 1);
-
-				long time = new Date().getTime();
-				campaign.setLastRun(new Date(time));
-				campaign.setTweetsSent(campaign.getTweetsSent() + 1);
-				campaign.setNextRun(new Date(time
-						+ (getAllowedElapsedMinutes(campaign) * 60 * 1000)));
-				log.info("Next Tweet to send at " + campaign.getNextRun());
+			if (template == null) {
+				throw new Exception("Template Not found");
 			}
+
+			// Send it
+			// Get the text to send in the Tweet
+			String updateStatus = template.getText();
+			this.outBuffer.append("<div>Using Template Text :" + updateStatus
+					+ "<div>");
+			// Check if it has a list to load
+
+			// Start get feedSet lists
+			List<String> feedSetLists = StringUtils
+					.getFeedSetLists(updateStatus);
+
+			for (String feedSetName : feedSetLists) {
+				this.outBuffer.append("<div>Found feedSetName :" + feedSetName
+						+ "<div>");
+				String randomUrl = getBusinessHelper().getFeedSetPojo()
+						.getRandomUrl(persona, feedSetName);
+				this.outBuffer.append("<div>URL :" + randomUrl + "<div>");
+				// now get some content....
+				boolean random = feedSetName.contains(":random")?true:false;
+				RSSItem item = RSS.get().getNextRssItem(randomUrl,random);
+
+				if (item != null) {
+					outBuffer.append("<div>RSSTitle:" + item.getTitle()
+							+ "</div>");
+					outBuffer.append("<div>RSSLink:" + item.getLink()
+							+ "</div>");
+					boolean addLink = true;
+					if (feedSetName.contains(":nolink")) {
+						addLink = false;
+					}
+					String rssStatus = RSS.get().createStatusFromRssItem(item,
+							addLink);
+					updateStatus = StringUtils.replaceRSSItem(updateStatus,
+							feedSetName, rssStatus);
+					outBuffer.append("<div>STATUS to REPLACE: " + rssStatus
+							+ "</div>");
+				} else {
+					outBuffer.append("<div>NO RSS ITEM FOUND</div>");
+					throw new Exception("Could not find a RSS Item to use");
+					// Cancel the tweet
+				}
+			}
+			// End get feedSet lists
+			List<String> lists = StringUtils.getFragmentLists(updateStatus);
+			Map<String, String> mappedValues = null;
+			try {
+				mappedValues = getBusinessHelper().getTemplatePojo()
+						.getFragmentsLists(campaign.getPersona().getName(),
+								campaign.getPersona().getUserEmail(), lists);
+			} catch (Exception e) {
+				log.warning("Error getting template lists" + e.getMessage());
+				e.printStackTrace();
+				throw new Exception(e);
+			}
+
+			if (mappedValues != null) {
+
+				updateStatus = StringUtils.replaceFragmentsLists(updateStatus,
+						mappedValues);
+
+			}
+
+			updateStatus = StringUtils.randomizeString(updateStatus);
+
+			TwitterUpdateDTO update = new TwitterUpdateDTO();
+			update.setTwitterAccount(accountDto);
+			update.setText(updateStatus);
+
+			try {
+				// Don't send if in testing mode
+				if (!TESTING) {
+					TwitterServiceAdapter.get().postUpdate(update);
+				}
+
+				outBuffer.append("<div>Tweet Sent: " + update.getText()
+						+ "</div>");
+			} catch (Exception e) {
+				log.warning("Could not send the tweet" + updateStatus
+						+ " for campaign " + campaign.getName()
+						+ " blonging to user "
+						+ campaign.getPersona().getName() + " "
+						+ e.getMessage());
+				e.printStackTrace();
+				outBuffer.append("Could not send the tweet" + updateStatus
+						+ " for campaign " + campaign.getName()
+						+ " blonging to user "
+						+ campaign.getPersona().getName() + " "
+						+ e.getMessage());
+
+				throw e;
+
+			}
+
+			// update used times
+			template.setUsedTimes(template.getUsedTimes() + 1);
+
+			long time = new Date().getTime();
+			campaign.setLastRun(new Date(time));
+			campaign.setTweetsSent(campaign.getTweetsSent() + 1);
+			campaign.setNextRun(new Date(time
+					+ (getAllowedElapsedMinutes(campaign) * 60 * 1000)));
+			log.info("Next Tweet to send at " + campaign.getNextRun());
 
 		}
 	}

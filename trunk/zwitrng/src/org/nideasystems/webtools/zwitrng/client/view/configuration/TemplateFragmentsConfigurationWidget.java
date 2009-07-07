@@ -182,8 +182,8 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		protected void save() {
 			if ( nameText.getValue().trim().isEmpty() ) {
 				MainController.getInstance().addError("Provide a name for the Fragment");
-			} else if (templateFragmentText.getValue().trim().isEmpty() ) {
-				MainController.getInstance().addError("Provide content for the Fragment");
+			} else if (templateFragmentText.getValue().trim().isEmpty() || templateFragmentText.getValue().length()>500 ) {
+				MainController.getInstance().addError("Provide content for the Fragment with no more than 500 characters");
 			} else {
 				
 				TemplateFragmentDTO tDto = new TemplateFragmentDTO();
