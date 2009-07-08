@@ -13,12 +13,15 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
+
 
 public class PersonasListController extends
 		AbstractController<PersonaDTOList, PersonasListView> {
-	
+
 	private Map<String, PersonaView> personaViews = new HashMap<String, PersonaView>();
-	
+
 	private PersonaController currentPersonaController = null;
 	private Map<String, PersonaController> personaControllers = new HashMap<String, PersonaController>();
 
@@ -32,95 +35,116 @@ public class PersonasListController extends
 	public PersonaController getCurrentPersonaController() {
 		return currentPersonaController;
 	}
+
 	/**
 	 * Initialize the view where all tabs are placed
 	 */
 	public void init() {
 		super.init();
-		//Create the View
+		// Create the View
 		setView(new PersonasListView());
-		//Set the controller for the view
+		// Set the controller for the view
 		getView().setController(this);
-		//Initialize the view
+		// Initialize the view
 		getView().init();
-		//Load the personas
+		// Load the personas
 		loadPersonas(getModel());
 		// create the view
-	
+
 	}
+
 	/**
 	 * Load a PersonaDTOList into the controller
 	 */
 	private void loadPersonas(PersonaDTOList result) {
 
 		// If the user is not logged in, then it can be null
-		//For each persona create a new Tab
+		// For each persona create a new Tab
 		if (result != null) {
 			for (PersonaDTO persona : result.getPersonaList()) {
-				loadPersona(persona,false);
+				loadPersona(persona, false);
 			}
 		}
 
 	}
-
 
 	/**
 	 * called when a given persona is selecets
 	 */
 	public void onTabSelectedChanged(int selectedTab) {
-		GWT.log("You selected TAB"+selectedTab,null);
-		
-		
+		GWT.log("You selected TAB" + selectedTab, null);
+
 		if (currentPersonaController != null) {
 			currentPersonaController.pause();
 		}
 
 		if (selectedTab != 0) {
-			
-			final PersonaView personaViewSelected = (PersonaView) this.getView()
-					.getWidget(selectedTab);
-			
+
+			final PersonaView personaViewSelected = (PersonaView) this
+					.getView().getWidget(selectedTab);
+
 			currentPersonaController = personaViewSelected.getController();
-			if ( currentPersonaController.hasTwitterUpdatesListControllerInitialized() ) {
+			if (currentPersonaController
+					.hasTwitterUpdatesListControllerInitialized()) {
 				currentPersonaController.resume();
 			} else {
 				currentPersonaController.initializeUpdatesListController();
 			}
-			
 
 		}
 	}
 
-	
-
 	/**
 	 * Load a persona into the controller and create a view for it
+	 * 
 	 * @param persona
 	 */
 	private void loadPersona(PersonaDTO persona, boolean selecteAfterCreated) {
-		
+
 		PersonaController personaController = new PersonaController();
 		personaController.setMainController(getMainController());
 		personaController.setServiceManager(getServiceManager());
 		personaController.setParentController(this);
 		personaController.setModel(persona);
 		personaController.init();
-		getView().add(personaController.getView(),persona.getName());
-		this.personaViews.put(persona.getName(), personaController.getView());
-		
-		if ( selecteAfterCreated ) {
-			getView().selectTab(getView().getWidgetCount()-1);
+		String title = persona.getName();
+
+		HorizontalPanel tabTitle = new HorizontalPanel();
+
+		String imgUrl = "http://static.twitter.com/images/default_profile_bigger.png";
+		Image titleImg = null;
+
+		if (persona.getTwitterAccount() != null
+				&& persona.getTwitterAccount().getTwitterScreenName() != null) {
+
+			title = persona.getTwitterAccount().getTwitterName()+" ("+persona.getTwitterAccount().getTwitterScreenName()+")";
+			imgUrl = persona.getTwitterAccount().getTwitterImageUrl();
 		}
-		
-		personaControllers.put(persona.getName(),personaController);
+		titleImg = new Image(imgUrl);
+
+		titleImg.setWidth("24px");
+		titleImg.setHeight("24px");
+
+		tabTitle.add(titleImg);
+		titleImg.setTitle(title);
+
+		getView().add(personaController.getView(), tabTitle);
+		this.personaViews.put(persona.getName(), personaController.getView());
+
+		if (selecteAfterCreated) {
+			getView().selectTab(getView().getWidgetCount() - 1);
+		}
+
+		personaControllers.put(persona.getName(), personaController);
 	}
 
 	/**
 	 * This will unloa the persona from the list and any reference to it
+	 * 
 	 * @param personaName
 	 */
 	private void unloadPersona(String personaName) {
-		
+
 		if (this.personaViews.get(personaName) != null) {
 			getView().remove(personaViews.get(personaName));
 			getView().selectTab(0);
@@ -130,49 +154,48 @@ public class PersonasListController extends
 		}
 
 	}
-	
+
 	/**
 	 * Call the service to remove a persona. After success call unloadPersona
+	 * 
 	 * @param persona
 	 */
 	public void deletePersona(PersonaDTO persona) {
-		
-		if ( Window.confirm("Are you sure you want to delete this Persona?") ) {
-			//make the server call
+
+		if (Window.confirm("Are you sure you want to delete this Persona?")) {
+			// make the server call
 			startProcessing();
 			try {
-				getServiceManager().getRPCService().deletePersona(persona.getName(), new AsyncCallback<String>() {
+				getServiceManager().getRPCService().deletePersona(
+						persona.getName(), new AsyncCallback<String>() {
 
-					@Override
-					public void onFailure(Throwable caught) {
-						endProcessing();
-						getMainController().addException(caught);
-						
-						
-					}
+							@Override
+							public void onFailure(Throwable caught) {
+								endProcessing();
+								getMainController().addException(caught);
 
-					@Override
-					public void onSuccess(String result) {
-						endProcessing();
-						unloadPersona(result);
-						
-					}
-					
-				});
+							}
+
+							@Override
+							public void onSuccess(String result) {
+								endProcessing();
+								unloadPersona(result);
+
+							}
+
+						});
 			} catch (Exception e) {
 				getMainController().addException(e);
 				endProcessing();
 			}
-			
+
 		}
-		
+
 	}
-
-
 
 	@Override
 	public void endProcessing() {
-		
+
 		getMainController().isProcessing(false);
 
 	}
@@ -180,7 +203,7 @@ public class PersonasListController extends
 	@Override
 	public void startProcessing() {
 		getMainController().isProcessing(true);
-		
+
 	}
 
 	@Override
@@ -211,7 +234,7 @@ public class PersonasListController extends
 						@Override
 						public void onSuccess(PersonaDTO result) {
 							endProcessing();
-							loadPersona(result,true);
+							loadPersona(result, true);
 
 						}
 
@@ -229,12 +252,13 @@ public class PersonasListController extends
 
 	public TwitterAccountController getTwitterAccountController(
 			String userScreenName) {
-		for (PersonaController pController: this.personaControllers.values() ) {
-			if (pController.getTwitterAccountController().getModel().getTwitterScreenName().endsWith(userScreenName)) {
+		for (PersonaController pController : this.personaControllers.values()) {
+			if (pController.getTwitterAccountController().getModel()
+					.getTwitterScreenName().endsWith(userScreenName)) {
 				return pController.getTwitterAccountController();
 			}
 		}
-		
+
 		return null;
 	}
 

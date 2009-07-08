@@ -7,9 +7,16 @@ public class Constants {
 	public static final String FOLLOW_USER_IMAGE = "/images/followUser.gif";
 	public static final String SIGN_WITH_TWITTER_IMG = "/images/Sign-in-with-Twitter-lighter.png";
 	public static final String CONTINUE_SIGN_WITH_TWITTER_IMG = "/images/continue-Sign-in-with-Twitter-lighter.png";
+	public static final String HOME_TAB_IMG = "/images/home_tab.png";
 	public static final String USER_IMAGE_MEDIUM_WIDTH = "48px";
 	public static final String USER_IMAGE_MEDIUM_HEIGHT = "48px";
 	
+	public static final String DM_TAB_IMG = "/images/tab_dm.png";
+	public static final String SEARCH_TAB_IMG = "/images/tab_searches.png";
+	public static final String FRIENDS_TAB = "/images/tab_friends.png";
+	public static final String MENTIONS_TAB = "/images/tab_mentions.png";
+
+	public static final String TEMPLATES_TAB_IMG = "/images/tab_config_templates.png";
 	
 	public static final String TEMPLATES_ICON_IMAGE = "/images/templates_icon.gif";
 	public static final String CONFIGURATION_PANEL_MAX_HEIGH = "400px";
@@ -22,6 +29,14 @@ public class Constants {
 	public static final String EDIT_ICON = "/images/edit_icon.gif";
 	public static final String DATE_FORMAT = "EEE, MMM d, yyyy";
 	public static final String DATE_TIME_FORMAT = "EEE, MMM d, yyyy HH:mm";
+	public static final String INSIDE_TABE_ICON_WIDTH = "32px";
+	public static final String INSIDE_TABE_ICON_HEIGHT = "24px";
+	
+	
+	
+	
+	
+	
 
 
 	

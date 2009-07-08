@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -12,6 +13,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.nideasystems.webtools.zwitrng.server.amazon.AmazonAdapter;
+import org.nideasystems.webtools.zwitrng.server.amazon.AmazonBook;
+import org.nideasystems.webtools.zwitrng.server.amazon.AmazonLocale;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
@@ -184,8 +188,8 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 						.getRandomUrl(persona, feedSetName);
 				this.outBuffer.append("<div>URL :" + randomUrl + "<div>");
 				// now get some content....
-				boolean random = feedSetName.contains(":random")?true:false;
-				RSSItem item = RSS.get().getNextRssItem(randomUrl,random);
+				boolean random = feedSetName.contains(":random") ? true : false;
+				RSSItem item = RSS.get().getNextRssItem(randomUrl, random);
 
 				if (item != null) {
 					outBuffer.append("<div>RSSTitle:" + item.getTitle()
@@ -258,7 +262,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 				throw e;
 
 			}
-
+			//replaceBooks(updateStatus);
 			// update used times
 			template.setUsedTimes(template.getUsedTimes() + 1);
 
@@ -270,6 +274,67 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			log.info("Next Tweet to send at " + campaign.getNextRun());
 
 		}
+	}
+
+	private List<String> getAffiliateLinks(String updateStatus) {
+		List<String> retList = new ArrayList<String>();
+		int startIndex = updateStatus.indexOf("%%");
+
+		if (startIndex >= 0) {
+			int endIndex = updateStatus.indexOf("%%", startIndex + 2);
+			if (endIndex > 0) {
+				retList.add(updateStatus.substring(startIndex + 2, endIndex));
+				retList.addAll(getAffiliateLinks(updateStatus.substring(
+						endIndex + 1, updateStatus.length())));
+			}
+
+		}
+
+		return retList;
+	}
+
+	private CharSequence getBookStatus(String affTemplate) {
+		String retVal = "";
+		boolean includeTitle = affTemplate.contains(":title") ? true : false;
+		boolean includePrice = affTemplate.contains(":price") ? true : false;
+		boolean includeAuthor = affTemplate.contains(":author") ? true : false;
+		boolean includeLink = affTemplate.contains(":link") ? true : false;
+		AmazonLocale locale = affTemplate.contains(":UK") ? AmazonLocale.UK : AmazonLocale.US;
+		// Get the search terms
+		String searchTerms = affTemplate.substring(affTemplate.indexOf("(")+1,
+				affTemplate.indexOf(")"));
+		AmazonBook book = AmazonAdapter.get().getRandomBook(searchTerms);
+		
+		if (book!=null) {
+			affTemplate = affTemplate.replace(":title", book.getTitle());
+			affTemplate = affTemplate.replace(":price", book.getLowestPrice());
+			affTemplate = affTemplate.replace(":author", book.getAuthor());
+			affTemplate = affTemplate.replace(":link", book.getDetailUrl());
+			
+		} else {
+			affTemplate = "invalid";
+		}
+		
+		
+		return affTemplate;
+	}
+
+	private String replaceBooks(String updateStatus) {
+		// format to find: this is %%:book :title :price :author :link
+		// :filter(term1 term2)%%
+		// replace by:title price author link
+
+		// Find any string inside of %%;
+
+		for (String affTemplate : getAffiliateLinks(updateStatus)) {
+			if (affTemplate.contains(":book")) {
+				updateStatus = updateStatus.replace(affTemplate,
+						getBookStatus(affTemplate));
+			}
+			outBuffer.append("<div>--" + updateStatus + "</div>");
+		}
+
+		return updateStatus;
 	}
 
 	private boolean maxTweetsReached(CampaignDO campaign) {
