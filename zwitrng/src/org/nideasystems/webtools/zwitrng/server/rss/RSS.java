@@ -16,10 +16,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.nideasystems.webtools.zwitrng.server.bitly.BitLyServiceAdapter;
+import org.nideasystems.webtools.zwitrng.server.utils.XMLUtils;
 import org.w3c.dom.CharacterData;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
+
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -45,7 +46,7 @@ public class RSS {
 		return instance.get();
 	}
 
-	private String getCharacterDataFromElement(Element e) {
+	/*private String getCharacterDataFromElement(Element e) {
 		try {
 			Node child = e.getFirstChild();
 			if (child instanceof CharacterData) {
@@ -68,7 +69,7 @@ public class RSS {
 	protected String getElementValue(Element parent, String label) {
 		return getCharacterDataFromElement((Element) parent
 				.getElementsByTagName(label).item(0));
-	}
+	}*/
 
 	public List<RSSItem> read(String randUrl) throws Exception{
 
@@ -85,9 +86,9 @@ public class RSS {
 				Element element = (Element) nList.item(i);
 				RSSItem rssItem = new RSSItem();
 				
-				rssItem.setTitle(getElementValue(element, "title"));
-				rssItem.setLink(getElementValue(element, "link"));
-				rssItem.setPubDate(getElementValue(element, "pubDate"));
+				rssItem.setTitle(XMLUtils.getElementValue(element, "title"));
+				rssItem.setLink(XMLUtils.getElementValue(element, "link"));
+				rssItem.setPubDate(XMLUtils.getElementValue(element, "pubDate"));
 				retList.add(rssItem);
 				
 				

@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.controller.updates;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
@@ -20,6 +21,7 @@ import com.google.gwt.event.logical.shared.SelectionEvent;
 import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Image;
 
 public class TwitterUpdatesListController extends
 		AbstractController<TwitterAccountDTO, TwitterUpdatesListView> implements
@@ -69,8 +71,13 @@ public class TwitterUpdatesListController extends
 		this.friendsTwitterUpdatesController.setCurrentFilter(friendsFilter);
 
 		this.friendsTwitterUpdatesController.init();
+		Image friendsTabImage = new Image(Constants.FRIENDS_TAB);
+		friendsTabImage.setTitle("Friends Timeline");
+		friendsTabImage.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
+		friendsTabImage.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
+		
 		getView()
-				.add(this.friendsTwitterUpdatesController.getView(), "Friends");
+				.add(this.friendsTwitterUpdatesController.getView(), friendsTabImage);
 
 		getView().selectTab(0);
 		loadUpdateList(this.friendsTwitterUpdatesController);
@@ -89,8 +96,16 @@ public class TwitterUpdatesListController extends
 		this.mentionsTwitterUpdatesController
 				.setServiceManager(getServiceManager());
 		this.mentionsTwitterUpdatesController.init();
+		
+		//tab_mentions
+		
+		Image mentionsTabImage = new Image(Constants.MENTIONS_TAB);
+		mentionsTabImage.setTitle("Mentions");
+		mentionsTabImage.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
+		mentionsTabImage.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
+		
 		getView().add(this.mentionsTwitterUpdatesController.getView(),
-				"Mentions");
+				mentionsTabImage);
 
 		// Create Search
 		this.searchesTwitterUpdatesController = new TwitterUpdatesController();
@@ -106,8 +121,12 @@ public class TwitterUpdatesListController extends
 
 		this.searchesTwitterUpdatesController.init();
 
+		Image searchImageTab = new Image(Constants.SEARCH_TAB_IMG);
+		searchImageTab.setTitle("Search");
+		searchImageTab.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
+		searchImageTab.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
 		getView().add(this.searchesTwitterUpdatesController.getView(),
-				"Searches");
+				searchImageTab);
 
 		// Create Direct Messages
 		dmTwitterUpdatesController = new TwitterUpdatesController();
@@ -121,7 +140,12 @@ public class TwitterUpdatesListController extends
 		this.dmTwitterUpdatesController.setCurrentFilter(dmFlter);
 
 		this.dmTwitterUpdatesController.init();
-		getView().add(this.dmTwitterUpdatesController.getView(),"Direct Messages");
+		Image dmImageTab = new Image(Constants.DM_TAB_IMG);
+		dmImageTab.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
+		dmImageTab.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
+		
+		dmImageTab.setTitle("Direct Messages");
+		getView().add(this.dmTwitterUpdatesController.getView(),dmImageTab);
 
 		
 		ConfigurationController confController = new ConfigurationController();
@@ -130,7 +154,11 @@ public class TwitterUpdatesListController extends
 		confController.setServiceManager(getServiceManager());
 		confController.init();
 		
-		getView().add(confController.getView(),"Configs Con");		
+		Image templatesImgTab = new Image(Constants.TEMPLATES_TAB_IMG);
+		templatesImgTab.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
+		templatesImgTab.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
+		templatesImgTab.setTitle("Configure Templates and Campaigns");
+		getView().add(confController.getView(),templatesImgTab);		
 		// Add change tab handler
 		getView().addSelectionHandler(new SelectionHandler<Integer>() {
 
