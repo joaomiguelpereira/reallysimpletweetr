@@ -26,7 +26,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
 
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends
@@ -101,9 +100,9 @@ public class TwitterAccountController extends
 
 	public SendUpdateWidget createSendUpdateWidget(
 			TwitterUpdateDTO inResponseTo, int type, boolean showUserImg) {
-		
+
 		SendUpdateWidget updateWidget = new SendUpdateWidget();
-		
+
 		updateWidget.setSendingTwitterAccount(getModel());
 		updateWidget.setInResponseTo(inResponseTo);
 		updateWidget.setType(type);
@@ -279,15 +278,17 @@ public class TwitterAccountController extends
 		UsersWindow friendsWindow = new UsersWindow(this, filter);
 		friendsWindow.show();
 		friendsWindow.isUpdating(true);
-	//	loadFriends(friendsWindow, filter);
+		// loadFriends(friendsWindow, filter);
 	}
 
 	public void loadFriends(final TwitterUsersController callback,
 			TwitterUserFilterDTO currentFilter) {
 
 		try {
-			getServiceManager().getRPCService().getUsers(MainController.getInstance().getCurrentPersonaController().getModel(),
-					currentFilter, new AsyncCallback<TwitterUserDTOList>() {
+			getServiceManager().getRPCService().getUsers(
+					MainController.getInstance().getCurrentPersonaController()
+							.getModel(), currentFilter,
+					new AsyncCallback<TwitterUserDTOList>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -308,40 +309,35 @@ public class TwitterAccountController extends
 
 	}
 
-	/*public void loadTwitterUpdate(final ShowStatusWindow showStatusWindow,
-			String tweetId) {
-
-		FilterCriteriaDTO filter = new FilterCriteriaDTO();
-
-		filter.setStatusId(Long.parseLong(tweetId));
-		filter.setUpdatesType(UpdatesType.SINGLE);
-		// filter.setUniqueResult(true);
-
-		try {
-			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
-					filter, new AsyncCallback<TwitterUpdateDTOList>() {
-
-						@Override
-						public void onFailure(Throwable caught) {
-							showStatusWindow.onError(caught);
-
-						}
-
-						@Override
-						public void onSuccess(TwitterUpdateDTOList result) {
-							showStatusWindow.onSuccess(result);
-
-						}
-
-					});
-		} catch (Exception e) {
-			showStatusWindow.onError(e);
-		}
-
-	}
-*/
-	public void loadTwitterConversation(final ShowStatusWindow showStatusWindow,
-			long id, UpdatesType type) {
+	/*
+	 * public void loadTwitterUpdate(final ShowStatusWindow showStatusWindow,
+	 * String tweetId) {
+	 * 
+	 * FilterCriteriaDTO filter = new FilterCriteriaDTO();
+	 * 
+	 * filter.setStatusId(Long.parseLong(tweetId));
+	 * filter.setUpdatesType(UpdatesType.SINGLE); //
+	 * filter.setUniqueResult(true);
+	 * 
+	 * try { getServiceManager().getRPCService().getTwitterUpdates(getModel(),
+	 * filter, new AsyncCallback<TwitterUpdateDTOList>() {
+	 * 
+	 * @Override public void onFailure(Throwable caught) {
+	 * showStatusWindow.onError(caught);
+	 * 
+	 * }
+	 * 
+	 * @Override public void onSuccess(TwitterUpdateDTOList result) {
+	 * showStatusWindow.onSuccess(result);
+	 * 
+	 * }
+	 * 
+	 * }); } catch (Exception e) { showStatusWindow.onError(e); }
+	 * 
+	 * }
+	 */
+	public void loadTwitterConversation(
+			final ShowStatusWindow showStatusWindow, long id, UpdatesType type) {
 		FilterCriteriaDTO filter = new FilterCriteriaDTO();
 
 		filter.setStatusId(id);
@@ -377,4 +373,32 @@ public class TwitterAccountController extends
 		this.sendUpdate(twitterUpdate, null);
 
 	}
+
+	public void synchronize(final TwitterUsersController twitterUsersController) {
+
+		try {
+			getServiceManager().getRPCService().synchronizeTwitterAccount(
+					MainController.getInstance().getCurrentPersonaController()
+							.getModel(),
+					new AsyncCallback<Void>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							twitterUsersController.onSynchronizeError(caught);
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							twitterUsersController.onSynchronizeSuccess();
+
+						}
+
+					});
+		} catch (Exception e) {
+			twitterUsersController.onSynchronizeError(e);
+
+		}
+
+	}
+
 }

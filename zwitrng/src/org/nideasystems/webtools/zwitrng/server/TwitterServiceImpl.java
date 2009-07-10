@@ -200,4 +200,90 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 
 	}
 
+	@Override
+	public void synchronizeTwitterAccount(PersonaDTO model) throws Exception {
+		startTransaction(true);
+		
+		try {
+			getBusinessHelper().getTwitterPojo().synchronize(model);
+		} catch (Exception e) {
+			
+			log.severe("Error Synchronizing: "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			endTransaction();
+		}
+		
+	}
+
+	@Override
+	public void followUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+			throws Exception {
+		startTransaction(true);
+		log.fine("Follow User: "+user.getTwitterScreenName());
+		try {
+			getBusinessHelper().getTwitterPojo().followUser(currentPersona,user);
+		} catch (Exception e) {
+			
+			log.severe("Error Following User: "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			endTransaction();
+		}
+		
+	}
+
+	@Override
+	public void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+			throws Exception {
+		startTransaction(true);
+		try {
+			getBusinessHelper().getTwitterPojo().unfollowUser(currentPersona,user);
+		} catch (Exception e) {
+			
+			log.severe("Error Unfollowing User: "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			endTransaction();
+		}
+		
+	}
+
+	@Override
+	public void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+			throws Exception {
+		startTransaction(true);
+		try {
+			getBusinessHelper().getTwitterPojo().blockUser(currentPersona,user);
+		} catch (Exception e) {
+			
+			log.severe("Error blocking User: "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			endTransaction();
+		}
+		
+	}
+
+	@Override
+	public void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+			throws Exception {
+		startTransaction(true);
+		try {
+			getBusinessHelper().getTwitterPojo().unblockUser(currentPersona,user);
+		} catch (Exception e) {
+			
+			log.severe("Error blocking User: "+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		} finally {
+			endTransaction();
+		}
+		
+	}
+
 }

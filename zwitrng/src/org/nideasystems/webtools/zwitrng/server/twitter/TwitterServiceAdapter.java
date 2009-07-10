@@ -497,7 +497,7 @@ public class TwitterServiceAdapter {
 		User user = null;
 		try {
 			if (follow) {
-				user = twitter.createFriendship(userId.toString());
+				user = twitter.createFriendship(userId.toString(), true);
 
 			} else {
 				user = twitter.destroyFriendship(userId.toString());

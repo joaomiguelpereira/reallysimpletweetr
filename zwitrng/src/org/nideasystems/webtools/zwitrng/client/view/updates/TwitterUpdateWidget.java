@@ -141,6 +141,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			public void onMouseOver(MouseOverEvent event) {
 				addStyleName("currentTweet");
 				// parentController.pause();
+
 				MainController.getInstance().getCurrentPersonaController()
 						.getTwitterUpdatesListController()
 						.getActiveUpdatesController().pause();

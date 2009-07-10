@@ -44,4 +44,19 @@ public interface TwitterServiceAsync {
 			TwitterUserFilterDTO currentFilter,
 			AsyncCallback<TwitterUserDTOList> callback) throws Exception;
 
+	void synchronizeTwitterAccount(PersonaDTO model,
+			AsyncCallback<Void> asyncCallback) throws Exception;
+
+	void followUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception;
+
+	void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception;
+
+	void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception;
+
+	void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception;
+
 }
