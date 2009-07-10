@@ -1,7 +1,13 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-public class ExtendedTwitterAccountDTO implements IDTO {
+import java.io.Serializable;
+
+public class ExtendedTwitterAccountDTO implements IDTO, Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3310122501803317226L;
 	private boolean imFollowing = false;
 	private boolean imBlocking = false;
 	//if I'm following and if he/she's following me

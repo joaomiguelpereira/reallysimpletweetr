@@ -9,7 +9,7 @@ import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -245,8 +245,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public CampaignDTODTOList getCampaigns(PersonaDTO model) throws Exception {
-		CampaignDTODTOList retList = null;
+	public CampaignDTOList getCampaigns(PersonaDTO model) throws Exception {
+		CampaignDTOList retList = null;
 		startTransaction(true);
 		retList = getBusinessHelper().getCampaignPojo().findCampaigns(
 				model.getName(), user.getEmail());

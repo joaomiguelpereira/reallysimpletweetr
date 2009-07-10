@@ -208,4 +208,17 @@ public class StringUtils {
 		}
 		return returnList;
 	}
+
+	public static String formatPercentage(float number, int i) {
+		
+		String str = (number*100)+""; 
+		if ( str.indexOf(".")+i+1 < str.length()) {
+			return str.substring(0,str.indexOf(".")+i+1)+"%";
+		} else {
+			return str+"%";
+		}
+		
+		
+		
+	}
 }

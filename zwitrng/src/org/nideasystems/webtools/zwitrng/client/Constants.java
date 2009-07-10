@@ -15,7 +15,8 @@ public class Constants {
 	public static final String SEARCH_TAB_IMG = "/images/tab_searches.png";
 	public static final String FRIENDS_TAB = "/images/tab_friends.png";
 	public static final String MENTIONS_TAB = "/images/tab_mentions.png";
-
+	public static final String USERS_TAB_IMG = "/images/tab_users.png";
+	
 	public static final String TEMPLATES_TAB_IMG = "/images/tab_config_templates.png";
 	
 	public static final String TEMPLATES_ICON_IMAGE = "/images/templates_icon.gif";
@@ -31,6 +32,7 @@ public class Constants {
 	public static final String DATE_TIME_FORMAT = "EEE, MMM d, yyyy HH:mm";
 	public static final String INSIDE_TABE_ICON_WIDTH = "32px";
 	public static final String INSIDE_TABE_ICON_HEIGHT = "24px";
+	
 	
 	
 	

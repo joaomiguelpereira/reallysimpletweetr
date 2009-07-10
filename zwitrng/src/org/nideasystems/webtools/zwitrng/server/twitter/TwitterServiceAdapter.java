@@ -1,7 +1,12 @@
 package org.nideasystems.webtools.zwitrng.server.twitter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheManager;
 
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
@@ -9,12 +14,14 @@ import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.ExtendedTwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import twitter4j.DirectMessage;
+import twitter4j.IDs;
 import twitter4j.Paging;
 import twitter4j.Query;
 import twitter4j.QueryResult;
@@ -281,11 +288,10 @@ public class TwitterServiceAdapter {
 				update.getTwitterAccount().getOAuthTokenSecret());
 
 		// twitter.updateStatus(update.getText());
-		//twitter.setSource("web");
+		// twitter.setSource("web");
 		// ExtendedUser user = null;
 		Status latestStatus = null;
 		log.fine("Updating status: " + update.getText());
-		
 
 		try {
 			if (update.getInReplyToUserId() > -1) {
@@ -536,8 +542,115 @@ public class TwitterServiceAdapter {
 		}
 	}
 
-	public TwitterAccountListDTO getUsers(TwitterAccountDTO account,
+	private TwitterUserDTOList getUsersFromCache(
+			TwitterUserFilterDTO currentFilter) {
+		Cache cache = null;
+		try {
+			cache = CacheManager.getInstance().getCacheFactory().createCache(
+					Collections.emptyMap());
+		} catch (CacheException e1) {
+			// TODO Auto-generated catch block
+			log.warning("Could not get a Cache instance " + cache);
+			e1.printStackTrace();
+			// ignore and just return null. Cache service not available
+		}
+
+		// if in the cache, just return the requested elements
+		TwitterUserDTOList cachedList = (TwitterUserDTOList) cache
+				.get(currentFilter.getTwitterUserScreenName() + "_"
+						+ currentFilter.getType().name());
+
+		TwitterUserDTOList retList = null;
+		if (cachedList != null) {
+			retList = new TwitterUserDTOList();
+			int start = currentFilter.getCount() * currentFilter.getPage()
+					- currentFilter.getCount();
+			int end = start + currentFilter.getCount();
+
+			if (end <= cachedList.getAccounts().size()) {
+				for (int i = start; i < end; i++) {
+					retList.add(cachedList.getAccounts().get(i));
+					// retList.add(twAccount)
+				}
+
+			}
+		}
+
+		return retList;
+	}
+
+	private void addToCache(TwitterUserFilterDTO currentFilter,
+			TwitterUserDTOList ret) throws Exception {
+		Cache cache = null;
+		try {
+			cache = CacheManager.getInstance().getCacheFactory().createCache(
+					Collections.emptyMap());
+
+		} catch (CacheException e1) {
+			// TODO Auto-generated catch block
+			log.warning("Could not get a Cache instance " + cache);
+			throw e1;
+			// ignore and just return null. Cache service not available
+		}
+
+		if (cache != null) {
+
+			// Get the actual value
+			TwitterUserDTOList currentList = (TwitterUserDTOList) cache
+					.get(currentFilter.getTwitterUserScreenName() + "_"
+							+ currentFilter.getType().name());
+
+			
+			TwitterUserDTOList newList = null;
+			
+			if (currentList != null) {
+				
+				log.fine("Adding "+ret.getAccounts().size()+" elements to the lisr");
+				
+				log.fine("List size: "+currentList.getAccounts().size());
+				currentList.getAccounts().addAll(ret.getAccounts());
+				log.fine("New List size: "+currentList.getAccounts().size());
+			
+				cache.put(currentFilter.getTwitterUserScreenName() + "_"
+						+ currentFilter.getType().name(),currentList);
+			} else {
+				cache.put(currentFilter.getTwitterUserScreenName() + "_"
+						+ currentFilter.getType().name(), ret);
+			}
+		}
+
+	}
+
+	public List<User> getUsers(TwitterAccountDTO account,
 			TwitterUserFilterDTO currentFilter) throws Exception {
+		List<User> ret = null;
+		// Check the cache
+		log.info("Chechink cache...");
+//		//ret = getUsersFromCache(currentFilter);
+//		// if the requested page has no data
+//		if (ret == null
+//				|| ret.getAccounts().size() < (currentFilter.getPage() * currentFilter
+//						.getCount())) {
+//			log
+//					.info("Could not get the users list in cache. Retrieving the users from Twitter API");
+//			ret = getFriends(account, currentFilter);
+//			//addToCache(currentFilter, ret);
+//
+//		}
+		
+		if ( currentFilter.getType().equals(TwitterUserType.FRIENDS)) {
+			ret = getFriends(account, currentFilter);
+		} else {
+			ret = getFollowers(account, currentFilter);
+		}
+				return ret;
+
+	}
+
+	private List<User> getFollowers(
+			TwitterAccountDTO account, TwitterUserFilterDTO currentFilter) throws Exception {
+	
+		//TwitterUserDTOList ret = new TwitterUserDTOList();
 		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
 		Twitter twitter = new Twitter();
 		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
@@ -549,8 +662,71 @@ public class TwitterServiceAdapter {
 		paging.setCount(currentFilter.getCount());
 		paging.setPage(currentFilter.getPage());
 
-		log.fine("Paging count is: " + paging.getCount());
-		log.fine("Paging page is: " + paging.getPage());
+		List<User> users = null;
+		try {
+			users = twitter.getFollowers(currentFilter.getTwitterUserScreenName(), paging);
+			
+			
+		} catch (TwitterException e) {
+			e.printStackTrace();
+			log.severe("Error: " + e.getMessage());
+			throw new Exception(e);
+		}
+		log.fine("returned " + users.size() + " users from twitter");
+
+/*		if (users != null) {
+			for (User user : users) {
+				
+				//ExtendedTwitterAccountDTO extendedUser = getExtendedTwitterAccountDTO(user, twitter);
+				
+				TwitterAccountDTO twAccount = DataUtils
+						.createTwitterAccountDto(user);
+				ret.add(twAccount);
+			}
+		}*/
+
+		return users;
+
+	}
+	
+	private ExtendedTwitterAccountDTO getExtendedTwitterAccountDTO(User user, Twitter twitter) {
+		ExtendedTwitterAccountDTO ret = new ExtendedTwitterAccountDTO();
+		ret.setImBlocking(existsBlocking(user,twitter));
+		ret.setImFollowing(existsFollowing(user,twitter));
+		ret.setMutualFriendShip(existsMutualFriendShip(user,twitter));
+		return ret;
+		
+	}
+	private boolean existsMutualFriendShip(User user, Twitter twitter) {
+ 
+		return false;
+	}
+
+	private boolean existsFollowing(User user, Twitter twitter) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private boolean existsBlocking(User user, Twitter twitter) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	private List<User> getFriends(
+			TwitterAccountDTO account, TwitterUserFilterDTO currentFilter)
+			throws Exception {
+		//TwitterUserDTOList ret = new TwitterUserDTOList();
+		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account
+				.getOAuthTokenSecret());
+
+		Paging paging = new Paging();
+		paging.count(currentFilter.getCount());
+		paging.setCount(currentFilter.getCount());
+		paging.setPage(currentFilter.getPage());
+
 		List<User> users = null;
 		try {
 			users = twitter.getFriends(
@@ -561,19 +737,87 @@ public class TwitterServiceAdapter {
 			throw new Exception(e);
 		}
 		log.fine("returned " + users.size() + " users from twitter");
-		TwitterAccountListDTO ret = new TwitterAccountListDTO();
 
-		if (users != null) {
+		/*if (users != null) {
 			for (User user : users) {
-
 				TwitterAccountDTO twAccount = DataUtils
 						.createTwitterAccountDto(user);
-				log.fine("Loading user: " + twAccount.getTwitterScreenName());
 				ret.add(twAccount);
 			}
+		}*/
+
+		return users;
+	}
+
+	public int[] getFollowersIds(TwitterAccountDTO account) throws Exception {
+		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account
+				.getOAuthTokenSecret());
+
+		Paging paging = new Paging();
+		//paging.count(currentFilter.getCount());
+		//paging.setCount(currentFilter.getCount());
+		//paging.setPage();
+		int[] retIds;
+		try {
+			IDs ids = twitter.getFollowersIDs();
+			retIds = ids.getIDs();
+		} catch (TwitterException e) {
+			log.severe("Error calling Twitter API: "+e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
 		}
 
-		return ret;
+		return retIds;
+		
 	}
+
+	public int[] getFollowingIds(TwitterAccountDTO account) throws Exception{
+		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account
+				.getOAuthTokenSecret());
+
+		Paging paging = new Paging();
+		//paging.count(currentFilter.getCount());
+		//paging.setCount(currentFilter.getCount());
+		//paging.setPage();
+		int[] retIds;
+		try {
+			IDs ids = twitter.getFriendsIDs();
+			retIds = ids.getIDs();
+		} catch (TwitterException e) {
+			log.severe("Error calling Twitter API: "+e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+
+		return retIds;	}
+
+	public int[] getBlockingIds(TwitterAccountDTO account) throws Exception {
+		log.info("Calling TWITTER API: " + account.getTwitterScreenName());
+		Twitter twitter = new Twitter();
+		twitter.setOAuthConsumer(CONSUMER_KEY, CONSUMER_SECRET);
+		twitter.setOAuthAccessToken(account.getOAuthToken(), account
+				.getOAuthTokenSecret());
+
+		Paging paging = new Paging();
+		//paging.count(currentFilter.getCount());
+		//paging.setCount(currentFilter.getCount());
+		//paging.setPage();
+		int[] retIds;
+		try {
+			IDs ids = twitter.getBlockingUsersIDs();
+			retIds = ids.getIDs();
+		} catch (TwitterException e) {
+			log.severe("Error calling Twitter API: "+e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+
+		return retIds;	}	
 
 }

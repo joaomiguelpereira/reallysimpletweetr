@@ -1,8 +1,14 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-public class TwitterUserFilterDTO implements IDTO{
+import java.io.Serializable;
+
+public class TwitterUserFilterDTO implements IDTO, Serializable{
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3292621821257754975L;
 	private TwitterUserType type = TwitterUserType.FRIENDS;
 	private int page = 1;
 	private int count = 20;

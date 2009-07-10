@@ -10,6 +10,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.configuration.ConfigurationController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.controller.users.TwitterUsersController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesListView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -148,17 +149,34 @@ public class TwitterUpdatesListController extends
 		getView().add(this.dmTwitterUpdatesController.getView(),dmImageTab);
 
 		
+		
+		//Add the Users tab
+		TwitterUsersController twitterUserController = new TwitterUsersController(); 
+
+		twitterUserController.setMainController(getMainController());
+		twitterUserController.setParentController(MainController.getInstance().getCurrentPersonaController());
+		twitterUserController.setServiceManager(getServiceManager());
+		twitterUserController.init();
+		Image twitterUsersTabeImgTab = new Image(Constants.USERS_TAB_IMG);
+		twitterUsersTabeImgTab.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
+		twitterUsersTabeImgTab.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
+		twitterUsersTabeImgTab.setTitle("Users");
+		getView().add(twitterUserController.getView(),twitterUsersTabeImgTab);		
+		//End users
+		//
 		ConfigurationController confController = new ConfigurationController();
 		confController.setMainController(getMainController());
 		confController.setParentController(MainController.getInstance().getCurrentPersonaController());
 		confController.setServiceManager(getServiceManager());
 		confController.init();
-		
 		Image templatesImgTab = new Image(Constants.TEMPLATES_TAB_IMG);
 		templatesImgTab.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
 		templatesImgTab.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
 		templatesImgTab.setTitle("Configure Templates and Campaigns");
 		getView().add(confController.getView(),templatesImgTab);		
+		
+		
+		
 		// Add change tab handler
 		getView().addSelectionHandler(new SelectionHandler<Integer>() {
 

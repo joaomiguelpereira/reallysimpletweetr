@@ -11,7 +11,7 @@ import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
@@ -29,7 +29,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	private static final long serialVersionUID = -481643127871478064L;
 	private static final Logger log = Logger.getLogger(TwitterServiceImpl.class
 			.getName());
-	
+
 	@Override
 	public List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount,
 			FilterCriteriaDTO filter) throws Exception {
@@ -71,7 +71,6 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 		// Send tweet
 		// Check if is logged in
 		startTransaction(false);
-		
 
 		TwitterUpdateDTO lastUpdate = null;
 		Status status = TwitterServiceAdapter.get().postUpdate(update);
@@ -112,16 +111,13 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 
 		TwitterAccountDO twitterAccountDo = DataUtils
 				.twitterAccountDoFromDto(fullAuthorizeddAccount);
-		
-		getBusinessHelper().getPersonaPojo().updatePersonaTwitterAccount(personaDto,
-				twitterAccountDo);
-		
-		
+
+		getBusinessHelper().getPersonaPojo().updatePersonaTwitterAccount(
+				personaDto, twitterAccountDo);
+
 		endTransaction();
 		return fullAuthorizeddAccount;
 	}
-
-	
 
 	@Override
 	public TwitterAccountDTO getExtendedUserAccount(
@@ -175,19 +171,32 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public TwitterAccountListDTO getUsers(TwitterAccountDTO account,
+	public TwitterUserDTOList getUsers(PersonaDTO persona,
 			TwitterUserFilterDTO currentFilter) throws Exception {
-		startTransaction(false);
-		TwitterAccountListDTO list = null;
+		// new Transaction
+		startTransaction(true);
+		TwitterUserDTOList list;
+
 		try {
-			list = TwitterServiceAdapter.get().getUsers(account, currentFilter);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			list = getBusinessHelper().getTwitterPojo().getUsers(persona,
+					currentFilter);
+		} catch (Exception e1) {
+			log.severe("Error: " + e1.getMessage());
+			e1.printStackTrace();
+			throw e1;
 		} finally {
 			endTransaction();
 		}
+
 		return list;
+		/*
+		 * startTransaction(false); //TwitterAccountDTOList list = null; try {
+		 * list =
+		 * TwitterServiceAdapter.get().getUsers(persona.getTwitterAccount(),
+		 * currentFilter); } catch (Exception e) { // TODO Auto-generated catch
+		 * block e.printStackTrace(); } finally { endTransaction(); } return
+		 * list;
+		 */
 
 	}
 

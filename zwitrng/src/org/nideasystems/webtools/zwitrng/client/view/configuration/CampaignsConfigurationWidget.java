@@ -6,7 +6,7 @@ import java.util.Map;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.datepicker.client.DateBox;
 
 public class CampaignsConfigurationWidget extends
-		AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> {
+		AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> {
 
 	@Override
 	public void init() {
@@ -34,7 +34,7 @@ public class CampaignsConfigurationWidget extends
 	}
 
 	@Override
-	protected EditableItem<CampaignDTO, CampaignDTODTOList> createEditableItem() {
+	protected EditableItem<CampaignDTO, CampaignDTOList> createEditableItem() {
 		return new EditableCampaign(this);
 	}
 
@@ -55,19 +55,19 @@ public class CampaignsConfigurationWidget extends
 	}
 
 	@Override
-	protected SelectableItem<CampaignDTO, CampaignDTODTOList> createSelectableItem(
+	protected SelectableItem<CampaignDTO, CampaignDTOList> createSelectableItem(
 			CampaignDTO obj,
-			AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> parent) {
+			AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> parent) {
 
 		return new SelectableCampaign(obj, parent, true);
 	}
 
 	@Override
-	public void onSuccessLoadObjects(CampaignDTODTOList list) {
+	public void onSuccessLoadObjects(CampaignDTOList list) {
 
 		isProcessing(false);
 		for (CampaignDTO campaign : list.getCampaigns()) {
-			SelectableItem<CampaignDTO, CampaignDTODTOList> item = createSelectableItem(
+			SelectableItem<CampaignDTO, CampaignDTOList> item = createSelectableItem(
 					campaign, this);
 			addListItem(item);
 		}
@@ -76,7 +76,7 @@ public class CampaignsConfigurationWidget extends
 
 	@Override
 	protected void removeItem(
-			SelectableItem<CampaignDTO, CampaignDTODTOList> item) {
+			SelectableItem<CampaignDTO, CampaignDTOList> item) {
 
 		MainController.getInstance().getCurrentPersonaController()
 				.removeCampaign(item.dataObject, item);
@@ -111,7 +111,7 @@ public class CampaignsConfigurationWidget extends
 	 * 
 	 */
 	private class EditableCampaign extends
-			EditableItem<CampaignDTO, CampaignDTODTOList> {
+			EditableItem<CampaignDTO, CampaignDTOList> {
 
 		private TextBox campaignName;
 		private TextBox filterByTags;
@@ -127,7 +127,7 @@ public class CampaignsConfigurationWidget extends
 		private ListBox startHourOfTheDay;
 
 		public EditableCampaign(
-				AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent) {
+				AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> theParent) {
 			super(theParent);
 
 			InlineHTML textLabel = new InlineHTML("Name: ");
@@ -534,7 +534,7 @@ public class CampaignsConfigurationWidget extends
 	 * 
 	 */
 	private class SelectableCampaign extends
-			SelectableItem<CampaignDTO, CampaignDTODTOList> {
+			SelectableItem<CampaignDTO, CampaignDTOList> {
 
 		private InlineHTML nameText;
 		private InlineHTML filterText;
@@ -544,7 +544,7 @@ public class CampaignsConfigurationWidget extends
 
 		public SelectableCampaign(
 				CampaignDTO theCampaign,
-				AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> theParent,
+				AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> theParent,
 				boolean isEditable) {
 			// Set the parent
 			super(theParent, isEditable);

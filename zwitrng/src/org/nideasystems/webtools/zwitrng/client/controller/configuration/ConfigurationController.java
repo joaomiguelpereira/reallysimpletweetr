@@ -3,12 +3,12 @@ package org.nideasystems.webtools.zwitrng.client.controller.configuration;
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationView;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.CampaignsConfigurationView;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
-public class ConfigurationController extends AbstractController<IDTO, ConfigurationView>{
+public class ConfigurationController extends AbstractController<IDTO, CampaignsConfigurationView>{
 
 	@Override
 	public void handleAction(String action, Object... args) {
@@ -20,7 +20,7 @@ public class ConfigurationController extends AbstractController<IDTO, Configurat
 	public void init() {
 		// TODO Auto-generated method stub
 		//super.init();
-		ConfigurationView view = new ConfigurationView();
+		CampaignsConfigurationView view = new CampaignsConfigurationView();
 		view.setController(this);
 		view.init();
 		setView(view);

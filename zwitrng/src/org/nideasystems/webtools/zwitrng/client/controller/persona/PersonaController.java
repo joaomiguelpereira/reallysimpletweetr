@@ -17,7 +17,7 @@ import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -394,10 +394,10 @@ public class PersonaController extends
 	}
 
 	public void loadCampaigns(
-			final AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> callback) {
+			final AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> callback) {
 		try {
 			getServiceManager().getRPCService().getCampaigns(this.getModel(),
-					new AsyncCallback<CampaignDTODTOList>() {
+					new AsyncCallback<CampaignDTOList>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -406,7 +406,7 @@ public class PersonaController extends
 						}
 
 						@Override
-						public void onSuccess(CampaignDTODTOList result) {
+						public void onSuccess(CampaignDTOList result) {
 							// callback.onSuccessDeleteObject(result);
 							callback.onSuccessLoadObjects(result);
 
@@ -422,7 +422,7 @@ public class PersonaController extends
 
 	public void createCampaign(
 			CampaignDTO object,
-			final AbstractListConfigurationWidget<CampaignDTO, CampaignDTODTOList> callback) {
+			final AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> callback) {
 		try {
 			getServiceManager().getRPCService().createCampaign(this.getModel(),
 					object, new AsyncCallback<CampaignDTO>() {
@@ -476,7 +476,7 @@ public class PersonaController extends
 	}
 
 	public void removeCampaign(CampaignDTO dataObject,
-			final SelectableItem<CampaignDTO, CampaignDTODTOList> callback) {
+			final SelectableItem<CampaignDTO, CampaignDTOList> callback) {
 		try {
 			getServiceManager().getRPCService().deleteCampaign(this.getModel(),
 					dataObject, new AsyncCallback<CampaignDTO>() {

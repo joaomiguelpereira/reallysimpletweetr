@@ -1,9 +1,15 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
+import java.io.Serializable;
 
 
-public class TwitterAccountDTO implements IDTO {
 
+public class TwitterAccountDTO implements IDTO, Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6608385823608001282L;
 	private String twitterScreenName;
 	private String twitterPassword;
 	private String twitterName;	
@@ -24,6 +30,7 @@ public class TwitterAccountDTO implements IDTO {
 	private ExtendedTwitterAccountDTO extendedUserAccount = null;
 	
 	private TwitterUpdateDTO twitterUpdateDto;
+	private String twitterStatusText;
 	
 	
 	public String getOAuthToken() {
@@ -140,5 +147,12 @@ public class TwitterAccountDTO implements IDTO {
 	public ExtendedTwitterAccountDTO getExtendedUserAccount() {
 		return extendedUserAccount;
 	}
+	public void setTwitterStatusText(String twitterStatusText) {
+		this.twitterStatusText = twitterStatusText;
+	}
+	public String getTwitterStatusText() {
+		return twitterStatusText;
+	}
+	
 	
 }

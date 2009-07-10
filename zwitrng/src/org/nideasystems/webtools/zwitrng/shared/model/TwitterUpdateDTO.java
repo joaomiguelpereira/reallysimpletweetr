@@ -1,12 +1,17 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 
 
-public class TwitterUpdateDTO implements IDTO{
+public class TwitterUpdateDTO implements IDTO, Serializable{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4765112483942956314L;
 	//When was Update create
 	private Date createdAt;
 	private long id;
