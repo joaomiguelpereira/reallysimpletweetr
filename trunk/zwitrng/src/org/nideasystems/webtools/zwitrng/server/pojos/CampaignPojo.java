@@ -12,7 +12,7 @@ import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 
 
@@ -56,7 +56,7 @@ public class CampaignPojo extends AbstractPojo {
 	 * @return
 	 * @throws Exception
 	 */
-	public CampaignDTODTOList findCampaigns(String name, String email)
+	public CampaignDTOList findCampaigns(String name, String email)
 			throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
@@ -65,7 +65,7 @@ public class CampaignPojo extends AbstractPojo {
 		if (persona == null) {
 			throw new Exception();
 		}
-		CampaignDTODTOList retList = new CampaignDTODTOList();
+		CampaignDTOList retList = new CampaignDTOList();
 
 		if (persona.getCampaigns() != null) {
 			for (CampaignDO dom : persona.getCampaigns()) {

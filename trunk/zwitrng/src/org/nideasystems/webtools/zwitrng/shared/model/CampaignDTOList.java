@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.shared.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CampaignDTODTOList implements IDTO {
+public class CampaignDTOList implements IDTO {
 
 	private List<CampaignDTO> campaigns = new ArrayList<CampaignDTO>();
 	

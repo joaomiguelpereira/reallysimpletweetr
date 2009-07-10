@@ -65,8 +65,16 @@ public class PersonaDO implements Serializable{
 	@Persistent(mappedBy="persona",defaultFetchGroup="true")
 	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
 	private List<FeedSetDO> feedSets;
+	@Persistent
+	private List<Integer> followersIds;
 	
+	@Persistent
+	private List<Integer> followingIds;
 	
+
+	@Persistent
+	private List<Integer> blockingIds;
+
 
 	public void setName(String name) {
 		this.name = name;
@@ -200,6 +208,32 @@ public class PersonaDO implements Serializable{
 		return feedSets;
 	}
 
+	
+	public void setFollowersIds(List<Integer> followersIds) {
+		this.followersIds = followersIds;
+	}
+
+	public List<Integer> getFollowersIds() {
+		return followersIds;
+	}
+
+	public void setFollowingIds(List<Integer> followingIds) {
+		this.followingIds = followingIds;
+	}
+
+	public List<Integer> getFollowingIds() {
+		return followingIds;
+	}
+
+	public void setBlockingIds(List<Integer> blockingIds) {
+		this.blockingIds = blockingIds;
+	}
+
+	public List<Integer> getBlockingIds() {
+		return blockingIds;
+	}
+
+	
 
 	
 

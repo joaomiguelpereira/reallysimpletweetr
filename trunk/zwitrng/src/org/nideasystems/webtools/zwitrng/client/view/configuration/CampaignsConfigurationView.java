@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationController>{
+public class CampaignsConfigurationView extends AbstractVerticalPanelView<ConfigurationController>{
 
 	private ExpandablePanel selectedPanel = null;
 	@Override
@@ -50,7 +50,6 @@ public class ConfigurationView extends AbstractVerticalPanelView<ConfigurationCo
 		campaingns.setConfigWidget(ccw);
 		this.add(campaingns);
 
-		
 		
 
 	}

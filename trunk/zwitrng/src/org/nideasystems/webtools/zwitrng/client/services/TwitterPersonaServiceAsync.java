@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -43,7 +43,7 @@ public interface TwitterPersonaServiceAsync {
 	void getTemplateFragmentsLists(PersonaDTO model, List<String> lists,
 			AsyncCallback<Map<String, String>> asyncCallback) throws Exception;
 	void getCampaigns(PersonaDTO model,
-			AsyncCallback<CampaignDTODTOList> asyncCallback) throws Exception;
+			AsyncCallback<CampaignDTOList> asyncCallback) throws Exception;
 	void createCampaign(PersonaDTO model, CampaignDTO object,
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
 	void saveCampaign(PersonaDTO model, CampaignDTO object,

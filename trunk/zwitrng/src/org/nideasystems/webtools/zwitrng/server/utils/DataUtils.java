@@ -3,7 +3,9 @@ package org.nideasystems.webtools.zwitrng.server.utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
@@ -12,7 +14,9 @@ import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitteUserDTO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterUserDO;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 
@@ -23,6 +27,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 
 import twitter4j.DirectMessage;
 import twitter4j.Status;
@@ -68,6 +73,7 @@ public class DataUtils {
 		twitterAcount.setId(twitterUser.getId());
 		twitterAcount.setTwitterWeb(twitterUser.getURL() != null ? twitterUser
 				.getURL().toExternalForm() : "");
+		twitterAcount.setTwitterStatusText(twitterUser.getStatusText());
 
 		return twitterAcount;
 	}
@@ -468,6 +474,35 @@ public class DataUtils {
 		log.fine("Adding created");
 		dto.setCreated(dom.getCreated());
 		return dto;
+	}
+
+	public static TwitterUserDTOList twitterUserDtoFromDo(
+			List<TwitterUserDO> followers) {
+
+		List<TwitterUserDO> list = new ArrayList<TwitterUserDO>();
+		for (TwitterUserDO dom: followers ) {
+			TwitteUserDTO dto = new TwitteUserDTO();
+			dto.setCreated(dom.getCreated());
+			dto.setFollowersCount(dom.getGollowersCount());
+			dto.setFriendsCount(dom.getFriendsCount());
+			dto.setDescription(dom.getDescription());
+			dto.setId(dom.getId());
+			dto.setLocation(dom.getLocation());
+			dto.setModified(dom.getModified());
+			dto.setName(dom.getName());
+			dto.setProfileImageURL(dom.getProfileImageURL());
+			dto.setScreenName(dom.getScreenName());
+			dto.setStatusesCount(dom.getStatusesCount());
+			dto.setUrl(dom.getUrl());
+			
+			
+			
+			
+		}
+		
+		
+		
+		return null;
 	}
 
 }

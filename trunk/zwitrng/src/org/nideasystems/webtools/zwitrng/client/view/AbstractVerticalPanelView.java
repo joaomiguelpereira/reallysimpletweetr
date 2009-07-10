@@ -11,6 +11,7 @@ public abstract class AbstractVerticalPanelView<C extends IController> extends V
 	private String name;
 	
 	
+	
 	@Override
 	public C getController() {
 		// TODO Auto-generated method stub

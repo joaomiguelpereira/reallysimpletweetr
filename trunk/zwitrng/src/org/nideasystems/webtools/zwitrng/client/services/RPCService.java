@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTODTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -16,7 +16,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
@@ -96,9 +96,10 @@ public class RPCService implements IService {
 		
 	}
 
-	public void getUsers(TwitterAccountDTO account, TwitterUserFilterDTO currentFilter,
-			AsyncCallback<TwitterAccountListDTO> callback) throws Exception{
-		this.twitterService.getUsers(account,currentFilter,callback);
+	public void getUsers(PersonaDTO persona, TwitterUserFilterDTO currentFilter,
+			AsyncCallback<TwitterUserDTOList> callback) throws Exception{
+		
+		this.twitterService.getUsers(persona,currentFilter,callback);
 		
 	}
 
@@ -165,7 +166,7 @@ public class RPCService implements IService {
 	}
 
 	public void getCampaigns(PersonaDTO model,
-			AsyncCallback<CampaignDTODTOList> asyncCallback) throws Exception {
+			AsyncCallback<CampaignDTOList> asyncCallback) throws Exception {
 		this.personaService.getCampaigns(model,asyncCallback);
 		
 	}

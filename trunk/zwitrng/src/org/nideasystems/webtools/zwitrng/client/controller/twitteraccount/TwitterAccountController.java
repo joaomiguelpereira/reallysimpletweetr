@@ -4,18 +4,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
+import org.nideasystems.webtools.zwitrng.client.controller.users.TwitterUsersController;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterAccountView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.UsersWindow;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
+import org.nideasystems.webtools.zwitrng.client.view.users.TwitterUsersView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
@@ -276,30 +279,30 @@ public class TwitterAccountController extends
 		UsersWindow friendsWindow = new UsersWindow(this, filter);
 		friendsWindow.show();
 		friendsWindow.isUpdating(true);
-		loadFriends(friendsWindow, filter);
+	//	loadFriends(friendsWindow, filter);
 	}
 
-	public void loadFriends(final UsersWindow usersWindow,
+	public void loadFriends(final TwitterUsersController callback,
 			TwitterUserFilterDTO currentFilter) {
 
 		try {
-			getServiceManager().getRPCService().getUsers(getModel(),
-					currentFilter, new AsyncCallback<TwitterAccountListDTO>() {
+			getServiceManager().getRPCService().getUsers(MainController.getInstance().getCurrentPersonaController().getModel(),
+					currentFilter, new AsyncCallback<TwitterUserDTOList>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
-							usersWindow.onLoadError(caught);
+							callback.onLoadError(caught);
 						}
 
 						@Override
-						public void onSuccess(TwitterAccountListDTO result) {
-							usersWindow.onLoadSuccess(result);
+						public void onSuccess(TwitterUserDTOList result) {
+							callback.onLoadSuccess(result);
 
 						}
 
 					});
 		} catch (Exception e) {
-			usersWindow.onLoadError(e);
+			callback.onLoadError(e);
 
 		}
 

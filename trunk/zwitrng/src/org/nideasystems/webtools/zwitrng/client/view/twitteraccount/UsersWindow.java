@@ -4,7 +4,7 @@ package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.DialogBoxesConstants;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
@@ -30,7 +30,7 @@ public class UsersWindow extends DialogBox  {
 	private static final String HEIGHT = "150px";*/
 	private TwitterUserFilterDTO currentFilter = null;
 	private TwitterAccountController twitterAccountController = null;
-	private TwitterAccountListDTO model;
+	private TwitterUserDTOList model;
 	private Image waitingImage = new Image(Constants.WAITING_IMAGE);
 	
 	public UsersWindow(TwitterAccountController controller, TwitterUserFilterDTO filter) {
@@ -113,7 +113,7 @@ public class UsersWindow extends DialogBox  {
 	private void reload() {
 		GWT.log("Reloading for type "+currentFilter.getType().type(), null);
 		GWT.log("Reloading for user "+currentFilter.getTwitterUserScreenName(), null);
-		twitterAccountController.loadFriends(this, currentFilter);
+		//twitterAccountController.loadFriends(this, currentFilter);
 		
 		
 		
@@ -150,17 +150,17 @@ public class UsersWindow extends DialogBox  {
 		
 	}
 
-	public void onLoadSuccess(TwitterAccountListDTO result) {
+	public void onLoadSuccess(TwitterUserDTOList result) {
 		this.setModel(result);
 		isUpdating(false);
 		Window.alert("Size "+result.getAccounts().size());
 	}
 
-	public void setModel(TwitterAccountListDTO model) {
+	public void setModel(TwitterUserDTOList model) {
 		this.model = model;
 	}
 
-	public TwitterAccountListDTO getModel() {
+	public TwitterUserDTOList getModel() {
 		return model;
 	}
 
