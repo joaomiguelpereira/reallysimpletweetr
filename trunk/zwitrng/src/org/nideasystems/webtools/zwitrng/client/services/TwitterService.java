@@ -11,6 +11,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
+
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -48,5 +50,18 @@ public interface TwitterService extends RemoteService {
 
 	TwitterUserDTOList getUsers(PersonaDTO persona,
 			TwitterUserFilterDTO currentFilter) throws Exception;
+	
+	void synchronizeTwitterAccount(PersonaDTO model) throws Exception;	
+	
+	void followUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception;
+	
+
+	void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception;
+	
+
+	void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception;
+	
+	void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception;
+
 
 }

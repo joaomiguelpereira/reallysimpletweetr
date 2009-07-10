@@ -1,5 +1,7 @@
 package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -9,6 +11,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SendPrivateMessageWindow extends DialogBox {
@@ -41,6 +44,18 @@ public class SendPrivateMessageWindow extends DialogBox {
 		VerticalPanel mainPanel = new VerticalPanel();
 		setModal(true);
 		mainPanel.add(updateWidget);
+		InlineHTML closeWindowLink = new InlineHTML("Close");
+		closeWindowLink.addStyleName("link");
+		closeWindowLink.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				hide(true);
+				
+			}
+			
+		});
+		mainPanel.add(closeWindowLink);
 		updateWidget.addAsyncHandler(new SendUpdateAsyncHandler() {
 
 			@Override
@@ -69,6 +84,27 @@ public class SendPrivateMessageWindow extends DialogBox {
 		setWidget(mainPanel);
 	
 		center();
+	}
+	public static SendPrivateMessageWindow create(
+			TwitterAccountController twitterAccountController,
+			TwitterAccountDTO user) {
+
+		SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
+		sendUpdateWidget.setController(twitterAccountController);
+		sendUpdateWidget
+				.setSendingTwitterAccount(twitterAccountController.getModel());
+		sendUpdateWidget.setShowUserImage(true);
+		sendUpdateWidget
+				.setInResponseToUserAccount(user);
+		sendUpdateWidget
+				.setType(SendUpdateWidget.PRIVATE_MESSAGE);
+		sendUpdateWidget.init();
+
+		SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
+				twitterAccountController.getModel(), sendUpdateWidget);
+		sendPrivateMessageWindow.setAnimationEnabled(true);
+
+		return sendPrivateMessageWindow;
 	}
 
 }

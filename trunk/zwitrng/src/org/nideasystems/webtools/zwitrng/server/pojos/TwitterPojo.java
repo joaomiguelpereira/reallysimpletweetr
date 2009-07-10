@@ -144,4 +144,100 @@ public class TwitterPojo extends AbstractPojo{
 		
 	}
 
+	public void synchronize(PersonaDTO thePersonaDto) throws Exception{
+		//Get the users from the accoun
+		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(thePersonaDto.getName(),thePersonaDto.getUserEmail());
+		
+		if (persona == null) {
+			throw new Exception("Could not find the persona");
+		}
+		synchronize(persona, thePersonaDto.getTwitterAccount());
+		
+		
+	}
+
+	public void followUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception{
+		log.fine("Start following user: "+user.getTwitterScreenName());
+		log.fine("Start following user: "+user.getId());
+		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(currentPersona.getName(),currentPersona.getUserEmail());
+
+		if (persona==null) {
+			throw new Exception("Could not find the persona");
+		}
+		//Try to call Twitter service
+		try {
+			TwitterServiceAdapter.get().followUser(currentPersona.getTwitterAccount(), true, user.getId());
+		} catch (Exception e) {
+			log.severe("Could not follow the User"+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}
+		
+		persona.getFollowingIds().add(user.getId());
+		
+		
+	}
+
+	public void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception{
+		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(currentPersona.getName(),currentPersona.getUserEmail());
+		log.fine("Unfollow user: "+user.getTwitterScreenName() );
+		log.fine("Unfollow user: "+user.getId() );
+		
+		if (persona==null) {
+			throw new Exception("Could not find the persona");
+		}
+		//Try to call Twitter service
+		try {
+			TwitterServiceAdapter.get().followUser(currentPersona.getTwitterAccount(), false, user.getId());
+		} catch (Exception e) {
+			log.severe("Could not follow the User"+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}
+		
+		persona.getFollowingIds().remove(user.getId());
+	}
+
+	public void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception{
+		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(currentPersona.getName(),currentPersona.getUserEmail());
+		log.fine("Block  user: "+user.getTwitterScreenName() );
+		log.fine("Block user: "+user.getId() );
+		
+		if (persona==null) {
+			throw new Exception("Could not find the persona");
+		}
+		//Try to call Twitter service
+		try {
+			TwitterServiceAdapter.get().blockUser(currentPersona.getTwitterAccount(), true, user.getId());
+		} catch (Exception e) {
+			log.severe("Could not block the User"+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}
+		
+		persona.getBlockingIds().remove(user.getId());
+		
+	}
+
+	public void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user) throws Exception{
+		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(currentPersona.getName(),currentPersona.getUserEmail());
+		log.fine("unBlock  user: "+user.getTwitterScreenName() );
+		log.fine("unBlock user: "+user.getId() );
+		
+		if (persona==null) {
+			throw new Exception("Could not find the persona");
+		}
+		//Try to call Twitter service
+		try {
+			TwitterServiceAdapter.get().blockUser(currentPersona.getTwitterAccount(), false, user.getId());
+		} catch (Exception e) {
+			log.severe("Could not unblock the User"+e.getMessage());
+			e.printStackTrace();
+			throw e;
+		}
+		
+		persona.getBlockingIds().remove(user.getId());
+		
+	}
+
 }

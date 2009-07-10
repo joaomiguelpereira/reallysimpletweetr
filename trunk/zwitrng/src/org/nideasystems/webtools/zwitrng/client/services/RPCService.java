@@ -213,6 +213,36 @@ public class RPCService implements IService {
 		
 	}
 
+	public void synchronizeTwitterAccount(PersonaDTO model,
+			AsyncCallback<Void> asyncCallback) throws Exception{
+		this.twitterService.synchronizeTwitterAccount(model, asyncCallback);
+		
+	}
+
+	public void followUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception{
+		this.twitterService.followUser(currentPersona,user, asyncCallback);
+		
+	}
+
+	public void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception{
+		this.twitterService.unfollowUser(currentPersona,user, asyncCallback);
+		
+	}
+
+	public void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception{
+		this.twitterService.blockUser(currentPersona,user, asyncCallback);
+		
+	}
+
+	public void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+			AsyncCallback<Void> asyncCallback) throws Exception{
+		this.twitterService.unblockUser(currentPersona,user, asyncCallback);
+		
+	}
+
 	
 
 }
