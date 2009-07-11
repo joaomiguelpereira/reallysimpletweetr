@@ -1,0 +1,43 @@
+<ItemSearchResponse
+	xmlns="http://webservices.amazon.com/AWSECommerceService/2005-10-05">
+	<OperationRequest>
+		<HTTPHeaders>
+			<Header Name="UserAgent"
+				Value="Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/530.5 (KHTML, like Gecko) Chrome/2.0.172.33 Safari/530.5"></Header>
+		</HTTPHeaders>
+		<RequestId>6796a2cc-b6f6-4a8a-bc76-51febae361ce</RequestId>
+		<Arguments>
+			<Argument Name="Operation" Value="ItemSearch"></Argument>
+			<Argument Name="Service" Value="AWSECommerceService"></Argument>
+			<Argument Name="AWSAccessKeyId" Value="0H8E46FBZKK1RWK1RT02"></Argument>
+			<Argument Name="Title" Value="agile"></Argument>
+			<Argument Name="SearchIndex" Value="Books"></Argument>
+		</Arguments>
+		<RequestProcessingTime>0.0663360000000000</RequestProcessingTime>
+	</OperationRequest>
+	<Items>
+		<Request>
+			<IsValid>True</IsValid>
+			<ItemSearchRequest>
+				<Condition>New</Condition>
+				<DeliveryMethod>Ship</DeliveryMethod>
+				<MerchantId>Amazon</MerchantId>
+				<ResponseGroup>Small</ResponseGroup>
+				<SearchIndex>Books</SearchIndex>
+				<Title>agile</Title>
+			</ItemSearchRequest>
+		</Request>
+		<TotalResults>504</TotalResults>
+		<TotalPages>51</TotalPages>
+		<Item>
+			<ASIN>0132350882</ASIN>
+			<DetailPageURL>http://www.amazon.co.uk/Clean-Code-Handbook-Software-Craftsmanship/dp/
+			</DetailPageURL>
+			<ItemAttributes>
+			<Author>Robert C. Martin</Author>
+			<Manufacturer>Prentice Hall</Manufacturer>
+			<ProductGroup>Book</ProductGroup>
+			<Title>Clean Code: A Handbook of Agile Software Craftsmanship (Robert C. Martin)</Title>
+			</ItemAttributes>
+			</Item>
+			
