@@ -5,6 +5,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.Twitte
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -87,7 +88,7 @@ public class SendPrivateMessageWindow extends DialogBox {
 	}
 	public static SendPrivateMessageWindow create(
 			TwitterAccountController twitterAccountController,
-			TwitterAccountDTO user) {
+			TwitterAccountDTO user, int type) {
 
 		SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
 		sendUpdateWidget.setController(twitterAccountController);
@@ -97,8 +98,14 @@ public class SendPrivateMessageWindow extends DialogBox {
 		sendUpdateWidget
 				.setInResponseToUserAccount(user);
 		sendUpdateWidget
-				.setType(SendUpdateWidget.PRIVATE_MESSAGE);
+				.setType(type);
+		
+		TwitterUpdateDTO update = new TwitterUpdateDTO();
+		update.setText(user.getTwitterStatusText());
+		update.setTwitterAccount(user);
+		sendUpdateWidget.setInResponseTo(update);
 		sendUpdateWidget.init();
+		sendUpdateWidget.refresh();
 
 		SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
 				twitterAccountController.getModel(), sendUpdateWidget);

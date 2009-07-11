@@ -1,8 +1,8 @@
 package org.nideasystems.webtools.zwitrng.client.view.users;
 
-
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.users.TwitterUsersController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateMessageWindow;
@@ -10,10 +10,19 @@ import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
+
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasMouseOutHandlers;
+import com.google.gwt.event.dom.client.HasMouseOverHandlers;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -35,6 +44,7 @@ public class TwitterUsersView extends
 	HorizontalPanel bottomToolbar;
 	Hyperlink nextPageLink;
 	Hyperlink previousPageLink;
+
 
 	@Override
 	public void init() {
@@ -116,6 +126,8 @@ public class TwitterUsersView extends
 			});
 		}
 	}
+
+	
 
 	private void updatePaging() {
 
@@ -199,11 +211,332 @@ public class TwitterUsersView extends
 		contents.clear();
 	}
 
-	public class TwitterInfoListItem extends VerticalPanel {
+	private class TwitterUserToolBar extends HorizontalPanel implements
+			UserListener {
+		TwitterAccountDTO user;
+		Image waitingImage = new Image(Constants.WAITING_IMAGE);
+		TwitterUsersView view;
+		InlineHTML followLink;
+		InlineHTML unfollowLink;
+		InlineHTML blockUser;
+		InlineHTML blockLink;
+		InlineHTML unblockLink;
+		InlineHTML sendDirectMessageLink;
+		Image canSendDMImg = new Image(Constants.SMALL_CHECK_IMG);
+		Image imFollowingDMImg = new Image(Constants.SMALL_CHECK_IMG);
+		SendUpdateWidget sendUpdateW = null;
+		TwitterInfoListItem parentItem;
+		
+
+		public TwitterUserToolBar(TwitterAccountDTO user, TwitterInfoListItem item) {
+			this.user = user;
+			this.view = item.view;
+			this.parentItem = item;
+			this.setSpacing(4);
+			waitingImage.setVisible(false);
+			this.add(waitingImage);
+			this.add(imFollowingDMImg);
+			followLink = createFollowActionMenu();
+			this.add(followLink);
+
+			unfollowLink = createUnfollowActionMenu();
+
+			this.add(unfollowLink);
+			this.add(createBlockActionMenu());
+			this.add(createUnblockActionMenu());
+			this.add(createSendDirectMessageMenu());
+			
+			this.add(canSendDMImg);
+			
+			this.add(createRetweetLastMenu());
+			
+			updateFollowingStatus();
+			
+			canSendDMImg.setWidth(Constants.MENU_ICON_WIDTH);
+			canSendDMImg.setHeight(Constants.MENU_ICON_HEIGH);
+			
+			
+
+			imFollowingDMImg.setWidth(Constants.MENU_ICON_WIDTH);
+			imFollowingDMImg.setHeight(Constants.MENU_ICON_HEIGH);
+			
+			
+			
+			
+			
+			
+		
+			
+		}
+
+		
+		private Widget createRetweetLastMenu() {
+			InlineHTML retweetLast = new InlineHTML("Retweet last");
+			retweetLast.addStyleName("link");
+			
+			retweetLast.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					parentItem.showUpdateWidget();
+					
+					
+
+				}
+				
+			});
+			
+			return retweetLast;
+		}
+
+		private void updateFollowingStatus() {
+			
+			if ( user.getExtendedUserAccount().isMutualFriendShip() && 
+					view.getController().getModel().getFilter().getType().equals(TwitterUserType.FRIENDS)) {
+				this.canSendDMImg.setVisible(true);
+			} else {
+				this.canSendDMImg.setVisible(false);
+			} 
+			
+			if (user.getExtendedUserAccount().isImFollowing() && 
+					view.getController().getModel().getFilter().getType().equals(TwitterUserType.FOLLOWERS)) {
+				this.imFollowingDMImg.setVisible(true);
+			} else {
+				this.imFollowingDMImg.setVisible(false);
+			}
+			
+			
+		}
+		private Widget createSendDirectMessageMenu() {
+
+			this.sendDirectMessageLink = new InlineHTML("Send Direct Message");
+			this.sendDirectMessageLink.addStyleName("link");
+			this.sendDirectMessageLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					openSendDirectMessageWindow();
+
+				}
+
+			});
+			if (user.getExtendedUserAccount().isMutualFriendShip()
+					|| view.getController().getModel().getFilter().getType() == TwitterUserType.FOLLOWERS) {
+				this.sendDirectMessageLink.setVisible(true);
+			} else {
+				this.sendDirectMessageLink.setVisible(false);
+			}
+
+			return this.sendDirectMessageLink;
+		}
+
+		private void openSendDirectMessageWindow() {
+
+			SendPrivateMessageWindow wnd = SendPrivateMessageWindow.create(
+					MainController.getInstance().getCurrentPersonaController()
+							.getTwitterAccountController(), user, SendUpdateWidget.PRIVATE_MESSAGE);
+			wnd.show();
+
+		}
+
+		private Widget createUnblockActionMenu() {
+			unblockLink = new InlineHTML("Unblock");
+			unblockLink.addStyleName("link");
+
+			unblockLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					unblockUser();
+
+				}
+
+			});
+
+			if (!user.getExtendedUserAccount().isImBlocking()) {
+				unblockLink.setVisible(false);
+			}
+			return unblockLink;
+		}
+
+		private InlineHTML createBlockActionMenu() {
+			blockLink = new InlineHTML("Block");
+			blockLink.addStyleName("link");
+
+			blockLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					blockUser();
+
+				}
+
+			});
+
+			if (user.getExtendedUserAccount().isImBlocking()) {
+				blockLink.setVisible(false);
+			}
+			return blockLink;
+		}
+
+		private void isProcessing(boolean b) {
+			this.waitingImage.setVisible(b);
+		}
+
+		private InlineHTML createUnfollowActionMenu() {
+			InlineHTML followAction = new InlineHTML();
+
+			followAction.setText("Stop following");
+			followAction.setTitle("Stop following "
+					+ user.getTwitterScreenName());
+			followAction.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					stopFollowing();
+
+				}
+
+			});
+
+			followAction.addStyleName("link");
+
+			if (!user.getExtendedUserAccount().isImFollowing()) {
+				followAction.setVisible(false);
+			}
+
+			return followAction;
+		}
+
+		private InlineHTML createFollowActionMenu() {
+			InlineHTML followAction = new InlineHTML();
+
+			followAction.setText("Start following");
+			followAction.setTitle("Start following "
+					+ user.getTwitterScreenName());
+			followAction.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					startFollowing();
+
+				}
+
+			});
+
+			if (user.getExtendedUserAccount().isImFollowing()) {
+				followAction.setVisible(false);
+			}
+			followAction.addStyleName("link");
+			return followAction;
+		}
+
+		private void unblockUser() {
+			isProcessing(true);
+			view.getController().unblockUser(user, this);
+
+		}
+
+		private void blockUser() {
+			isProcessing(true);
+			view.getController().blockUser(user, this);
+
+		}
+
+		protected void startFollowing() {
+			isProcessing(true);
+			view.getController().followUser(user, this);
+
+		}
+
+		protected void stopFollowing() {
+			isProcessing(true);
+			view.getController().stopFollowUser(user, this);
+
+		}
+
+		@Override
+		public void onBlockSucess() {
+			isProcessing(false);
+			user.getExtendedUserAccount().setImBlocking(true);
+			this.unblockLink.setVisible(true);
+			this.blockLink.setVisible(false);
+			user.setNew(false);
+			parentItem.updateIsNew();
+
+
+		}
+
+		@Override
+		public void onError(Throwable tr) {
+			isProcessing(false);
+			MainController.getInstance().addException(tr);
+
+		}
+
+		@Override
+		public void onFollowSucess() {
+			isProcessing(false);
+			user.getExtendedUserAccount().setImFollowing(true);
+			this.unfollowLink.setVisible(true);
+			this.followLink.setVisible(false);
+			updateFollowingStatus();
+			user.setNew(false);
+			parentItem.updateIsNew();
+
+
+		}
+
+		@Override
+		public void onUnFollowSucess() {
+			isProcessing(false);
+			user.getExtendedUserAccount().setImFollowing(false);
+			
+			this.unfollowLink.setVisible(false);
+			this.followLink.setVisible(true);
+			updateFollowingStatus();
+			user.setNew(false);
+			parentItem.updateIsNew();
+			
+		}
+
+		@Override
+		public void onUnblockSucess() {
+			isProcessing(false);
+			user.getExtendedUserAccount().setImBlocking(false);
+			this.unblockLink.setVisible(false);
+			this.blockLink.setVisible(true);
+			user.setNew(false);
+			parentItem.updateIsNew();
+
+
+		}
+
+	};
+
+	public class TwitterInfoListItem extends VerticalPanel implements
+			HasMouseOutHandlers, HasMouseOverHandlers {
 		private TwitterUsersView view;
+		private SendUpdateWidget sendUpdateWidget;
+		private TwitterAccountDTO user;
+		private HorizontalPanel isNewPanel;
+	
 
 		public TwitterInfoListItem(TwitterAccountDTO user, TwitterUsersView view) {
 			this.view = view;
+			this.user = user;
+			isNewPanel = new HorizontalPanel();
+			InlineHTML isNewtText = new InlineHTML("Is New ");
+			isNewtText.addStyleName("bolder");
+			Image isNewImg = new Image(Constants.SMALL_CHECK_IMG);
+			isNewImg.setWidth(Constants.MENU_ICON_WIDTH);	
+			isNewImg.setHeight(Constants.MENU_ICON_HEIGH);
+			
+			
+			isNewPanel.add(isNewtText);
+			isNewPanel.add(isNewImg);
+			this.add(isNewPanel);
+			
 			FlexTable table = new FlexTable();
 			FlexCellFormatter formatter = table.getFlexCellFormatter();
 
@@ -217,8 +550,11 @@ public class TwitterUsersView extends
 			VerticalPanel userInfo1 = new VerticalPanel();
 			userInfo1.add(new InlineHTML(buildUserLineHtml(user)));
 			userInfo1.add(new InlineHTML(buildLocationHtml(user)));
+			
+			//userInfo1.add(userLine)
 			userInfo1.add(new InlineHTML(buildUserHomePageHtml(user)));
-
+			
+			
 			table.setWidget(0, 1, userInfo1);
 			this.add(table);
 
@@ -231,266 +567,80 @@ public class TwitterUsersView extends
 			// add Info
 			this.add(buildUserPopularityPanel(user));
 
-			this.add(new TwitterUserToolBar(user, view));
+			this.add(new TwitterUserToolBar(user, this));
 
 			this.setWidth(Constants.EDITABLE_TEMPLATE_WIDTH);
 			this.setHeight(Constants.EDITABLE_TEMPLATE_MIN_HEIGHT);
 			this.addStyleName("list_item");
+			addMouseHandlers();
+			updateIsNew();
+
 
 		}
 
-		private class TwitterUserToolBar extends HorizontalPanel implements
-				UserListener {
-			TwitterAccountDTO user;
-			Image waitingImage = new Image(Constants.WAITING_IMAGE);
-			TwitterUsersView view;
-			InlineHTML followLink;
-			InlineHTML unfollowLink;
-			InlineHTML blockUser;
-			InlineHTML blockLink;
-			InlineHTML unblockLink;
-			InlineHTML sendDirectMessageLink;
-			
 
-			public TwitterUserToolBar(TwitterAccountDTO user,
-					TwitterUsersView view) {
-				this.user = user;
-				this.view = view;
-				this.setSpacing(4);
-				waitingImage.setVisible(false);
-				this.add(waitingImage);
-				followLink = createFollowActionMenu();
-				this.add(followLink);
-
-				unfollowLink = createUnfollowActionMenu();
-				
-				
-				this.add(unfollowLink);
-				this.add(createBlockActionMenu());
-				this.add(createUnblockActionMenu());
-				this.add(createSendDirectMessageMenu());
-			}
-
-
-			private Widget createSendDirectMessageMenu() {
-
-				this.sendDirectMessageLink = new InlineHTML("Send Direct Message");
-				this.sendDirectMessageLink.addStyleName("link");
-				this.sendDirectMessageLink.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						openSendDirectMessageWindow();
-						
-					}
-					
-				});
-				if (!user.getExtendedUserAccount().isMutualFriendShip() || view.getController().getModel().getFilter().getType()==TwitterUserType.FOLLOWERS) {
-					this.sendDirectMessageLink.setVisible(true);
-				} else {
-					this.sendDirectMessageLink.setVisible(false);
-				}
-					
-				return this.sendDirectMessageLink;
-			}
-
-			private void openSendDirectMessageWindow() {
-				
-				
-				SendPrivateMessageWindow wnd = SendPrivateMessageWindow.create(MainController.getInstance().getCurrentPersonaController().getTwitterAccountController(),user);
-//				
-//				SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
-//				sendUpdateWidget.setController(MainController.getInstance().getCurrentPersonaController().getTwitterAccountController());
-//				sendUpdateWidget
-//						.setSendingTwitterAccount(MainController.getInstance().getCurrentPersonaController().getModel().getTwitterAccount());
-//				sendUpdateWidget.setShowUserImage(true);
-//				sendUpdateWidget
-//						.setInResponseToUserAccount(user);
-//				sendUpdateWidget
-//						.setType(SendUpdateWidget.PRIVATE_MESSAGE);
-//				sendUpdateWidget.init();
-//
-//				SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
-//						MainController.getInstance().getCurrentPersonaController().getModel().getTwitterAccount(), sendUpdateWidget);
-//				sendPrivateMessageWindow.setAnimationEnabled(true);
-				wnd.show();
-				
+		public void updateIsNew() {
+			if (user.isNew()) {
+				isNewPanel.setVisible(true);
+			} else {
+				isNewPanel.setVisible(false);
 			}
 			
-			private Widget createUnblockActionMenu() {
-				unblockLink = new InlineHTML("Unblock");
-				unblockLink.addStyleName("link");
-				
-				unblockLink.addClickHandler(new ClickHandler() {
+		}
 
-					@Override
-					public void onClick(ClickEvent event) {
-						unblockUser();
-						
-					}
 
-					
-
-					
-				});
-				
-				if (!user.getExtendedUserAccount().isImBlocking()) {
-					unblockLink.setVisible(false);
-				}
-				return unblockLink;
+		public void showUpdateWidget() {
+			if (this.sendUpdateWidget == null ) {
+				this.sendUpdateWidget = new SendUpdateWidget();
+				TwitterAccountController controller = MainController.getInstance().getCurrentPersonaController().getTwitterAccountController();
+				sendUpdateWidget.setController(controller);
+				sendUpdateWidget
+						.setSendingTwitterAccount(controller.getModel());
+				sendUpdateWidget.setShowUserImage(true);
+				sendUpdateWidget
+						.setInResponseToUserAccount(user);
+				sendUpdateWidget
+						.setType(SendUpdateWidget.RETWEET);
+				TwitterUpdateDTO update = new TwitterUpdateDTO();
+				update.setText(user.getTwitterStatusText());
+				update.setTwitterAccount(user);
+				sendUpdateWidget.setInResponseTo(update);
+				sendUpdateWidget.init();
+				sendUpdateWidget.setVisible(false);
+				this.add(sendUpdateWidget);
 			}
-			private InlineHTML createBlockActionMenu() {
-				blockLink = new InlineHTML("Block");
-				blockLink.addStyleName("link");
-				
-				blockLink.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						blockUser();
-						
-					}
-
-					
-				});
-				
-				if (user.getExtendedUserAccount().isImBlocking()) {
-					blockLink.setVisible(false);
-				}
-				return blockLink;
-			}
+			sendUpdateWidget.setVisible(!sendUpdateWidget.isVisible());
+			sendUpdateWidget.refresh();
 			
+		}
 
-			private void isProcessing(boolean b) {
-				this.waitingImage.setVisible(b);
-			}
+		private void addMouseHandlers() {
+			this.addMouseOverHandler(new MouseOverHandler() {
 
-			private InlineHTML createUnfollowActionMenu() {
-				InlineHTML followAction = new InlineHTML();
+				@Override
+				public void onMouseOver(MouseOverEvent event) {
+					addStyleName("list_item_over");
 
-				followAction.setText("Stop following");
-				followAction.setTitle("Stop following "
-						+ user.getTwitterScreenName());
-				followAction.addClickHandler(new ClickHandler() {
-
-					@Override
-					public void onClick(ClickEvent event) {
-						stopFollowing();
-
-					}
-
-				});
-
-				followAction.addStyleName("link");
-				
-				if (!user.getExtendedUserAccount().isImFollowing() ) {
-					followAction.setVisible(false);
 				}
-				
-				return followAction;
-			}
 
-			private InlineHTML createFollowActionMenu() {
-				InlineHTML followAction = new InlineHTML();
+			});
+			this.addMouseOutHandler(new MouseOutHandler() {
 
-				followAction.setText("Start following");
-				followAction.setTitle("Start following "
-						+ user.getTwitterScreenName());
-				followAction.addClickHandler(new ClickHandler() {
+				@Override
+				public void onMouseOut(MouseOutEvent event) {
+					removeStyleName("list_item_over");
 
-					@Override
-					public void onClick(ClickEvent event) {
-						startFollowing();
-
-					}
-
-				});
-
-				if (user.getExtendedUserAccount().isImFollowing() ) {
-					followAction.setVisible(false);
 				}
-				followAction.addStyleName("link");
-				return followAction;
-			}
 
-			private void unblockUser() {
-				isProcessing(true);
-				view.getController().unblockUser(user,this);
-				
-			}
-			private void blockUser() {
-				isProcessing(true);
-				view.getController().blockUser(user,this);
-				
-			}
-			protected void startFollowing() {
-				isProcessing(true);
-				view.getController().followUser(user, this);
+			});
 
-			}
-
-			protected void stopFollowing() {
-				isProcessing(true);
-				view.getController().stopFollowUser(user, this);
-
-			}
-
-			@Override
-			public void onBlockSucess() {
-				isProcessing(false);
-				user.getExtendedUserAccount().setImBlocking(true);
-				this.unblockLink.setVisible(true);
-				this.blockLink.setVisible(false);
-				
-
-
-			}
-
-			@Override
-			public void onError(Throwable tr) {
-				isProcessing(false);
-				MainController.getInstance().addException(tr);
-
-			}
-
-			@Override
-			public void onFollowSucess() {
-				isProcessing(false);
-				user.getExtendedUserAccount().setImFollowing(true);
-				this.unfollowLink.setVisible(true);
-				this.followLink.setVisible(false);
-				
-
-			}
-
-			@Override
-			public void onUnFollowSucess() {
-				isProcessing(false);
-				user.getExtendedUserAccount().setImFollowing(false);
-				this.unfollowLink.setVisible(false);
-				this.followLink.setVisible(true);			}
-
-
-
-			@Override
-			public void onUnblockSucess() {
-				isProcessing(false);
-				user.getExtendedUserAccount().setImBlocking(false);
-				this.unblockLink.setVisible(false);
-				this.blockLink.setVisible(true);
-
-				
-			}
-
-		};
+		}
 
 		private String buildStatusLine(String status) {
 			return "<span class=\"inlineStatus\"><span class=\"label\">Last status:</span> "
 					+ StringUtils.jsParseText(status) + "</span>";
 
 		}
-
-		
 
 		private Widget buildUserPopularityPanel(final TwitterAccountDTO user) {
 			HorizontalPanel panel = new HorizontalPanel();
@@ -578,10 +728,21 @@ public class TwitterUsersView extends
 					+ user.getTwitterName()
 					+ "</span> (<span class=\"userScreenName\">"
 					+ user.getTwitterScreenName() + "</span>)";
-
+			// add imge follow (ok)
 			return userNamePlusUserScreeName;
 
 		}
+
+		@Override
+		public HandlerRegistration addMouseOutHandler(MouseOutHandler handler) {
+			return addDomHandler(handler, MouseOutEvent.getType());
+		}
+
+		@Override
+		public HandlerRegistration addMouseOverHandler(MouseOverHandler handler) {
+			return addDomHandler(handler, MouseOverEvent.getType());
+		}
 	}
+
 
 }

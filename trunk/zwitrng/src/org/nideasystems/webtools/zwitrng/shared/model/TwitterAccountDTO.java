@@ -26,6 +26,9 @@ public class TwitterAccountDTO implements IDTO, Serializable {
 	private String oAuthToken;
 	private String oAuthTokenSecret;
 	private String oAuthLoginUrl;
+	//Indicates if the user is a new follower/friend
+	private boolean isNew = false;
+	
 	
 	private ExtendedTwitterAccountDTO extendedUserAccount = null;
 	
@@ -152,6 +155,12 @@ public class TwitterAccountDTO implements IDTO, Serializable {
 	}
 	public String getTwitterStatusText() {
 		return twitterStatusText;
+	}
+	public void setNew(boolean isNew) {
+		this.isNew = isNew;
+	}
+	public boolean isNew() {
+		return isNew;
 	}
 	
 	

@@ -56,13 +56,18 @@ public class TwitterPojo extends AbstractPojo{
 		for (User twitterUser: twitterUserList) {
 			TwitterAccountDTO twitterAccount = DataUtils.createTwitterAccountDto(twitterUser);
 			//Create extension
-			
+			//Set is new
+			boolean isNew = !persona.getFollowersIds().contains(new Integer(twitterAccount.getId())) && !persona.getFollowingIds().contains(new Integer(twitterAccount.getId()));
+			twitterAccount.setNew(isNew);
 			ExtendedTwitterAccountDTO extUser = new ExtendedTwitterAccountDTO();
-			extUser.setImBlocking(persona.getBlockingIds().contains(new Integer(twitterAccount.getId())));
 			
+			
+			extUser.setImBlocking(persona.getBlockingIds().contains(new Integer(twitterAccount.getId())));
 			extUser.setImFollowing(persona.getFollowingIds().contains(new Integer(twitterAccount.getId())));
 			extUser.setMutualFriendShip(extUser.isImFollowing() && persona.getFollowersIds().contains(new Integer(twitterAccount.getId())));
 			twitterAccount.setExtendedUserAccount(extUser);
+			
+			
 			ret.add(twitterAccount);
 			
 		}
