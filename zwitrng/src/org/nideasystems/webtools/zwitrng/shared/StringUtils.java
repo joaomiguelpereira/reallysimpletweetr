@@ -115,8 +115,12 @@ public class StringUtils {
 	 */
 
 	public static String jsParseText(String templateText) {
-
-		return MainController.jsParseText(templateText);
+		if (templateText!=null) {
+			return MainController.jsParseText(templateText);
+		} else {
+			return "Ooops! No Updates";
+		}
+		
 	}
 
 	public static String randomizeString(String templateText) {
@@ -212,11 +216,12 @@ public class StringUtils {
 	public static String formatPercentage(float number, int i) {
 		
 		String str = (number*100)+""; 
-		if ( str.indexOf(".")+i+1 < str.length()) {
+		return str+"%";
+		/*if ( str.indexOf(".")+i+1 < str.length()) {
 			return str.substring(0,str.indexOf(".")+i+1)+"%";
 		} else {
 			return str+"%";
-		}
+		}*/
 		
 		
 		

@@ -5,24 +5,22 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
-import org.nideasystems.webtools.zwitrng.client.controller.IController;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.ShortLinksListenerCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
-import org.nideasystems.webtools.zwitrng.client.view.persona.SelectTemplateWindow;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendingAccountWindow;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -390,9 +388,16 @@ public class SendUpdateWidget extends
 							.getTwitterScreenName() + ":"
 					+ this.inResponseTotwitterUpdate.getText());
 
+		} else if (this.type == PRIVATE_MESSAGE && this.inResponseTotwitterUpdate!= null ) {
+			this.update.setFocus(true);
+
+			this.update.setValue("@"
+					+ this.inResponseTotwitterUpdate.getTwitterAccount()
+							.getTwitterScreenName() );
+			
 		}
 
-		/*
+				/*
 		 * Integer remainingLength = DEFAULT_TWEET_SIZE -
 		 * this.update.getValue().length();
 		 * 

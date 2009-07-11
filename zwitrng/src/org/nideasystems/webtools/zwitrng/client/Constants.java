@@ -32,14 +32,10 @@ public class Constants {
 	public static final String DATE_TIME_FORMAT = "EEE, MMM d, yyyy HH:mm";
 	public static final String INSIDE_TABE_ICON_WIDTH = "32px";
 	public static final String INSIDE_TABE_ICON_HEIGHT = "24px";
+	public static final String SMALL_CHECK_IMG = "/images/check_img.png";
+	public static final String MENU_ICON_WIDTH = "16px";
+	public static final String MENU_ICON_HEIGH = "16px";
 	
-	
-	
-	
-	
-	
-	
-
 
 	
 	
