@@ -8,9 +8,9 @@ import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateMessageWindow;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 
-import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 
@@ -198,7 +198,7 @@ public class TwitterUsersView extends
 	public void refresh() {
 		if (getController().getModel().getAccounts() != null
 				&& getController().getModel().getAccounts().size() > 0) {
-			for (TwitterAccountDTO user : getController().getModel()
+			for (TwitterUserDTO user : getController().getModel()
 					.getAccounts()) {
 				TwitterInfoListItem item = new TwitterInfoListItem(user, this);
 				contents.add(item);
@@ -213,7 +213,7 @@ public class TwitterUsersView extends
 
 	private class TwitterUserToolBar extends HorizontalPanel implements
 			UserListener {
-		TwitterAccountDTO user;
+		TwitterUserDTO user;
 		Image waitingImage = new Image(Constants.WAITING_IMAGE);
 		TwitterUsersView view;
 		InlineHTML followLink;
@@ -228,7 +228,7 @@ public class TwitterUsersView extends
 		TwitterInfoListItem parentItem;
 		
 
-		public TwitterUserToolBar(TwitterAccountDTO user, TwitterInfoListItem item) {
+		public TwitterUserToolBar(TwitterUserDTO user, TwitterInfoListItem item) {
 			this.user = user;
 			this.view = item.view;
 			this.parentItem = item;
@@ -291,14 +291,14 @@ public class TwitterUsersView extends
 
 		private void updateFollowingStatus() {
 			
-			if ( user.getExtendedUserAccount().isMutualFriendShip() && 
+			if ( user.isMutualFriendShip() && 
 					view.getController().getModel().getFilter().getType().equals(TwitterUserType.FRIENDS)) {
 				this.canSendDMImg.setVisible(true);
 			} else {
 				this.canSendDMImg.setVisible(false);
 			} 
 			
-			if (user.getExtendedUserAccount().isImFollowing() && 
+			if (user.isImFollowing() && 
 					view.getController().getModel().getFilter().getType().equals(TwitterUserType.FOLLOWERS)) {
 				this.imFollowingDMImg.setVisible(true);
 			} else {
@@ -320,7 +320,7 @@ public class TwitterUsersView extends
 				}
 
 			});
-			if (user.getExtendedUserAccount().isMutualFriendShip()
+			if (user.isMutualFriendShip()
 					|| view.getController().getModel().getFilter().getType() == TwitterUserType.FOLLOWERS) {
 				this.sendDirectMessageLink.setVisible(true);
 			} else {
@@ -353,7 +353,7 @@ public class TwitterUsersView extends
 
 			});
 
-			if (!user.getExtendedUserAccount().isImBlocking()) {
+			if (!user.isImBlocking()) {
 				unblockLink.setVisible(false);
 			}
 			return unblockLink;
@@ -373,7 +373,7 @@ public class TwitterUsersView extends
 
 			});
 
-			if (user.getExtendedUserAccount().isImBlocking()) {
+			if (user.isImBlocking()) {
 				blockLink.setVisible(false);
 			}
 			return blockLink;
@@ -401,7 +401,7 @@ public class TwitterUsersView extends
 
 			followAction.addStyleName("link");
 
-			if (!user.getExtendedUserAccount().isImFollowing()) {
+			if (!user.isImFollowing()) {
 				followAction.setVisible(false);
 			}
 
@@ -424,7 +424,7 @@ public class TwitterUsersView extends
 
 			});
 
-			if (user.getExtendedUserAccount().isImFollowing()) {
+			if (user.isImFollowing()) {
 				followAction.setVisible(false);
 			}
 			followAction.addStyleName("link");
@@ -458,7 +458,7 @@ public class TwitterUsersView extends
 		@Override
 		public void onBlockSucess() {
 			isProcessing(false);
-			user.getExtendedUserAccount().setImBlocking(true);
+			user.setImBlocking(true);
 			this.unblockLink.setVisible(true);
 			this.blockLink.setVisible(false);
 			user.setNew(false);
@@ -477,7 +477,7 @@ public class TwitterUsersView extends
 		@Override
 		public void onFollowSucess() {
 			isProcessing(false);
-			user.getExtendedUserAccount().setImFollowing(true);
+			user.setImFollowing(true);
 			this.unfollowLink.setVisible(true);
 			this.followLink.setVisible(false);
 			updateFollowingStatus();
@@ -490,7 +490,7 @@ public class TwitterUsersView extends
 		@Override
 		public void onUnFollowSucess() {
 			isProcessing(false);
-			user.getExtendedUserAccount().setImFollowing(false);
+			user.setImFollowing(false);
 			
 			this.unfollowLink.setVisible(false);
 			this.followLink.setVisible(true);
@@ -503,7 +503,7 @@ public class TwitterUsersView extends
 		@Override
 		public void onUnblockSucess() {
 			isProcessing(false);
-			user.getExtendedUserAccount().setImBlocking(false);
+			user.setImBlocking(false);
 			this.unblockLink.setVisible(false);
 			this.blockLink.setVisible(true);
 			user.setNew(false);
@@ -518,11 +518,12 @@ public class TwitterUsersView extends
 			HasMouseOutHandlers, HasMouseOverHandlers {
 		private TwitterUsersView view;
 		private SendUpdateWidget sendUpdateWidget;
-		private TwitterAccountDTO user;
+		private TwitterUserDTO user;
 		private HorizontalPanel isNewPanel;
 	
+		
 
-		public TwitterInfoListItem(TwitterAccountDTO user, TwitterUsersView view) {
+		public TwitterInfoListItem(TwitterUserDTO user, TwitterUsersView view) {
 			this.view = view;
 			this.user = user;
 			isNewPanel = new HorizontalPanel();
@@ -603,7 +604,9 @@ public class TwitterUsersView extends
 						.setType(SendUpdateWidget.RETWEET);
 				TwitterUpdateDTO update = new TwitterUpdateDTO();
 				update.setText(user.getTwitterStatusText());
-				update.setTwitterAccount(user);
+				
+				update.setTwitterUser(user);
+				
 				sendUpdateWidget.setInResponseTo(update);
 				sendUpdateWidget.init();
 				sendUpdateWidget.setVisible(false);
@@ -637,13 +640,16 @@ public class TwitterUsersView extends
 		}
 
 		private String buildStatusLine(String status) {
-			return "<span class=\"inlineStatus\"><span class=\"label\">Last status:</span> "
-					+ StringUtils.jsParseText(status) + "</span>";
+			return TwitterUsersHtmlUtils.buildStatusLine(status);
+			/*return "<span class=\"inlineStatus\"><span class=\"label\">Last status:</span> "
+					+ StringUtils.jsParseText(status) + "</span>";*/
 
 		}
 
-		private Widget buildUserPopularityPanel(final TwitterAccountDTO user) {
-			HorizontalPanel panel = new HorizontalPanel();
+		private Widget buildUserPopularityPanel(final TwitterUserDTO user) {
+			return TwitterUsersHtmlUtils.buildUserPopularityPanel(user,true);
+			
+/*			HorizontalPanel panel = new HorizontalPanel();
 			panel.setSpacing(4);
 			InlineHTML following_label = new InlineHTML("Following: ");
 			InlineHTML followers_label = new InlineHTML("Followers: ");
@@ -698,38 +704,28 @@ public class TwitterUsersView extends
 			});
 
 			return panel;
-
+*/
 		}
 
-		private String buildUserBioHtml(TwitterAccountDTO user) {
-			String userBio = "<span class=\"userBio\">"
-					+ user.getTwitterDescription() + "</span>";
-			return userBio;
+		private String buildUserBioHtml(TwitterUserDTO user) {
+			return TwitterUsersHtmlUtils.buildUserBioHtml(user);
+			
+			
 		}
 
-		private String buildUserHomePageHtml(TwitterAccountDTO user) {
+		private String buildUserHomePageHtml(TwitterUserDTO user) {
 
-			String userUrl = "<a href=\"" + user.getTwitterWeb()
-					+ "\" target=\"_blank\" class=\"userWeb\">"
-					+ user.getTwitterWeb() + "</a>";
+			return TwitterUsersHtmlUtils.buildUserHomePageHtml(user);
+			
+					}
 
-			return userUrl;
+		private String buildLocationHtml(TwitterUserDTO user) {
+			return TwitterUsersHtmlUtils.buildLocationHtml(user);
+			
 		}
 
-		private String buildLocationHtml(TwitterAccountDTO user) {
-			String location = "Location: <span class=\"userLocation\">"
-					+ user.getTwitterLocation() + "</span>";
-
-			return location;
-		}
-
-		private String buildUserLineHtml(TwitterAccountDTO user) {
-			String userNamePlusUserScreeName = "<span class=\"userName\">"
-					+ user.getTwitterName()
-					+ "</span> (<span class=\"userScreenName\">"
-					+ user.getTwitterScreenName() + "</span>)";
-			// add imge follow (ok)
-			return userNamePlusUserScreeName;
+		private String buildUserLineHtml(TwitterUserDTO user) {
+			return TwitterUsersHtmlUtils.buildUserLineHtml(user);
 
 		}
 

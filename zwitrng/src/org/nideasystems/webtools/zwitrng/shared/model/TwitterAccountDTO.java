@@ -1,16 +1,15 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
-import java.io.Serializable;
 
 
 
-public class TwitterAccountDTO implements IDTO, Serializable {
+public class TwitterAccountDTO extends TwitterUserDTO {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -6608385823608001282L;
-	private String twitterScreenName;
+/*	private String twitterScreenName;
 	private String twitterPassword;
 	private String twitterName;	
 	private String twitterLocation;
@@ -19,21 +18,26 @@ public class TwitterAccountDTO implements IDTO, Serializable {
 	private String twitterImageUrl;
 	private Integer twitterFollowers;
 	private Integer id;
-	private String location;
+	//private String location;
 	private Integer twitterUpdates;
 	private Integer twitterFriends;
-	private Boolean isOAuthenticated = false;
+*/	private Boolean isOAuthenticated = false;
 	private String oAuthToken;
 	private String oAuthTokenSecret;
 	private String oAuthLoginUrl;
+	private int newFollowers;
+	private int newFriends;
+	private int newBlocking;
 	//Indicates if the user is a new follower/friend
-	private boolean isNew = false;
+	
+	private RateLimitsDTO rateLimits;
 	
 	
-	private ExtendedTwitterAccountDTO extendedUserAccount = null;
+	
+	//private ExtendedTwitterAccountDTO extendedUserAccount = null;
 	
 	private TwitterUpdateDTO twitterUpdateDto;
-	private String twitterStatusText;
+	
 	
 	
 	public String getOAuthToken() {
@@ -54,71 +58,20 @@ public class TwitterAccountDTO implements IDTO, Serializable {
 	public void setOAuthLoginUrl(String authLoginUrl) {
 		oAuthLoginUrl = authLoginUrl;
 	}
-	public Integer getTwitterFollowers() {
-		return twitterFollowers;
-	}
-	public void setTwitterFollowers(Integer twitterFollowers) {
-		this.twitterFollowers = twitterFollowers;
-	}
 	
-	public Integer getTwitterUpdates() {
-		return twitterUpdates;
-	}
-	public void setTwitterUpdates(Integer twitterUpdates) {
-		this.twitterUpdates = twitterUpdates;
-	}
-	
-	
-	
-	
-	public void setTwitterPassword(String twitterPassword) {
-		this.twitterPassword = twitterPassword;
-	}
-	public String getTwitterPassword() {
-		return twitterPassword;
-	}
-	public void setTwitterScreenName(String twitterScreenName) {
-		this.twitterScreenName = twitterScreenName;
-	}
-	public String getTwitterScreenName() {
-		return twitterScreenName;
-	}
-	public void setTwitterName(String twitterUserName) {
-		this.twitterName = twitterUserName;
-	}
-	public String getTwitterName() {
-		return twitterName;
-	}
-	public void setTwitterDescription(String twitterDescription) {
-		this.twitterDescription = twitterDescription;
-	}
-	public String getTwitterDescription() {
-		return twitterDescription;
-	}
-	public void setTwitterImageUrl(String twitterImageUrl) {
-		this.twitterImageUrl = twitterImageUrl;
-	}
-	public String getTwitterImageUrl() {
-		return twitterImageUrl;
-	}
 	public void setIsOAuthenticated(Boolean isOAuthenticated) {
 		this.isOAuthenticated = isOAuthenticated;
 	}
 	public Boolean getIsOAuthenticated() {
 		return isOAuthenticated;
 	}
-	public void setId(Integer id) {
-		this.id = id;
-	}
-	public Integer getId() {
-		return id;
-	}
-	public void setLocation(String location) {
+	
+	/*public void setLocation(String location) {
 		this.location = location;
 	}
 	public String getLocation() {
 		return location;
-	}
+	}*/
 	
 	public void setTwitterUpdateDto(TwitterUpdateDTO twitterUpdateDto) {
 		this.twitterUpdateDto = twitterUpdateDto;
@@ -126,25 +79,8 @@ public class TwitterAccountDTO implements IDTO, Serializable {
 	public TwitterUpdateDTO getTwitterUpdateDto() {
 		return twitterUpdateDto;
 	}
-	public void setTwitterFriends(Integer friends) {
-		this.twitterFriends = friends;
-	}
-	public Integer getTwitterFriends() {
-		return twitterFriends;
-	}
-	public void setTwitterLocation(String twitterLocation) {
-		this.twitterLocation = twitterLocation;
-	}
-	public String getTwitterLocation() {
-		return twitterLocation;
-	}
-	public void setTwitterWeb(String twitterWeb) {
-		this.twitterWeb = twitterWeb;
-	}
-	public String getTwitterWeb() {
-		return twitterWeb;
-	}
-	public void setExtendedUserAccount(ExtendedTwitterAccountDTO extendedUserAccount) {
+	
+	/*public void setExtendedUserAccount(ExtendedTwitterAccountDTO extendedUserAccount) {
 		this.extendedUserAccount = extendedUserAccount;
 	}
 	public ExtendedTwitterAccountDTO getExtendedUserAccount() {
@@ -161,6 +97,31 @@ public class TwitterAccountDTO implements IDTO, Serializable {
 	}
 	public boolean isNew() {
 		return isNew;
+	}*/
+	public void setNewFollowers(int newFollowers) {
+		this.newFollowers = newFollowers;
+	}
+	public int getNewFollowers() {
+		return newFollowers;
+	}
+	public void setNewFriends(int newFriends) {
+		this.newFriends = newFriends;
+	}
+	public int getNewFriends() {
+		return newFriends;
+	}
+	public void setNewBlocking(int newBlocking) {
+		this.newBlocking = newBlocking;
+	}
+	public int getNewBlocking() {
+		return newBlocking;
+	}
+	
+	public void setRateLimits(RateLimitsDTO rateLimits) {
+		this.rateLimits = rateLimits;
+	}
+	public RateLimitsDTO getRateLimits() {
+		return rateLimits;
 	}
 	
 	

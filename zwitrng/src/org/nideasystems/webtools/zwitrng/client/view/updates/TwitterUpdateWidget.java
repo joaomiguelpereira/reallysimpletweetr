@@ -10,6 +10,7 @@ import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -74,8 +75,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		tweetLayout.setWidth("630px");
 
 		// Create the user image
-		userImg = new Image(twitterUpdate.getTwitterAccount()
-				.getTwitterImageUrl());
+		userImg = new Image(twitterUpdate.getTwitterUser().getTwitterImageUrl());
 		userImg.setWidth("48px");
 		userImg.setHeight("48px");
 
@@ -187,7 +187,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 				@Override
 				public void onClick(ClickEvent event) {
 
-					showSendDM(twitterUpdate.getTwitterAccount(),
+					showSendDM(twitterUpdate.getTwitterUser(),
 							SendUpdateWidget.PRIVATE_MESSAGE);
 				}
 
@@ -332,29 +332,20 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	}
 
-	private void showSendDM(TwitterAccountDTO twitterAccount, int type) {
+	private void showSendDM(TwitterUserDTO twitterAccount, int type) {
 
-		
 		SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
 		sendUpdateWidget.setController(parentController);
-		sendUpdateWidget
-				.setSendingTwitterAccount(parentController
-						.getModel());
+		sendUpdateWidget.setSendingTwitterAccount(parentController.getModel());
 		sendUpdateWidget.setShowUserImage(true);
-		sendUpdateWidget
-				.setInResponseToUserAccount(twitterAccount);
-		sendUpdateWidget
-				.setType(SendUpdateWidget.PRIVATE_MESSAGE);
+		sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
+		sendUpdateWidget.setType(SendUpdateWidget.PRIVATE_MESSAGE);
 		sendUpdateWidget.init();
 
 		SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
 				twitterAccount, sendUpdateWidget);
 		sendPrivateMessageWindow.setAnimationEnabled(true);
 		sendPrivateMessageWindow.show();
-
-		
-		
-		
 
 	}
 
@@ -364,7 +355,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	 * @param type
 	 */
 	private void showSendUpdate(int type) {
-		
+
 		if (sendUpdateWidget == null) {
 			// Create new
 			/*
@@ -376,9 +367,9 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 			sendUpdateWidget = parentController.createSendUpdateWidget(
 					twitterUpdate, type, true);
-			//if (twitterAccount != null) {
-			//	sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
-			//}
+			// if (twitterAccount != null) {
+			// sendUpdateWidget.setInResponseToUserAccount(twitterAccount);
+			// }
 			sendUpdateContainer.add(sendUpdateWidget);
 			sendUpdateWidget.addAsyncHandler(this);
 			sendUpdateContainer.setVisible(true);
@@ -405,16 +396,18 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		final InlineHTML updateText = new InlineHTML();
 
 		screenName.setHTML("<span class=\"userScreenName\">"
-				+ twitterUpdate.getTwitterAccount().getTwitterScreenName()
+				+ twitterUpdate.getTwitterUser().getTwitterScreenName()
 				+ " </span>");
 
 		// in the update find http:// or https://
 
 		// Parse the update text
 		HTMLHelper helper = HTMLHelper.get();
-		
-		
-		/*String htmlText = helper.getParsedUpdateHtml(twitterUpdate.getText());*/
+
+		/*
+		 * String htmlText =
+		 * helper.getParsedUpdateHtml(twitterUpdate.getText());
+		 */
 
 		String htmlText = StringUtils.jsParseText(twitterUpdate.getText());
 		updateText.setHTML("<span class=\"text\">" + htmlText + "</span>");
@@ -434,7 +427,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 						.showDelayedUserInfoPopup(
 								screenName.getAbsoluteLeft(),
 								screenName.getAbsoluteTop() + 20,
-								twitterUpdate.getTwitterAccount()
+								twitterUpdate.getTwitterUser()
 										.getTwitterScreenName());
 				// createUserPopupPanel(screenName.getAbsoluteLeft(), screenName
 				// .getAbsoluteTop() + 20,null);
@@ -487,8 +480,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		HorizontalPanel replyPannel = new HorizontalPanel();
 
-		Image userImg = new Image(result.getTwitterAccount()
-				.getTwitterImageUrl());
+		Image userImg = new Image(result.getTwitterUser().getTwitterImageUrl());
 
 		userImg.setWidth("32px");
 		userImg.setHeight("32px");
@@ -546,12 +538,12 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	@Override
 	public void onSuccess(Object arg) {
 		TwitterUpdateDTO update = (TwitterUpdateDTO) arg;
-		assert(update!=null);
-		assert(this.twitterUpdate!=null);
+		assert (update != null);
+		assert (this.twitterUpdate != null);
 		if (update.getInReplyToStatusId() == this.twitterUpdate.getId()) {
 			hasReply(update);
 		}
-Window.alert("on sucess");
+		Window.alert("on sucess");
 		removeSendUpdate();
 	}
 

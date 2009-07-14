@@ -1,23 +1,17 @@
 package org.nideasystems.webtools.zwitrng.server;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
-import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
-import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
-
-import twitter4j.Status;
-import twitter4j.User;
 
 /*
  public class TwitterServiceImpl extends RemoteServiceServlet implements
@@ -30,31 +24,27 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	private static final Logger log = Logger.getLogger(TwitterServiceImpl.class
 			.getName());
 
-	@Override
-	public List<TwitterUpdateDTO> search(TwitterAccountDTO twitterAccount,
-			FilterCriteriaDTO filter) throws Exception {
+	
 
-		// Check if is logged in
-		AuthorizationManager.checkAuthentication();
-		return null;
-
-		// return TwitterServiceAdapter.get().searchStatus(twitterAccount,
-		// filter);
-
-	}
-
+	
+	/**
+	 * Get the updates according to the filter
+	 */
 	@Override
 	public TwitterUpdateDTOList getTwitterUpdates(
-			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter)
+			PersonaDTO persona, FilterCriteriaDTO filter)
 			throws Exception {
-		startTransaction(false);
+		startTransaction(true);
 		// Check if is logged in
 		TwitterUpdateDTOList list = null;
 		try {
-			list = TwitterServiceAdapter.get().getUpdates(twitterAccount,
+			list = getBusinessHelper().getTwitterPojo().getUpdates(persona,
 					filter);
+			
+			//list = TwitterServiceAdapter.get().getUpdates(twitterAccount,
+			//		filter);
 		} catch (Exception e) {
-			log.severe(e.getMessage());
+			log.severe("Error: "+e.getMessage());
 			e.printStackTrace();
 			throw new Exception(e);
 		} finally {
@@ -66,25 +56,37 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public TwitterUpdateDTO postUpdate(TwitterUpdateDTO update)
+	public TwitterUpdateDTO postUpdate(PersonaDTO persona,TwitterUpdateDTO update)
 			throws Exception {
 		// Send tweet
 		// Check if is logged in
-		startTransaction(false);
+		startTransaction(true);
 
+		
 		TwitterUpdateDTO lastUpdate = null;
-		Status status = TwitterServiceAdapter.get().postUpdate(update);
-		if (status != null) {
-			lastUpdate = DataUtils.createTwitterUpdateDto(status, true);
+		
+		try {
+			lastUpdate =  getBusinessHelper().getTwitterPojo().postUpdate(persona, update);
+			
+			//lastUpdate = TwitterServiceAdapter.get().postUpdate(update);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			endTransaction();
 		}
-		endTransaction();
+		
+		
+		/*if (status != null) {
+			lastUpdate = DataUtils.createTwitterUpdateDto(status, true);
+		}*/
+		
 		return lastUpdate;
 
 		// throw new Exception("Not implemented");
 
 	}
 
-	@Override
+/*	@Override
 	public OAuthInfoDTO getOAuthInfo(TwitterAccountDTO twitterAccount)
 			throws Exception {
 
@@ -92,59 +94,85 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 		// TODO Auto-generated method stub
 		// return TwitterServiceAdapter.get().getOAuthInfo(twitterAccount);
 		return null;
-	}
+	}*/
 
 	@Override
 	public TwitterAccountDTO authenticateUser(PersonaDTO personaDto,
 			String pinCode) throws Exception {
+		
+		//Start the transaction
 		startTransaction(true);
-		TwitterAccountDTO authorizedTwitterAccount = TwitterServiceAdapter
-				.get()
-				.authorizeAccount(personaDto.getTwitterAccount(), pinCode);
+		
+		//Authorize the account
+		TwitterAccountDTO authorizedAccount;
+		try {
+			authorizedAccount = TwitterServiceAdapter.authorizeAccount(personaDto.getTwitterAccount(), pinCode);
+			
+			//update database		
+			getBusinessHelper().getTwitterPojo().updateAuthorizedTwitterAccount(personaDto,authorizedAccount);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw e;
+			
+		} finally {
+			endTransaction();
 
-		User exUser = TwitterServiceAdapter.get().getExtendedUser(
+		}
+		
+		return authorizedAccount;
+
+		
+		
+/*		//Now get the user info 
+		
+		
+		User exUser = TwitterServiceAdapter.get().getUserInfo(
 				authorizedTwitterAccount);
 
-		TwitterAccountDTO fullAuthorizeddAccount = DataUtils
-				.mergeTwitterAccount(exUser, authorizedTwitterAccount);
+		TwitterAccountDTO fullAuthorizedAccount = DataUtils
+				.createAutenticatedTwitterAccountDto(exUser, authorizedTwitterAccount);
 		// Update DOmain Object in DB with new oauth token
 
 		TwitterAccountDO twitterAccountDo = DataUtils
-				.twitterAccountDoFromDto(fullAuthorizeddAccount);
+				.twitterAccountDoFromDto(fullAuthorizedAccount);
 
 		getBusinessHelper().getPersonaPojo().updatePersonaTwitterAccount(
 				personaDto, twitterAccountDo);
-
-		endTransaction();
-		return fullAuthorizeddAccount;
+*/
 	}
 
 	@Override
-	public TwitterAccountDTO getExtendedUserAccount(
-			TwitterAccountDTO twitterAccount, String userIdOrScreenName)
+	public TwitterUserDTO getUserInfo(
+			PersonaDTO persona, String userIdOrScreenName)
 			throws Exception {
-		startTransaction(false);
-		TwitterAccountDTO returnDto = null;
+		startTransaction(true);
+		
+		TwitterUserDTO returnDto = null;
 
 		try {
-			returnDto = TwitterServiceAdapter.get().getExtendedUser(
-					twitterAccount, userIdOrScreenName);
+			
+			returnDto = getBusinessHelper().getTwitterPojo().getUserInfo(persona, userIdOrScreenName);
+			
 		} catch (Exception e) {
 			log.severe("Error " + e.getMessage());
 			throw new Exception(e);
+		} finally {
+			endTransaction();
 		}
-		endTransaction();
+		
 		return returnDto;
 
 	}
 
-	@Override
-	public void followUser(TwitterAccountDTO account, boolean follow,
+	/*@Override
+	public void followUser(PersonaDTO persona, boolean follow,
 			Integer userId) throws Exception {
 		startTransaction(false);
 
 		try {
-			TwitterServiceAdapter.get().followUser(account, follow, userId);
+			getBusinessHelper().getTwitterPojo().followUser(persona, userId);
+			
+			//TwitterServiceAdapter.get().followUser(account, follow, userId);
 		} catch (Exception e) {
 
 			e.printStackTrace();
@@ -155,7 +183,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public void blockUser(TwitterAccountDTO account, boolean block,
+	public void blockUser(PersonaDTO persona, boolean block,
 			Integer userId) throws Exception {
 		startTransaction(false);
 
@@ -168,7 +196,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 			endTransaction();
 		}
 
-	}
+	}*/
 
 	@Override
 	public TwitterUserDTOList getUsers(PersonaDTO persona,
@@ -218,10 +246,10 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public void followUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user)
 			throws Exception {
 		startTransaction(true);
-		log.fine("Follow User: "+user.getTwitterScreenName());
+		
 		try {
 			getBusinessHelper().getTwitterPojo().followUser(currentPersona,user);
 		} catch (Exception e) {
@@ -236,7 +264,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+	public void unfollowUser(PersonaDTO currentPersona, TwitterUserDTO user)
 			throws Exception {
 		startTransaction(true);
 		try {
@@ -253,7 +281,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+	public void blockUser(PersonaDTO currentPersona, TwitterUserDTO user)
 			throws Exception {
 		startTransaction(true);
 		try {
@@ -270,7 +298,7 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user)
+	public void unblockUser(PersonaDTO currentPersona, TwitterUserDTO user)
 			throws Exception {
 		startTransaction(true);
 		try {
@@ -284,6 +312,28 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 			endTransaction();
 		}
 		
+	}
+
+	@Override
+	public TwitterUpdateDTO sendDirectMessage(PersonaDTO currentPersona,
+			TwitterUpdateDTO dm) throws Exception {
+		// Send tweet
+		// Check if is logged in
+		startTransaction(true);
+
+		
+		TwitterUpdateDTO directM = null;
+		
+		try {
+			directM =  getBusinessHelper().getTwitterPojo().sendDM(currentPersona, dm);
+			
+			//lastUpdate = TwitterServiceAdapter.get().postUpdate(update);
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			endTransaction();
+		}
+		return directM;
 	}
 
 }

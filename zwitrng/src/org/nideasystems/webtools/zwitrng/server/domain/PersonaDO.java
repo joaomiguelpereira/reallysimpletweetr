@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-
-
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -18,9 +16,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.google.appengine.api.datastore.Key;
 
-
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class PersonaDO implements Serializable{
+public class PersonaDO implements Serializable {
 
 	/**
 	 * 
@@ -30,117 +27,83 @@ public class PersonaDO implements Serializable{
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	private Key key;
-	
+
 	@Persistent
-	private String userEmail ;
+	private String userEmail;
 
 	@Persistent
 	private String name;
-	
-	
-	@Persistent
-	private Date creationDate;
-	
 
+	@Persistent
+	private Date created;
+
+	@Persistent
+	private Date modified;
+
+	
 	@Persistent
 	private TwitterAccountDO twitterAccount;
-	
-	@Persistent(mappedBy="persona",defaultFetchGroup="true")
-	private List<FilterDO> filters;
-	
 
-	
-	@Persistent(mappedBy="persona",defaultFetchGroup="true")
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
+	private List<FilterDO> filters;
+
+	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
 	private List<CampaignDO> campaigns;
 
-	@Persistent(mappedBy="persona",defaultFetchGroup="true")
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
 	private List<TemplateDO> templates;
-	
-	@Persistent(mappedBy="persona",defaultFetchGroup="true")
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+
+	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
 	private List<TemplateFragmentDO> templateFragments;
-	
-	@Persistent(mappedBy="persona",defaultFetchGroup="true")
-	@Order(extensions = @Extension(vendorName="datanucleus", key="list-ordering", value="created desc"))
+
+	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
 	private List<FeedSetDO> feedSets;
-	@Persistent
-	private List<Integer> followersIds;
-	
-	@Persistent
-	private List<Integer> followingIds;
-	
 
-	@Persistent
-	private List<Integer> blockingIds;
-
-
-	public void setName(String name) {
+		public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
 
-
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
-
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-
-
-
+	
 	public void setTwitterAccount(TwitterAccountDO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 	}
-
 
 	public TwitterAccountDO getTwitterAccount() {
 		return twitterAccount;
 	}
 
-
-	
-
-
-
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
-
 
 	public String getUserEmail() {
 		return userEmail;
 	}
 
-
-	
-
-
 	public void setFilters(List<FilterDO> filters) {
 		this.filters = filters;
 	}
-
 
 	public List<FilterDO> getFilters() {
 		return filters;
 	}
 
 	public void addFilter(FilterDO filter) {
-		if (this.filters == null )
+		if (this.filters == null)
 			this.filters = new ArrayList<FilterDO>();
 		this.filters.add(filter);
 	}
-	
+
 	public void addtemplate(TemplateDO template) {
-		if ( this.templates == null) {
+		if (this.templates == null) {
 			this.templates = new ArrayList<TemplateDO>();
 		}
 		this.templates.add(template);
@@ -170,23 +133,23 @@ public class PersonaDO implements Serializable{
 		return templateFragments;
 	}
 
-	
 	public void addCampaign(CampaignDO campaign) {
 		if (this.campaigns == null) {
 			this.campaigns = new ArrayList<CampaignDO>();
 		}
 		this.campaigns.add(campaign);
 	}
+
 	public void addtemplateFragment(TemplateFragmentDO fragDo) {
-		if ( this.templateFragments == null ) {
+		if (this.templateFragments == null) {
 			this.templateFragments = new ArrayList<TemplateFragmentDO>();
 		}
 		this.templateFragments.add(fragDo);
-		
+
 	}
-	
+
 	public void addFeedSet(FeedSetDO feed) {
-		if (this.feedSets==null) {
+		if (this.feedSets == null) {
 			this.feedSets = new ArrayList<FeedSetDO>();
 		}
 		this.feedSets.add(feed);
@@ -208,39 +171,21 @@ public class PersonaDO implements Serializable{
 		return feedSets;
 	}
 
-	
-	public void setFollowersIds(List<Integer> followersIds) {
-		this.followersIds = followersIds;
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
-	public List<Integer> getFollowersIds() {
-		return followersIds;
+	public Date getCreated() {
+		return created;
 	}
 
-	public void setFollowingIds(List<Integer> followingIds) {
-		this.followingIds = followingIds;
+	public void setModified(Date modified) {
+		this.modified = modified;
 	}
 
-	public List<Integer> getFollowingIds() {
-		return followingIds;
+	public Date getModified() {
+		return modified;
 	}
-
-	public void setBlockingIds(List<Integer> blockingIds) {
-		this.blockingIds = blockingIds;
-	}
-
-	public List<Integer> getBlockingIds() {
-		return blockingIds;
-	}
-
-	
-
-	
-
-	
-
-
-	
 
 
 }

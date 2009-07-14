@@ -8,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.server.utils.DtoAssembler;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -37,57 +38,37 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	 * Create a new Persona and return its representation
 	 */
 	@Override
-	public PersonaDTO createPersona(final PersonaDTO persona) throws Exception {
+	public PersonaDTO createPersona(final PersonaDTO personaDto)
+			throws Exception {
 		log.fine("createPersona...");
 		startTransaction(true);
+		PersonaDO personaDo = null;
 
-		try {
-
-			if (persona.getTwitterAccount() == null) {
-				throw new Exception("Please provide your twitter information");
-			}
-
-			if (persona.getName().isEmpty()) {
-				throw new Exception(
-						"Not all data provided. All field are required");
-			}
-
-			log.fine("preAutorizedTwitterAccount...");
-			// Create a preAuthorized TwitterAccount
-			TwitterAccountDTO preAutorizedTwitterAccount = TwitterServiceAdapter
-					.get().getPreAuthorizedTwitterAccount();
-			log.fine("preAutorizedTwitterAccount Url "
-					+ preAutorizedTwitterAccount.getOAuthLoginUrl());
-			log.fine("preAutorizedTwitterAccount Token "
-					+ preAutorizedTwitterAccount.getOAuthToken());
-			log.fine("preAutorizedTwitterAccount Token Secret "
-					+ preAutorizedTwitterAccount.getOAuthTokenSecret());
-
-			log.fine("Set the preAuthorizedAcctony to input PersonaDto...");
-			persona.setTwitterAccount(preAutorizedTwitterAccount);
-
-			PersonaDO personaDo = null;
-			try {
-				log.fine("Creating persona in Datastore");
-				personaDo = getBusinessHelper().getPersonaPojo().createPersona(
-						persona, user.getEmail());
-				// personaDo = getPersonaDao().createPersona(persona,
-				// currentUser.getEmail());
-
-			} catch (Exception e) {
-				log.severe(e.getMessage());
-				throw e;
-
-			}
-			return DataUtils.personaDtoFromDo(personaDo);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			log.severe(e.getMessage());
-			throw new Exception(e);
-		} finally {
-			endTransaction();
+		if (personaDto.getTwitterAccount() == null) {
+			throw new Exception("Please provide your twitter information");
 		}
+
+		if (personaDto.getName().isEmpty()) {
+			throw new Exception("Not all data provided. All field are required");
+		}
+
+		log.fine("Creating a Pre-AutorizedTwitterAccount...");
+		// Create a preAuthorized TwitterAccount
+
+		TwitterAccountDTO preAutorizedTwitterAccount = TwitterServiceAdapter
+				.createPreAuthorizedTwitterAccount();
+
+		log.fine("Set the preAuthorizedAcctony to input PersonaDto...");
+		personaDto.setTwitterAccount(preAutorizedTwitterAccount);
+
+		log.fine("Creating persona in Datastore");
+		personaDo = getBusinessHelper().getPersonaPojo().createPersona(
+				personaDto, user.getEmail());
+
+		endTransaction();
+
+		return DtoAssembler.assemble(personaDo);
+		// return DataUtils.personaDtoFromDo(personaDo);
 	}
 
 	@Override
@@ -129,21 +110,19 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	@Override
 	public List<FilterCriteriaDTO> getPersonaFilters(String personaName)
 			throws Exception {
-		startTransaction(true);
-		// get the DAO
-		// Key personaKey = ;
-		// User user = AuthorizationManager.checkAuthentication();
-
-		List<FilterCriteriaDTO> returnFilters = null;
-		if (user != null) {
-
-			returnFilters = getBusinessHelper().getPersonaPojo().getAllFilters(
-					personaName, user.getEmail());
-
-			// Get all Personas for email: email
-		}
-		endTransaction();
-		return returnFilters;
+		/*
+		 * startTransaction(true); // get the DAO // Key personaKey = ; // User
+		 * user = AuthorizationManager.checkAuthentication();
+		 * 
+		 * List<FilterCriteriaDTO> returnFilters = null; if (user != null) {
+		 * 
+		 * returnFilters = getBusinessHelper().getPersonaPojo().getAllFilters(
+		 * personaName, user.getEmail());
+		 * 
+		 * // Get all Personas for email: email } endTransaction();
+		 */
+		throw new Exception("Not implemented");
+		// return null;
 
 	}
 
@@ -312,8 +291,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		return campaign;
 	}
 
-	
-	//FeedSets
+	// FeedSets
 	@Override
 	public FeedSetDTOList getFeedSets(PersonaDTO model) throws Exception {
 		FeedSetDTOList returnList = null;
@@ -338,7 +316,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		startTransaction(true);
 		try {
 			feedSet = getBusinessHelper().getFeedSetPojo().createFeedSet(
-					model.getName(), user.getEmail(),object);
+					model.getName(), user.getEmail(), object);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);
@@ -347,8 +325,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			endTransaction();
 		}
 		return feedSet;
-		
-		
+
 	}
 
 	@Override
@@ -357,8 +334,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		FeedSetDTO feedSet = object;
 		startTransaction(true);
 		try {
-			getBusinessHelper().getFeedSetPojo().deleteFeedSet(
-					model.getName(), user.getEmail(),object);
+			getBusinessHelper().getFeedSetPojo().deleteFeedSet(model.getName(),
+					user.getEmail(), object);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);
@@ -376,7 +353,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		startTransaction(true);
 		try {
 			feedSet = getBusinessHelper().getFeedSetPojo().saveFeedSet(
-					model.getName(), user.getEmail(),object);
+					model.getName(), user.getEmail(), object);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new Exception(e);
@@ -385,7 +362,6 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			endTransaction();
 		}
 		return feedSet;
-		
-		
+
 	}
 }

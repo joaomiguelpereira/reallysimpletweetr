@@ -5,10 +5,12 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesView;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -70,10 +72,10 @@ public class TwitterUpdatesController extends
 			if (newUpdateId != currentFilter.getSinceId()) {
 				updateNeeded = true;
 				currentFilter.setSinceId(newUpdateId);
-				currentFilter.setCompletedIn(twitterUpdates.getFilter()
-						.getCompletedIn());
-				currentFilter.setRefreshUrl(twitterUpdates.getFilter()
-						.getRefreshUrl());
+				//currentFilter.setCompletedIn(twitterUpdates.getFilter()
+				//		.getCompletedIn());
+				//currentFilter.setRefreshUrl(twitterUpdates.getFilter()
+				//		.getRefreshUrl());
 				// currentFilter = twitterUpdates.getFilter();
 			}
 
@@ -127,6 +129,7 @@ public class TwitterUpdatesController extends
 	
 	public void reload(FilterCriteriaDTO filter) {
 		
+		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
 		if (!isPaused) {
 			startProcessing();
 
@@ -144,7 +147,7 @@ public class TwitterUpdatesController extends
 			}
 			try {
 				getServiceManager().getRPCService().getTwitterUpdates(
-						twitterAccount, usedfilter,
+						currentPersona, usedfilter,
 						new AsyncCallback<TwitterUpdateDTOList>() {
 
 							@Override

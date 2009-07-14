@@ -11,11 +11,11 @@ import com.google.gwt.json.client.JSONValue;
 
 public class JSONUtils {
 
-	public static JSONObject createNewPersonaJSonRequest(String personaName,
+	/*public static JSONObject createNewPersonaJSonRequest(String personaName,
 			String twUserName, String twPassword) {
 		
 		PersonaDTO personaObj = new PersonaDTO();
-		personaObj.setCreationDate(new Date());
+		personaObj.setCreated(new Date());
 		personaObj.setName(personaName);
 		
 		TwitterAccountDTO twitterAccount = new TwitterAccountDTO();
@@ -40,5 +40,5 @@ public class JSONUtils {
 		return returnString;
 
 	}
-	
+	*/
 }

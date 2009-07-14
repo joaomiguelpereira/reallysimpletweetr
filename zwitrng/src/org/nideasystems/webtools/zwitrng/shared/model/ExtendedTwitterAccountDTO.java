@@ -8,7 +8,7 @@ public class ExtendedTwitterAccountDTO implements IDTO, Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 3310122501803317226L;
-	private boolean imFollowing = false;
+	/*private boolean imFollowing = false;
 	private boolean imBlocking = false;
 	//if I'm following and if he/she's following me
 	private boolean mutualFriendShip = false;
@@ -29,7 +29,7 @@ public class ExtendedTwitterAccountDTO implements IDTO, Serializable {
 	}
 	public boolean isMutualFriendShip() {
 		return mutualFriendShip;
-	}
+	}*/
 	
 
 }

@@ -14,13 +14,15 @@ import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendin
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.CloseEvent;
 import com.google.gwt.event.logical.shared.CloseHandler;
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlexTable;
@@ -50,7 +52,7 @@ public class SendUpdateWidget extends
 	final TextArea update = new TextArea();
 	final Button send = new Button("Send");
 	private int type = STATUS;
-	private TwitterAccountDTO inResponseToUserAccount = null;
+	private TwitterUserDTO inResponseToUserAccount = null;
 	private TwitterAccountDTO sendingTwitterAccount;
 	private List<String> sendingTwitterAccountNames = new ArrayList<String>();
 	private TwitterUpdateDTO inResponseTotwitterUpdate;
@@ -199,7 +201,7 @@ public class SendUpdateWidget extends
 				} else if (update.getValue().length() > 0) {
 					TwitterUpdateDTO twitterUpdate = new TwitterUpdateDTO();
 					twitterUpdate.setText(update.getValue());
-					twitterUpdate.setTwitterAccount(getSendingTwitterAccount());
+					twitterUpdate.setSendingTwitterAccount(getSendingTwitterAccount());
 					if (type == REPLY) {
 						twitterUpdate
 								.setInReplyToStatusId(inResponseTotwitterUpdate
@@ -212,7 +214,7 @@ public class SendUpdateWidget extends
 						twitterUpdate
 								.setInReplyToUserId(getInResponseToUserAccount()
 										.getId());
-
+						
 					}
 
 					isUpdating(true);
@@ -223,9 +225,15 @@ public class SendUpdateWidget extends
 								.getMainController()
 								.getTwitterAccountController(userScreenName);
 
-						twitterUpdate.setTwitterAccount(controller.getModel());
+						twitterUpdate.setSendingTwitterAccount(controller.getModel());
 
-						controller.sendUpdate(twitterUpdate, instance);
+						if ( type==PRIVATE_MESSAGE) {
+							controller.sendDM(twitterUpdate, instance);
+							
+						} else {
+							controller.sendUpdate(twitterUpdate, instance);
+						}
+						
 					}
 
 					// Clear
@@ -376,7 +384,7 @@ public class SendUpdateWidget extends
 			assert (this.inResponseTotwitterUpdate != null);
 			this.update.setFocus(true);
 			this.update.setValue("@"
-					+ this.inResponseTotwitterUpdate.getTwitterAccount()
+					+ this.inResponseTotwitterUpdate.getTwitterUser()
 							.getTwitterScreenName() + " ");
 
 		} else if (this.type == RETWEET) {
@@ -384,15 +392,15 @@ public class SendUpdateWidget extends
 			this.update.setFocus(true);
 
 			this.update.setValue("RT @"
-					+ this.inResponseTotwitterUpdate.getTwitterAccount()
+					+ this.inResponseTotwitterUpdate.getTwitterUser()
 							.getTwitterScreenName() + ":"
 					+ this.inResponseTotwitterUpdate.getText());
 
 		} else if (this.type == PRIVATE_MESSAGE && this.inResponseTotwitterUpdate!= null ) {
 			this.update.setFocus(true);
-
+			
 			this.update.setValue("@"
-					+ this.inResponseTotwitterUpdate.getTwitterAccount()
+					+ this.inResponseTotwitterUpdate.getTwitterUser()
 							.getTwitterScreenName() );
 			
 		}
@@ -470,11 +478,11 @@ public class SendUpdateWidget extends
 
 	}
 
-	public TwitterAccountDTO getInResponseToUserAccount() {
+	public TwitterUserDTO getInResponseToUserAccount() {
 		return inResponseToUserAccount;
 	}
 
-	public void setInResponseToUserAccount(TwitterAccountDTO twitterAccount) {
+	public void setInResponseToUserAccount(TwitterUserDTO twitterAccount) {
 		this.inResponseToUserAccount = twitterAccount;
 
 	}

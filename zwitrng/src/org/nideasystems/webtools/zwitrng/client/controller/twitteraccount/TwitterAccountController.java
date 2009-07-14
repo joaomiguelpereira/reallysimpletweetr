@@ -8,16 +8,17 @@ import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.TwitterAccountOperationCallBack;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.controller.users.TwitterUsersController;
-import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterAccountView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterUserInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.UsersWindow;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.ShowStatusWindow;
+import org.nideasystems.webtools.zwitrng.client.view.users.TwitterAccountView;
 import org.nideasystems.webtools.zwitrng.client.view.users.TwitterUsersView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -26,12 +27,13 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends
 		AbstractController<TwitterAccountDTO, TwitterAccountView> {
 
-	private Map<String, TwitterAccountDTO> extendedUsersInfo = null;
+	private Map<String, TwitterUserDTO> extendedUsersInfo = null;
 
 	@Override
 	public void init() {
@@ -59,6 +61,7 @@ public class TwitterAccountController extends
 	public void finishTwitterLogin(String pinCode) {
 		startProcessing();
 		assert (getParentController() instanceof PersonaController);
+		
 		PersonaDTO personaDto = ((PersonaController) getParentController())
 				.getModel();
 
@@ -77,10 +80,12 @@ public class TwitterAccountController extends
 
 						@Override
 						public void onSuccess(TwitterAccountDTO result) {
+							
 							((PersonaController) getParentController())
 									.getModel().setTwitterAccount(result);
 							setModel(result);
 							getView().onAuthenticationSuccess();
+							
 							if (!((PersonaController) getParentController())
 									.hasTwitterUpdatesListControllerInitialized()) {
 								((PersonaController) getParentController())
@@ -115,8 +120,9 @@ public class TwitterAccountController extends
 	public void sendUpdate(TwitterUpdateDTO twitterUpdate,
 			final SendUpdateWidget instance) {
 
+		PersonaDTO persona = MainController.getInstance().getCurrentPersonaController().getModel();
 		try {
-			getServiceManager().getRPCService().postUpdate(twitterUpdate,
+			getServiceManager().getRPCService().postUpdate(persona,twitterUpdate,
 					new AsyncCallback<TwitterUpdateDTO>() {
 
 						@Override
@@ -155,15 +161,16 @@ public class TwitterAccountController extends
 	public void getExtendedUserAccount(final String accountIdOrScreenName,
 			final TwitterAccountOperationCallBack callback) {
 
+		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
 		if (this.extendedUsersInfo != null
 				&& this.extendedUsersInfo.containsKey(accountIdOrScreenName)) {
 			callback.onTwitterAccountLoadSuccess(this.extendedUsersInfo
 					.get(accountIdOrScreenName));
 		} else {
 			try {
-				getServiceManager().getRPCService().getExtendedUser(
-						this.getModel(), accountIdOrScreenName,
-						new AsyncCallback<TwitterAccountDTO>() {
+				getServiceManager().getRPCService().getUserInfo(
+						currentPersona, accountIdOrScreenName,
+						new AsyncCallback<TwitterUserDTO>() {
 
 							@Override
 							public void onFailure(Throwable caught) {
@@ -174,9 +181,9 @@ public class TwitterAccountController extends
 							}
 
 							@Override
-							public void onSuccess(TwitterAccountDTO result) {
+							public void onSuccess(TwitterUserDTO result) {
 								if (extendedUsersInfo == null) {
-									extendedUsersInfo = new HashMap<String, TwitterAccountDTO>();
+									extendedUsersInfo = new HashMap<String, TwitterUserDTO>();
 								}
 								extendedUsersInfo.put(accountIdOrScreenName,
 										result);
@@ -203,12 +210,16 @@ public class TwitterAccountController extends
 	 * @param callback
 	 *            the callback to be notified
 	 */
-	public void followUser(boolean follow, Integer id,
+	public void followUser(Integer id,
 			final TwitterAccountOperationCallBack callback) {
-
+		TwitterUserDTO user = new TwitterUserDTO();
+		user.setId(id);
+		
+		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
+		
 		try {
-			getServiceManager().getRPCService().followUser(this.getModel(),
-					follow, id, new AsyncCallback<Void>() {
+			getServiceManager().getRPCService().followUser(currentPersona,
+					user, new AsyncCallback<Void>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -231,6 +242,42 @@ public class TwitterAccountController extends
 			getMainController().addException(e);
 			callback.onFollowUserError(e.getMessage());
 		}
+		
+
+	}
+	public void unfollowUser(Integer id,
+			final TwitterAccountOperationCallBack callback) {
+		TwitterUserDTO user = new TwitterUserDTO();
+		user.setId(id);
+		
+		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
+		
+		try {
+			getServiceManager().getRPCService().unfollowUser(currentPersona,
+					user, new AsyncCallback<Void>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log("error returned from followUser method",
+									caught);
+							getMainController().addException(caught);
+							callback.onFollowUserError(caught.getMessage());
+
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							callback.onFollowUserSuccess(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			GWT.log("error calling followUser method", e);
+			getMainController().addException(e);
+			callback.onFollowUserError(e.getMessage());
+		}
+		
 
 	}
 
@@ -244,9 +291,11 @@ public class TwitterAccountController extends
 	public void blockUser(final boolean block, final Integer id,
 			final TwitterUserInfoWidget callback) {
 
+		TwitterUserDTO user = new TwitterUserDTO();
+		user.setId(id);
+		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
 		try {
-			getServiceManager().getRPCService().blockUser(getModel(), block,
-					id, new AsyncCallback<Void>() {
+			getServiceManager().getRPCService().blockUser(currentPersona, user, new AsyncCallback<Void>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -343,9 +392,10 @@ public class TwitterAccountController extends
 		filter.setStatusId(id);
 		filter.setUpdatesType(type);
 		// filter.setUniqueResult(true);
+		PersonaDTO persona = MainController.getInstance().getCurrentPersonaController().getModel();
 
 		try {
-			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
+			getServiceManager().getRPCService().getTwitterUpdates(persona,
 					filter, new AsyncCallback<TwitterUpdateDTOList>() {
 
 						@Override
@@ -399,6 +449,39 @@ public class TwitterAccountController extends
 
 		}
 
+	}
+
+	public void sendDM(TwitterUpdateDTO twitterUpdate, final SendUpdateWidget instance) {
+		PersonaDTO persona = MainController.getInstance().getCurrentPersonaController().getModel();
+		try {
+			getServiceManager().getRPCService().sendDM(persona,twitterUpdate,
+					new AsyncCallback<TwitterUpdateDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							GWT.log("received error from postUpdate", caught);
+							getMainController().addException(caught);
+							if (instance != null) {
+								instance.onFailure(caught);
+							}
+
+						}
+
+						@Override
+						public void onSuccess(TwitterUpdateDTO result) {
+							getView().updateLastStatus(result);
+							if (instance != null) {
+								instance.onSuccess(result);
+							}
+
+						}
+
+					});
+		} catch (Exception e) {
+			GWT.log("Error Calling postUpdate", e);
+			getMainController().addException(e);
+		}
+		
 	}
 
 }

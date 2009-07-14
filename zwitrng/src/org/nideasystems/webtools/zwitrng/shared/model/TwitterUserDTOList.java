@@ -16,24 +16,24 @@ public class TwitterUserDTOList implements IDTO, Serializable {
 
 	private TwitterUserFilterDTO filter;
 	
-	private  List<TwitterAccountDTO> accounts = null;
+	private  List<TwitterUserDTO> users = null;
 	
 	public TwitterUserDTOList() {
-		accounts = new ArrayList<TwitterAccountDTO>();
+		users = new ArrayList<TwitterUserDTO>();
 	}
 	
 
-	public void setAccounts(List<TwitterAccountDTO> accounts) {
-		this.accounts = accounts;
+	public void setAccounts(List<TwitterUserDTO> accounts) {
+		this.users = accounts;
 	}
 
-	public List<TwitterAccountDTO> getAccounts() {
-		return accounts;
+	public List<TwitterUserDTO> getAccounts() {
+		return users;
 	}
 
 
-	public void add(TwitterAccountDTO twAccount) {
-		this.accounts.add(twAccount);
+	public void add(TwitterUserDTO twAccount) {
+		this.users.add(twAccount);
 		
 	}
 

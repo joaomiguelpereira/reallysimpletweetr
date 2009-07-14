@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.Image;
  */
 public class PersonasListView extends AbstractTabbedPanel<PersonasListController>{
 
-	
+	private DefaultHomeView defaultHomeView;
 	
 	//private final PersonasCompositeToolsWidget = new PersonasCompositeToolsWidget(); 
 	/**
@@ -31,9 +31,7 @@ public class PersonasListView extends AbstractTabbedPanel<PersonasListController
 		
 	}
 
-	public void myMethod() {
-		
-	}
+
 	@Override
 	public void init() {
 		this.setWidth("720px");
@@ -41,7 +39,7 @@ public class PersonasListView extends AbstractTabbedPanel<PersonasListController
 		
 		
 		//Add the default AddPersonaPanel
-		DefaultHomeView defaultHomeView = new DefaultHomeView();
+		defaultHomeView = new DefaultHomeView();
 		
 		defaultHomeView.setController(getController());
 		
@@ -78,5 +76,10 @@ public class PersonasListView extends AbstractTabbedPanel<PersonasListController
 		
 
 		
+	}
+
+	public DefaultHomeView getHomeView() {
+		
+		return this.defaultHomeView;
 	}
 }

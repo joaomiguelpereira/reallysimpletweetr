@@ -1,11 +1,10 @@
 package org.nideasystems.webtools.zwitrng.client.services;
 
-import java.util.List;
 
-import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -14,49 +13,111 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public interface TwitterServiceAsync {
-	void search(TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter,
-			AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception;
+	
 
-	void getTwitterUpdates(TwitterAccountDTO twitterAccount,
+
+	/**
+	 * 
+	 * @param persona
+	 * @param filter
+	 * @param callback
+	 * @throws Exception
+	 */
+	void getTwitterUpdates(PersonaDTO persona,
 			FilterCriteriaDTO filter,
 			AsyncCallback<TwitterUpdateDTOList> callback) throws Exception;
 
-	void postUpdate(TwitterUpdateDTO update,
+	/**
+	 * 
+	 * @param persona
+	 * @param update
+	 * @param callback
+	 * @throws Exception
+	 */
+	void postUpdate(PersonaDTO persona,TwitterUpdateDTO update,
 			AsyncCallback<TwitterUpdateDTO> callback) throws Exception;
 
-	void getOAuthInfo(TwitterAccountDTO twitterAccount,
-			AsyncCallback<OAuthInfoDTO> callback) throws Exception;
-
+	/**
+	 * 
+	 * @param personaDto
+	 * @param pinCode
+	 * @param asyncCallback
+	 * @throws Exception
+	 */
 	void authenticateUser(PersonaDTO personaDto, String pinCode,
 			AsyncCallback<TwitterAccountDTO> asyncCallback) throws Exception;
 
-	void getExtendedUserAccount(TwitterAccountDTO twitterAccount,
-			String userIdOrScreenName, AsyncCallback<TwitterAccountDTO> callbak)
+	/**
+	 * 
+	 * @param persona
+	 * @param userIdOrScreenName
+	 * @param callbak
+	 * @throws Exception
+	 */
+	void getUserInfo(PersonaDTO persona,
+			String userIdOrScreenName, AsyncCallback<TwitterUserDTO> callbak)
 			throws Exception;
 
-	void followUser(TwitterAccountDTO account, boolean follow, Integer id,
-			AsyncCallback<java.lang.Void> asyncCallback);
-
-	void blockUser(TwitterAccountDTO account, boolean block, Integer id,
-			AsyncCallback<Void> callback);
-
+	/**
+	 * 
+	 * @param persona
+	 * @param currentFilter
+	 * @param callback
+	 * @throws Exception
+	 */
 	void getUsers(PersonaDTO persona,
 			TwitterUserFilterDTO currentFilter,
 			AsyncCallback<TwitterUserDTOList> callback) throws Exception;
 
+	/**
+	 * 
+	 * @param model
+	 * @param asyncCallback
+	 * @throws Exception
+	 */
 	void synchronizeTwitterAccount(PersonaDTO model,
 			AsyncCallback<Void> asyncCallback) throws Exception;
 
-	void followUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	
+	/**
+	 * 
+	 * @param currentPersona
+	 * @param user
+	 * @param asyncCallback
+	 * @throws Exception
+	 */
+	void followUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception;
 
-	void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	/**
+	 * 
+	 * @param currentPersona
+	 * @param user
+	 * @param asyncCallback
+	 * @throws Exception
+	 */
+	void unfollowUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception;
 
-	void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	/**
+	 * 
+	 * @param currentPersona
+	 * @param user
+	 * @param asyncCallback
+	 * @throws Exception
+	 */
+	void blockUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception;
 
-	void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	/**
+	 * 
+	 * @param currentPersona
+	 * @param user
+	 * @param asyncCallback
+	 * @throws Exception
+	 */
+	void unblockUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception;
 
+	void sendDirectMessage(PersonaDTO currentPersona, TwitterUpdateDTO dm,AsyncCallback<TwitterUpdateDTO> asyncCallback) throws Exception;
 }

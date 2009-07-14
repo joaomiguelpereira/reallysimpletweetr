@@ -1,10 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.controller;
 
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 
 public interface TwitterAccountOperationCallBack {
 	
-	public void onTwitterAccountLoadSuccess(TwitterAccountDTO twitterAccount);
+	public void onTwitterAccountLoadSuccess(TwitterUserDTO twitterAccount);
 	public void onTwitterAccountLoadError(String error);
 	public void onFollowUserSuccess(Object result);
 	public void onFollowUserError(String error);

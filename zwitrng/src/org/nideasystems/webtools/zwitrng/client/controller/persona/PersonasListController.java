@@ -1,14 +1,18 @@
 package org.nideasystems.webtools.zwitrng.client.controller.persona;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
+import org.nideasystems.webtools.zwitrng.client.view.persona.DefaultHomeView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
@@ -24,6 +28,7 @@ public class PersonasListController extends
 
 	private PersonaController currentPersonaController = null;
 	private Map<String, PersonaController> personaControllers = new HashMap<String, PersonaController>();
+	private DefaultHomeView homeView;
 
 	/**
 	 * Constructor
@@ -36,6 +41,7 @@ public class PersonasListController extends
 		return currentPersonaController;
 	}
 
+	
 	/**
 	 * Initialize the view where all tabs are placed
 	 */
@@ -47,6 +53,7 @@ public class PersonasListController extends
 		getView().setController(this);
 		// Initialize the view
 		getView().init();
+		this.homeView = getView().getHomeView();
 		// Load the personas
 		loadPersonas(getModel());
 		// create the view
@@ -60,11 +67,18 @@ public class PersonasListController extends
 
 		// If the user is not logged in, then it can be null
 		// For each persona create a new Tab
+		List<TwitterAccountDTO> accounts = new ArrayList<TwitterAccountDTO>();
 		if (result != null) {
 			for (PersonaDTO persona : result.getPersonaList()) {
 				loadPersona(persona, false);
+				TwitterAccountDTO account = persona.getTwitterAccount();
+				accounts.add(account);
 			}
 		}
+		
+		//Update list of accounts in home
+		
+		homeView.createTwitterAccounts(accounts);
 
 	}
 
@@ -101,6 +115,7 @@ public class PersonasListController extends
 	 */
 	private void loadPersona(PersonaDTO persona, boolean selecteAfterCreated) {
 
+		
 		PersonaController personaController = new PersonaController();
 		personaController.setMainController(getMainController());
 		personaController.setServiceManager(getServiceManager());

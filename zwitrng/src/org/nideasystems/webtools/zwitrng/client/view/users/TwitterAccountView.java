@@ -1,9 +1,10 @@
-package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
+package org.nideasystems.webtools.zwitrng.client.view.users;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
+import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.TwitterAccountInfoWidget;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
