@@ -1,7 +1,5 @@
 package org.nideasystems.webtools.zwitrng.client.view.users;
 
-import java.util.Date;
-
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
@@ -18,6 +16,29 @@ public class TwitterUsersHtmlUtils {
 	public static String buildStatusLine(String status) {
 		return "<span class=\"inlineStatus\"><span class=\"label\">Last status:</span> "
 				+ StringUtils.jsParseText(status) + "</span>";
+	}
+
+	public static String buildUserPopularityString(final TwitterUserDTO user) {
+		StringBuffer sb = new StringBuffer();
+		sb
+				.append("<span class=\"following\">Following: <span class=\"bolder\">"
+						+ user.getTwitterFriends().toString()
+						+ "</span></span>");
+		sb
+				.append("<span class=\"followers\"> Followers: <span class=\"bolder\">"
+						+ user.getTwitterFollowers().toString()
+						+ "</span></span>");
+
+		float ratio = Float.valueOf(user.getTwitterFriends())
+				/ Float.valueOf(user.getTwitterFollowers());
+
+		String rationStr = StringUtils.formatPercentage(ratio, 2);
+
+		sb
+				.append("<span class=\"ratio\"> Following/Followers Ratio: <span class=\"bolder\">"
+						+ rationStr + "</span></span>");
+
+		return sb.toString();
 	}
 
 	public static Widget buildUserPopularityPanel(final TwitterUserDTO user,
@@ -121,7 +142,7 @@ public class TwitterUsersHtmlUtils {
 		return userNamePlusUserScreeName;
 	}
 
-	public static Widget buildUserActivityPanel(TwitterAccountDTO account) {
+	public static String buildUserActivityString(TwitterAccountDTO account) {
 
 		StringBuffer htmlB = new StringBuffer();
 		htmlB
@@ -130,33 +151,42 @@ public class TwitterUsersHtmlUtils {
 		htmlB
 				.append("<span class=\"userNewFollowers\">New Friends:<span class=\"bolder\">"
 						+ account.getNewFriends() + "</span></span> ");
-		/*htmlB
-				.append("<span class=\"userNewFollowers\">New Blocking:<span class=\"bolder\">"
-						+ account.getNewBlocking() + "</span></span> ");*/
-		InlineHTML html = new InlineHTML(htmlB.toString());
-		return html;
+		/*
+		 * htmlB.append(
+		 * "<span class=\"userNewFollowers\">New Blocking:<span class=\"bolder\">"
+		 * + account.getNewBlocking() + "</span></span> ");
+		 */
+		// InlineHTML html = new InlineHTML(htmlB.toString());
+		return htmlB.toString();
 	}
 
-	public static Widget buildUserRateLimitPanel(TwitterAccountDTO account) {
+	public static String buildUserRateLimitPanel(TwitterAccountDTO account) {
 		StringBuffer htmlB = new StringBuffer();
+		if (account.getRateLimits() == null
+				|| (account.getRateLimits().getRateLimitLimit() == -1 || account
+						.getRateLimits().getRateLimitReset() == -1)
+				|| account.getRateLimits().getRateLimitRemaining() == -1) {
+			htmlB.append("Please synchronize this account");
+		} else {
 
-		htmlB
-				.append("<span class=\"rateLimitLimit\">Rate Limit limit:<span class=\"bolder\">"
-						+ account.getRateLimits().getRateLimitLimit()
-						+ "</span></span> ");
-		htmlB
-				.append("<span class=\"rateLimitRemaining\">Remainding API calls:<span class=\"bolder\">"
-						+ account.getRateLimits().getRateLimitRemaining()
-						+ "</span></span> ");
-		
-		long minutes = (account.getRateLimits().getRateLimitReset()/1000)/60;
-		htmlB
-				.append("<span class=\"userNewFollowers\">Next Reset in<span class=\"bolder\">"
-						+ minutes + " minutes</span></span> ");
+			htmlB
+					.append("<span class=\"rateLimitLimit\">Rate Limit limit:<span class=\"bolder\">"
+							+ account.getRateLimits().getRateLimitLimit()
+							+ "</span></span> ");
+			htmlB
+					.append("<span class=\"rateLimitRemaining\">Remainding API calls:<span class=\"bolder\">"
+							+ account.getRateLimits().getRateLimitRemaining()
+							+ "</span></span> ");
 
-		InlineHTML html = new InlineHTML(htmlB.toString());
+		}
+		/*
+		 * long minutes = (account.getRateLimits().getRateLimitReset()/1000)/60;
+		 * htmlB.append(
+		 * "<span class=\"userNewFollowers\">Next Reset in<span class=\"bolder\">"
+		 * + minutes + " minutes</span></span> ");
+		 */
 
-		return html;
+		// InlineHTML html = new InlineHTML(htmlB.toString());
+		return htmlB.toString();
 	}
-
 }

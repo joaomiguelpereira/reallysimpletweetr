@@ -15,10 +15,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 
-
-
-
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -70,6 +66,7 @@ public interface TwitterPersonaService extends RemoteService {
 	FeedSetDTO createFeedSet(PersonaDTO model, FeedSetDTO object) throws Exception;
 	FeedSetDTO saveFeedSet(PersonaDTO model, FeedSetDTO object) throws Exception;
 	FeedSetDTO deleteFeedSet(PersonaDTO model, FeedSetDTO dataObject) throws Exception;
+	PersonaDTO getPersona(String personaName) throws Exception;
 	
 
 	

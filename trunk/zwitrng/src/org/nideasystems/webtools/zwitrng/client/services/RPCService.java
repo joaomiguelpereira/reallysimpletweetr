@@ -249,6 +249,16 @@ public class RPCService implements IService {
 		
 	}
 
+
+
+	public void getPersona(String personaName, 
+			AsyncCallback<PersonaDTO> asyncCallback) throws Exception{
+		this.personaService.getPersona(personaName, asyncCallback);
+		
+	}
+
+
+
 	
 
 }

@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
-import org.nideasystems.webtools.zwitrng.client.view.persona.DefaultHomeView;
+import org.nideasystems.webtools.zwitrng.client.view.persona.EditableTwitterAccountItem;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonasListView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -20,7 +21,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 
-
 public class PersonasListController extends
 		AbstractController<PersonaDTOList, PersonasListView> {
 
@@ -28,7 +28,10 @@ public class PersonasListController extends
 
 	private PersonaController currentPersonaController = null;
 	private Map<String, PersonaController> personaControllers = new HashMap<String, PersonaController>();
-	private DefaultHomeView homeView;
+
+	
+
+	// private DefaultHomeView homeView;
 
 	/**
 	 * Constructor
@@ -41,7 +44,6 @@ public class PersonasListController extends
 		return currentPersonaController;
 	}
 
-	
 	/**
 	 * Initialize the view where all tabs are placed
 	 */
@@ -53,7 +55,8 @@ public class PersonasListController extends
 		getView().setController(this);
 		// Initialize the view
 		getView().init();
-		this.homeView = getView().getHomeView();
+		MainController.getInstance().setHomeView(getView().getHomeView());
+		// this.homeView = getView().getHomeView();
 		// Load the personas
 		loadPersonas(getModel());
 		// create the view
@@ -67,18 +70,20 @@ public class PersonasListController extends
 
 		// If the user is not logged in, then it can be null
 		// For each persona create a new Tab
-		List<TwitterAccountDTO> accounts = new ArrayList<TwitterAccountDTO>();
+		List<PersonaDTO> personas = new ArrayList<PersonaDTO>();
+
 		if (result != null) {
 			for (PersonaDTO persona : result.getPersonaList()) {
 				loadPersona(persona, false);
 				TwitterAccountDTO account = persona.getTwitterAccount();
-				accounts.add(account);
+				personas.add(persona);
 			}
 		}
-		
-		//Update list of accounts in home
-		
-		homeView.createTwitterAccounts(accounts);
+
+		// Update list of accounts in home
+
+		MainController.getInstance().getHomeView().createTwitterAccounts(
+				personas);
 
 	}
 
@@ -115,7 +120,6 @@ public class PersonasListController extends
 	 */
 	private void loadPersona(PersonaDTO persona, boolean selecteAfterCreated) {
 
-		
 		PersonaController personaController = new PersonaController();
 		personaController.setMainController(getMainController());
 		personaController.setServiceManager(getServiceManager());
@@ -132,7 +136,8 @@ public class PersonasListController extends
 		if (persona.getTwitterAccount() != null
 				&& persona.getTwitterAccount().getTwitterScreenName() != null) {
 
-			title = persona.getTwitterAccount().getTwitterName()+" ("+persona.getTwitterAccount().getTwitterScreenName()+")";
+			title = persona.getTwitterAccount().getTwitterName() + " ("
+					+ persona.getTwitterAccount().getTwitterScreenName() + ")";
 			imgUrl = persona.getTwitterAccount().getTwitterImageUrl();
 		}
 		titleImg = new Image(imgUrl);
@@ -151,6 +156,10 @@ public class PersonasListController extends
 		}
 
 		personaControllers.put(persona.getName(), personaController);
+		
+		MainController.getInstance().addPersonaTabTitle(persona.getName(), tabTitle);
+		
+		MainController.getInstance().getHomeView().addPersona(persona);
 	}
 
 	/**
@@ -165,8 +174,9 @@ public class PersonasListController extends
 			getView().selectTab(0);
 			this.personaViews.remove(personaName);
 			personaControllers.remove(personaName);
-
 		}
+		//Get the Home view and remove it also
+		MainController.getInstance().getHomeView().removePersona(personaName);
 
 	}
 
@@ -177,7 +187,7 @@ public class PersonasListController extends
 	 */
 	public void deletePersona(PersonaDTO persona) {
 
-		if (Window.confirm("Are you sure you want to delete this Persona?")) {
+		if (Window.confirm("Are you sure you want to remove the account "+persona.getTwitterAccount().getTwitterScreenName()+" from the system?")) {
 			// make the server call
 			startProcessing();
 			try {
@@ -275,6 +285,61 @@ public class PersonasListController extends
 		}
 
 		return null;
+	}
+
+	public void getPersonaInfo(String personaName,
+			final EditableTwitterAccountItem callback) {
+
+		try {
+
+			getServiceManager().getRPCService().getPersona(personaName,
+					new AsyncCallback<PersonaDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onReloadPersonaError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(PersonaDTO result) {
+							callback.onReloadPersonaSucess(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+
+			callback.onReloadPersonaError(e);
+		}
+
+	}
+
+	public void synchronize(PersonaDTO persona,
+			final EditableTwitterAccountItem callback) {
+		try {
+
+			getServiceManager().getRPCService().synchronizeTwitterAccount (persona,
+					new AsyncCallback<Void>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onSynchronizePersonaError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(Void result) {
+							callback.onSynchronizePersonaSucess();
+
+						}
+
+					});
+		} catch (Exception e) {
+
+			callback.onSynchronizePersonaError(e);
+		}
+
 	}
 
 }

@@ -3,7 +3,10 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -26,7 +29,7 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 	private final TextBox twPersonaName = new TextBox();
 
 	private VerticalPanel twitterAccountsPanel = new VerticalPanel();
-	
+	private VerticalPanel messages = new VerticalPanel();
 	
 	public DefaultHomeView() {
 		super();
@@ -36,7 +39,7 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 	public void init() {
 		
 		
-		
+		this.add(messages);
 		//Add My Persona's twitter account listView
 		this.add(new InlineHTML("<h2>Your accounts</h2>"));
 		this.add(twitterAccountsPanel);
@@ -56,8 +59,8 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 		HorizontalPanel toolPanel = new HorizontalPanel();
 		Button addNewTwitterAccountButton = new Button("Add new Twitter Account");
 
-		addNewTwitterAccountButton.setWidth("153px");
-		addNewTwitterAccountButton.setHeight("26px");
+		addNewTwitterAccountButton.setWidth("180px");
+		addNewTwitterAccountButton.setHeight("25px");
 
 		addNewTwitterAccountButton.addClickHandler(new ClickHandler() {
 			@Override
@@ -70,8 +73,10 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 				//twitterAccountObj.setTwitterScreenName(twUserName.getValue());
 				//twitterAccountObj.setTwitterPassword(twPassword.getValue());
 				persona.setTwitterAccount(twitterAccountObj);
+				
 				//Pass to controller. The controller will create the persona
 				getController().createPersona(persona);
+				twPersonaName.setValue("");
 				
 				
 
@@ -94,18 +99,53 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 		Window.alert("Is Updating");
 	}
 	
-	public void createTwitterAccounts(List<TwitterAccountDTO> accounts) {
+	public void removePersona(String personaName) {
+		EditableTwitterAccountItem widR = personaWidgets.get(personaName);
+		
+		if ( widR!= null ) {
+			this.twitterAccountsPanel.remove(widR);
+		}
+		
+	}
+
+	private Map<String, EditableTwitterAccountItem> personaWidgets = new HashMap<String, EditableTwitterAccountItem>();
+	public void createTwitterAccounts(List<PersonaDTO> personas) {
+		
 		
 		this.twitterAccountsPanel.clear();
-		for (TwitterAccountDTO account: accounts) {
-			EditableTwitterAccountItem wid = new EditableTwitterAccountItem(account);
-			this.twitterAccountsPanel.add(wid);
+		for (PersonaDTO account: personas) {
+			//EditableTwitterAccountItem wid = new EditableTwitterAccountItem(account,this);
+			//this.twitterAccountsPanel.add(wid);
+			//personaWidgets.put(account.getName(), wid);
+			addPersona(account);
 			
 		}
-		if ( accounts.size()==0 ) {
+		if ( personas.size()==0 ) {
 			this.twitterAccountsPanel.add(new InlineHTML("<h3>You have no accounts</h3>"));
 		}
 		
 		
 	}
+
+	public void addPersona(PersonaDTO persona) {
+		if (persona.getTwitterAccount()!= null && persona.getTwitterAccount().getIsOAuthenticated() ) {
+			EditableTwitterAccountItem wid = new EditableTwitterAccountItem(persona,this);
+			this.twitterAccountsPanel.add(wid);
+			personaWidgets.put(persona.getName(), wid);
+			clearMessages();
+		}
+		addMessage("You have accounts that need to be authenticated.");
+		
+	}
+
+	private void clearMessages() {
+		messages.clear();
+		
+	}
+
+	private void addMessage(String string) {
+		messages.add(new InlineHTML(string));
+		
+	}
+
 }

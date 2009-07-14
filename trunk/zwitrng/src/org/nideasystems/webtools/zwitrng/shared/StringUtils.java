@@ -215,8 +215,13 @@ public class StringUtils {
 
 	public static String formatPercentage(float number, int i) {
 		
-		String str = (number*100)+""; 
-		return str+"%";
+		String str = (number*100)+"";
+		if ( str.indexOf(".") > 0 && str.substring(str.indexOf("."),str.length()).length()>2 ) {
+			str = str.substring(0,str.indexOf(".")+2)+"%";
+		} else {
+			str = str+"%";
+		}
+		return str;
 		/*if ( str.indexOf(".")+i+1 < str.length()) {
 			return str.substring(0,str.indexOf(".")+i+1)+"%";
 		} else {

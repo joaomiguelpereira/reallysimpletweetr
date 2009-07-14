@@ -13,6 +13,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.RateLimitsDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
+import sun.security.action.GetBooleanAction;
 import twitter4j.User;
 
 
@@ -171,6 +172,64 @@ public class PersonaPojo extends AbstractPojo {
 		businessHelper.getPersonaDao().updatePersonaTwitterAccount(personaDto,
 				twitterAccountDo);
 		
+	}
+
+	public PersonaDTO getPersona(String personaName, String email) throws Exception{
+
+		
+		PersonaDO persona = businessHelper.getPersonaDao().findPersonaByNameAndEmail(personaName, email);
+		
+		if ( persona == null ) {
+			throw new Exception("Persona Not found");
+		}
+		
+		
+		User twitterUser = null;
+		TwitterAccountDTO authorizedTwitterAccount = null;
+		
+		if (persona.getTwitterAccount() != null) {
+			//Check if is authenticated
+			//Create an TwitterAccountDTO 
+			
+			authorizedTwitterAccount = TwitterAccountDAO.createAuthorizedAccountDto(persona.getTwitterAccount());
+			
+			//authorizedTwitterAccount = DataUtils.twitterAccountDtoFromDo(persona.getTwitterAccount());
+			//try to authenticate the User
+			try {
+				twitterUser = businessHelper.getTwitterPojo().getAuthenticatedUser(authorizedTwitterAccount);
+				//twitterUser = TwitterServiceAdapter.get().getUserInfo(authorizedTwitterAccount);
+			} catch (Exception e) {
+				//Nothing to do here
+			}
+
+		} 
+		
+		if (twitterUser != null ) {
+			//authorizedTwitterAccount = DataUtils.createAuthenticatedTwitterAccount();
+			authorizedTwitterAccount = DataUtils.createAutenticatedTwitterAccountDto(twitterUser, authorizedTwitterAccount);
+			authorizedTwitterAccount.setIsOAuthenticated(true);
+			
+			
+			RateLimitsDO rateLimisDo = persona.getTwitterAccount().getRateLimits();
+			RateLimitsDTO rateLimitsDto = new RateLimitsDTO();
+			if ( rateLimisDo!= null) {	
+				rateLimitsDto.setRateLimitLimit(rateLimisDo.getRateLimitLimit());
+				rateLimitsDto.setRateLimitRemaining(rateLimisDo.getRateLimitRemaining());
+				rateLimitsDto.setRateLimitReset(rateLimisDo.getRateLimitReset());
+			}
+			authorizedTwitterAccount.setRateLimits(rateLimitsDto);
+			
+			authorizedTwitterAccount.setNewFollowers(getNewFollowersCount(persona,authorizedTwitterAccount));
+			authorizedTwitterAccount.setNewFriends(getNewFriendsCount(persona,authorizedTwitterAccount));
+			authorizedTwitterAccount.setNewBlocking(getNewBlockingCount(persona,authorizedTwitterAccount));
+			
+			
+			
+		} else {
+			authorizedTwitterAccount =  TwitterServiceAdapter.createPreAuthorizedTwitterAccount();
+		}
+		
+		return DataUtils.createPersonaDto(persona, authorizedTwitterAccount);
 	}
 
 	

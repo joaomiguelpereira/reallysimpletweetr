@@ -59,6 +59,8 @@ public interface TwitterPersonaServiceAsync {
 
 	void deleteFeedSet(PersonaDTO model, FeedSetDTO dataObject,
 			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception;
+	void getPersona(String personaName,
+			AsyncCallback<PersonaDTO> asyncCallback) throws Exception;
 	
 
 	
