@@ -364,4 +364,31 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		return feedSet;
 
 	}
+
+	@Override
+	public PersonaDTO getPersona(String personaName/*, String personaEmail*/)
+			throws Exception {
+		log.fine("Start getting personas..");
+		startTransaction(true);
+		// User user = AuthorizationManager.checkAuthentication();
+
+		PersonaDTO returnPersona = null;
+		if (user != null) {
+			try {
+
+				//
+				returnPersona= getBusinessHelper().getPersonaPojo()
+						.getPersona(personaName,user.getEmail());
+			} catch (Exception e) {
+				e.printStackTrace();
+				log.severe(e.getMessage());
+				throw new Exception(e);
+			} finally {
+				endTransaction();
+			}
+		}
+
+		log.fine("End getting personas..");
+		return returnPersona;
+	}
 }

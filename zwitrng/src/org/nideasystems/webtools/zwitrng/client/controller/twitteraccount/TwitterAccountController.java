@@ -27,7 +27,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
 
 import com.google.gwt.core.client.GWT;
 
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterAccountController extends
@@ -91,8 +91,15 @@ public class TwitterAccountController extends
 								((PersonaController) getParentController())
 										.initializeUpdatesListController();
 							}
+							//add the persona to the View
+							addPersonaToHome();
+							updateUserTabImage();
 							endProcessing();
 						}
+
+						
+
+						
 
 					});
 		} catch (Exception e) {
@@ -103,6 +110,18 @@ public class TwitterAccountController extends
 
 	}
 
+	private void updateUserTabImage() {
+		PersonaDTO personaDto = ((PersonaController) getParentController())
+		.getModel();
+		MainController.getInstance().updateTabTitle(personaDto); 
+		
+	}
+	private void addPersonaToHome() {
+		PersonaDTO personaDto = ((PersonaController) getParentController())
+		.getModel();
+		MainController.getInstance().getHomeView().addPersona(personaDto);
+		
+	}
 	public SendUpdateWidget createSendUpdateWidget(
 			TwitterUpdateDTO inResponseTo, int type, boolean showUserImg) {
 

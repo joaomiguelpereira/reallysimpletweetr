@@ -11,6 +11,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListC
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.services.BasicServiceManager;
 import org.nideasystems.webtools.zwitrng.client.services.IServiceManager;
+import org.nideasystems.webtools.zwitrng.client.view.persona.DefaultHomeView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendingAccountWindow;
 
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -19,6 +20,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -30,6 +32,8 @@ public class MainController implements IMainController {
 	private IServiceManager serviceManager = new BasicServiceManager();
 	private Map<String, PopupManager> popupManagers = new HashMap<String, PopupManager>();
 	PersonasListController personasListController = null;
+	private DefaultHomeView homeView;
+	private Map<String, HorizontalPanel> personaTabTitles = new HashMap<String, HorizontalPanel>();
 
 	private MainController() {
 
@@ -119,31 +123,7 @@ public class MainController implements IMainController {
 			isProcessing(false);
 		}
 
-		/*
-		 * //Add the tools toolsWidget.setController(this); toolsWidget.init();
-		 * mainPanel.add(toolsWidget);
-		 * 
-		 * 
-		 * //Create the PesonasCompisiteController //This controller will
-		 * control the Personas loaded for the logged user //Another
-		 * reponsabilit, is to handle the renderization of the tabs for the
-		 * personas
-		 * 
-		 * 
-		 * personasListController = new PersonasListController(); //The name of
-		 * the controller will be assigned by the systems
-		 * personasListController.
-		 * setName(AbstractController.generateDefaultName()); //The controller
-		 * will have this MainController and parent controleer
-		 * //personasCompositeController.setParentController(this); //The
-		 * service manager used to get instance of remote services(In this case
-		 * gRPC) personasListController.setServiceManager(serviceManager); //The
-		 * error handler of the controller will be this instance
-		 * personasListController.setMainController(this); //Initialize
-		 * personasListController.init(); //Get the corresponding view and add
-		 * it as a widget to the main Root Panel
-		 * mainPanel.add(personasListController.getView().getAsWidget());
-		 */
+		
 
 	}
 	public native static void publishJsMethods() /*-{
@@ -204,24 +184,6 @@ public native static String jsParseText(String text) /*-{
 	}
 
 
-	/*
-	 * @Override public SelectionHandler<Integer> getSelectionHandler() { //
-	 * TODO Auto-generated method stub return null; }
-	 */
-
-	/*
-	 * @Override public void handleDataLoaded(Object result) { // TODO
-	 * Auto-generated method stub
-	 * 
-	 * }
-	 * 
-	 * 
-	 * @Override public void handleAction(String action, Object... args) {
-	 * Window.alert("MainCOntroller ActionEvent Handler"+action);
-	 * 
-	 * }
-	 */
-
 	@Override
 	public void isProcessing(boolean isProcessing) {
 		waitingImg.setVisible(isProcessing);
@@ -247,6 +209,36 @@ public native static String jsParseText(String text) /*-{
 		return this.personasListController
 				.getTwitterAccountController(userScreenName);
 
+	}
+
+	public void setHomeView(DefaultHomeView homeView) {
+		this.homeView = homeView;
+		
+	}
+
+	public DefaultHomeView getHomeView() {
+		return this.homeView;
+	}
+
+	public void addPersonaTabTitle(String name, HorizontalPanel tabTitle) {
+
+		personaTabTitles.put(name, tabTitle);
+		
+		
+	}
+
+	public void updateTabTitle(PersonaDTO personaDto) {
+		HorizontalPanel panel = personaTabTitles.get(personaDto.getName());
+		
+		if ( panel!= null) {
+			panel.clear();
+			Image img = new Image(personaDto.getTwitterAccount().getTwitterImageUrl());
+			img.setWidth("24px");
+			img.setHeight("24px");
+			img.setTitle(personaDto.getTwitterAccount().getTwitterName());
+			panel.add(img);
+		}
+		
 	}
 
 

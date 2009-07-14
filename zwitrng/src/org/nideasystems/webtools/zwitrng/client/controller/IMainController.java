@@ -6,6 +6,8 @@ import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.Twitte
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SelectSendingAccountWindow;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
+import com.google.gwt.user.client.ui.HorizontalPanel;
+
 public interface IMainController {
 
 	public void addError(String errorMsg);
@@ -15,4 +17,5 @@ public interface IMainController {
 			SelectSendingAccountWindow selectSendingAccountWindow);
 	public TwitterAccountController getTwitterAccountController(String userScreenName);
 	public void addInfoMessage(String string);
+
 }

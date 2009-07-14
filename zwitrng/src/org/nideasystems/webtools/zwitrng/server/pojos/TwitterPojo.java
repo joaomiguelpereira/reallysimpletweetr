@@ -213,11 +213,15 @@ public class TwitterPojo extends AbstractPojo {
 				.findPersonaByNameAndEmail(thePersonaDto.getName(),
 						thePersonaDto.getUserEmail());
 
+		startTwitterTransaction(thePersonaDto.getTwitterAccount());
 		if (persona == null) {
 			throw new Exception("Could not find the persona");
 		}
+		
 		synchronize(persona, thePersonaDto.getTwitterAccount());
+		endTwitterTransaction();
 		updateRateLimist(persona);
+		
 
 	}
 
