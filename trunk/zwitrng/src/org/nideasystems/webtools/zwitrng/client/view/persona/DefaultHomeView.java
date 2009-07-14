@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.view.persona;
 
 
 
+import java.util.List;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonasListController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -13,6 +14,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -23,6 +25,7 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 
 	private final TextBox twPersonaName = new TextBox();
 
+	private VerticalPanel twitterAccountsPanel = new VerticalPanel();
 	
 	
 	public DefaultHomeView() {
@@ -31,6 +34,14 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 
 	@Override
 	public void init() {
+		
+		
+		
+		//Add My Persona's twitter account listView
+		this.add(new InlineHTML("<h2>Your accounts</h2>"));
+		this.add(twitterAccountsPanel);
+		/////
+		
 		formPPanel.setSpacing(5);	
 		formPPanel.add(new HTML("Create new Persona"));
 		formPPanel.add(new HTML("Enter the name of the persona. Later you'll be asked to login into a twitter account."));
@@ -43,12 +54,12 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 		this.add(formPPanel);
 
 		HorizontalPanel toolPanel = new HorizontalPanel();
-		Button loginButton = new Button("Create this account");
+		Button addNewTwitterAccountButton = new Button("Add new Twitter Account");
 
-		loginButton.setWidth("153px");
-		loginButton.setHeight("26px");
+		addNewTwitterAccountButton.setWidth("153px");
+		addNewTwitterAccountButton.setHeight("26px");
 
-		loginButton.addClickHandler(new ClickHandler() {
+		addNewTwitterAccountButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 
@@ -68,7 +79,7 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 
 		});
 
-		toolPanel.add(loginButton);
+		toolPanel.add(addNewTwitterAccountButton);
 
 		this.add(toolPanel);
 		
@@ -81,6 +92,19 @@ public class DefaultHomeView extends AbstractVerticalPanelView<PersonasListContr
 	@Override
 	public void isUpdating(boolean isUpdating) {
 		Window.alert("Is Updating");
+	}
+	
+	public void createTwitterAccounts(List<TwitterAccountDTO> accounts) {
+		
+		this.twitterAccountsPanel.clear();
+		for (TwitterAccountDTO account: accounts) {
+			EditableTwitterAccountItem wid = new EditableTwitterAccountItem(account);
+			this.twitterAccountsPanel.add(wid);
+			
+		}
+		if ( accounts.size()==0 ) {
+			this.twitterAccountsPanel.add(new InlineHTML("<h3>You have no accounts</h3>"));
+		}
 		
 		
 	}

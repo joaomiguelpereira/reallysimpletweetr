@@ -55,7 +55,7 @@ public class PersonaController extends
 		// Add the view of TwitterAccount to this persona
 		getView().add(twitterAccountController.getView());
 		// Add twitter updates list
-		getView().add(new HTML("Update list"));
+		
 
 	}
 

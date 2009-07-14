@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -35,6 +36,23 @@ public class TwitterAccountDO implements Serializable{
 	@Persistent
 	private String oAuthLoginUrl;
 
+	@Persistent 
+	private RateLimitsDO rateLimits;
+	
+	@Persistent
+	private List<Integer> followersIds;
+
+	@Persistent
+	private List<Integer> followingIds;
+
+	@Persistent
+	private List<Integer> blockingIds;
+	
+	@Persistent
+
+	private Integer id;
+	
+	
 	public void setTwitterName(String twitterName) {
 		this.twitterName = twitterName;
 	}
@@ -73,6 +91,48 @@ public class TwitterAccountDO implements Serializable{
 
 	public String getOAuthLoginUrl() {
 		return oAuthLoginUrl;
+	}
+
+	public void setRateLimits(RateLimitsDO rateLimits) {
+		this.rateLimits = rateLimits;
+	}
+
+	public RateLimitsDO getRateLimits() {
+		return rateLimits;
+	}
+
+	public void setFollowersIds(List<Integer> followersIds) {
+		this.followersIds = followersIds;
+	}
+
+	public List<Integer> getFollowersIds() {
+		return followersIds;
+	}
+
+	public void setFollowingIds(List<Integer> followingIds) {
+		this.followingIds = followingIds;
+	}
+
+	public List<Integer> getFollowingIds() {
+		return followingIds;
+	}
+
+	public void setBlockingIds(List<Integer> blockingIds) {
+		this.blockingIds = blockingIds;
+	}
+
+	public List<Integer> getBlockingIds() {
+		return blockingIds;
+	}
+
+
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public Integer getId() {
+		return id;
 	}
 
 	

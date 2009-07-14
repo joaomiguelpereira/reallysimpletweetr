@@ -18,10 +18,12 @@ public class PersonaDTO implements IDTO{
 	 */
 	private static final long serialVersionUID = 1L;
 	private String name = null;
-	private Date creationDate =null;
+	private Date created =null;
+	private Date modified;
 	private String userEmail = null;
-	private List<FilterCriteriaDTO> filters;
+	//private List<FilterCriteriaDTO> filters;
 	private long id = 0;
+	
 	
 
 	
@@ -45,12 +47,12 @@ public class PersonaDTO implements IDTO{
 	}
 	
 
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
+	public void setCreated(Date creationDate) {
+		this.created = creationDate;
 	}
 
-	public Date getCreationDate() {
-		return creationDate;
+	public Date getCreated() {
+		return created;
 	}
 
 	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
@@ -61,7 +63,7 @@ public class PersonaDTO implements IDTO{
 		return twitterAccount;
 	}
 
-	public JSONObject toJson() {
+	/*public JSONObject toJson() {
 		//creat jsonObj
 		JSONObject personaObj = new JSONObject();
 		personaObj.put("personaName", new JSONString(this.getName()));
@@ -95,7 +97,7 @@ public class PersonaDTO implements IDTO{
 		persona.setTwitterAccount(twitterAccount);
 		return persona;
 	}
-
+*/
 	public void setUserEmail(String userEmail) {
 		this.userEmail = userEmail;
 	}
@@ -104,13 +106,13 @@ public class PersonaDTO implements IDTO{
 		return userEmail;
 	}
 
-	public void setFilters(List<FilterCriteriaDTO> filters) {
+/*	public void setFilters(List<FilterCriteriaDTO> filters) {
 		this.filters = filters;
 	}
 
 	public List<FilterCriteriaDTO> getFilters() {
 		return filters;
-	}
+	}*/
 
 	public void setId(long id) {
 		this.id = id;
@@ -120,6 +122,15 @@ public class PersonaDTO implements IDTO{
 		return id;
 	}
 
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
+	public Date getModified() {
+		return modified;
+	}
+
+	
 
 
 	

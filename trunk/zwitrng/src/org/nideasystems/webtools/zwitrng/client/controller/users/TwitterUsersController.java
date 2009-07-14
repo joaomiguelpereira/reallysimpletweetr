@@ -9,6 +9,7 @@ import org.nideasystems.webtools.zwitrng.client.view.users.UserListener;
 
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
@@ -90,7 +91,7 @@ public class TwitterUsersController extends
 
 	}
 
-	public void followUser(TwitterAccountDTO user, final UserListener callback) {
+	public void followUser(TwitterUserDTO user, final UserListener callback) {
 		PersonaDTO currentPersona = MainController.getInstance()
 				.getCurrentPersonaController().getModel();
 
@@ -118,7 +119,7 @@ public class TwitterUsersController extends
 
 	}
 
-	public void stopFollowUser(TwitterAccountDTO user,
+	public void stopFollowUser(TwitterUserDTO user,
 			final UserListener callback) {
 		PersonaDTO currentPersona = MainController.getInstance()
 				.getCurrentPersonaController().getModel();
@@ -147,7 +148,7 @@ public class TwitterUsersController extends
 
 	}
 
-	public void blockUser(TwitterAccountDTO user,
+	public void blockUser(TwitterUserDTO user,
 			final UserListener callback) {
 		
 		PersonaDTO currentPersona = MainController.getInstance()
@@ -176,7 +177,7 @@ public class TwitterUsersController extends
 
 	}
 
-	public void unblockUser(TwitterAccountDTO user,
+	public void unblockUser(TwitterUserDTO user,
 			final UserListener callback) {
 		
 		PersonaDTO currentPersona = MainController.getInstance()

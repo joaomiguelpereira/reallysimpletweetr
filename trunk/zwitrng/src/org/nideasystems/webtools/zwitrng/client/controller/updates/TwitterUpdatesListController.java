@@ -14,6 +14,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.users.TwitterUsersCon
 import org.nideasystems.webtools.zwitrng.client.view.updates.TwitterUpdatesListView;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
@@ -152,11 +153,12 @@ public class TwitterUpdatesListController extends
 		
 		//Add the Users tab
 		TwitterUsersController twitterUserController = new TwitterUsersController(); 
-
 		twitterUserController.setMainController(getMainController());
 		twitterUserController.setParentController(MainController.getInstance().getCurrentPersonaController());
 		twitterUserController.setServiceManager(getServiceManager());
 		twitterUserController.init();
+
+		
 		Image twitterUsersTabeImgTab = new Image(Constants.USERS_TAB_IMG);
 		twitterUsersTabeImgTab.setWidth(Constants.INSIDE_TABE_ICON_WIDTH);
 		twitterUsersTabeImgTab.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
@@ -244,10 +246,11 @@ public class TwitterUpdatesListController extends
 
 	private void loadUpdateList(final TwitterUpdatesController updatesController) {
 
+		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
 		updatesController.startProcessing();
 		
 				try {
-			getServiceManager().getRPCService().getTwitterUpdates(getModel(),
+			getServiceManager().getRPCService().getTwitterUpdates(currentPersona,
 					updatesController.getCurrentFilter(),
 					new AsyncCallback<TwitterUpdateDTOList>() {
 

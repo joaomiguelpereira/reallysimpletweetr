@@ -7,7 +7,8 @@ import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.Twitte
 
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -39,7 +40,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	private static final String HEIGHT = "150px";
 	private TwitterAccountController parentController = null;
 	private InlineHTML followLink = new InlineHTML();
-	private TwitterAccountDTO twitterAccount = null;
+	private TwitterUserDTO twitterAccount = null;
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
 	private InlineHTML blockLink = new InlineHTML();
 
@@ -195,31 +196,33 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 			optionPannel.addStyleName("user_options");
 
 			// Add follow/unfollow user link
-			setupFollowLink(this.twitterAccount.getExtendedUserAccount()
-					.isImFollowing());
+			setupFollowLink(this.twitterAccount.isImFollowing());
 			followLink.addClickHandler(new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
 					waitingImg.setVisible(true);
-					parentController.followUser(!twitterAccount
-							.getExtendedUserAccount().isImFollowing(),
-							twitterAccount.getId(), instance);
+					if ( twitterAccount.isImFollowing() ) {
+						parentController.unfollowUser(
+								twitterAccount.getId(), instance);	
+					} else {
+						parentController.followUser(
+								twitterAccount.getId(), instance);	
+					}
+					
 				}
 
 			});
 			optionPannel.add(followLink);
 
 			// Add block/unblok
-			setupBlockLink(this.twitterAccount.getExtendedUserAccount()
-					.isImBlocking());
+			setupBlockLink(this.twitterAccount.isImBlocking());
 			blockLink.addClickHandler(new ClickHandler() {
 
 				@Override
 				public void onClick(ClickEvent event) {
 					waitingImg.setVisible(true);
-					parentController.blockUser(!twitterAccount
-							.getExtendedUserAccount().isImBlocking(),
+					parentController.blockUser(!twitterAccount.isImBlocking(),
 							twitterAccount.getId(), instance);
 
 				}
@@ -228,7 +231,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 			optionPannel.add(blockLink);
 
 			// Start Set Up the Send Private Message Link
-			if (twitterAccount.getExtendedUserAccount().isMutualFriendShip()) {
+			if (twitterAccount.isMutualFriendShip()) {
 				InlineHTML sendPm = new InlineHTML("Send private message");
 				sendPm.addStyleName("link");
 				sendPm.addClickHandler(new ClickHandler() {
@@ -365,7 +368,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	}
 
 	@Override
-	public void onTwitterAccountLoadSuccess(TwitterAccountDTO twitterAccount) {
+	public void onTwitterAccountLoadSuccess(TwitterUserDTO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 		this.setWidget(createMainPanel());
 
@@ -380,9 +383,9 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	@Override
 	public void onBlockUserSuccess(Object result) {
 		waitingImg.setVisible(false);
-		twitterAccount.getExtendedUserAccount().setImBlocking(
-				!twitterAccount.getExtendedUserAccount().isImBlocking());
-		setupBlockLink(twitterAccount.getExtendedUserAccount().isImBlocking());
+		twitterAccount.setImBlocking(
+				!twitterAccount.isImBlocking());
+		setupBlockLink(twitterAccount.isImBlocking());
 	}
 
 	@Override
@@ -394,9 +397,9 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 	@Override
 	public void onFollowUserSuccess(Object result) {
 		waitingImg.setVisible(false);
-		twitterAccount.getExtendedUserAccount().setImFollowing(
-				!twitterAccount.getExtendedUserAccount().isImFollowing());
-		setupFollowLink(twitterAccount.getExtendedUserAccount().isImFollowing());
+		twitterAccount.setImFollowing(
+				!twitterAccount.isImFollowing());
+		setupFollowLink(twitterAccount.isImFollowing());
 
 	}
 

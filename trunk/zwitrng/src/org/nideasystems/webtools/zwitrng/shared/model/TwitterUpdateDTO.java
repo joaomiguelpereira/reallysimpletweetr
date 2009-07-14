@@ -18,18 +18,13 @@ public class TwitterUpdateDTO implements IDTO, Serializable{
 	private long replyToStatusId;
 	private long InReplyToStatusId = -1;
 	private long inReplyToUserId = -1;
-	private String inReplyToScreenName = null;
-	
-	private int rateLimitLimit;
-	private int rateLimitRemaining;
-	private long rateLimitReset;
+	private String inReplyToScreenName = null;	
 	private String source;
 	private String text;
-	private TwitterAccountDTO twitterAccount;
+	private TwitterUserDTO twitterUser;
+	private TwitterAccountDTO sendingTwitterAccount;
 	private UpdatesType type;
-	
 	public Date getCreatedAt() {
-		
 		return createdAt;
 	}
 	public void setCreatedAt(Date createdAt) {
@@ -47,29 +42,23 @@ public class TwitterUpdateDTO implements IDTO, Serializable{
 	public void setReplyToStatusId(long replyToStatusId) {
 		this.replyToStatusId = replyToStatusId;
 	}
+	public long getInReplyToStatusId() {
+		return InReplyToStatusId;
+	}
+	public void setInReplyToStatusId(long inReplyToStatusId) {
+		InReplyToStatusId = inReplyToStatusId;
+	}
 	public long getInReplyToUserId() {
 		return inReplyToUserId;
 	}
 	public void setInReplyToUserId(long inReplyToUserId) {
 		this.inReplyToUserId = inReplyToUserId;
 	}
-	public int getRateLimitLimit() {
-		return rateLimitLimit;
+	public String getInReplyToScreenName() {
+		return inReplyToScreenName;
 	}
-	public void setRateLimitLimit(int rateLimitLimit) {
-		this.rateLimitLimit = rateLimitLimit;
-	}
-	public int getRateLimitRemaining() {
-		return rateLimitRemaining;
-	}
-	public void setRateLimitRemaining(int rateLimitRemaining) {
-		this.rateLimitRemaining = rateLimitRemaining;
-	}
-	public long getRateLimitReset() {
-		return rateLimitReset;
-	}
-	public void setRateLimitReset(long rateLimitReset) {
-		this.rateLimitReset = rateLimitReset;
+	public void setInReplyToScreenName(String inReplyToScreenName) {
+		this.inReplyToScreenName = inReplyToScreenName;
 	}
 	public String getSource() {
 		return source;
@@ -83,31 +72,25 @@ public class TwitterUpdateDTO implements IDTO, Serializable{
 	public void setText(String text) {
 		this.text = text;
 	}
-	public TwitterAccountDTO getTwitterAccount() {
-		return twitterAccount;
+	public TwitterUserDTO getTwitterUser() {
+		return twitterUser;
 	}
-	public void setTwitterAccount(TwitterAccountDTO twitterAccount) {
-		this.twitterAccount = twitterAccount;
+	public void setTwitterUser(TwitterUserDTO twitterUser) {
+		this.twitterUser = twitterUser;
 	}
-	public void setInReplyToStatusId(long inReplyToStatusId) {
-		InReplyToStatusId = inReplyToStatusId;
+	public TwitterAccountDTO getSendingTwitterAccount() {
+		return sendingTwitterAccount;
 	}
-	public long getInReplyToStatusId() {
-		return InReplyToStatusId;
-	}
-	public void setInReplyToScreenName(String inReplyToScreenName) {
-		this.inReplyToScreenName = inReplyToScreenName;
+	public void setSendingTwitterAccount(TwitterAccountDTO sendingTwitterAccount) {
+		this.sendingTwitterAccount = sendingTwitterAccount;
 	}
 	public UpdatesType getType() {
 		return type;
 	}
-	public String getInReplyToScreenName() {
-		return inReplyToScreenName;
-	}
 	public void setType(UpdatesType type) {
 		this.type = type;
-		
 	}
+	
 	
 	
 }

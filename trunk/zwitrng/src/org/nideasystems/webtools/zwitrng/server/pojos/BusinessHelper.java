@@ -10,6 +10,7 @@ import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDAO;
 
 public class BusinessHelper {
 
@@ -17,15 +18,15 @@ public class BusinessHelper {
 			.getName());
 	private PersistenceManager pm = null;
 
-	//Twitter Pojos
+	// Twitter Pojos
 	private ThreadLocal<TwitterPojo> twitterPojo = new ThreadLocal<TwitterPojo>() {
 		@Override
 		protected TwitterPojo initialValue() {
 			return new TwitterPojo();
 		}
-		
+
 	};
-	
+
 	// Persona Pojos
 	private ThreadLocal<PersonaPojo> personaPojo = new ThreadLocal<PersonaPojo>() {
 
@@ -74,7 +75,7 @@ public class BusinessHelper {
 		}
 	};
 
-	//FeedSet
+	// FeedSet
 	private ThreadLocal<FeedSetDAO> feedSetDao = new ThreadLocal<FeedSetDAO>() {
 		@Override
 		protected FeedSetDAO initialValue() {
@@ -98,6 +99,12 @@ public class BusinessHelper {
 		}
 	};
 
+	private ThreadLocal<TwitterAccountDAO> twitterAccountDao = new ThreadLocal<TwitterAccountDAO>() {
+		@Override
+		protected TwitterAccountDAO initialValue() {
+			return new TwitterAccountDAO();
+		}
+	};
 
 	public void setPm(PersistenceManager pm) {
 		this.pm = pm;
@@ -175,18 +182,27 @@ public class BusinessHelper {
 	public FeedSetPojo getFeedSetPojo() {
 		FeedSetPojo pojo = feedSetPojo.get();
 		pojo.setBusinessHelper(this);
-		return pojo;	}
+		return pojo;
+	}
 
 	public FeedSetDAO getFeedSetDao() {
 		FeedSetDAO dao = feedSetDao.get();
 		dao.setPm(pm);
 		log.fine("Returning DAO " + dao.hashCode());
-		return dao;	}
+		return dao;
+	}
 
 	public TwitterPojo getTwitterPojo() {
 		TwitterPojo pojo = twitterPojo.get();
 		pojo.setBusinessHelper(this);
-		return pojo;	
+		return pojo;
+	}
+
+	public TwitterAccountDAO getTwitterAccountDao() {
+		TwitterAccountDAO dao = twitterAccountDao.get();
+		dao.setPm(pm);
+		log.fine("Returning DAO " + dao.hashCode());
+		return dao;
 	}
 
 }

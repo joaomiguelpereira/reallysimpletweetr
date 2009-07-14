@@ -3,7 +3,7 @@ package org.nideasystems.webtools.zwitrng.client.services;
 import java.util.List;
 import java.util.Map;
 
-import org.nideasystems.webtools.zwitrng.shared.OAuthInfoDTO;
+
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -16,6 +16,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -36,26 +37,23 @@ public class RPCService implements IService {
 		urlService = GWT.create(UrlService.class);
 	}
 
-	public void getOAuthInfo(TwitterAccountDTO twitterAccount, AsyncCallback<OAuthInfoDTO> callback) throws Exception {
+	
+	
+	/*public void getOAuthInfo(TwitterAccountDTO twitterAccount, AsyncCallback<OAuthInfoDTO> callback) throws Exception {
 		this.twitterService.getOAuthInfo(twitterAccount, callback);
-	}
-	public void postUpdate(TwitterUpdateDTO update, AsyncCallback<TwitterUpdateDTO> callback) throws Exception {
-		this.twitterService.postUpdate(update,callback);
+	}*/
+	public void postUpdate(PersonaDTO persona, TwitterUpdateDTO update, AsyncCallback<TwitterUpdateDTO> callback) throws Exception {
+		this.twitterService.postUpdate(persona,update,callback);
 		
 	}
 		
 	public void getTwitterUpdates(
-			TwitterAccountDTO twitterAccount, FilterCriteriaDTO filter,
+			PersonaDTO persona, FilterCriteriaDTO filter,
 			AsyncCallback<TwitterUpdateDTOList> callback) throws Exception {
-		this.twitterService.getTwitterUpdates(twitterAccount, filter, callback);
+		this.twitterService.getTwitterUpdates(persona, filter, callback);
 		
 	}
 
-	public void search(FilterCriteriaDTO query,
-			TwitterAccountDTO twitterAccount,
-			AsyncCallback<List<TwitterUpdateDTO>> callback) throws Exception {
-		this.twitterService.search(twitterAccount, query, callback);
-	}
 
 	public void createPersona(PersonaDTO string,
 			AsyncCallback<PersonaDTO> callBack) throws Exception {
@@ -78,23 +76,23 @@ public class RPCService implements IService {
 		
 	}
 
-	public void getExtendedUser(TwitterAccountDTO autehnticatedUser, String userIdOrScreenName,
-			AsyncCallback<TwitterAccountDTO> callback) throws Exception {
-		this.twitterService.getExtendedUserAccount(autehnticatedUser,userIdOrScreenName, callback);
+	public void getUserInfo(PersonaDTO persona, String userIdOrScreenName,
+			AsyncCallback<TwitterUserDTO> callback) throws Exception {
+		this.twitterService.getUserInfo(persona,userIdOrScreenName, callback);
 		
 	}
-
-	public void followUser(TwitterAccountDTO account, boolean follow, Integer id,
+/*
+	public void followUser(PersonaDTO persona, boolean follow, Integer id,
 			AsyncCallback<Void> asyncCallback) {
-		this.twitterService.followUser(account, follow, id, asyncCallback);
+		this.twitterService.followUser(persona, follow, id, asyncCallback);
 		
 	}
 
-	public void blockUser(TwitterAccountDTO account, boolean block, Integer id,
+	public void blockUser(PersonaDTO persona, boolean block, Integer id,
 			AsyncCallback<Void> callback) {
-		this.twitterService.blockUser(account, block, id, callback);
+		this.twitterService.blockUser(persona, block, id, callback);
 		
-	}
+	}*/
 
 	public void getUsers(PersonaDTO persona, TwitterUserFilterDTO currentFilter,
 			AsyncCallback<TwitterUserDTOList> callback) throws Exception{
@@ -219,27 +217,35 @@ public class RPCService implements IService {
 		
 	}
 
-	public void followUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception{
 		this.twitterService.followUser(currentPersona,user, asyncCallback);
 		
 	}
 
-	public void unfollowUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	public void unfollowUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception{
 		this.twitterService.unfollowUser(currentPersona,user, asyncCallback);
 		
 	}
 
-	public void blockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	public void blockUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception{
 		this.twitterService.blockUser(currentPersona,user, asyncCallback);
 		
 	}
 
-	public void unblockUser(PersonaDTO currentPersona, TwitterAccountDTO user,
+	public void unblockUser(PersonaDTO currentPersona, TwitterUserDTO user,
 			AsyncCallback<Void> asyncCallback) throws Exception{
 		this.twitterService.unblockUser(currentPersona,user, asyncCallback);
+		
+	}
+
+
+
+	public void sendDM(PersonaDTO persona, TwitterUpdateDTO twitterUpdate,
+			AsyncCallback<TwitterUpdateDTO> asyncCallback) throws Exception{
+		this.twitterService.sendDirectMessage(persona, twitterUpdate, asyncCallback);
 		
 	}
 

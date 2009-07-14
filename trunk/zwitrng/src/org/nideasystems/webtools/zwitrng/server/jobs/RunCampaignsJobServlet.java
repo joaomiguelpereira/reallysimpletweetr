@@ -19,12 +19,12 @@ import org.nideasystems.webtools.zwitrng.server.amazon.AmazonLocale;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.rss.RSS;
 import org.nideasystems.webtools.zwitrng.server.rss.RSSItem;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
-import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
-import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
@@ -160,8 +160,8 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			// Get sending account
 			TwitterAccountDO accountDo = persona.getTwitterAccount();
 
-			TwitterAccountDTO accountDto = DataUtils
-					.twitterAccountDtoFromDo(accountDo);
+			TwitterAccountDTO accountDto = TwitterAccountDAO.createAuthorizedAccountDto(accountDo);
+			
 
 			TemplateDO template = getBusinessHelper().getTemplatePojo()
 					.getRandomTemplateForCampaign(campaign);
@@ -235,13 +235,15 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			updateStatus = StringUtils.randomizeString(updateStatus);
 
 			TwitterUpdateDTO update = new TwitterUpdateDTO();
-			update.setTwitterAccount(accountDto);
+			update.setSendingTwitterAccount(accountDto);
 			update.setText(updateStatus);
 
 			try {
 				// Don't send if in testing mode
 				if (!TESTING) {
-					TwitterServiceAdapter.get().postUpdate(update);
+					
+					getBusinessHelper().getTwitterPojo().postUpdate(update);
+					//TwitterServiceAdapter.get().postUpdate(update);
 				}
 
 				outBuffer.append("<div>Tweet Sent: " + update.getText()

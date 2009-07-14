@@ -53,7 +53,7 @@ public class PersonaView extends AbstractVerticalPanelView<PersonaController> {
 	@Override
 	public void init() {
 		if (isInitialized) {
-			throw new RuntimeException("You try to initialize personaView again?");
+			throw new RuntimeException("have you tried to initialize personaView again?");
 		}
 		tools = new PersonaToolsWidget();
 		tools.setController(getController());

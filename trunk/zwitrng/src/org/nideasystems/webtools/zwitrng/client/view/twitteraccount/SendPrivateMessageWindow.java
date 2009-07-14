@@ -1,12 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.view.twitteraccount;
 
-import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
-
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.DialogBox;
@@ -20,7 +19,7 @@ public class SendPrivateMessageWindow extends DialogBox {
 	private final static String HEIGH_DIALOG_BOX = "100px";
 	
 	private  VerticalPanel successPanel = new VerticalPanel(); 
-	public SendPrivateMessageWindow(TwitterAccountDTO recipient,final SendUpdateWidget updateWidget) {
+	public SendPrivateMessageWindow(TwitterUserDTO recipient,final SendUpdateWidget updateWidget) {
 
 		HTML successMessage = new HTML("Your message was sent to "+recipient.getTwitterScreenName());
 
@@ -88,7 +87,7 @@ public class SendPrivateMessageWindow extends DialogBox {
 	}
 	public static SendPrivateMessageWindow create(
 			TwitterAccountController twitterAccountController,
-			TwitterAccountDTO user, int type) {
+			TwitterUserDTO user, int type) {
 
 		SendUpdateWidget sendUpdateWidget = new SendUpdateWidget();
 		sendUpdateWidget.setController(twitterAccountController);
@@ -100,10 +99,12 @@ public class SendPrivateMessageWindow extends DialogBox {
 		sendUpdateWidget
 				.setType(type);
 		
+		
 		TwitterUpdateDTO update = new TwitterUpdateDTO();
 		update.setText(user.getTwitterStatusText());
-		update.setTwitterAccount(user);
+		update.setSendingTwitterAccount(twitterAccountController.getModel());
 		sendUpdateWidget.setInResponseTo(update);
+		update.setTwitterUser(user);
 		sendUpdateWidget.init();
 		sendUpdateWidget.refresh();
 
