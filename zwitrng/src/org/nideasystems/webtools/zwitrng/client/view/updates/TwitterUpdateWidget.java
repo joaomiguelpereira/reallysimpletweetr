@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.client.view.updates;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.view.SendUpdateAsyncHandler;
@@ -8,7 +9,7 @@ import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateM
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 
@@ -69,35 +70,33 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 	// final private HorizontalPanel tweetQuickOptions = new HorizontalPanel();
 
 	public void init() {
+		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
+		
 		FlexTable tweetLayout = new FlexTable();
 		FlexCellFormatter tweetLayoutFormatter = tweetLayout
 				.getFlexCellFormatter();
-		tweetLayout.setWidth("630px");
-
+		//tweetLayout.setWidth("630px");
+		
 		// Create the user image
 		userImg = new Image(twitterUpdate.getTwitterUser().getTwitterImageUrl());
-		userImg.setWidth("48px");
-		userImg.setHeight("48px");
+		userImg.setWidth(Constants.USER_IMAGE_MEDIUM_WIDTH);
+		userImg.setHeight(Constants.USER_IMAGE_MEDIUM_HEIGHT);
 
 		// if ( refLeftImage == null ) {
 		// refLeftImage = userImg;
 		// }
-
+		
 		tweetLayout.setWidget(0, 0, userImg);
-		tweetLayoutFormatter.setAlignment(0, 0,
-				HasHorizontalAlignment.ALIGN_LEFT,
-				HasVerticalAlignment.ALIGN_TOP);
-		tweetLayoutFormatter.setRowSpan(0, 0, 1);
-		tweetLayoutFormatter.setWidth(0, 1, "50px");
-
+		tweetLayoutFormatter.setWidth(0, 0, "50px");
+		
 		// Create the update Text
 		// TODO: Parse html
 		VerticalPanel tweetInfo = new VerticalPanel();
-		tweetInfo.setWidth("630px");
+		//tweetInfo.setWidth("630px");
 
 		Widget updateText = getUpdateTextWidget(twitterUpdate);
-		updateText.addStyleName("tweet");
-
+		//updateText.addStyleName("list_item");
+		
 		tweetInfo.add(updateText);
 
 		HTML tweetUpdateMetaData = getUpdateMetaInfoHtml(twitterUpdate,
@@ -106,16 +105,6 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		tweetInfo.add(tweetUpdateMetaData);
 
 		tweetLayout.setWidget(0, 1, tweetInfo);
-		tweetLayoutFormatter.setColSpan(0, 1, 2);
-		tweetLayoutFormatter.setAlignment(0, 1,
-				HasHorizontalAlignment.ALIGN_RIGHT,
-				HasVerticalAlignment.ALIGN_TOP);
-
-		// tweetLayout.setWidget(1, 1, tweetUpdateMetaData);
-
-		// Now add the action
-
-		// HTML followUser = new HTML("unfollow user (do later)");
 
 		// Create Reguldate action panel
 		if (twitterUpdate.getType().equals(UpdatesType.DIRECT_RECEIVED)
@@ -125,21 +114,26 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 			actionPanel = createDefaultActionPanel();
 		}
 
-		tweetLayout.setWidget(1, 1, actionPanel);
-		tweetLayoutFormatter.setStyleName(1, 1, "tweetOptions");
-		tweetLayoutFormatter.setHeight(1, 1, "25px");
-		tweetLayoutFormatter.setAlignment(1, 1,
+		/*tweetLayout.setWidget(1, 0, actionPanel);
+		tweetLayoutFormatter.setStyleName(1, 0, "tweetOptions");
+		tweetLayoutFormatter.setHeight(1, 0, "25px");
+		tweetLayoutFormatter.setAlignment(1, 0,
 				HasHorizontalAlignment.ALIGN_RIGHT,
-				HasVerticalAlignment.ALIGN_TOP);
+				HasVerticalAlignment.ALIGN_TOP);*/
+		
 		super.add(tweetLayout);
+		
+		super.add(actionPanel);
+		super.setCellWidth(actionPanel, Constants.MAIN_LIST_ITEM_WIDTH);
+		super.setCellHorizontalAlignment(actionPanel, HasHorizontalAlignment.ALIGN_RIGHT);
 		super.add(sendUpdateContainer);
 		sendUpdateContainer.setVisible(false);
-
+		addStyleName("list_item");
 		this.addMouseOverHandler(new MouseOverHandler() {
 
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
-				addStyleName("currentTweet");
+				addStyleName("list_item_over");
 				// parentController.pause();
 
 				MainController.getInstance().getCurrentPersonaController()
@@ -153,7 +147,7 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
-				removeStyleName("currentTweet");
+				removeStyleName("list_item_over");
 				// parentController.resume();
 				MainController.getInstance().getCurrentPersonaController()
 						.getTwitterUpdatesListController()
@@ -169,6 +163,8 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 	private HorizontalPanel createDMActionPanel() {
 		HorizontalPanel tmpPanel = new HorizontalPanel();
+		
+		
 		if (this.twitterUpdate.getInReplyToUserId() == this.parentController
 				.getModel().getId()) {
 			HTML reply = new HTML("Reply");
@@ -201,9 +197,12 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 		HorizontalPanel tmpPanel = new HorizontalPanel();
 		HTML retweet = new HTML("Retweet");
 		HTML reply = new HTML("Reply");
+		HTML markRead = new HTML("Hide");
+		markRead.addStyleName("link");
 		tmpPanel.setSpacing(5);
 		tmpPanel.add(retweet);
 		tmpPanel.add(reply);
+		
 		retweet.addStyleName("link");
 		reply.addStyleName("link");
 
@@ -248,6 +247,20 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 				showSendUpdate(SendUpdateWidget.REPLY);
 			}
 
+		});
+		tmpPanel.add(markRead);
+		markRead.addClickHandler(new ClickHandler() {
+
+			@Override
+			public void onClick(ClickEvent event) {
+				setVisible(false);
+				removeFromParent();
+				MainController.getInstance().getCurrentPersonaController()
+				.getTwitterUpdatesListController()
+				.getActiveUpdatesController().resume();
+				
+			}
+			
 		});
 		return tmpPanel;
 
@@ -401,8 +414,6 @@ public class TwitterUpdateWidget extends VerticalPanel implements
 
 		// in the update find http:// or https://
 
-		// Parse the update text
-		HTMLHelper helper = HTMLHelper.get();
 
 		/*
 		 * String htmlText =

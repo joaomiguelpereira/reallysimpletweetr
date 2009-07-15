@@ -22,8 +22,8 @@ public class Constants {
 	public static final String TEMPLATES_ICON_IMAGE = "/images/templates_icon.gif";
 	public static final String CONFIGURATION_PANEL_MAX_HEIGH = "400px";
 	public static final String CONFIGURATION_PANEL_WIDTH = "650px";
-	public static final String EDITABLE_TEMPLATE_WIDTH = "650px";
-	public static final String EDITABLE_TEMPLATE_MIN_HEIGHT = "60px";
+	//public static final String EDITABLE_TEMPLATE_WIDTH = "650px";
+	
 	public static final String MINI_TOOLBAR_ICON_WIDTH = "24px";
 	public static final String MINI_TOOLBAR_ICON_HEIGHT = "24px";
 	public static final String REMOVE_ICON = "/images/remove_icon.gif";;
@@ -36,7 +36,8 @@ public class Constants {
 	public static final String MENU_ICON_WIDTH = "16px";
 	public static final String MENU_ICON_HEIGH = "16px";
 	public static final String MAIN_TABBED_PANEL_WIDTH = "720px";
-	
+	public static final String MAIN_LIST_ITEM_WIDTH = "700px";
+	public static final String MAIN_LIST_ITEM_MIN_HEIGHT = "60px";
 
 	
 	
