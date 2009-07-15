@@ -47,8 +47,8 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		parent = theParent;
 		instance = this;
 		this.isEditable = aIsEditable;
-		this.setWidth(Constants.EDITABLE_TEMPLATE_WIDTH);
-		this.setHeight(Constants.EDITABLE_TEMPLATE_MIN_HEIGHT);
+		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
+		this.setHeight(Constants.MAIN_LIST_ITEM_MIN_HEIGHT);
 		this.addStyleName("list_item");
 		content = new VerticalPanel();
 		this.add(content);

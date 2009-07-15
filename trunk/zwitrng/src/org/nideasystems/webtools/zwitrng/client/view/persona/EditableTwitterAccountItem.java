@@ -20,6 +20,7 @@ import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -60,6 +61,7 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 
 		table.setWidget(0, 0, userImg);
 		formatter.setWidth(0, 0, "50px");
+		
 		VerticalPanel userInfo1 = new VerticalPanel();
 		userLine = new InlineHTML(TwitterUsersHtmlUtils
 				.buildUserLineHtml(persona.getTwitterAccount()));
@@ -110,11 +112,13 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 		moreOptions.add(this.userActivity);
 		moreOptions.add(this.userRateLimitsPanel);
 		moreOptions.add(toolsPanel);
+		
+		
 		disPanel.setContent(moreOptions);
 		this.add(disPanel);
 
-		this.setWidth("700px");
-		this.setHeight(Constants.EDITABLE_TEMPLATE_MIN_HEIGHT);
+		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
+		this.setHeight(Constants.MAIN_LIST_ITEM_MIN_HEIGHT);
 		this.addStyleName("list_item");
 		this.addMouseOverHandler(new MouseOverHandler() {
 

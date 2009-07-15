@@ -13,7 +13,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.RateLimitsDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
-import sun.security.action.GetBooleanAction;
 import twitter4j.User;
 
 

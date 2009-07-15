@@ -93,6 +93,7 @@ public class SendPrivateMessageWindow extends DialogBox {
 		sendUpdateWidget.setController(twitterAccountController);
 		sendUpdateWidget
 				.setSendingTwitterAccount(twitterAccountController.getModel());
+		
 		sendUpdateWidget.setShowUserImage(true);
 		sendUpdateWidget
 				.setInResponseToUserAccount(user);
@@ -109,7 +110,7 @@ public class SendPrivateMessageWindow extends DialogBox {
 		sendUpdateWidget.refresh();
 
 		SendPrivateMessageWindow sendPrivateMessageWindow = new SendPrivateMessageWindow(
-				twitterAccountController.getModel(), sendUpdateWidget);
+				/*twitterAccountController.getModel()*/user, sendUpdateWidget);
 		sendPrivateMessageWindow.setAnimationEnabled(true);
 
 		return sendPrivateMessageWindow;

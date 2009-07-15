@@ -17,6 +17,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 
 
 
@@ -56,7 +57,7 @@ public class TwitterUpdatesController extends
 	}
 
 	public void handleDataLoaded(TwitterUpdateDTOList twitterUpdates) {
-
+		
 		setModel(twitterUpdates);
 		assert (twitterUpdates != null);
 		boolean addOnTop = false;
@@ -302,17 +303,18 @@ public class TwitterUpdatesController extends
 	}
 
 	public void loadMoreUpdates() {
-		//get the last id
-		TwitterUpdateWidget updateWidget = getView().getUpdateWidget(getView().getUpdateCount()-1);
-		long maxId = updateWidget.getTwitterUpdate().getId();
-		
+		Window.alert("Current Filter since id ID:"+currentFilter.getSinceId());
+		Window.alert("Current pAGE since id ID:"+currentFilter.getPage());
+		Window.alert("Current TYPE:"+currentFilter.getUpdatesType());
+	
 		FilterCriteriaDTO filter = new FilterCriteriaDTO();
 		filter.reset();
-		filter.setPage(1);
+		filter.setPage(currentFilter.getPage()+1);
 		
 		filter.setResultsPerPage(MORE_RESULTS_PER_PAGE);
-		filter.setMaxId(maxId);
-		//filter.setSinceId(currentFilter.getSinceId());
+		//filter.setMaxId(maxId);
+		filter.setSinceId(currentFilter.getSinceId());
+		filter.setUpdatesType(currentFilter.getUpdatesType());
 		reload(filter);
 		//Window.alert("calling reloading");
 		

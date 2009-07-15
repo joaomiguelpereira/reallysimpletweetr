@@ -28,6 +28,7 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
+import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
 import com.google.gwt.user.client.ui.Image;
@@ -264,11 +265,12 @@ public class TwitterUsersView extends
 			this.add(unfollowLink);
 			this.add(createBlockActionMenu());
 			this.add(createUnblockActionMenu());
+			this.add(createRetweetLastMenu());
 			this.add(createSendDirectMessageMenu());
 			
 			this.add(canSendDMImg);
 			
-			this.add(createRetweetLastMenu());
+			
 			
 			updateFollowingStatus();
 			
@@ -293,6 +295,7 @@ public class TwitterUsersView extends
 		private Widget createRetweetLastMenu() {
 			InlineHTML retweetLast = new InlineHTML("Retweet last");
 			retweetLast.addStyleName("link");
+			retweetLast.setTitle("Retweet user status: "+user.getTwitterStatusText());
 			
 			retweetLast.addClickHandler(new ClickHandler() {
 
@@ -331,6 +334,7 @@ public class TwitterUsersView extends
 
 			this.sendDirectMessageLink = new InlineHTML("Send Direct Message");
 			this.sendDirectMessageLink.addStyleName("link");
+			this.sendDirectMessageLink.setTitle("Send a Direct Message to "+user.getTwitterScreenName());
 			this.sendDirectMessageLink.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -362,7 +366,7 @@ public class TwitterUsersView extends
 		private Widget createUnblockActionMenu() {
 			unblockLink = new InlineHTML("Unblock");
 			unblockLink.addStyleName("link");
-
+			unblockLink.setTitle("Unblock user "+user.getTwitterScreenName());
 			unblockLink.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -382,6 +386,7 @@ public class TwitterUsersView extends
 		private InlineHTML createBlockActionMenu() {
 			blockLink = new InlineHTML("Block");
 			blockLink.addStyleName("link");
+			blockLink.setTitle("Block user "+user.getTwitterScreenName());
 
 			blockLink.addClickHandler(new ClickHandler() {
 
@@ -588,10 +593,12 @@ public class TwitterUsersView extends
 			// add Info
 			this.add(buildUserPopularityPanel(user));
 
-			this.add(new TwitterUserToolBar(user, this));
-
-			this.setWidth(Constants.EDITABLE_TEMPLATE_WIDTH);
-			this.setHeight(Constants.EDITABLE_TEMPLATE_MIN_HEIGHT);
+			TwitterUserToolBar toolBar = new TwitterUserToolBar(user,this);
+			this.add(toolBar);
+			this.setCellHorizontalAlignment(toolBar, HasHorizontalAlignment.ALIGN_RIGHT);
+			
+			this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
+			this.setHeight(Constants.MAIN_LIST_ITEM_MIN_HEIGHT);
 			this.addStyleName("list_item");
 			addMouseHandlers();
 			updateIsNew();

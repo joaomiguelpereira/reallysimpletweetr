@@ -42,7 +42,7 @@ public class SelectTemplateWindow extends PopupPanel implements
 
 		templatesConfWidget.addSelectListener(this);
 		VerticalPanel mainPanel = new VerticalPanel();
-		mainPanel.setWidth(Constants.EDITABLE_TEMPLATE_WIDTH);
+		mainPanel.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
 		mainPanel.add(templatesConfWidget);
 		InlineHTML closeLink = new InlineHTML("Close");
 		closeLink.addStyleName("link");

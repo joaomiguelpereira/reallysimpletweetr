@@ -12,25 +12,27 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
+
+import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
-import com.google.gwt.user.client.ui.PushButton;
 
 public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView<TwitterUpdatesController> {
 	
 	private final CheckBox autoUpdate = new CheckBox("Auto Update?");
-	private final Image refreshImg = new Image(Constants.REFRESH_IMAGE_LOCATION);
+	//private final Image refreshImg = new Image(Constants.REFRESH_IMAGE_LOCATION);
 	private final ListBox updatesPerPage = new ListBox();
 	
 	@Override
 	public void init() {
 		HorizontalPanel container = new HorizontalPanel();
 		container.setSpacing(5);
+		InlineHTML refreshLink = new InlineHTML("Update");
+		refreshLink.addStyleName("link");
 		
-		PushButton refresheBt = new PushButton(refreshImg);		
-		refresheBt.setStyleName("bottonIcon");
-		refresheBt.addClickHandler(new ClickHandler() {
+		//PushButton refresheBt = new PushButton(refreshImg);		
+		//refresheBt.setStyleName("bottonIcon");
+		refreshLink.addClickHandler(new ClickHandler() {
 
 			@Override
 			public void onClick(ClickEvent event) {
@@ -39,7 +41,7 @@ public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView<TwitterU
 			}
 			
 		});
-		container.add(refresheBt);
+		container.add(refreshLink);
 		//Create auto update 
 		
 		autoUpdate.addClickHandler(new ClickHandler() {
