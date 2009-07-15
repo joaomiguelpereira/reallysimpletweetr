@@ -1,17 +1,72 @@
-package org.nideasystems.webtools.zwitrng.shared.model;
+package org.nideasystems.webtools.zwitrng.server.domain;
+
+import java.util.Date;
+
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 
-public class AutoFollowRuleDTO implements IDTO {
 
+import com.google.appengine.api.datastore.Key;
+
+@PersistenceCapable(identityType = IdentityType.APPLICATION)
+public class AutoFollowRuleDO {
+
+
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
+	@Persistent
 	private boolean enabled;
+	@Persistent
 	private int maxRatio;
+	@Persistent
 	private int minUpdates;
+	@Persistent
 	private boolean sendDirectMessage;
+	@Persistent
 	private java.util.List<String> excludedWordsInNames;
+	@Persistent
 	private AutoFollowTriggerType triggerType;
+	@Persistent
+	private PersonaDO persona;
+
+	@Persistent
+	private Date created;
+	@Persistent
+	private Date modified;
+	@Persistent
 	private String templateName;
+
 	
+	public PersonaDO getPersona() {
+		return persona;
+	}
+	public void setPersona(PersonaDO persona) {
+		this.persona = persona;
+	}
+	public Date getCreated() {
+		return created;
+	}
+	public void setCreated(Date created) {
+		this.created = created;
+	}
+	public Date getModified() {
+		return modified;
+	}
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+	public Key getKey() {
+		return key;
+	}
+	public void setKey(Key key) {
+		this.key = key;
+	}
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -50,10 +105,10 @@ public class AutoFollowRuleDTO implements IDTO {
 	}
 	public void setTemplateName(String templateName) {
 		this.templateName = templateName;
+		
 	}
 	public String getTemplateName() {
 		return templateName;
 	}
 	
 }
-

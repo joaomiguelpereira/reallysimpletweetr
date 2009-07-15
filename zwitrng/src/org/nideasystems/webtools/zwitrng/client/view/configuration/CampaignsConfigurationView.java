@@ -8,6 +8,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 
+import com.google.gwt.user.client.ui.DecoratedTabPanel;
 import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
@@ -21,6 +22,20 @@ public class CampaignsConfigurationView extends AbstractVerticalPanelView<Config
 	public void init() {
 		this.setSpacing(1);
 		assert(getController()!=null);
+		//Add a tab
+		DecoratedTabPanel options = new DecoratedTabPanel();
+		options.setAnimationEnabled(true);
+		options.add(new InlineHTML("tabe"), "Campaigns");
+		options.add(new InlineHTML("tabe"), "Templates");
+		options.add(new InlineHTML("tabe"), "Lists");
+		options.add(new InlineHTML("tabe"), "Feeds");
+		
+		
+		this.add(options);
+		
+		
+		
+		
 		ExpandablePanel templates = new ExpandablePanel();
 		templates.setTitleText("Configure Templates");
 		

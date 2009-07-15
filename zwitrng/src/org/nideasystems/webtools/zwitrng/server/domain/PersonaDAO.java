@@ -9,6 +9,7 @@ import javax.jdo.Query;
 
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
@@ -298,6 +299,19 @@ public class PersonaDAO extends BaseDAO {
 			persona.setTwitterAccount(twitterAccountDo);
 		}
 
+	}
+
+	public AutoFollowRuleDO getAutoFollowRule(PersonaDO parentPersona, AutoFollowTriggerType on_follow_me) throws Exception {
+		
+		Query autoFollowRule = pm.newQuery(AutoFollowRuleDO.class);
+		autoFollowRule.setFilter("triggerType==theTriggerType && persona==parentPersona");
+		
+		autoFollowRule.declareParameters("org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType theTriggerType, PersonaDO parentPersona");
+		autoFollowRule.setUnique(true);
+		
+		AutoFollowRuleDO rule = (AutoFollowRuleDO)autoFollowRule.execute(on_follow_me,parentPersona);
+		
+		return rule;
 	}
 
 }

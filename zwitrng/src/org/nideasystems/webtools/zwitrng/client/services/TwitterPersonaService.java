@@ -3,6 +3,8 @@ package org.nideasystems.webtools.zwitrng.client.services;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
+import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -14,8 +16,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
-
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -55,23 +55,35 @@ public interface TwitterPersonaService extends RemoteService {
 
 	Map<String, String> getTemplateFragmentsLists(PersonaDTO model,
 			List<String> lists) throws Exception;
-	
+
 	CampaignDTOList getCampaigns(PersonaDTO model) throws Exception;
 
-	CampaignDTO createCampaign(PersonaDTO model, CampaignDTO object) throws Exception;
-	
-	CampaignDTO saveCampaign(PersonaDTO model, CampaignDTO object) throws Exception;
-	CampaignDTO deleteCampaign(PersonaDTO model, CampaignDTO dataObject) throws Exception;
+	CampaignDTO createCampaign(PersonaDTO model, CampaignDTO object)
+			throws Exception;
+
+	CampaignDTO saveCampaign(PersonaDTO model, CampaignDTO object)
+			throws Exception;
+
+	CampaignDTO deleteCampaign(PersonaDTO model, CampaignDTO dataObject)
+			throws Exception;
+
 	FeedSetDTOList getFeedSets(PersonaDTO model) throws Exception;
-	FeedSetDTO createFeedSet(PersonaDTO model, FeedSetDTO object) throws Exception;
-	FeedSetDTO saveFeedSet(PersonaDTO model, FeedSetDTO object) throws Exception;
-	FeedSetDTO deleteFeedSet(PersonaDTO model, FeedSetDTO dataObject) throws Exception;
+
+	FeedSetDTO createFeedSet(PersonaDTO model, FeedSetDTO object)
+			throws Exception;
+
+	FeedSetDTO saveFeedSet(PersonaDTO model, FeedSetDTO object)
+			throws Exception;
+
+	FeedSetDTO deleteFeedSet(PersonaDTO model, FeedSetDTO dataObject)
+			throws Exception;
+
 	PersonaDTO getPersona(String personaName) throws Exception;
-	
 
-	
+	AutoFollowRuleDTO saveAutoFollowRule(PersonaDTO model,
+			AutoFollowRuleDTO rule) throws Exception;
 
+	AutoFollowRuleDTO loadAutoFollowRule(PersonaDTO model,
+			AutoFollowTriggerType on_follow_me) throws Exception;
 
-	
 }
-

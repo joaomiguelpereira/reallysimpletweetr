@@ -9,6 +9,8 @@ import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.server.utils.DtoAssembler;
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
+import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -366,7 +368,7 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public PersonaDTO getPersona(String personaName/*, String personaEmail*/)
+	public PersonaDTO getPersona(String personaName/* , String personaEmail */)
 			throws Exception {
 		log.fine("Start getting personas..");
 		startTransaction(true);
@@ -377,8 +379,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			try {
 
 				//
-				returnPersona= getBusinessHelper().getPersonaPojo()
-						.getPersona(personaName,user.getEmail());
+				returnPersona = getBusinessHelper().getPersonaPojo()
+						.getPersona(personaName, user.getEmail());
 			} catch (Exception e) {
 				e.printStackTrace();
 				log.severe(e.getMessage());
@@ -390,5 +392,44 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 
 		log.fine("End getting personas..");
 		return returnPersona;
+	}
+
+	@Override
+	public AutoFollowRuleDTO saveAutoFollowRule(PersonaDTO model,
+			AutoFollowRuleDTO rule) throws Exception {
+		startTransaction(true);
+
+		AutoFollowRuleDTO retRule = null;
+		try {
+			retRule = getBusinessHelper().getRulesPojo().saveAutoFollowRule(model, rule);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} finally {
+			endTransaction();
+		}
+
+		return retRule;
+	}
+
+	@Override
+	public AutoFollowRuleDTO loadAutoFollowRule(PersonaDTO model,
+			AutoFollowTriggerType on_follow_me) throws Exception {
+		startTransaction(true);
+
+		
+		AutoFollowRuleDTO retRule = null;
+		try {
+			retRule = getBusinessHelper().getRulesPojo().getAutoFollowRule(model,on_follow_me);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} finally {
+			endTransaction();
+		}
+
+		return retRule;
 	}
 }
