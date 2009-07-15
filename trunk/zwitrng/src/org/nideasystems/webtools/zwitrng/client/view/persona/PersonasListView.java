@@ -34,7 +34,7 @@ public class PersonasListView extends AbstractTabbedPanel<PersonasListController
 
 	@Override
 	public void init() {
-		this.setWidth("720px");
+		this.setWidth(Constants.MAIN_TABBED_PANEL_WIDTH);
 		super.setAnimationEnabled(true);
 		
 		

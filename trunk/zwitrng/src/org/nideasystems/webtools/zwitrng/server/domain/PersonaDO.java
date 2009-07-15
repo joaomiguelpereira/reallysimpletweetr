@@ -40,7 +40,6 @@ public class PersonaDO implements Serializable {
 	@Persistent
 	private Date modified;
 
-	
 	@Persistent
 	private TwitterAccountDO twitterAccount;
 
@@ -63,7 +62,11 @@ public class PersonaDO implements Serializable {
 	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
 	private List<FeedSetDO> feedSets;
 
-		public void setName(String name) {
+	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
+	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
+	private List<AutoFollowRuleDO> autoFollowRules;
+
+	public void setName(String name) {
 		this.name = name;
 	}
 
@@ -71,7 +74,6 @@ public class PersonaDO implements Serializable {
 		return name;
 	}
 
-	
 	public void setTwitterAccount(TwitterAccountDO twitterAccount) {
 		this.twitterAccount = twitterAccount;
 	}
@@ -187,5 +189,20 @@ public class PersonaDO implements Serializable {
 		return modified;
 	}
 
+	public void setAutoFollowRules(List<AutoFollowRuleDO> autoFollowRules) {
+		this.autoFollowRules = autoFollowRules;
+	}
+
+	public List<AutoFollowRuleDO> getAutoFollowRules() {
+		return autoFollowRules;
+	}
+
+	public void addAutoFollowRule(AutoFollowRuleDO rule) {
+		if (this.autoFollowRules == null) {
+			this.autoFollowRules = new ArrayList<AutoFollowRuleDO>();
+		}
+
+		this.autoFollowRules.add(rule);
+	}
 
 }

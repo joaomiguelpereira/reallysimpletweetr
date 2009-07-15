@@ -14,8 +14,12 @@ import org.nideasystems.webtools.zwitrng.client.view.configuration.FeedSetConfig
 import org.nideasystems.webtools.zwitrng.client.view.configuration.SelectableItem;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
+import org.nideasystems.webtools.zwitrng.client.view.users.AutoFollowConfigurationPanel;
+import org.nideasystems.webtools.zwitrng.client.view.users.AutoFollowRuleCallback;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
+import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -611,6 +615,62 @@ public class PersonaController extends
 		}
 
 		
+	}
+
+	public void saveAutofollowRule(AutoFollowRuleDTO rule,
+			final AutoFollowRuleCallback callback) {
+		try {
+			getServiceManager().getRPCService().saveAutoFollowRule(this.getModel(),
+					rule, new AsyncCallback<AutoFollowRuleDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(AutoFollowRuleDTO result) {
+							// callback.onSuccessDeleteObject(result);
+							callback.onAutoFollowRuleChanged(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onError(e);
+			e.printStackTrace();
+		}
+		
+		
+	}
+
+	public void loadRule(final AutoFollowTriggerType on_follow_me,
+			final AutoFollowRuleCallback  callback) {
+
+		try {
+			getServiceManager().getRPCService().loadAutoFollowRule(this.getModel(),
+					on_follow_me, new AsyncCallback<AutoFollowRuleDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(AutoFollowRuleDTO result) {
+							// callback.onSuccessDeleteObject(result);
+							callback.onAutoFollowRuleLoaded(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onError(e);
+			e.printStackTrace();
+		}
+
 	}
 
 }

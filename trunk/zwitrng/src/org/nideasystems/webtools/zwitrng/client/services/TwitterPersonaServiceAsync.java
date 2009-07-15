@@ -4,6 +4,8 @@ package org.nideasystems.webtools.zwitrng.client.services;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
+import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -61,6 +63,11 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<FeedSetDTO> asyncCallback) throws Exception;
 	void getPersona(String personaName,
 			AsyncCallback<PersonaDTO> asyncCallback) throws Exception;
+	void saveAutoFollowRule(PersonaDTO model, AutoFollowRuleDTO rule,
+			AsyncCallback<AutoFollowRuleDTO> asyncCallback) throws Exception;
+	void loadAutoFollowRule(PersonaDTO model,
+			AutoFollowTriggerType on_follow_me,
+			AsyncCallback<AutoFollowRuleDTO> asyncCallback) throws Exception;
 	
 
 	

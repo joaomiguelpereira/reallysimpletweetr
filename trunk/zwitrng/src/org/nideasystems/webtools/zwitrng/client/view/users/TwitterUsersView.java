@@ -8,7 +8,7 @@ import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateMessageWindow;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
@@ -22,8 +22,11 @@ import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Hyperlink;
@@ -51,6 +54,21 @@ public class TwitterUsersView extends
 
 		waitingImg.setVisible(false);
 		this.add(waitingImg);
+		final AutoFollowConfigurationPanel autoFollowPanel = new AutoFollowConfigurationPanel();
+		DisclosurePanel optionsPanel = new DisclosurePanel("Configure auto follower");
+		optionsPanel.setAnimationEnabled(true);
+		optionsPanel.setContent(autoFollowPanel);
+		optionsPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				autoFollowPanel.loadRule();
+				
+			}
+			
+		});
+		
+		this.add(optionsPanel);
 		this.add(new TwitterUsersViewToolBar(this));
 		HorizontalPanel filterPanel = new HorizontalPanel();
 		filterPanel.setSpacing(5);
@@ -101,6 +119,8 @@ public class TwitterUsersView extends
 		bottomToolbar.setSpacing(4);
 		this.add(bottomToolbar);
 	}
+
+
 
 	/**
 	 * 

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
+import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
@@ -254,6 +256,24 @@ public class RPCService implements IService {
 	public void getPersona(String personaName, 
 			AsyncCallback<PersonaDTO> asyncCallback) throws Exception{
 		this.personaService.getPersona(personaName, asyncCallback);
+		
+	}
+
+
+
+	public void saveAutoFollowRule(PersonaDTO model, AutoFollowRuleDTO rule,
+			AsyncCallback<AutoFollowRuleDTO> asyncCallback) throws Exception {
+		this.personaService.saveAutoFollowRule(model, rule, asyncCallback);
+		
+	}
+
+
+
+	public void loadAutoFollowRule(PersonaDTO model,
+			AutoFollowTriggerType on_follow_me,
+			AsyncCallback<AutoFollowRuleDTO> asyncCallback) throws Exception {
+		
+		this.personaService.loadAutoFollowRule(model, on_follow_me, asyncCallback);
 		
 	}
 

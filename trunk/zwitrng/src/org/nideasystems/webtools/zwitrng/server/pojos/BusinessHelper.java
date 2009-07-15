@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 
+import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDAO;
@@ -105,6 +106,13 @@ public class BusinessHelper {
 			return new TwitterAccountDAO();
 		}
 	};
+	private ThreadLocal<RulesPojo> rulesPojo = new ThreadLocal<RulesPojo>() {
+		@Override
+		protected RulesPojo initialValue() {
+			return new RulesPojo();
+		}
+		
+	};
 
 	public void setPm(PersistenceManager pm) {
 		this.pm = pm;
@@ -203,6 +211,12 @@ public class BusinessHelper {
 		dao.setPm(pm);
 		log.fine("Returning DAO " + dao.hashCode());
 		return dao;
+	}
+
+	public RulesPojo getRulesPojo() {
+		RulesPojo pojo = rulesPojo .get();
+		pojo.setBusinessHelper(this);
+		return pojo;
 	}
 
 }
