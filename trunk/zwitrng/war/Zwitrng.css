@@ -2,9 +2,25 @@
 
 
 body {
+background:#9CE7EF;
+}
+#topPanel {
+	background:#9CE7EF;
+	width:100%;
+}
+#userInfo {
+	background:#FFFFFF;
+	padding-top:5px;
+	padding-bottom:4px;
+	text-align:right;
+	width:98%;
 	
 }
-
+#main {
+	padding-top:0px;
+	background:#FFFFFF;
+	
+}
 .search-panel {
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
@@ -88,8 +104,9 @@ body {
 #main {
 	position:absolute;
 	left: 50%;
-	width:700px;	
-	margin-left: -350px; /*set to a negative number 1/2 of your width*/
+	width:740px;	
+	margin-left: -370px; /*set to a negative number 1/2 of your width*/
+	
 }
 
 a.linkButton {
@@ -98,15 +115,15 @@ a.linkButton {
 }
 
 .list_item_over {
-	background:#FFFFCC;
+	background:#F2F2F2;
 	cursor: pointer;
-	padding-left:5px;
-	padding-right:5px;
+	/*padding-left:5px;
+	padding-right:5px;*/
 }
 .list_item_selected {
-	background:#FFFFCC;
-	padding-left:5px;
-	padding-right:5px;
+	background:#F2F2F2;
+	/*padding-left:5px;
+	padding-right:5px;*/
 }
 
 .list_item {
@@ -137,8 +154,59 @@ a.linkButton {
 .label {
 	font-weight:bold;
 }
-
+.inlineStatus {
+	font-style:italic;
+	
+}
 .inline-form-inline-help {
 	font-size:80%;
 	
 }
+.bolder {
+	font-weight:bold;
+}
+a {
+	text-decoration:underline;
+	cursor:pointer;
+}
+
+a:hover {
+	text-decoration:none;
+	
+}
+
+/************************Start Override GWT Styles*/
+
+.gwt-DisclosurePanel .content {
+  border-left: 1px solid #CCCCCC;
+  padding: 4px 0px 4px 8px;
+  margin-left: 4px;
+}
+
+
+
+
+
+.gwt-TabPanelBottom {
+
+  border-width: 0px;
+  border-top-width:1px;
+}
+
+.gwt-DecoratedTabBar .tabMiddleCenter {
+  font-weight: normal;
+
+}
+.gwt-DecoratedTabBar {
+	padding:0px;
+}
+
+.gwt-TabBar .gwt-TabBarFirst {
+  width: 0px;  /* first tab distance from the left */
+}
+
+.gwt-DecoratedTabBar .gwt-TabBarFirst {
+  width: 0px;  /* first tab distance from the left */
+}
+/************************End Override GWT Styles*/
+
