@@ -22,7 +22,7 @@ public class TestTwitterPersonaServiceImpl extends LocalDataStoreTestCase {
 	
 	}
 
-
+/*
 	public void testCreatePersonaBadTwitter() {
 		TwitterPersonaServiceImpl service = new TwitterPersonaServiceImpl();
 		//Mocking UserService
@@ -93,5 +93,5 @@ public class TestTwitterPersonaServiceImpl extends LocalDataStoreTestCase {
 		
 		
 		
-	}
+	}*/
 }

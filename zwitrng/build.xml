@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <project name="Showcase" default="build" basedir=".">
 	<!-- Configure path to GWT SDK -->
-	<property name="gwt.sdk" location="f:/nIdeaSystems-Project/gwt-windows-1.6.4" />
+	<!--<property name="gwt.sdk" location="f:/nIdeaSystems-Project/gwt-windows-1.6.4" />-->
+	<property name="gwt.sdk" location="F:\nIdeaSystems-Project\eclipse-java-ganymede-SR2-win32-jBPM\eclipse\plugins\com.google.gwt.eclipse.sdkbundle.win32_1.7.0.v200907131030\gwt-windows-1.7.0" />
+	
 	
 	<!--GTW Entry point-->
 	<property name="entry.point.name" value="org.nideasystems.webtools.zwitrng.Zwitrng" />

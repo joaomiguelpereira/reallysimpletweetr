@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.json-2.0.jar"/>
 	<classpathentry kind="con" path="com.google.appengine.eclipse.core.GAE_CONTAINER"/>
@@ -12,6 +11,7 @@
 	<classpathentry kind="lib" path="F:/mvn_repo/org/easymock/easymock/2.2/easymock-2.2.jar"/>
 	<classpathentry kind="lib" path="F:/mvn_repo/commons-configuration/commons-configuration/1.6/commons-configuration-1.6.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/org.restlet.gwt-1.2-SNAPSHOT-LOCAL-BUILD.jar"/>
-	<classpathentry kind="lib" path="war/WEB-INF/lib/twitter4j-2.0.8.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/twitter4j-2.0.8.jar" sourcepath="war/WEB-INF/lib/twitter4j-2.0.8-sources.jar"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER/GWT (1)"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

@@ -55,6 +55,16 @@
 		<servlet-name>campaignsJobs</servlet-name>
 		<url-pattern>/cron/runcampaigns</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>clearRSSJob</servlet-name>
+		<servlet-class>org.nideasystems.webtools.zwitrng.server.jobs.RunRefreshRSSItems</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>clearRSSJob</servlet-name>
+		<url-pattern>/cron/clearrss</url-pattern>
+	</servlet-mapping>
 <!-- 
 	<security-constraint>
 		<web-resource-collection>
