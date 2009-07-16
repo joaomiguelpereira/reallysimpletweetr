@@ -32,6 +32,7 @@ public class TwitterUpdatesView extends
 	private InlineHTML topPreviousPageLink = null;
 	private InlineHTML topNextPageLink = null;
 	private FilterCriteriaDTO currentFilter = null;
+	private InlineHTML loadMoreLink = null;
 
 	@Override
 	public void init() {
@@ -56,7 +57,6 @@ public class TwitterUpdatesView extends
 
 			searchWidget = new TwitterUpdatesSearchToolWidget();
 			searchWidget.setCurrentFiler(currentFilter);
-
 			searchWidget.setController(getController());
 			searchWidget.init();
 			toolsPanel.add(searchWidget);
@@ -85,20 +85,21 @@ public class TwitterUpdatesView extends
 		if (currentFilter.getUpdatesType() == UpdatesType.DIRECT_RECEIVED
 				|| currentFilter.getUpdatesType() == UpdatesType.DIRECT_SENT) {
 			this.add(createPagingPanel());
+			
 		} else {
-			this.add(createLoadMorePanel());
+			loadMoreLink = createLoadMorePanel();
+			this.add(loadMoreLink);
 		}
 
 	}
 
-	private Widget createLoadMorePanel() {
+	private InlineHTML createLoadMorePanel() {
 
-		HorizontalPanel pagingOptions = new HorizontalPanel();
-		pagingOptions.setSpacing(5);
+		
 
-		InlineHTML loadMoreLink = new InlineHTML("More");
+		InlineHTML loadMoreLink = new InlineHTML("More?");
 		loadMoreLink.addStyleName("link");
-		pagingOptions.add(loadMoreLink);
+		
 		loadMoreLink.addClickHandler(new ClickHandler() {
 
 			@Override
@@ -108,7 +109,7 @@ public class TwitterUpdatesView extends
 			}
 			
 		});
-		return pagingOptions;
+		return loadMoreLink;
 	}
 
 	private HorizontalPanel createTopPaginPanel() {
@@ -200,6 +201,7 @@ public class TwitterUpdatesView extends
 		if (currentFilter.getUpdatesType() == UpdatesType.SEARCHES) {
 			searchWidget.refresh();
 		}
+		this.loadMoreLink.setText("Update?");
 		updatePaging();
 
 	}

@@ -4,12 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 
 
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.ChangeListener;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextArea;
@@ -97,9 +104,11 @@ public class FeedSetConfigurationWidget extends
 	public class EditableFeedSet extends
 			EditableItem<FeedSetDTO, FeedSetDTOList> {
 
+		private static final int DEFAULT_TEMPLATE_LIST_MAX_CHARS = 500;
 		private TextBox feedSetName;
 		private TextArea urlList;
-		private TextArea filter;
+		private InlineHTML  remainingChars=new InlineHTML(""+DEFAULT_TEMPLATE_LIST_MAX_CHARS);
+		
 
 		public EditableFeedSet(
 				AbstractListConfigurationWidget<FeedSetDTO, FeedSetDTOList> parent) {
@@ -110,28 +119,33 @@ public class FeedSetConfigurationWidget extends
 			contentPanel.add(feedSetName);
 
 			InlineHTML feedUrlTitle = new InlineHTML(
-					"Add URL for the feeds, one per line:");
+					"Add URLs for the feeds, one URL per line:");
 			urlList = new TextArea();
 
-			urlList.setWidth("580px");
-			// update.setHeight("35px");
+			urlList.setWidth(Constants.CONFIGURATION_INPUT_MAX_WIDTH);
 			urlList.addStyleName("input");
-			urlList.setVisibleLines(4);
+			urlList.setVisibleLines(5);
 
 			contentPanel.add(feedUrlTitle);
 			contentPanel.add(urlList);
+			contentPanel.add(remainingChars);
 
-			InlineHTML filterTitle = new InlineHTML(
-					"Use posts with words, one word per line:");
-			filter = new TextArea();
+			urlList.addKeyUpHandler(new KeyUpHandler() {
 
-			filter.setWidth("580px");
-			// update.setHeight("35px");
-			filter.addStyleName("input");
-			filter.setVisibleLines(4);
-
-			contentPanel.add(filterTitle);
-			contentPanel.add(filter);
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					updateRemainingChars();
+					HTMLHelper.adjustLines(urlList, HTMLHelper.getLines(urlList.getValue()).length, 5, 10);
+				}
+				
+			});
+			
+			
+		}
+		protected void updateRemainingChars() {
+			int remainingCharsNbr = DEFAULT_TEMPLATE_LIST_MAX_CHARS
+					- this.urlList.getValue().length();
+			remainingChars.setHTML("" + remainingCharsNbr);
 
 		}
 
@@ -159,14 +173,8 @@ public class FeedSetConfigurationWidget extends
 			}
 			this.urlList.setValue(sb.toString());
 
-			sb = new StringBuffer();
-			if ( dataObject.getFilter()!=null){
-				for (String filter : dataObject.getFilter()) {
-					sb.append(filter);
-					sb.append("\n");
-				}
-				this.filter.setValue(sb.toString());			
-			}
+
+			
 	
 
 		}
@@ -175,15 +183,15 @@ public class FeedSetConfigurationWidget extends
 		protected void save() {
 
 			boolean isValid = true;
-			if (this.feedSetName.getValue().trim().length() == 0) {
+			if (this.feedSetName.getValue().trim().length() == 0 ) {
 				MainController.getInstance().addError(
 						"Provide a name for the Feed Set");
 				isValid = false;
 			}
 
-			if (this.urlList.getValue().trim().length() == 0) {
+			if (this.urlList.getValue().trim().length() == 0 ||this.urlList.getValue().trim().length()>500) {
 				MainController.getInstance().addError(
-						"Provide at least one URL");
+						"Provide at least one URL and try not exceed the 500 characters");
 				isValid = false;
 			}
 
@@ -204,11 +212,7 @@ public class FeedSetConfigurationWidget extends
 					dto.addFeedUrl(url);
 				}
 
-				List<String> filterList = getLines(this.filter.getValue());
-				for (String filter : filterList) {
-					dto.addFilter(filter);
-				}
-
+				
 				setUpdating(true);
 				parent.saveObject(dto);
 
@@ -245,7 +249,7 @@ public class FeedSetConfigurationWidget extends
 				FeedSetDTO obj,
 				AbstractListConfigurationWidget<FeedSetDTO, FeedSetDTOList> parent,
 				boolean isEditable) {
-			super(parent, isEditable);
+			super(parent, isEditable, false);
 			setDataObject(obj);
 
 			
@@ -267,45 +271,23 @@ public class FeedSetConfigurationWidget extends
 
 		@Override
 		public String getSearchableText() {
-			return dataObject.getFilter() + " " + dataObject.getName();
+			return dataObject.getName();
 		}
 
 		@Override
 		protected void refresh() {
-			String nameText = "<span class=\"label\">Name:</span> "
-					+ dataObject.getName();
-			nameHtml.setHTML(nameText);
+			nameHtml.setHTML("<h3>"+this.dataObject.getName()+"</h3>");
 			
-
 			StringBuffer sb = new StringBuffer();
 			for (String feedUrl : this.dataObject.getFeedUrls()) {
-				sb.append("<a href=\"" + feedUrl + "\">"
-						+ getTruncatedUrl(feedUrl) + "</a>");
-				sb.append(",");
+				sb.append("<div>");
+				sb.append(MainController.jsParseText(feedUrl));
+				sb.append("</div>");
 			}
 			this.urlHtml.setHTML(sb.toString());
 
-			sb = new StringBuffer();
-			sb.append("Post links with words in title:");
-			if ( this.dataObject.getFilter()!=null) {
-				for (String filter : this.dataObject.getFilter()) {
-					sb.append(filter);
-					sb.append(",");
-				}
-				this.filterHtml.setHTML(sb.toString());
-			
-			}
-	
 		}
 
-		private String getTruncatedUrl(String feedUrl) {
-			String retFeed = feedUrl;
-			if (feedUrl.length() > 50) {
-				retFeed = feedUrl.substring(0, 50);
-				retFeed = retFeed + "...";
-			}
-			return retFeed;
-		}
 
 	}
 

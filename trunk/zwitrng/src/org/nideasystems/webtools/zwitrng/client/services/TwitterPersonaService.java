@@ -14,8 +14,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -41,17 +41,17 @@ public interface TwitterPersonaService extends RemoteService {
 	TemplateDTO saveTemplate(PersonaDTO model, TemplateDTO template)
 			throws Exception;
 
-	TemplateFragmentDTOList getTemplateFragments(PersonaDTO personaDto)
+	TemplateListDTOList getTemplateFragments(PersonaDTO personaDto)
 			throws Exception;
 
-	TemplateFragmentDTO createTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO object) throws Exception;
+	TemplateListDTO createTemplateFragment(PersonaDTO model,
+			TemplateListDTO object) throws Exception;
 
-	TemplateFragmentDTO saveTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO object) throws Exception;
+	TemplateListDTO saveTemplateFragment(PersonaDTO model,
+			TemplateListDTO object) throws Exception;
 
-	TemplateFragmentDTO deleteTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO dataObject) throws Exception;
+	TemplateListDTO deleteTemplateFragment(PersonaDTO model,
+			TemplateListDTO dataObject) throws Exception;
 
 	Map<String, String> getTemplateFragmentsLists(PersonaDTO model,
 			List<String> lists) throws Exception;

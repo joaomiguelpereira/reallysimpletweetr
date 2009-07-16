@@ -19,8 +19,10 @@ import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
+
+import com.google.appengine.api.datastore.Text;
 
 
 
@@ -51,20 +53,19 @@ public class TemplatePojo extends AbstractPojo {
 			throw new Exception("Persona not found");
 		}
 
-		// Create new Template
-		TemplateDO templateDom = new TemplateDO();
-		templateDom.setPersona(persona);
-		templateDom.setText(template.getTemplateText());
-		templateDom.setUsedTimes(new Long(0));
-
-		// Create the Tags
-		if (template.getTags() != null) {
-			for (String tag : template.getTags()) {
-				log.fine("creating Tag: " + tag);
-				templateDom.addTag(tag);
-
-			}
+		//Try to find the template by name
+		TemplateDO templateDom = businessHelper.getTemplateDao().findTemplate(persona, template.getName());
+		
+		if ( templateDom!=null) {
+			throw new Exception("A template with the name "+templateDom.getName()+" already exists");
 		}
+		
+		// Create new Template
+		templateDom = new TemplateDO();
+		templateDom.setPersona(persona);
+		templateDom.setText(new Text(template.getTemplateText()));
+		templateDom.setName(template.getName());
+		templateDom.setUsedTimes(new Long(0));
 		templateDom.setCreated(new Date());
 		templateDom.setModified(new Date());
 
@@ -150,12 +151,21 @@ public class TemplatePojo extends AbstractPojo {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
-		TemplateDTO retTemplate = null;
+		
 		if (persona == null) {
 			throw new Exception("Persona not found");
 		}
 
+		TemplateDO templateDom = businessHelper.getTemplateDao().findTemplate(persona, template.getName());
+		if (templateDom==null) {
+			throw new Exception("Template not found:"+template.getName());
+		}
+		
+		templateDom.setModified(new Date());
+		templateDom.setText(new Text(template.getTemplateText()));
+/*
 		try {
+			
 			retTemplate = businessHelper.getTemplateDao().saveTemplate(persona,
 					template);
 		} catch (Exception e) {
@@ -164,12 +174,12 @@ public class TemplatePojo extends AbstractPojo {
 			throw e;
 
 		}
-
+*/
 		// Just return was was given
-		return retTemplate;
+		return DataUtils.templateDtoFromDom(templateDom);
 	}
 
-	public TemplateFragmentDTOList getTemplateFragments(String name,
+	public TemplateListDTOList getTemplateFragments(String name,
 			String email) throws Exception {
 		// Find the persona
 		PersonaDO persona = businessHelper.getPersonaDao()
@@ -178,7 +188,7 @@ public class TemplatePojo extends AbstractPojo {
 			throw new Exception("Persona not found");
 		}
 
-		TemplateFragmentDTOList retList = new TemplateFragmentDTOList();
+		TemplateListDTOList retList = new TemplateListDTOList();
 		if (persona.getTemplateFragments() != null) {
 			for (TemplateFragmentDO frag : persona.getTemplateFragments()) {
 				retList.addTemplateFragmentList(DataUtils
@@ -190,8 +200,8 @@ public class TemplatePojo extends AbstractPojo {
 		return retList;
 	}
 
-	public TemplateFragmentDTO createTemplateFragment(
-			TemplateFragmentDTO object, String name, String email)
+	public TemplateListDTO createTemplateFragment(
+			TemplateListDTO object, String name, String email)
 			throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
@@ -202,7 +212,8 @@ public class TemplatePojo extends AbstractPojo {
 		// Check if exists any fragment with the same name
 		TemplateFragmentDO domFrag = businessHelper.getTemplateDao()
 				.findTemplateFragmentByName(persona, object.getName());
-		TemplateFragmentDTO returnDto = null;
+		TemplateListDTO returnDto = null;
+		
 		if (domFrag != null) {
 			throw new Exception("A Template Fragment exists with the Same name");
 		} else {
@@ -215,7 +226,7 @@ public class TemplatePojo extends AbstractPojo {
 		return returnDto;
 	}
 
-	public TemplateFragmentDTO saveTemplateFragment(TemplateFragmentDTO object,
+	public TemplateListDTO saveTemplateFragment(TemplateListDTO object,
 			String name, String email) throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
@@ -228,8 +239,8 @@ public class TemplatePojo extends AbstractPojo {
 				object);
 	}
 
-	public TemplateFragmentDTO deleteTemplateFragment(String name,
-			String email, TemplateFragmentDTO dataObject) throws Exception {
+	public TemplateListDTO deleteTemplateFragment(String name,
+			String email, TemplateListDTO dataObject) throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 

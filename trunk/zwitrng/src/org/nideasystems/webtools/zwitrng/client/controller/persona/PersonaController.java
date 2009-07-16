@@ -12,7 +12,7 @@ import org.nideasystems.webtools.zwitrng.client.view.configuration.CampaignsConf
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.FeedSetConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.SelectableItem;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateListsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
 import org.nideasystems.webtools.zwitrng.client.view.users.AutoFollowConfigurationPanel;
 import org.nideasystems.webtools.zwitrng.client.view.users.AutoFollowRuleCallback;
@@ -27,8 +27,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -179,18 +179,9 @@ public class PersonaController extends
 
 	}
 
-	public void createTemplate(String templateText, String tags,
+	public void createTemplate(TemplateDTO template,
 			final ConfigurationEditListener<TemplateDTO> callback) {
 
-		TemplateDTO template = new TemplateDTO();
-		template.setTemplateText(templateText);
-		// tags
-
-		String[] tagsArray = StringUtils.splitText(tags);
-		// end tags
-		for (String tag : tagsArray) {
-			template.addTags(tag);
-		}
 
 		try {
 			getServiceManager().getRPCService().createTemplate(this.getModel(),
@@ -274,11 +265,11 @@ public class PersonaController extends
 	}
 
 	public void getTemplateFragments(
-			final TemplateFragmentsConfigurationWidget templateFragmentsConfigurationWidget) {
+			final TemplateListsConfigurationWidget templateFragmentsConfigurationWidget) {
 		try {
 			getServiceManager().getRPCService().getTemplateFragmentList(
 					this.getModel(),
-					new AsyncCallback<TemplateFragmentDTOList>() {
+					new AsyncCallback<TemplateListDTOList>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -289,7 +280,7 @@ public class PersonaController extends
 						}
 
 						@Override
-						public void onSuccess(TemplateFragmentDTOList result) {
+						public void onSuccess(TemplateListDTOList result) {
 							templateFragmentsConfigurationWidget
 									.onSuccessLoadObjects(result);
 
@@ -305,12 +296,12 @@ public class PersonaController extends
 
 	}
 
-	public void createTemplateFragment(TemplateFragmentDTO object,
-			final TemplateFragmentsConfigurationWidget callback) {
+	public void createTemplateFragment(TemplateListDTO object,
+			final TemplateListsConfigurationWidget callback) {
 		try {
 			getServiceManager().getRPCService().createTemplateFragment(
 					this.getModel(), object,
-					new AsyncCallback<TemplateFragmentDTO>() {
+					new AsyncCallback<TemplateListDTO>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -319,7 +310,7 @@ public class PersonaController extends
 						}
 
 						@Override
-						public void onSuccess(TemplateFragmentDTO result) {
+						public void onSuccess(TemplateListDTO result) {
 							callback.onObjectCreated(result);
 
 						}
@@ -333,12 +324,12 @@ public class PersonaController extends
 
 	}
 
-	public void saveTemplateFragment(TemplateFragmentDTO object,
-			final ConfigurationEditListener<TemplateFragmentDTO> callback) {
+	public void saveTemplateFragment(TemplateListDTO object,
+			final ConfigurationEditListener<TemplateListDTO> callback) {
 		try {
 			getServiceManager().getRPCService().saveTemplateFragment(
 					this.getModel(), object,
-					new AsyncCallback<TemplateFragmentDTO>() {
+					new AsyncCallback<TemplateListDTO>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -347,7 +338,7 @@ public class PersonaController extends
 						}
 
 						@Override
-						public void onSuccess(TemplateFragmentDTO result) {
+						public void onSuccess(TemplateListDTO result) {
 							callback.onObjectSaved(result);
 
 						}
@@ -362,12 +353,12 @@ public class PersonaController extends
 	}
 
 	public void removeTemplateFragment(
-			TemplateFragmentDTO dataObject,
-			final SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> callbak) {
+			TemplateListDTO dataObject,
+			final SelectableItem<TemplateListDTO, TemplateListDTOList> callbak) {
 		try {
 			getServiceManager().getRPCService().deleteTemplateFragment(
 					this.getModel(), dataObject,
-					new AsyncCallback<TemplateFragmentDTO>() {
+					new AsyncCallback<TemplateListDTO>() {
 
 						@Override
 						public void onFailure(Throwable caught) {
@@ -376,7 +367,7 @@ public class PersonaController extends
 						}
 
 						@Override
-						public void onSuccess(TemplateFragmentDTO result) {
+						public void onSuccess(TemplateListDTO result) {
 							// callback.onSuccessDeleteObject(result);
 							callbak.onObjectRemoved(result);
 

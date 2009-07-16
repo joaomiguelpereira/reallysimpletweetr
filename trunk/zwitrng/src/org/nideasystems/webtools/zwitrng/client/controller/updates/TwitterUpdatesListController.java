@@ -53,11 +53,11 @@ public class TwitterUpdatesListController extends
 		setView(new TwitterUpdatesListView());
 		getView().init();
 
-		loadFriendsTweets();
+		loadTabs();
 
 	}
 
-	private void loadFriendsTweets() {
+	private void loadTabs() {
 
 		// Create Friends
 		this.friendsTwitterUpdatesController = new TwitterUpdatesController();
@@ -71,8 +71,10 @@ public class TwitterUpdatesListController extends
 		friendsFilter.setUpdatesType(UpdatesType.FRIENDS);
 		friendsFilter.setSearchText("friends");
 		this.friendsTwitterUpdatesController.setCurrentFilter(friendsFilter);
-
 		this.friendsTwitterUpdatesController.init();
+		
+		
+		
 		Image friendsTabImage = new Image(Constants.FRIENDS_TAB);
 		friendsTabImage.setTitle("Friends Timeline");
 		friendsTabImage.setHeight(Constants.INSIDE_TABE_ICON_HEIGHT);
@@ -82,7 +84,7 @@ public class TwitterUpdatesListController extends
 				.add(this.friendsTwitterUpdatesController.getView(), friendsTabImage);
 
 		getView().selectTab(0);
-		loadUpdateList(this.friendsTwitterUpdatesController);
+		//loadUpdateList(this.friendsTwitterUpdatesController);
 		activeController = this.friendsTwitterUpdatesController;
 
 		// Create Mentions
@@ -116,10 +118,10 @@ public class TwitterUpdatesListController extends
 		this.searchesTwitterUpdatesController.setParentController(this);
 		this.searchesTwitterUpdatesController
 				.setServiceManager(getServiceManager());
-		FilterCriteriaDTO seachesFlter = new FilterCriteriaDTO();
-		seachesFlter.setUpdatesType(UpdatesType.SEARCHES);
-		seachesFlter.setSearchText("default");
-		this.searchesTwitterUpdatesController.setCurrentFilter(seachesFlter);
+		FilterCriteriaDTO seachesFilter = new FilterCriteriaDTO();
+		seachesFilter.setUpdatesType(UpdatesType.SEARCHES);
+		seachesFilter.setSearchText("");
+		this.searchesTwitterUpdatesController.setCurrentFilter(seachesFilter);
 
 		this.searchesTwitterUpdatesController.init();
 
@@ -190,16 +192,17 @@ public class TwitterUpdatesListController extends
 						activeController.pause();
 					}
 					if (mentionsTwitterUpdatesController.getModel() == null) {
-						loadUpdateList(mentionsTwitterUpdatesController);
+						//loadUpdateList(mentionsTwitterUpdatesController);
 					}
 					activeController = mentionsTwitterUpdatesController;
 
 				} else if (event.getSelectedItem() == 0) {
+					
 					if (activeController != null) {
 						activeController.pause();
 					}
 					if (friendsTwitterUpdatesController.getModel() == null) {
-						loadUpdateList(friendsTwitterUpdatesController);
+						//loadUpdateList(friendsTwitterUpdatesController);
 					}
 					activeController = friendsTwitterUpdatesController;
 				} else if (event.getSelectedItem() == 2) {
@@ -207,7 +210,7 @@ public class TwitterUpdatesListController extends
 						activeController.pause();
 					}
 					if (searchesTwitterUpdatesController.getModel() == null) {
-						loadUpdateList(searchesTwitterUpdatesController);
+						//loadUpdateList(searchesTwitterUpdatesController);
 
 					}
 					activeController = searchesTwitterUpdatesController;
@@ -216,7 +219,7 @@ public class TwitterUpdatesListController extends
 						activeController.pause();
 					}
 					if (dmTwitterUpdatesController.getModel() == null) {
-						loadUpdateList(dmTwitterUpdatesController);
+						//loadUpdateList(dmTwitterUpdatesController);
 					}
 					activeController = dmTwitterUpdatesController;
 				} else if (event.getSelectedItem() == 4 ) {
@@ -246,6 +249,7 @@ public class TwitterUpdatesListController extends
 
 	private void loadUpdateList(final TwitterUpdatesController updatesController) {
 
+		
 		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
 		updatesController.startProcessing();
 		

@@ -10,7 +10,7 @@ import javax.jdo.Query;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
 
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.KeyFactory;
@@ -59,20 +59,11 @@ public class TemplateDAO extends BaseDAO {
 			// persona.getTemplates().remove(templateDo);
 			templateDo.setModified(new Date());
 			
-			templateDo.setText(template.getTemplateText());
+			templateDo.setText(new Text(template.getTemplateText()));
 
 			if (templateDo.getUsedTimes()==null) {
 				templateDo.setUsedTimes(new Long(0));
 			}
-			// Tags
-			if (templateDo.getTags() != null) {
-				templateDo.getTags().clear();
-			}
-
-			for (String tag : template.getTags()) {
-				templateDo.addTag(tag.trim());
-			}
-
 			returnTemplateDto = DataUtils.templateDtoFromDom(templateDo);
 		}
 		return returnTemplateDto;
@@ -111,27 +102,23 @@ public class TemplateDAO extends BaseDAO {
 	 * @param object
 	 * @return
 	 */
-	public TemplateFragmentDTO createTemplateFragment(PersonaDO persona,
-			TemplateFragmentDTO object) {
+	public TemplateListDTO createTemplateFragment(PersonaDO persona,
+			TemplateListDTO object) {
 
 		TemplateFragmentDO fragDo = new TemplateFragmentDO();
 		fragDo.setName(object.getName());
 		fragDo.setText(object.getList());
-		for (String tag : object.getTags()) {
-			fragDo.addTag(tag);
-		}
+		
 		fragDo.setCreated(new Date());
 		fragDo.setModified(new Date());
 		fragDo.setPersona(persona);
-		fragDo.setMaintainOrder(object.getMaintainOrder());
-		fragDo.setRepeatInCampaignAndTemplate(object.getRepeatInCampaignAndTemplate());
 		persona.addtemplateFragment(fragDo);
 		
 		return DataUtils.templateFragmentDtoFromDom(fragDo);
 	}
 
-	public TemplateFragmentDTO saveTemplateFragment(PersonaDO persona,
-			TemplateFragmentDTO object) throws Exception{
+	public TemplateListDTO saveTemplateFragment(PersonaDO persona,
+			TemplateListDTO object) throws Exception{
 
 		TemplateFragmentDO domFrag = findTemplateFragmentByName(persona, object.getName());
 		
@@ -141,21 +128,14 @@ public class TemplateDAO extends BaseDAO {
 		
 		//domFrag.setName(object.getName());
 		domFrag.setText(object.getList());
-		if (domFrag.getTags()!=null) {
-			domFrag.getTags().clear();
-		}
 
-		for (String tag : object.getTags()) {
-			domFrag.addTag(tag);
-		}
-		domFrag.setMaintainOrder(object.getMaintainOrder());
-		domFrag.setRepeatInCampaignAndTemplate(object.getRepeatInCampaignAndTemplate());
-		domFrag.setModified(new Date());
+		
+				domFrag.setModified(new Date());
 		return DataUtils.templateFragmentDtoFromDom(domFrag);
 	}
 
 	public void deleteTemplateFragment(PersonaDO persona,
-			TemplateFragmentDTO dataObject) {
+			TemplateListDTO dataObject) {
 		log.fine("Deleting template: " + dataObject.getList());
 		
 		Key key = KeyFactory.createKey(persona.getKey(), TemplateFragmentDO.class
@@ -216,7 +196,7 @@ public class TemplateDAO extends BaseDAO {
 			for (String tag:tags) {
 				log.fine("Template: "+template.getText());
 				add = false;
-				if ( template.getTags().contains(tag)) {
+				if ( template.getName().contains(tag)) {
 					add = true;
 				}
 				if ( add ) {
@@ -231,6 +211,25 @@ public class TemplateDAO extends BaseDAO {
 		//Find the templates for the filter
 		
 		
+	}
+
+	public TemplateDO findTemplate(PersonaDO persona, String templateName) throws Exception {
+		Query queryTemplate = pm.newQuery(TemplateDO.class);
+		queryTemplate.setFilter("persona==thePersona && name==theName");
+		queryTemplate.declareParameters("PersonaDO thePersona, String theName");
+		queryTemplate.setUnique(true);
+		
+		TemplateDO template = null;
+		
+		try {
+			template = (TemplateDO)queryTemplate.execute(persona, templateName);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		
+		return template;
 	}
 
 }

@@ -20,8 +20,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
@@ -170,10 +170,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public TemplateFragmentDTOList getTemplateFragments(PersonaDTO personaDto)
+	public TemplateListDTOList getTemplateFragments(PersonaDTO personaDto)
 			throws Exception {
 		startTransaction(true);
-		TemplateFragmentDTOList outTemplateFragList = getBusinessHelper()
+		TemplateListDTOList outTemplateFragList = getBusinessHelper()
 				.getTemplatePojo().getTemplateFragments(personaDto.getName(),
 						user.getEmail());
 		endTransaction();
@@ -181,12 +181,12 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public TemplateFragmentDTO createTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO object) throws Exception {
+	public TemplateListDTO createTemplateFragment(PersonaDTO model,
+			TemplateListDTO object) throws Exception {
 
 		startTransaction(true);
 
-		TemplateFragmentDTO returnFrag = getBusinessHelper().getTemplatePojo()
+		TemplateListDTO returnFrag = getBusinessHelper().getTemplatePojo()
 				.createTemplateFragment(object, model.getName(),
 						user.getEmail());
 		endTransaction();
@@ -194,10 +194,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public TemplateFragmentDTO saveTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO object) throws Exception {
+	public TemplateListDTO saveTemplateFragment(PersonaDTO model,
+			TemplateListDTO object) throws Exception {
 		startTransaction(true);
-		TemplateFragmentDTO returnFrag = getBusinessHelper().getTemplatePojo()
+		TemplateListDTO returnFrag = getBusinessHelper().getTemplatePojo()
 				.saveTemplateFragment(object, model.getName(), user.getEmail());
 
 		endTransaction();
@@ -205,10 +205,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public TemplateFragmentDTO deleteTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO dataObject) throws Exception {
+	public TemplateListDTO deleteTemplateFragment(PersonaDTO model,
+			TemplateListDTO dataObject) throws Exception {
 		startTransaction(true);
-		TemplateFragmentDTO outTemplateFrag = getBusinessHelper()
+		TemplateListDTO outTemplateFrag = getBusinessHelper()
 				.getTemplatePojo().deleteTemplateFragment(model.getName(),
 						user.getEmail(), dataObject);
 		endTransaction();

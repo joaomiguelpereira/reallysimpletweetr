@@ -9,7 +9,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -51,7 +50,8 @@ public class TwitterUpdatesSearchToolWidget extends AbstractVerticalPanelView<Tw
 			public void onClick(ClickEvent event) {
 				//Window.alert(search.getValue());
 				//Window.alert(currentFiler.getSearchText());
-				if (!search.getValue().isEmpty() && !search.getValue().equals(currentFilter.getSearchText())) {
+				if (!search.getValue().isEmpty() ) {
+					
 					currentFilter.setSearchText(search.getValue());
 					currentFilter.reset();
 					

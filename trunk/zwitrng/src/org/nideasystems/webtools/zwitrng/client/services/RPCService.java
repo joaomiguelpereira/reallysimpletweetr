@@ -15,8 +15,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
@@ -132,28 +132,28 @@ public class RPCService implements IService {
 
 
 	public void getTemplateFragmentList(PersonaDTO model,
-			AsyncCallback<TemplateFragmentDTOList> asyncCallback) throws Exception {
+			AsyncCallback<TemplateListDTOList> asyncCallback) throws Exception {
 		this.personaService.getTemplateFragments(model,asyncCallback);
 		
 	}
 
 	public void createTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO object,
-			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception{
+			TemplateListDTO object,
+			AsyncCallback<TemplateListDTO> asyncCallback) throws Exception{
 		this.personaService.createTemplateFragment(model, object, asyncCallback);
 		
 	}
 
 	public void saveTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO object,
-			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception{
+			TemplateListDTO object,
+			AsyncCallback<TemplateListDTO> asyncCallback) throws Exception{
 		this.personaService.saveTemplateFragment(model, object, asyncCallback);
 		
 	}
 
 	public void deleteTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO dataObject,
-			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception{
+			TemplateListDTO dataObject,
+			AsyncCallback<TemplateListDTO> asyncCallback) throws Exception{
 		this.personaService.deleteTemplateFragment(model, dataObject, asyncCallback);
 		
 	}

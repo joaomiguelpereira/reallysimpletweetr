@@ -4,7 +4,7 @@ import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.persona.PersonaController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.CampaignsConfigurationView;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateFragmentsConfigurationWidget;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateListsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
@@ -50,7 +50,7 @@ public class ConfigurationController extends AbstractController<IDTO, CampaignsC
 	}
 
 	public void getTemplateFragments(
-			TemplateFragmentsConfigurationWidget templateFragmentsConfigurationWidget) {
+			TemplateListsConfigurationWidget templateFragmentsConfigurationWidget) {
 		
 		((PersonaController)getParentController()).getTemplateFragments(templateFragmentsConfigurationWidget);		
 		

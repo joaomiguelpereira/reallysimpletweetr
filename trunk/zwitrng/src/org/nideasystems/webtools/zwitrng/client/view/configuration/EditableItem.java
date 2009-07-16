@@ -36,7 +36,7 @@ public abstract class EditableItem<T extends IDTO, L extends IDTO> extends
 		this.addStyleName("list_item_selected");
 		contentPanel = new VerticalPanel();
 		this.add(contentPanel);
-		this.setWidth("600px");
+		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
 
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		toolsPanel.setSpacing(5);

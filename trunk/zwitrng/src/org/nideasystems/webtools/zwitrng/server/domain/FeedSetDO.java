@@ -26,8 +26,7 @@ public class FeedSetDO implements Serializable {
 	private Key key;
 	@Persistent
 	private String name;
-	@Persistent
-	private List<String> filter;
+
 	@Persistent
 	private PersonaDO persona;
 	
@@ -57,12 +56,7 @@ public class FeedSetDO implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<String> getFilter() {
-		return filter;
-	}
-	public void setFilter(List<String> filter) {
-		this.filter = filter;
-	}
+	
 	public static long getSerialVersionUID() {
 		return serialVersionUID;
 	}
@@ -74,12 +68,7 @@ public class FeedSetDO implements Serializable {
 		this.feedUrls.add(url);
 	}
 	
-	public void addFilter(String filter) {
-		if (this.filter == null) {
-			this.filter = new ArrayList<String>();
-		}
-		this.filter.add(filter);
-	}
+	
 	
 	
 	public void setPersona(PersonaDO persona) {

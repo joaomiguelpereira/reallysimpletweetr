@@ -1,23 +1,23 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
-import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.configuration.ConfigurationController;
 import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.ui.FlexTable;
-
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.user.client.ui.DecoratedTabPanel;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Image;
-import com.google.gwt.user.client.ui.InlineHTML;
-import com.google.gwt.user.client.ui.VerticalPanel;
+
 
 public class CampaignsConfigurationView extends AbstractVerticalPanelView<ConfigurationController>{
 
-	private ExpandablePanel selectedPanel = null;
+
+	
+	TemplatesConfigurationWidget templatesConfWidget;
+	TemplateListsConfigurationWidget templatesFragmentsConfigWidget ;
+	FeedSetConfigurationWidget feedSetcw;
+	CampaignsConfigurationWidget ccw;
+	
+	 
 	@Override
 	public void init() {
 		this.setSpacing(1);
@@ -25,45 +25,96 @@ public class CampaignsConfigurationView extends AbstractVerticalPanelView<Config
 		//Add a tab
 		DecoratedTabPanel options = new DecoratedTabPanel();
 		options.setAnimationEnabled(true);
-		options.add(new InlineHTML("tabe"), "Campaigns");
-		options.add(new InlineHTML("tabe"), "Templates");
-		options.add(new InlineHTML("tabe"), "Lists");
-		options.add(new InlineHTML("tabe"), "Feeds");
+		
+		
+		templatesConfWidget = new TemplatesConfigurationWidget();
+		templatesFragmentsConfigWidget = new TemplateListsConfigurationWidget();
+		feedSetcw = new FeedSetConfigurationWidget();
+		ccw = new CampaignsConfigurationWidget();
+		
+		
+		options.add(ccw, "Campaigns");
+		options.add(templatesConfWidget, "Templates");
+		options.add(templatesFragmentsConfigWidget, "Lists");
+		options.add(feedSetcw, "Feeds");
 		
 		
 		this.add(options);
 		
+		options.addSelectionHandler(new SelectionHandler<Integer>() {
+
+			@Override	
+			public void onSelection(SelectionEvent<Integer> event) {
+				if (event.getSelectedItem()==0) {
+					if (!ccw.isInitialized()) {
+						ccw.init();
+						ccw.loadData();
+					}
+					
+				}
+				if (event.getSelectedItem()==1) {
+					if (!templatesConfWidget.isInitialized()) {
+						templatesConfWidget.init();
+						templatesConfWidget.loadData();
+						
+					}
+					
+				}
+
+				if (event.getSelectedItem()==2) {
+					if (!templatesFragmentsConfigWidget.isInitialized() ) {
+						templatesFragmentsConfigWidget.init();
+						templatesFragmentsConfigWidget.loadData();
+						
+					}
+					
+				}
+
+				if (event.getSelectedItem()==3) {
+					if (!feedSetcw.isInitialized()) {
+						feedSetcw.init();
+						feedSetcw.loadData();
+						
+					}
+					
+				}
+
+				
+				
+			}
+			
+		});
 		
 		
 		
-		ExpandablePanel templates = new ExpandablePanel();
+		/*ExpandablePanel templates = new ExpandablePanel();
 		templates.setTitleText("Configure Templates");
 		
 		TemplatesConfigurationWidget templatesConfWidget = new TemplatesConfigurationWidget();
 		//templatesConfWidget.setController(getController());
 		templates.setConfigWidget(templatesConfWidget);
-		this.add(templates);
+		this.add(templates);*/
 		
 		
-		ExpandablePanel recommendations = new ExpandablePanel();
+		/*ExpandablePanel recommendations = new ExpandablePanel();
 		recommendations.setTitleText("Configure template fragments");
 		TemplateFragmentsConfigurationWidget templatesFragmentsConfigWidget = new TemplateFragmentsConfigurationWidget();
 		//templatesFragmentsConfigWidget.setController(getController());
 		recommendations.setConfigWidget(templatesFragmentsConfigWidget);
 		this.add(recommendations);
+		*/
 		
-		
-		ExpandablePanel feedSet = new ExpandablePanel();
+		/*ExpandablePanel feedSet = new ExpandablePanel();
 		feedSet.setTitleText("Configure Feeds");
 		FeedSetConfigurationWidget feedSetcw = new FeedSetConfigurationWidget();
 		feedSet.setConfigWidget(feedSetcw);
 		this.add(feedSet);
-		
-		ExpandablePanel campaingns = new ExpandablePanel();
+		*/
+		/*ExpandablePanel campaingns = new ExpandablePanel();
 		campaingns.setTitleText("Configure campaigns");
 		CampaignsConfigurationWidget ccw = new CampaignsConfigurationWidget();
 		campaingns.setConfigWidget(ccw);
-		this.add(campaingns);
+		this.add(campaingns);*/
 
 		
 
@@ -75,7 +126,7 @@ public class CampaignsConfigurationView extends AbstractVerticalPanelView<Config
 		
 	}
 	
-	private class ExpandablePanel extends VerticalPanel  {
+	/*private class ExpandablePanel extends VerticalPanel  {
 		AbstractListConfigurationWidget configWidget = null;
 		HorizontalPanel header = null;
 		String headerText = "";
@@ -132,7 +183,7 @@ public class CampaignsConfigurationView extends AbstractVerticalPanelView<Config
 			
 		}
 
-		private void selectPanel() {
+		/*private void selectPanel() {
 			
 			if ( !isInitialized) {
 				init();
@@ -152,8 +203,8 @@ public class CampaignsConfigurationView extends AbstractVerticalPanelView<Config
 				selectedPanel = null;
 			
 			}
-		}
-		private void init() {
+		}*/
+		/*private void init() {
 			configWidget.init();
 			mainContent.add(configWidget);
 			isInitialized = true;
@@ -164,6 +215,6 @@ public class CampaignsConfigurationView extends AbstractVerticalPanelView<Config
 			headerTextHtml.setHTML(text);
 			
 		}
-	}
+	}*/
 
 }

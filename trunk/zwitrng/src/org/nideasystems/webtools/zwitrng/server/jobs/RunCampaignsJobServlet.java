@@ -172,7 +172,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
 			// Send it
 			// Get the text to send in the Tweet
-			String updateStatus = template.getText();
+			String updateStatus = template.getText().getValue();
 			this.outBuffer.append("<div>Using Template Text :" + updateStatus
 					+ "<div>");
 			// Check if it has a list to load

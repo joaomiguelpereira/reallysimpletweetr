@@ -38,6 +38,7 @@ public class Constants {
 	public static final String MAIN_TABBED_PANEL_WIDTH = "720px";
 	public static final String MAIN_LIST_ITEM_WIDTH = "700px";
 	public static final String MAIN_LIST_ITEM_MIN_HEIGHT = "60px";
+	public static final String CONFIGURATION_INPUT_MAX_WIDTH = "650px";
 
 	
 	
