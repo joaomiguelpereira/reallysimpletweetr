@@ -1,6 +1,8 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
 import java.util.Map;
+
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
@@ -22,14 +24,12 @@ import com.google.gwt.user.client.ui.TextBox;
 public class TemplatesConfigurationWidget extends
 		AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> {
 
-
 	@Override
 	public void init() {
 		super.init();
 		if (isEditable) {
 			super.addToolBarNewItemMenu("New Template");
 		}
-		
 
 	}
 
@@ -53,28 +53,30 @@ public class TemplatesConfigurationWidget extends
 
 	@Override
 	public void saveObject(TemplateDTO object) {
-	
+
 		if (object.getId() == -1) {
 			saveNewTemplate(object);
-			
+
 		} else {
 			saveExistingTemplate(object);
 		}
 
 	}
-	
-	private void saveExistingTemplate(TemplateDTO object) {
-		
-		MainController.getInstance().getCurrentPersonaController().saveTemplate(object, getSelectedItem());
 
-		
+	private void saveExistingTemplate(TemplateDTO object) {
+
+		MainController.getInstance().getCurrentPersonaController()
+				.saveTemplate(object, getSelectedItem());
+
 	}
 
 	private void saveNewTemplate(TemplateDTO template) {
-		
+
 		isProcessing(true);
-		MainController.getInstance().getCurrentPersonaController().createTemplate(template.getTemplateText(), template.getTagsAsText(), this);
+		MainController.getInstance().getCurrentPersonaController()
+				.createTemplate(template, this);
 	}
+
 	@Override
 	public void onSuccessLoadObjects(TemplateDTOList result) {
 		isProcessing(false);
@@ -90,13 +92,10 @@ public class TemplatesConfigurationWidget extends
 	@Override
 	protected void removeItem(
 			SelectableItem<TemplateDTO, TemplateDTOList> theInstance) {
-		MainController.getInstance().getCurrentPersonaController().removeTemplate(theInstance.dataObject, theInstance);
-		
-		
+		MainController.getInstance().getCurrentPersonaController()
+				.removeTemplate(theInstance.dataObject, theInstance);
+
 	}
-
-	
-
 
 	@Override
 	protected EditableItem<TemplateDTO, TemplateDTOList> createEditableItem() {
@@ -104,14 +103,14 @@ public class TemplatesConfigurationWidget extends
 		return new EditableTemplate(this);
 	}
 
-
 	// //////////////
 	// Private
 	// /////////////////////
 	private void loadTemplates() {
 		isProcessing(true);
 		contentPanel.clear();
-		MainController.getInstance().getCurrentPersonaController().loadTemplates(this);
+		MainController.getInstance().getCurrentPersonaController()
+				.loadTemplates(this);
 
 	}
 
@@ -121,6 +120,7 @@ public class TemplatesConfigurationWidget extends
 		isProcessing(false);
 
 	}
+
 	/**
 	 * Widget for the edit template
 	 * 
@@ -130,25 +130,37 @@ public class TemplatesConfigurationWidget extends
 	public class EditableTemplate extends
 			EditableItem<TemplateDTO, TemplateDTOList> {
 
+		private static final int DEFAULT_TEMPLATE_MAX_CHARS = 4096;
 		// private TemplateDTO template = null;
 		private TextArea templateText = null;
 		private InlineHTML remainingChars = null;
-		private TextBox templateTags = null;
+		private TextBox templateName = null;
 
-		
 		public EditableTemplate(
 				AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> parent) {
 			super(parent);
+			if (parent.isCreatingNew) {
+				contentPanel.add(new InlineHTML("<h3>Create new Template</h3>"));
+			} else {
+				contentPanel.add(new InlineHTML("<h3>Edit Template</h3>"));
+			}
+			
 
+			contentPanel.add(new InlineHTML("Name"));
+			templateName = new TextBox();
+			templateName.setMaxLength(25);
+			contentPanel.add(templateName);
+			
 			// Create the main wrapper pannel
-			contentPanel.add(new InlineHTML("Template text:"));
+			contentPanel.add(new InlineHTML("Template text: (One tweet per line.)"));
+			contentPanel.add(new InlineHTML("Use [xxx|yyy] to insert inline random lists of words. Use {{listName}} to insert a pre-defined random list of words. User {username_n} to insert the screenname for nth user. Use ((feed)) to include a feed."));
 
 			// Create the TextArea where the template text is
 			templateText = new TextArea();
-			templateText.setWidth("580px");
+			templateText.setWidth(Constants.CONFIGURATION_INPUT_MAX_WIDTH);
 			// update.setHeight("35px");
 			templateText.addStyleName("input");
-			templateText.setVisibleLines(2);
+			templateText.setVisibleLines(10);
 			contentPanel.add(templateText);
 
 			// Add remaining char info
@@ -162,17 +174,18 @@ public class TemplatesConfigurationWidget extends
 
 			// Add tags
 
-			contentPanel.add(new InlineHTML("Add tags separaded by spaces:"));
-			templateTags = new TextBox();
-			contentPanel.add(templateTags);
-
+		
+			
 			templateText.addKeyUpHandler(new KeyUpHandler() {
 
 				@Override
 				public void onKeyUp(KeyUpEvent event) {
 					updateRemainingChars();
+					adjustLines(templateText);
 					
 				}
+
+				
 				
 			});
 			shortLinksLink.addClickHandler(new ClickHandler() {
@@ -189,8 +202,14 @@ public class TemplatesConfigurationWidget extends
 			
 		}
 
+		private void adjustLines(TextArea area) {
+			int lines = HTMLHelper.getLines(area.getValue()).length;
+			HTMLHelper.adjustLines(area, lines, 10, 25);
+
+		}
+
 		protected void updateRemainingChars() {
-			int remainingCharsNbr = SendUpdateWidget.DEFAULT_TWEET_SIZE
+			int remainingCharsNbr = DEFAULT_TEMPLATE_MAX_CHARS
 					- this.templateText.getValue().length();
 			remainingChars.setHTML("" + remainingCharsNbr);
 
@@ -198,28 +217,39 @@ public class TemplatesConfigurationWidget extends
 
 		protected void save() {
 
-			if ( templateText.getValue().trim().isEmpty() ||  templateText.getValue().length()>500) {
-				MainController.getInstance().addError("Provide a template Text with no more than 500 chars");
-			} else {
+			boolean hasErrors = false;
+			if (templateText.getValue().trim().isEmpty()
+					|| templateText.getValue().length() > DEFAULT_TEMPLATE_MAX_CHARS) {
+				MainController.getInstance().addError(
+						"Provide a template Text with no more than "
+								+ DEFAULT_TEMPLATE_MAX_CHARS + " chars");
+				hasErrors = true;
+			}
+			if (templateName.getValue().trim().isEmpty()) {
+				MainController.getInstance().addError(
+						"Provide a name for the template.");
+				hasErrors = true;
+			}
+			if (!hasErrors) {
 				TemplateDTO template = new TemplateDTO();
 				template.setTemplateText(templateText.getValue());
-				if (dataObject != null ) {
+				if (dataObject != null) {
 					template.setId(dataObject.getId());
 				}
-				
-				
-				String[] tags = StringUtils.splitText(templateTags.getValue());
-				for (String tag : tags) {
-					template.addTags(tag);
-				}
+
+				template.setName(templateName.getValue().trim());
+				// Ignore Tags
+				// String[] tags =
+				// StringUtils.splitText(templateTags.getValue());
+				// for (String tag : tags) {
+				// template.addTags(tag);
+				// }
 				setUpdating(true);
 				parent.saveObject(template);
-				
+
 			}
 
 		}
-
-		
 
 		@Override
 		public void setVisible(boolean visible) {
@@ -230,38 +260,37 @@ public class TemplatesConfigurationWidget extends
 
 		}
 
-		
-
-		
-
 		@Override
 		public void onLinksShortened(Map<String, String> result) {
+
 			if (result != null) {
 				String newStr = HTMLHelper.get().replaceText(
 						templateText.getValue(), result);
 				templateText.setFocus(true);
-				templateText.setValue(newStr + " ");
+				templateText.setValue(newStr);
 				updateRemainingChars();
-
 			}
 			this.setUpdating(false);
-
 		}
 
 		@Override
 		public void focus() {
-			templateText.setFocus(true);
-
+			if (parent.isCreatingNew) {
+				templateName.setFocus(true);
+			} else {
+				templateText.setFocus(true);
+			}
 		}
 
 		@Override
 		public void refresh() {
-			this.templateTags.setValue(dataObject.getTagsAsText());
+
+			this.templateName.setValue(dataObject.getName());
+			this.templateName.setEnabled(false);
 			this.templateText.setValue(dataObject.getTemplateText());
 			this.templateText.setFocus(true);
 			updateRemainingChars();
-			
-			
+
 		}
 	}
 
@@ -279,25 +308,30 @@ public class TemplatesConfigurationWidget extends
 
 		HorizontalPanel textPanel = null;
 		HorizontalPanel tags = null;
-		private HTML tagsHtml = null;
+		private HTML additionalInfoHtml = null;
 		private HTML textHtml = null;
 
 		// EditableTemplate editableTemplate = null;
 
-		public SelectableTemplate(TemplateDTO theTemplate,
-				AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> theParent, boolean isEditable) {
+		public SelectableTemplate(
+				TemplateDTO theTemplate,
+				AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> theParent,
+				boolean isEditable) {
 			// Set the parent
-			super(theParent,isEditable);
+			super(theParent, isEditable, false);
 			setDataObject(theTemplate);
 
+			content
+					.add(new InlineHTML("<h3>" + theTemplate.getName()
+							+ "</h2>"));
 			textPanel = new HorizontalPanel();
 			textHtml = new HTML();
 			textPanel.add(textHtml);
 
 			tags = new HorizontalPanel();
-			tagsHtml = new HTML();
-			tags.add(tagsHtml);
-			tagsHtml.addStyleName("tags");
+			additionalInfoHtml = new HTML();
+			tags.add(additionalInfoHtml);
+			additionalInfoHtml.addStyleName("tags");
 
 			content.add(textPanel);
 			content.add(tags);
@@ -310,42 +344,24 @@ public class TemplatesConfigurationWidget extends
 		@Override
 		protected void refresh() {
 
-			textHtml.setHTML(StringUtils.jsParseText(dataObject
-					.getTemplateText()));
+			String tempText = StringUtils.jsParseText(dataObject
+					.getTemplateText());
 
 			StringBuffer sb = new StringBuffer();
-			sb.append("Tags: ");
-			for (String tag : dataObject.getTags()) {
-				sb.append(tag);
-				sb.append(" ");
+			for (String line : HTMLHelper.getLines(tempText)) {
+				sb.append("<div>" + line + "</div>");
 			}
-			sb.append("<div>[template used "+dataObject.getUsedTimes()+" times]</div>");
+			textHtml.setHTML(sb.toString());
 
-			tagsHtml.setHTML(sb.toString());
+			additionalInfoHtml.setHTML("<div>[template used "
+					+ dataObject.getUsedTimes() + " times]</div>");
 		}
-
-
-		//protected void select(SelectableTemplate templwidget) {
-		//	parent.onSelect(this);
-		//}
-
-		
-
 
 		@Override
 		public String getSearchableText() {
-			return dataObject.getTagsAsText() + " "
-					+ dataObject.getTemplateText();
+			return dataObject.getName() + " " + dataObject.getTemplateText();
 		}
-
-		
 
 	}
 
-	
-
-	
-
-
-	
 }

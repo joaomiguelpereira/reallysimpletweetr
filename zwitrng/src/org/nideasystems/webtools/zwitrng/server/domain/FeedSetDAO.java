@@ -43,7 +43,7 @@ public class FeedSetDAO extends BaseDAO{
 		
 		feedSetDom.setModified(new Date());
 		feedSetDom.setFeedUrls(object.getFeedUrls());
-		feedSetDom.setFilter(object.getFilter());
+		
 		
 		
 		return DataUtils.feedSetDtoFromDo(feedSetDom);
@@ -57,7 +57,7 @@ public class FeedSetDAO extends BaseDAO{
 		
 		dom.setName(object.getName());
 		dom.setFeedUrls(object.getFeedUrls());
-		dom.setFilter(object.getFilter());
+		
 		dom.setPersona(persona);
 		persona.addFeedSet(dom);
 		

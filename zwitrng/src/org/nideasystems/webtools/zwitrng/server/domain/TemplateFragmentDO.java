@@ -36,16 +36,11 @@ public class TemplateFragmentDO implements Serializable {
 	@Persistent
 	private PersonaDO persona;
 	
-	@Persistent
-	private List<String> tags;
 	
 	@Persistent
 	private Date created;
 	
-	@Persistent
-	private Boolean maintainOrder;
-	@Persistent
-	private Boolean repeatInCampaignAndTemplate;
+	
 	@Persistent
 	private Date modified;
 
@@ -81,13 +76,6 @@ public class TemplateFragmentDO implements Serializable {
 		this.persona = persona;
 	}
 
-	public List<String> getTags() {
-		return tags;
-	}
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
-	}
 
 	public Date getCreated() {
 		return created;
@@ -105,30 +93,5 @@ public class TemplateFragmentDO implements Serializable {
 		this.modified = modified;
 	}
 
-	public void addTag(String tag) {
-		if ( this.tags == null ) {
-			this.tags = new ArrayList<String>();
-		}
-		this.tags.add(tag);
-		
-	}
-
-	public void setMaintainOrder(Boolean maintainOrder) {
-		this.maintainOrder = maintainOrder;
-	}
-
-	public Boolean getMaintainOrder() {
-		return maintainOrder;
-	}
-
-	public void setRepeatInCampaignAndTemplate(
-			Boolean repeatInCampaignAndTemplate) {
-		this.repeatInCampaignAndTemplate = repeatInCampaignAndTemplate;
-	}
-
-	public Boolean getRepeatInCampaignAndTemplate() {
-		return repeatInCampaignAndTemplate;
-	}
-	
 	
 }

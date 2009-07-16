@@ -2,13 +2,12 @@ package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
 import java.util.Map;
 
+import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
-
-import org.nideasystems.webtools.zwitrng.shared.StringUtils;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -16,21 +15,24 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.dom.client.HasDoubleClickHandlers;
 import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
-
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
 
-public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurationWidget<TemplateFragmentDTO, TemplateFragmentDTOList> {
+public class TemplateListsConfigurationWidget extends AbstractListConfigurationWidget<TemplateListDTO, TemplateListDTOList> {
 
 
 	@Override
 	public void init() {
 		super.init();
 		if (isEditable) {
-			super.addToolBarNewItemMenu("New Template Fragment");
+			super.addToolBarNewItemMenu("New Template List");
 		}
 	
 	}
@@ -51,23 +53,23 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 	}
 	
 	@Override
-	protected EditableItem<TemplateFragmentDTO, TemplateFragmentDTOList> createEditableItem() {
+	protected EditableItem<TemplateListDTO, TemplateListDTOList> createEditableItem() {
 		
 		return new EditableTemplateFragment(this);
 	}
 
 	@Override
-	protected SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> createSelectableItem(
-			TemplateFragmentDTO obj,
-			AbstractListConfigurationWidget<TemplateFragmentDTO, TemplateFragmentDTOList> parent) {
+	protected SelectableItem<TemplateListDTO, TemplateListDTOList> createSelectableItem(
+			TemplateListDTO obj,
+			AbstractListConfigurationWidget<TemplateListDTO, TemplateListDTOList> parent) {
 		return new SelectableTemplateFragment(obj,parent,true);
 	}
 
 	@Override
-	public void onSuccessLoadObjects(TemplateFragmentDTOList list) {
+	public void onSuccessLoadObjects(TemplateListDTOList list) {
 		isProcessing(false);
-		for (TemplateFragmentDTO tmp: list.getTemplateFragmentList()) {
-			SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> item = createSelectableItem(tmp, this);
+		for (TemplateListDTO tmp: list.getTemplateFragmentList()) {
+			SelectableItem<TemplateListDTO, TemplateListDTOList> item = createSelectableItem(tmp, this);
 			addListItem(item);
 		}
 		searchValue.setFocus(true);
@@ -76,13 +78,13 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 
 	@Override
 	protected void removeItem(
-			SelectableItem<TemplateFragmentDTO, TemplateFragmentDTOList> item) {
+			SelectableItem<TemplateListDTO, TemplateListDTOList> item) {
 		MainController.getInstance().getCurrentPersonaController().removeTemplateFragment(item.dataObject, item);
 		
 	}
 
 	@Override
-	public void saveObject(TemplateFragmentDTO object) {
+	public void saveObject(TemplateListDTO object) {
 		
 		if (object.getId() == -1) {
 			saveNewTemplateFragment(object);
@@ -94,30 +96,36 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		
 	}
 	
-	private void saveExistingTemplatefragment(TemplateFragmentDTO object) {
+	private void saveExistingTemplatefragment(TemplateListDTO object) {
 		MainController.getInstance().getCurrentPersonaController().saveTemplateFragment(object, getSelectedItem());
 		
 	}
 
-	private void saveNewTemplateFragment(TemplateFragmentDTO object) {
+	private void saveNewTemplateFragment(TemplateListDTO object) {
 		MainController.getInstance().getCurrentPersonaController().createTemplateFragment(object, this);
 		
 	}
 
-	private class EditableTemplateFragment extends EditableItem<TemplateFragmentDTO, TemplateFragmentDTOList> {
+	private class EditableTemplateFragment extends EditableItem<TemplateListDTO, TemplateListDTOList> {
 
+		private static final int DEFAULT_TEMPLATE_LIST_MAX_CHARS = 500;
 		private TextBox nameText = null;
 		private TextArea templateFragmentText = null;
-		private TextBox templateTags = null;
+		private InlineHTML  remainingChars=new InlineHTML(""+DEFAULT_TEMPLATE_LIST_MAX_CHARS);
+		
 		//private CheckBox repeatInCampaignAndTemplate;
 		//private CheckBox maintainOrder;
 		
 		public EditableTemplateFragment(
-				AbstractListConfigurationWidget<TemplateFragmentDTO, TemplateFragmentDTOList> parent) {
+				AbstractListConfigurationWidget<TemplateListDTO, TemplateListDTOList> parent) {
 			super(parent);
 		
 			
-			
+			if (parent.isCreatingNew) {
+				contentPanel.add(new InlineHTML("Create new Template List"));
+			} else {
+				contentPanel.add(new InlineHTML("Edit Template List"));
+			}
 			InlineHTML nameLabel = new InlineHTML("Name: ");
 			
 			nameText = new TextBox();
@@ -125,23 +133,34 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			contentPanel.add(nameText);
 			contentPanel.add(new InlineHTML("Template Fragment Text"));
 			templateFragmentText = new TextArea();
-			templateFragmentText.setWidth("580px");
+			templateFragmentText.setWidth(Constants.CONFIGURATION_INPUT_MAX_WIDTH);
 			// update.setHeight("35px");
 			templateFragmentText.addStyleName("input");
-			templateFragmentText.setVisibleLines(2);
+			templateFragmentText.setVisibleLines(5);
 			contentPanel.add(templateFragmentText);
+			contentPanel.add(remainingChars);
 			// Add short links link
 			InlineHTML shortLinksLink = new InlineHTML("Short Links");
 			shortLinksLink.addStyleName("link");
 			contentPanel.add(shortLinksLink);
+			templateFragmentText.addKeyUpHandler(new KeyUpHandler() {
 
+				@Override
+				public void onKeyUp(KeyUpEvent event) {
+					// TODO Auto-generated method stub
+					HTMLHelper.adjustLines(templateFragmentText, HTMLHelper.getLines(templateFragmentText.getValue()).length, 5, 15);
+					updateRemainingChars();
+				}
+				
+			});
+			
 			//repeatInCampaignAndTemplate = new CheckBox("Repeat in the same template and campaign");
 			//contentPanel.add(repeatInCampaignAndTemplate);
 			//maintainOrder = new CheckBox("Maintain the order");
 			//contentPanel.add(maintainOrder);
-			contentPanel.add(new InlineHTML("Add tags separaded by spaces:"));
-			templateTags = new TextBox();
-			contentPanel.add(templateTags);
+			//contentPanel.add(new InlineHTML("Add tags separaded by spaces:"));
+			//templateTags = new TextBox();
+			//contentPanel.add(templateTags);
 			
 			shortLinksLink.addClickHandler(new ClickHandler() {
 
@@ -157,7 +176,12 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 
 			
 		}
-		
+		protected void updateRemainingChars() {
+			int remainingCharsNbr = DEFAULT_TEMPLATE_LIST_MAX_CHARS
+					- this.templateFragmentText.getValue().length();
+			remainingChars.setHTML("" + remainingCharsNbr);
+
+		}
 		@Override
 		public void focus() {
 			this.nameText.setFocus(true);
@@ -171,7 +195,6 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 			
 			this.nameText.setValue(dataObject.getName());
 			this.templateFragmentText.setValue(dataObject.getList());
-			this.templateTags.setValue(dataObject.getTagsAsString());
 			if ( dataObject.getId()!=-1) {
 				this.nameText.setEnabled(false);
 			}
@@ -181,21 +204,17 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		@Override
 		protected void save() {
 			if ( nameText.getValue().trim().isEmpty() ) {
-				MainController.getInstance().addError("Provide a name for the Fragment");
+				MainController.getInstance().addError("Provide a name for the List");
 			} else if (templateFragmentText.getValue().trim().isEmpty() || templateFragmentText.getValue().length()>500 ) {
-				MainController.getInstance().addError("Provide content for the Fragment with no more than 500 characters");
+				MainController.getInstance().addError("Provide content for the List with no more than 500 characters");
 			} else {
 				
-				TemplateFragmentDTO tDto = new TemplateFragmentDTO();
+				TemplateListDTO tDto = new TemplateListDTO();
 				tDto.setList(templateFragmentText.getValue());
 				tDto.setName(nameText.getValue());
 				//tDto.setMaintainOrder(this.maintainOrder.getValue());
 				//tDto.setRepeatInCampaignAndTemplate(this.repeatInCampaignAndTemplate.getValue());
 				
-				String[] tags = StringUtils.splitText(templateTags.getValue());
-				for (String tag : tags) {
-					tDto.addTag(tag);
-				}
 				
 				if ( dataObject != null ) {
 					tDto.setId(dataObject.getId());
@@ -226,7 +245,7 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 	 * @author jpereira
 	 * 
 	 */
-	private class SelectableTemplateFragment extends SelectableItem<TemplateFragmentDTO,TemplateFragmentDTOList> implements
+	private class SelectableTemplateFragment extends SelectableItem<TemplateListDTO,TemplateListDTOList> implements
 			HasMouseOutHandlers, HasMouseOverHandlers, HasDoubleClickHandlers,
 			HasClickHandlers {
 
@@ -238,15 +257,13 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 		//private InlineHTML moreInfoText; 
 		
 				
-		public SelectableTemplateFragment(TemplateFragmentDTO templateFragment, AbstractListConfigurationWidget<TemplateFragmentDTO, TemplateFragmentDTOList> theParent, boolean aIsEditable) {
-			super(theParent, aIsEditable);
+		public SelectableTemplateFragment(TemplateListDTO templateFragment, AbstractListConfigurationWidget<TemplateListDTO, TemplateListDTOList> theParent, boolean aIsEditable) {
+			super(theParent, aIsEditable, false);
 			setDataObject(templateFragment);
 			HorizontalPanel namePanel = new HorizontalPanel();
 			namePanel.setSpacing(3);
-			InlineHTML namelabel = new InlineHTML("Name: ");
-			namelabel.addStyleName("label");
+			
 			name = new InlineHTML("");
-			namePanel.add(namelabel);
 			namePanel.add(name);
 			content.add(namePanel);
 			textHtml = new InlineHTML();
@@ -271,23 +288,21 @@ public class TemplateFragmentsConfigurationWidget extends AbstractListConfigurat
 
 		@Override
 		public String getSearchableText() {
-			return dataObject.getName()+" "+dataObject.getList()+" "+dataObject.getTagsAsString();
+			return dataObject.getName()+" "+dataObject.getList();
 		}
 
 
 		@Override
 		protected void refresh() {
-			this.name.setHTML(dataObject.getName());
-			this.textHtml.setHTML(StringUtils.jsParseText(dataObject.getList()));
-			this.tagsHtml.setHTML("Tags: "+dataObject.getTagsAsString());
-			StringBuffer sb = new StringBuffer();
-			if ( dataObject.getRepeatInCampaignAndTemplate() ) {
-				sb.append("Repeat in same template and campaign. ");
-			}
-			if ( dataObject.getMaintainOrder() ) {
-				sb.append("Maintain order.");
-			}
 			
+			this.name.setHTML("<h3>"+dataObject.getName()+"</h3>");
+			
+			
+			StringBuffer sb = new StringBuffer();
+			for (String line:HTMLHelper.getLines(dataObject.getList())) {
+				sb.append("<div>"+MainController.jsParseText(line)+"</div>");
+			}
+			this.textHtml.setHTML(sb.toString());
 			//this.moreInfoText.setText(sb.toString());
 			
 		}

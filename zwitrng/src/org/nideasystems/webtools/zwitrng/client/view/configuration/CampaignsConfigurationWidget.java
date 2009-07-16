@@ -26,6 +26,7 @@ public class CampaignsConfigurationWidget extends
 
 	@Override
 	public void init() {
+		
 		super.init();
 		if (isEditable) {
 			super.addToolBarNewItemMenu("New Campaign");
@@ -547,7 +548,7 @@ public class CampaignsConfigurationWidget extends
 				AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> theParent,
 				boolean isEditable) {
 			// Set the parent
-			super(theParent, isEditable);
+			super(theParent, isEditable, false);
 			setDataObject(theCampaign);
 
 			HorizontalPanel nameLine = new HorizontalPanel();

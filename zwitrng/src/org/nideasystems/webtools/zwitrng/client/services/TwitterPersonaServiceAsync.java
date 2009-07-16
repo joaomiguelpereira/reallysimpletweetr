@@ -15,8 +15,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -34,14 +34,14 @@ public interface TwitterPersonaServiceAsync {
 	void saveTemplate(PersonaDTO model, TemplateDTO template,
 			AsyncCallback<TemplateDTO> asyncCallback);
 	void getTemplateFragments(PersonaDTO personaDto,
-			AsyncCallback<TemplateFragmentDTOList> asyncCallback) throws Exception;
-	void createTemplateFragment(PersonaDTO model, TemplateFragmentDTO object,
-			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception;
-	void saveTemplateFragment(PersonaDTO model, TemplateFragmentDTO object,
-			AsyncCallback<TemplateFragmentDTO> asyncCallback);
+			AsyncCallback<TemplateListDTOList> asyncCallback) throws Exception;
+	void createTemplateFragment(PersonaDTO model, TemplateListDTO object,
+			AsyncCallback<TemplateListDTO> asyncCallback) throws Exception;
+	void saveTemplateFragment(PersonaDTO model, TemplateListDTO object,
+			AsyncCallback<TemplateListDTO> asyncCallback);
 	void deleteTemplateFragment(PersonaDTO model,
-			TemplateFragmentDTO dataObject,
-			AsyncCallback<TemplateFragmentDTO> asyncCallback) throws Exception;
+			TemplateListDTO dataObject,
+			AsyncCallback<TemplateListDTO> asyncCallback) throws Exception;
 	void getTemplateFragmentsLists(PersonaDTO model, List<String> lists,
 			AsyncCallback<Map<String, String>> asyncCallback) throws Exception;
 	void getCampaigns(PersonaDTO model,

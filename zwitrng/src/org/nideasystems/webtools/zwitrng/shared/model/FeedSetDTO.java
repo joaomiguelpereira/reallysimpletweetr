@@ -10,7 +10,6 @@ public class FeedSetDTO implements IDTO {
 	private long id = -1;
 	
 	private String name;
-	private List<String> filter;
 	private List<String> feedUrls;
 	private Date modified;
 	private Date created;
@@ -28,12 +27,7 @@ public class FeedSetDTO implements IDTO {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public List<String> getFilter() {
-		return filter;
-	}
-	public void setFilter(List<String> filter) {
-		this.filter = filter;
-	}
+	
 	public Date getCreated() {
 		return created;
 	}
@@ -60,11 +54,5 @@ public class FeedSetDTO implements IDTO {
 		this.feedUrls.add(feedUrl);
 	}
 
-	public void addFilter(String filter) {
-		if ( this.filter == null) {
-			this.filter = new ArrayList<String>();
-		}
-		this.filter.add(filter);
-	}
 
 }

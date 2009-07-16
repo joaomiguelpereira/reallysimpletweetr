@@ -28,7 +28,7 @@ public class TemplateDO implements Serializable{
 	private Key key;
 	
 	@Persistent
-	private String text;
+	private Text text;
 
 	
 	//Parent Persona
@@ -36,7 +36,7 @@ public class TemplateDO implements Serializable{
 	private PersonaDO persona;
 	
 	@Persistent
-	private List<String> tags;
+	private String name;
 	
 	@Persistent
 	private Date created;
@@ -46,71 +46,64 @@ public class TemplateDO implements Serializable{
 	
 	@Persistent
 	private Long usedTimes;
-	
-	public void setKey(Key key) {
-		this.key = key;
-	}
 
 	public Key getKey() {
 		return key;
 	}
 
-	public void setText(String text) {
-		this.text = text;
+	public void setKey(Key key) {
+		this.key = key;
 	}
 
-	public String getText() {
+	public Text getText() {
 		return text;
 	}
 
-	public void setPersona(PersonaDO persona) {
-		this.persona = persona;
+	public void setText(Text text) {
+		this.text = text;
 	}
 
 	public PersonaDO getPersona() {
 		return persona;
 	}
 
-	public void setTags(List<String> tags) {
-		this.tags = tags;
+	public void setPersona(PersonaDO persona) {
+		this.persona = persona;
 	}
 
-	public List<String> getTags() {
-		return tags;
-	}
-	
-	public void addTag(String tag) {
-		if ( tags == null) {
-			tags = new ArrayList<String>();
-			
-		}
-		tags.add(tag);
+	public String getName() {
+		return name;
 	}
 
-	public void setCreated(Date created) {
-		this.created = created;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public Date getCreated() {
 		return created;
 	}
 
-	public void setModified(Date modified) {
-		this.modified = modified;
+	public void setCreated(Date created) {
+		this.created = created;
 	}
 
 	public Date getModified() {
 		return modified;
 	}
 
+	public void setModified(Date modified) {
+		this.modified = modified;
+	}
+
 	public void setUsedTimes(Long usedTimes) {
 		this.usedTimes = usedTimes;
-	
 	}
 
 	public Long getUsedTimes() {
 		return usedTimes;
 	}
+	
+	
 	
 	
 

@@ -26,7 +26,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.RateLimitsDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TemplateFragmentDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -349,20 +349,11 @@ public class DataUtils {
 
 	public static TemplateDTO templateDtoFromDom(TemplateDO templateDom) {
 		TemplateDTO templateDto = new TemplateDTO();
-		templateDto.setTemplateText(templateDom.getText());
+		templateDto.setTemplateText(templateDom.getText().getValue());
 		templateDto.setCreated(templateDom.getCreated());
 		templateDto.setModified(templateDom.getModified());
+		templateDto.setName(templateDom.getName());
 		
-		
-		if (templateDom.getTags() != null) {
-			
-			for (String tag : templateDom.getTags()) {
-				templateDto.addTags(tag);
-			}
-		} else {
-			templateDto.addTags("");
-		}
-
 		templateDto.setId(templateDom.getKey().getId());
 		if ( templateDom.getUsedTimes()!= null ) {
 			templateDto.setUsedTimes(templateDom.getUsedTimes());
@@ -373,27 +364,14 @@ public class DataUtils {
 		return templateDto;
 	}
 
-	public static TemplateFragmentDTO templateFragmentDtoFromDom(
+	public static TemplateListDTO templateFragmentDtoFromDom(
 			TemplateFragmentDO fragDo) {
-		TemplateFragmentDTO fragDto = new TemplateFragmentDTO();
+		TemplateListDTO fragDto = new TemplateListDTO();
 		fragDto.setCreated(fragDo.getCreated());
 		fragDto.setModified(fragDo.getModified());
 		fragDto.setName(fragDo.getName());
 		fragDto.setList(fragDo.getText());
-		if ( fragDo.getTags() != null ) {
-			for (String tag: fragDo.getTags()) {
-				fragDto.addTag(tag);
-			}
-		} else {
-			fragDto.addTag("");
-		}
 		
-		if (fragDo.getMaintainOrder()!=null) {
-			fragDto.setMaintainOrder(fragDo.getMaintainOrder());
-		}
-		if (fragDo.getRepeatInCampaignAndTemplate()!=null) {
-			fragDto.setRepeatInCampaignAndTemplate(fragDo.getRepeatInCampaignAndTemplate());
-		}
 		fragDto.setId(fragDo.getKey().getId());
 		
 		return fragDto;
@@ -451,14 +429,7 @@ public class DataUtils {
 			dto.addFeedUrl(feed);
 			
 		}
-		log.fine("Adding filters");
-		if ( dom.getFilter()!= null) {
-			for (String filter: dom.getFilter()) {
-				dto.addFilter(filter);
-				
-			}
-
-		}
+		
 		
 		
 		log.fine("Adding ID");

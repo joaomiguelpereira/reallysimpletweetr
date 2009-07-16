@@ -19,8 +19,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
-
-
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class TwitterUpdatesController extends
@@ -37,12 +35,13 @@ public class TwitterUpdatesController extends
 	private Timer timerForAutoUpdates = null;
 	private int timeBeforeAutoUpdate = 60; // Seconds
 	private int updatesPerPage = 20; // 20 updates in a page
-	
+
 	private FilterCriteriaDTO currentFilter = null;
 	// If is paused (tab invisible, tweet selected, answering tweet, etc) don't
 	// update automatically
 
 	private boolean isPaused = false;
+
 
 	@Override
 	public void init() {
@@ -65,7 +64,7 @@ public class TwitterUpdatesController extends
 		if (currentFilter.getSinceId() >= 1) {
 			addOnTop = true;
 		}
-		//Window.alert("Processing "+twitterUpdates.getTwitterUpdatesList().size()+" elements");
+		// Window.alert("Processing "+twitterUpdates.getTwitterUpdatesList().size()+" elements");
 		if (twitterUpdates.getTwitterUpdatesList().size() > 0) {
 			long newUpdateId = twitterUpdates.getTwitterUpdatesList().get(0)
 					.getId();
@@ -73,10 +72,10 @@ public class TwitterUpdatesController extends
 			if (newUpdateId != currentFilter.getSinceId()) {
 				updateNeeded = true;
 				currentFilter.setSinceId(newUpdateId);
-				//currentFilter.setCompletedIn(twitterUpdates.getFilter()
-				//		.getCompletedIn());
-				//currentFilter.setRefreshUrl(twitterUpdates.getFilter()
-				//		.getRefreshUrl());
+				// currentFilter.setCompletedIn(twitterUpdates.getFilter()
+				// .getCompletedIn());
+				// currentFilter.setRefreshUrl(twitterUpdates.getFilter()
+				// .getRefreshUrl());
 				// currentFilter = twitterUpdates.getFilter();
 			}
 
@@ -106,19 +105,20 @@ public class TwitterUpdatesController extends
 
 	private void addUpdateWidget(TwitterUpdateDTO update, int pos) {
 
-		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this.getTwitterAccountController(), update);
+		TwitterUpdateWidget updateWidget = new TwitterUpdateWidget(this
+				.getTwitterAccountController(), update);
 		updateWidget.init();
 
 		updateWidget.setStyleName("twitterUpdate");
 		// updateWidget.init();
 
 		if (pos > -1) {
-			
-			//getView().insert(updateWidget, pos);
+
+			// getView().insert(updateWidget, pos);
 			getView().addUpdate(updateWidget, pos);
 
 		} else {
-			//getView().add(updateWidget);
+			// getView().add(updateWidget);
 			getView().addUpdate(updateWidget);
 		}
 
@@ -126,11 +126,10 @@ public class TwitterUpdatesController extends
 		updates.put(update.getId(), update);
 	}
 
-	
-	
 	public void reload(FilterCriteriaDTO filter) {
-		
-		PersonaDTO currentPersona = MainController.getInstance().getCurrentPersonaController().getModel();
+
+		PersonaDTO currentPersona = MainController.getInstance()
+				.getCurrentPersonaController().getModel();
 		if (!isPaused) {
 			startProcessing();
 
@@ -141,7 +140,7 @@ public class TwitterUpdatesController extends
 			 */
 			// Let's update the tweets
 			FilterCriteriaDTO usedfilter = null;
-			if (filter != null ) {
+			if (filter != null) {
 				usedfilter = filter;
 			} else {
 				usedfilter = currentFilter;
@@ -221,20 +220,20 @@ public class TwitterUpdatesController extends
 			// Remove any remaining update
 			// int updatesToRemove = updatesPerPage-newPageSize;
 			for (int i = widgetCount; i > updatesPerPage; i--) {
-				
-				TwitterUpdateWidget updateWidget = getView().getUpdateWidget(i-1);
-				
+
+				TwitterUpdateWidget updateWidget = getView().getUpdateWidget(
+						i - 1);
+
 				updates.remove(updateWidget.getTwitterUpdate().getId());
 				updateWidgets.remove(updateWidget.getTwitterUpdate().getId());
 				getView().removeUpdate(updateWidget);
 			}
 
-			
 		}
-		
-		//TwitterUpdateWidget updateWidget = getView().getUpdateWidget(getView().getUpdateCount()-1);
-		//currentFilter.setMaxId(updateWidget.getTwitterUpdate().getId());
 
+		// TwitterUpdateWidget updateWidget =
+		// getView().getUpdateWidget(getView().getUpdateCount()-1);
+		// currentFilter.setMaxId(updateWidget.getTwitterUpdate().getId());
 
 	}
 
@@ -284,15 +283,12 @@ public class TwitterUpdatesController extends
 
 	public void clearView() {
 
-
-
-		for (TwitterUpdateWidget wid: this.updateWidgets.values() ) {
+		for (TwitterUpdateWidget wid : this.updateWidgets.values()) {
 			getView().removeUpdate(wid);
 		}
 		this.updates.clear();
 		this.updateWidgets.clear();
-		
-		
+
 	}
 
 	public void changePage(int page) {
@@ -303,30 +299,29 @@ public class TwitterUpdatesController extends
 	}
 
 	public void loadMoreUpdates() {
-		Window.alert("Current Filter since id ID:"+currentFilter.getSinceId());
-		Window.alert("Current pAGE since id ID:"+currentFilter.getPage());
-		Window.alert("Current TYPE:"+currentFilter.getUpdatesType());
-	
+		Window
+				.alert("Current Filter since id ID:"
+						+ currentFilter.getSinceId());
+		Window.alert("Current pAGE since id ID:" + currentFilter.getPage());
+		Window.alert("Current TYPE:" + currentFilter.getUpdatesType());
+
 		FilterCriteriaDTO filter = new FilterCriteriaDTO();
 		filter.reset();
-		filter.setPage(currentFilter.getPage()+1);
-		
+		filter.setPage(currentFilter.getPage() + 1);
+
 		filter.setResultsPerPage(MORE_RESULTS_PER_PAGE);
-		//filter.setMaxId(maxId);
+		// filter.setMaxId(maxId);
 		filter.setSinceId(currentFilter.getSinceId());
 		filter.setUpdatesType(currentFilter.getUpdatesType());
 		reload(filter);
-		//Window.alert("calling reloading");
-		
-		
-		
+		// Window.alert("calling reloading");
+
 	}
 
 	@Override
 	public void reload() {
 		reload(null);
-		
+
 	}
 
-	
 }

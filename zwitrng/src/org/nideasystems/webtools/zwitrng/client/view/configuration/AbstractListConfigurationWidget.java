@@ -40,6 +40,7 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 	private Image waitingImg = new Image(Constants.WAITING_IMAGE);
 	protected boolean isCreatingNew = false;
 	private String maxHeight = null;
+	private boolean initialized;
 	
 	private EditableItem<T, L> editableItemNew = null;
 
@@ -84,7 +85,7 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 			}
 
 		});
-
+		initialized = true;
 	}
 
 	public void addSelectListener(ConfigurationListSelectListener<T> listener) {
@@ -338,6 +339,14 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 		if (!this.isCreatingNew && isEditable) {
 			toolBar.setVisible(true);
 		}
+	}
+
+	public void setInitialized(boolean initialized) {
+		this.initialized = initialized;
+	}
+
+	public boolean isInitialized() {
+		return initialized;
 	}
 
 

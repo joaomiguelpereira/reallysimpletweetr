@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
+import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -14,7 +15,7 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.Window;
+
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Image;
@@ -252,18 +253,16 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 	}
 
 	private String[] getLines(TextArea excludeUserNames) {
-		String[] exStrings = excludeUserNames.getValue().split("\\n");
-		return exStrings;
+		//String[] exStrings = excludeUserNames.getValue().split("\\n");
+		return HTMLHelper.getLines(excludeUserNames.getValue());
+		//return exStrings;
+		
 
 	}
 
 	private void adjustLines(TextArea excludeUserNames, int lines) {
-		if (lines < 3) {
-			lines = 3;
-		} else if (lines > 10) {
-			lines = 10;
-		}
-		excludeUserNames.setVisibleLines(lines);
+		HTMLHelper.adjustLines(excludeUserNames,lines,3,10);
+		
 
 	}
 

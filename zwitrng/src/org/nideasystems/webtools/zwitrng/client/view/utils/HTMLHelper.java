@@ -1,9 +1,11 @@
 package org.nideasystems.webtools.zwitrng.client.view.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
@@ -11,7 +13,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import com.google.gwt.core.client.GWT;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.TextArea;
 
 public class HTMLHelper {
 
@@ -167,6 +169,26 @@ public class HTMLHelper {
 		 */
 	}
 
+	public static String[] getLines(String excludeUserNames) {
+		String[] exStrings = excludeUserNames.split("\\n");
+		// return HTMLWidgetUtils.getLines(excludeUserNames);
+		return exStrings;
+	}
+
+	public static void adjustLines(TextArea excludeUserNames, int lines, int min,
+			int max) {
+		if (lines < min) {
+			lines = min;
+		} else if (lines > max) {
+			lines = max;
+		} else {
+			lines++;
+		}
+		
+		
+		excludeUserNames.setVisibleLines(lines);		
+	}
+
 	/**
 	 * From the text, return the links
 	 * 
@@ -176,21 +198,54 @@ public class HTMLHelper {
 	public List<String> getLinks(String text) {
 		ArrayList<String> retList = new ArrayList<String>();
 		text = text.trim();
-		String[] words = text.split(" ");
-
-		for (String str : words) {
-			if (str.startsWith("http") && !retList.contains(str)) {
-				// GWT.log("URL before econding:" + str, null);
-				// GWT.log("URL after econding:" + URL.encodeComponent(str),
-				// null);
-				// URL.
-				retList.add(/* URL.encodeComponent( */str/* ) */);
-			}
+		//line by line, find any occurence of http
+		String lines[] = getLines(text);
+		
+		//for each word find an occurence of http://
+		for ( String line:lines) {
+			
+			
+			
+				retList.addAll(getUrls(line));
+			
+			
+			
 		}
 
 		return retList;
 
 	}
+	private Collection<? extends String> getUrls(String line) {
+		line = line.trim();
+		ArrayList<String> retList = new ArrayList<String>();
+		int startIndex = line.indexOf("http://");
+		if (startIndex>=0) {
+			int endIndex = line.indexOf(" ",startIndex);
+			
+			if (endIndex<0 ) {
+				endIndex = line.length();
+			}
+			
+			if ( endIndex>0) {
+				
+				String url = line.substring(startIndex,endIndex);
+				
+				retList.add(url);	
+				
+				if ( endIndex<line.length() )  {
+					int nextStart = line.substring(endIndex,line.length()).indexOf("http://");
+					if ( nextStart>0) {
+						retList.addAll(getUrls(line.substring(endIndex+nextStart,line.length())));
+					}
+				}
+				
+			}			
+		}
+		return retList;
+	
+	}
+
+	
 
 	private void processHashTag(String word) {
 		GWT.log("Processing hashTag " + word, null);
@@ -321,6 +376,8 @@ public class HTMLHelper {
 		for (String longLink : result.keySet()) {
 			// Strinr decoded =
 
+			//Window.alert("Replacing link: " + result.get(longLink) + " with "
+			//		+ longLink);
 			GWT.log("Replacing link: " + result.get(longLink) + " with "
 					+ longLink, null);
 
@@ -328,7 +385,7 @@ public class HTMLHelper {
 			// GWT.log("Decoded: replacing link: "+result.get(longLink)+" with "+decodedLongLink,
 			// null);
 			// newStr = currentStr.replaceAll(longLink.,result.get(longLink));
-			newStr = currentStr.replace(longLink, result.get(longLink));
+			newStr = newStr.replace(longLink, result.get(longLink));
 
 		}
 		return newStr;

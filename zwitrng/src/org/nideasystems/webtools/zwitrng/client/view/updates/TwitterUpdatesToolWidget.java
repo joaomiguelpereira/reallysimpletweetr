@@ -27,7 +27,7 @@ public class TwitterUpdatesToolWidget extends AbstractVerticalPanelView<TwitterU
 	public void init() {
 		HorizontalPanel container = new HorizontalPanel();
 		container.setSpacing(5);
-		InlineHTML refreshLink = new InlineHTML("Update");
+		InlineHTML refreshLink = new InlineHTML("Update?");
 		refreshLink.addStyleName("link");
 		
 		//PushButton refresheBt = new PushButton(refreshImg);		

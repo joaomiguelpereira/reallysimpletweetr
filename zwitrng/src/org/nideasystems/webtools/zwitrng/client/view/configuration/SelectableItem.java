@@ -36,6 +36,7 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 	protected VerticalPanel content;
 	protected T dataObject;
 	protected EditableItem<T, L> editableInstance;
+	protected boolean isSelectable = true;
 
 	/**
 	 * Constructor
@@ -43,9 +44,10 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 	 * @param theParent
 	 */
 	public SelectableItem(AbstractListConfigurationWidget<T, L> theParent,
-			boolean aIsEditable) {
+			boolean aIsEditable, boolean aIsSelectable) {
 		parent = theParent;
 		instance = this;
+		this.isSelectable = aIsSelectable;
 		this.isEditable = aIsEditable;
 		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
 		this.setHeight(Constants.MAIN_LIST_ITEM_MIN_HEIGHT);
@@ -87,7 +89,10 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 			@Override
 			public void onClick(ClickEvent event) {
-				select(instance);
+				
+					select(instance);
+				
+				
 
 			}
 
@@ -128,7 +133,7 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 		panel.add(table);
 
-		panel.setVisible(false);
+		//panel.setVisible(false);
 
 		// Add handler
 		remove.addClickHandler(new ClickHandler() {
@@ -168,8 +173,11 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 	public void onUnSelected() {
 		setEditing(false);
-		removeStyleName("list_item_selected");
-		this.toolBar.setVisible(false);
+		if (isSelectable) {
+			removeStyleName("list_item_selected");
+		}
+		
+		//this.toolBar.setVisible(false);
 
 	}
 
@@ -213,7 +221,10 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 	}
 
 	public void onSelected() {
-		addStyleName("list_item_selected");
+		if (isSelectable) {
+			addStyleName("list_item_selected");
+		}
+		
 		// add toolbar
 		if (!isEditing) {
 			this.toolBar.setVisible(true);
