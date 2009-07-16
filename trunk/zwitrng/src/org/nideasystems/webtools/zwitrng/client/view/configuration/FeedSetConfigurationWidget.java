@@ -14,9 +14,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.user.client.ui.ChangeListener;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextArea;
@@ -113,6 +111,13 @@ public class FeedSetConfigurationWidget extends
 		public EditableFeedSet(
 				AbstractListConfigurationWidget<FeedSetDTO, FeedSetDTOList> parent) {
 			super(parent);
+			
+			if (parent.isCreatingNew) {
+				contentPanel.add(new InlineHTML("<h3>Create new Feed List</h3>"));
+			} else {
+				contentPanel.add(new InlineHTML("<h3>Edit Feed List</h3>"));
+			}
+			
 			InlineHTML textLabel = new InlineHTML("Name: ");
 			feedSetName = new TextBox();
 			contentPanel.add(textLabel);

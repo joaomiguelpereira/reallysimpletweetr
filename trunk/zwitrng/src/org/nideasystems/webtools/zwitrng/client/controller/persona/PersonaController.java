@@ -8,17 +8,14 @@ import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
-import org.nideasystems.webtools.zwitrng.client.view.configuration.CampaignsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.ConfigurationEditListener;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.FeedSetConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.SelectableItem;
+import org.nideasystems.webtools.zwitrng.client.view.configuration.StringListLoadedCallBack;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.TemplateListsConfigurationWidget;
 import org.nideasystems.webtools.zwitrng.client.view.persona.PersonaView;
-import org.nideasystems.webtools.zwitrng.client.view.users.AutoFollowConfigurationPanel;
 import org.nideasystems.webtools.zwitrng.client.view.users.AutoFollowRuleCallback;
-import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
-import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
@@ -32,7 +29,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.HTML;
 
 public class PersonaController extends
 		AbstractController<PersonaDTO, PersonaView> implements AutoUpdatable {
@@ -662,6 +658,32 @@ public class PersonaController extends
 			e.printStackTrace();
 		}
 
+	}
+
+	public void loadTemplateNames(final StringListLoadedCallBack callback) {
+		try {
+			getServiceManager().getRPCService().loadTemplateNames(this.getModel(), new AsyncCallback<List<String>>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onTemplatesNamesListFail(caught);
+
+						}
+
+						@Override
+						public void onSuccess(List<String> result) {
+							// callback.onSuccessDeleteObject(result);
+							callback.onTemplatesNamesListLoaded(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+			callback.onTemplatesNamesListFail(e);
+			e.printStackTrace();
+		}
+
+		
 	}
 
 }
