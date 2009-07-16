@@ -26,7 +26,7 @@ public class CampaignsConfigurationWidget extends
 
 	@Override
 	public void init() {
-		
+
 		super.init();
 		if (isEditable) {
 			super.addToolBarNewItemMenu("New Campaign");
@@ -76,8 +76,7 @@ public class CampaignsConfigurationWidget extends
 	}
 
 	@Override
-	protected void removeItem(
-			SelectableItem<CampaignDTO, CampaignDTOList> item) {
+	protected void removeItem(SelectableItem<CampaignDTO, CampaignDTOList> item) {
 
 		MainController.getInstance().getCurrentPersonaController()
 				.removeCampaign(item.dataObject, item);
@@ -115,7 +114,7 @@ public class CampaignsConfigurationWidget extends
 			EditableItem<CampaignDTO, CampaignDTOList> {
 
 		private TextBox campaignName;
-		private TextBox filterByTags;
+		// private TextBox filterByTags;
 		// private ListBox filterOperator;
 		// private TextBox filterByText;
 		private DateBox startDate;
@@ -126,11 +125,17 @@ public class CampaignsConfigurationWidget extends
 		private InlineHTML runningDays;
 		private ListBox endHourOfTheDay;
 		private ListBox startHourOfTheDay;
+		private ListBox templateNames;
 
 		public EditableCampaign(
 				AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> theParent) {
 			super(theParent);
 
+			if (parent.isCreatingNew()) {
+				contentPanel.add(new InlineHTML("<h3>Create new Campaign</h3>"));
+			} else {
+				contentPanel.add(new InlineHTML("<h3>Edit Campaign</h3>"));
+			}
 			InlineHTML textLabel = new InlineHTML("Name: ");
 			campaignName = new TextBox();
 			contentPanel.add(textLabel);
@@ -138,31 +143,44 @@ public class CampaignsConfigurationWidget extends
 
 			FlexTable table = new FlexTable();
 
-			InlineHTML containingTagsLabel = new InlineHTML(
-					"Use templates containing tags:");
-			filterByTags = new TextBox();
-			table.setWidget(0, 0, containingTagsLabel);
-			table.setWidget(1, 0, filterByTags);
-		
-			filterByTags.setWidth("220px");
+			InlineHTML containingTagsLabel = new InlineHTML("Use templates:");
+			ListBox templateNames = new ListBox(true);
 
-			contentPanel.add(table);
+			templateNames.setWidth("11em");
+			templateNames.setVisibleItemCount(5);
+			
+			table.setWidget(0, 0, containingTagsLabel);
+			table.setWidget(1, 0, templateNames);
+
+			InlineHTML availableTemplates = new InlineHTML(
+					"Avaialable templates:");
+			ListBox availableNames = new ListBox(true);
+			availableNames.setWidth("11em");
+			availableNames.setVisibleItemCount(5);
+			
+
+			table.setWidget(0, 1, availableTemplates);
+			table.setWidget(1, 1, availableNames);
+
+			
 			// ///////
 
 			InlineHTML startDateLabel = new InlineHTML("Start date:");
 			// startDate = new TextBox();
 			startDate = new DateBox();
 			startDate.setValue(new Date());
-			startDate.setWidth("220px");
+			startDate.setWidth("11em");
 			table.setWidget(2, 0, startDateLabel);
 			table.setWidget(3, 0, startDate);
 
-			InlineHTML endDateLabel = new InlineHTML("Start date:");
+			
+			InlineHTML endDateLabel = new InlineHTML("End date:");
 			endDate = new DateBox();
-			endDate.setWidth("220px");
+			endDate.setWidth("11em");
 			endDate.setValue(new Date());
-			table.setWidget(2, 2, endDateLabel);
-			table.setWidget(3, 2, endDate);
+			table.setWidget(2, 1, endDateLabel);
+			table.setWidget(3, 1, endDate);
+			contentPanel.add(table);
 			runningDays = new InlineHTML();
 			runningDays.addStyleName("inline-form-inline-help");
 			contentPanel.add(runningDays);
@@ -307,7 +325,7 @@ public class CampaignsConfigurationWidget extends
 		@Override
 		public void focus() {
 			if (dataObject != null) {
-				this.filterByTags.setFocus(true);
+				//this.filterByTags.setFocus(true);
 			} else {
 				this.campaignName.setFocus(true);
 			}
@@ -324,14 +342,14 @@ public class CampaignsConfigurationWidget extends
 				isValid = false;
 			}
 
-			if (this.filterByTags.getValue().trim().isEmpty()
-			/* && this.filterByText.getValue().trim().isEmpty() */) {
+			/*if (this.filterByTags.getValue().trim().isEmpty()
+			 && this.filterByText.getValue().trim().isEmpty() ) {
 				MainController
 						.getInstance()
 						.addError(
 								"Please provide some tags so we can find your templates");
 				isValid = false;
-			}
+			}*/
 			if (this.campaignName.getValue().trim().isEmpty()) {
 				MainController.getInstance().addError(
 						"Please provide a name for the campaign.");
@@ -451,7 +469,7 @@ public class CampaignsConfigurationWidget extends
 				}
 				campaign.setName(this.campaignName.getValue());
 				campaign.setEndDate(this.endDate.getValue());
-				campaign.setFilterByTemplateTags(this.filterByTags.getValue());
+				//campaign.setFilterByTemplateTags(this.filterByTags.getValue());
 				// campaign.setFilterByTemplateText(this.filterByText.getValue());
 				/*
 				 * campaign.setFilterOperator(FilterOperator
@@ -494,7 +512,7 @@ public class CampaignsConfigurationWidget extends
 			this.startDate.setValue(dataObject.getStartDate());
 			this.timeBetweenTweets.setValue(dataObject.getTimeBetweenTweets()
 					+ "");
-			this.filterByTags.setValue(dataObject.getFilterByTemplateTags());
+			//this.filterByTags.setValue(dataObject.getFilterByTemplateTags());
 			// this.filterByText.setValue(dataObject.getFilterByTemplateText());
 			this.maxTweets.setValue(dataObject.getMaxTweets() + "");
 
