@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,14 +18,13 @@ import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
 import com.google.appengine.api.datastore.Text;
-
-
 
 public class TemplatePojo extends AbstractPojo {
 
@@ -53,13 +53,15 @@ public class TemplatePojo extends AbstractPojo {
 			throw new Exception("Persona not found");
 		}
 
-		//Try to find the template by name
-		TemplateDO templateDom = businessHelper.getTemplateDao().findTemplate(persona, template.getName());
-		
-		if ( templateDom!=null) {
-			throw new Exception("A template with the name "+templateDom.getName()+" already exists");
+		// Try to find the template by name
+		TemplateDO templateDom = businessHelper.getTemplateDao().findTemplate(
+				persona, template.getName());
+
+		if (templateDom != null) {
+			throw new Exception("A template with the name "
+					+ templateDom.getName() + " already exists");
 		}
-		
+
 		// Create new Template
 		templateDom = new TemplateDO();
 		templateDom.setPersona(persona);
@@ -151,36 +153,34 @@ public class TemplatePojo extends AbstractPojo {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
-		
 		if (persona == null) {
 			throw new Exception("Persona not found");
 		}
 
-		TemplateDO templateDom = businessHelper.getTemplateDao().findTemplate(persona, template.getName());
-		if (templateDom==null) {
-			throw new Exception("Template not found:"+template.getName());
+		TemplateDO templateDom = businessHelper.getTemplateDao().findTemplate(
+				persona, template.getName());
+		if (templateDom == null) {
+			throw new Exception("Template not found:" + template.getName());
 		}
-		
+
 		templateDom.setModified(new Date());
 		templateDom.setText(new Text(template.getTemplateText()));
-/*
-		try {
-			
-			retTemplate = businessHelper.getTemplateDao().saveTemplate(persona,
-					template);
-		} catch (Exception e) {
-			log.severe("Error trying to saving the Template");
-			e.printStackTrace();
-			throw e;
-
-		}
-*/
+		/*
+		 * try {
+		 * 
+		 * retTemplate = businessHelper.getTemplateDao().saveTemplate(persona,
+		 * template); } catch (Exception e) {
+		 * log.severe("Error trying to saving the Template");
+		 * e.printStackTrace(); throw e;
+		 * 
+		 * }
+		 */
 		// Just return was was given
 		return DataUtils.templateDtoFromDom(templateDom);
 	}
 
-	public TemplateListDTOList getTemplateFragments(String name,
-			String email) throws Exception {
+	public TemplateListDTOList getTemplateFragments(String name, String email)
+			throws Exception {
 		// Find the persona
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
@@ -200,9 +200,8 @@ public class TemplatePojo extends AbstractPojo {
 		return retList;
 	}
 
-	public TemplateListDTO createTemplateFragment(
-			TemplateListDTO object, String name, String email)
-			throws Exception {
+	public TemplateListDTO createTemplateFragment(TemplateListDTO object,
+			String name, String email) throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
@@ -213,7 +212,7 @@ public class TemplatePojo extends AbstractPojo {
 		TemplateFragmentDO domFrag = businessHelper.getTemplateDao()
 				.findTemplateFragmentByName(persona, object.getName());
 		TemplateListDTO returnDto = null;
-		
+
 		if (domFrag != null) {
 			throw new Exception("A Template Fragment exists with the Same name");
 		} else {
@@ -239,8 +238,8 @@ public class TemplatePojo extends AbstractPojo {
 				object);
 	}
 
-	public TemplateListDTO deleteTemplateFragment(String name,
-			String email, TemplateListDTO dataObject) throws Exception {
+	public TemplateListDTO deleteTemplateFragment(String name, String email,
+			TemplateListDTO dataObject) throws Exception {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(name, email);
 
@@ -319,7 +318,8 @@ public class TemplatePojo extends AbstractPojo {
 
 			// add to cache
 			if (cache != null && templates != null) {
-				log.fine("Adding templates for campaign "+campaign.getName()+" to cache");
+				log.fine("Adding templates for campaign " + campaign.getName()
+						+ " to cache");
 				cache.put(campaign.getKey(), templates);
 			}
 
@@ -340,7 +340,23 @@ public class TemplatePojo extends AbstractPojo {
 		// first in the list and discart others
 		return template;
 	}
-	
-	
+
+	public List<String> getTemplatesNames(PersonaDTO model) throws Exception{
+
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(model.getName(),
+						model.getUserEmail());
+
+		if (persona==null) {
+			throw new Exception("Persona not found");
+		}
+		List<String> result = new ArrayList<String>();
+		if ( persona.getTemplates()!= null) {
+			for (TemplateDO template:persona.getTemplates()) {
+				result.add(template.getName());
+			}
+		}
+		return result;
+	}
 
 }

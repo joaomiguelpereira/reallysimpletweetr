@@ -33,19 +33,23 @@ public abstract class EditableItem<T extends IDTO, L extends IDTO> extends
 
 		waitingImg.setVisible(false);
 		this.add(waitingImg);
+		this.addStyleName("list_item");
 		this.addStyleName("list_item_selected");
 		contentPanel = new VerticalPanel();
+		
 		this.add(contentPanel);
 		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
 
 		HorizontalPanel toolsPanel = new HorizontalPanel();
 		toolsPanel.setSpacing(5);
 
+		Button saveButton = new Button("Save");
+		toolsPanel.add(saveButton);
+		toolsPanel.add(new InlineHTML(" or "));
 		InlineHTML closeLink = new InlineHTML("Cancel");
 		closeLink.addStyleName("link");
 		toolsPanel.add(closeLink);
-		Button saveButton = new Button("Save");
-		toolsPanel.add(saveButton);
+	
 		this.add(toolsPanel);
 
 		closeLink.addClickHandler(new ClickHandler() {

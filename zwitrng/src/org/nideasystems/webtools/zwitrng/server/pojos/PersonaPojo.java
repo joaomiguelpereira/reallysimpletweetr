@@ -78,7 +78,7 @@ public class PersonaPojo extends AbstractPojo {
 					
 					RateLimitsDO rateLimisDo = persona.getTwitterAccount().getRateLimits();
 					RateLimitsDTO rateLimitsDto = new RateLimitsDTO();
-					if ( rateLimisDo!= null) {	
+					if ( rateLimisDo!= null && rateLimisDo.getRateLimitLimit()!=null&&rateLimisDo.getRateLimitRemaining()!=null&&rateLimisDo.getRateLimitReset()!=null) {	
 						rateLimitsDto.setRateLimitLimit(rateLimisDo.getRateLimitLimit());
 						rateLimitsDto.setRateLimitRemaining(rateLimisDo.getRateLimitRemaining());
 						rateLimitsDto.setRateLimitReset(rateLimisDo.getRateLimitReset());

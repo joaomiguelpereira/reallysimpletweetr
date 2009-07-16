@@ -32,7 +32,7 @@ public class RateLimitsDO implements Serializable {
 	@Persistent
 	private TwitterAccountDO twitterAccount;
 	
-	public int getRateLimitLimit() {
+	public Integer getRateLimitLimit() {
 		return rateLimitLimit;
 	}
 	public void setRateLimitLimit(Integer rateLimitLimit) {

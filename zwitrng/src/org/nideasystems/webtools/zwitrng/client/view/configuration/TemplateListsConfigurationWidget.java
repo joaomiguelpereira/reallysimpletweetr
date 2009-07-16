@@ -17,8 +17,7 @@ import com.google.gwt.event.dom.client.HasMouseOutHandlers;
 import com.google.gwt.event.dom.client.HasMouseOverHandlers;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
+
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -122,9 +121,9 @@ public class TemplateListsConfigurationWidget extends AbstractListConfigurationW
 		
 			
 			if (parent.isCreatingNew) {
-				contentPanel.add(new InlineHTML("Create new Template List"));
+				contentPanel.add(new InlineHTML("<h3>Create new Template List</h3>"));
 			} else {
-				contentPanel.add(new InlineHTML("Edit Template List"));
+				contentPanel.add(new InlineHTML("<h3>Edit Template List</h3>"));
 			}
 			InlineHTML nameLabel = new InlineHTML("Name: ");
 			

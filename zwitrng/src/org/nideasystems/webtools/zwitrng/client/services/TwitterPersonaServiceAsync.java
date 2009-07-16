@@ -68,6 +68,8 @@ public interface TwitterPersonaServiceAsync {
 	void loadAutoFollowRule(PersonaDTO model,
 			AutoFollowTriggerType on_follow_me,
 			AsyncCallback<AutoFollowRuleDTO> asyncCallback) throws Exception;
+	void getTemplateNames(PersonaDTO model,
+			AsyncCallback<List<String>> asyncCallback) throws Exception;
 	
 
 	

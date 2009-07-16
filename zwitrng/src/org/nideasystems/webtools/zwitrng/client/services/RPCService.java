@@ -279,6 +279,15 @@ public class RPCService implements IService {
 
 
 
+	public void loadTemplateNames(PersonaDTO model,
+			AsyncCallback<List<String>> asyncCallback) throws Exception{
+
+		this.personaService.getTemplateNames(model, asyncCallback);
+		
+	}
+
+
+
 	
 
 }

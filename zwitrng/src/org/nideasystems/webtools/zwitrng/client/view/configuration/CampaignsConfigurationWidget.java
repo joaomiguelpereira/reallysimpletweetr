@@ -1,6 +1,8 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
@@ -13,6 +15,7 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
+import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -111,10 +114,10 @@ public class CampaignsConfigurationWidget extends
 	 * 
 	 */
 	private class EditableCampaign extends
-			EditableItem<CampaignDTO, CampaignDTOList> {
+			EditableItem<CampaignDTO, CampaignDTOList> implements StringListLoadedCallBack {
 
 		private TextBox campaignName;
-		// private TextBox filterByTags;
+		// private TextBox filterByTags;<<<<<
 		// private ListBox filterOperator;
 		// private TextBox filterByText;
 		private DateBox startDate;
@@ -125,14 +128,20 @@ public class CampaignsConfigurationWidget extends
 		private InlineHTML runningDays;
 		private ListBox endHourOfTheDay;
 		private ListBox startHourOfTheDay;
-		private ListBox templateNames;
+		private CheckBox useTemplatesRandomly;
+		private CheckBox repeatTemplates;
+		private CheckBox limitTweets;
+		private CheckBox trackLinks;
+
+		private MultiSelectListWidget templateNamesSelect;
 
 		public EditableCampaign(
 				AbstractListConfigurationWidget<CampaignDTO, CampaignDTOList> theParent) {
 			super(theParent);
 
 			if (parent.isCreatingNew()) {
-				contentPanel.add(new InlineHTML("<h3>Create new Campaign</h3>"));
+				contentPanel
+						.add(new InlineHTML("<h3>Create new Campaign</h3>"));
 			} else {
 				contentPanel.add(new InlineHTML("<h3>Edit Campaign</h3>"));
 			}
@@ -141,45 +150,57 @@ public class CampaignsConfigurationWidget extends
 			contentPanel.add(textLabel);
 			contentPanel.add(campaignName);
 
+			templateNamesSelect = new MultiSelectListWidget();
+			templateNamesSelect.setAvailableItemsTitle("Available Templates");
+			templateNamesSelect.setSelectedItemsTitle("Selected Templates");
+			contentPanel.add(templateNamesSelect);
+			useTemplatesRandomly = new CheckBox("Use templates randomly.");
+			contentPanel.add(useTemplatesRandomly);
+			repeatTemplates = new CheckBox("Allow to repeat templates.");
+			contentPanel.add(repeatTemplates);
+			trackLinks = new CheckBox(
+					"Track clicks on links sent during this campaign?");
+			contentPanel.add(trackLinks);
+			
+
 			FlexTable table = new FlexTable();
 
-			InlineHTML containingTagsLabel = new InlineHTML("Use templates:");
-			ListBox templateNames = new ListBox(true);
+			/*
+			 * InlineHTML containingTagsLabel = new
+			 * InlineHTML("Use templates:"); ListBox templateNames = new
+			 * ListBox(true);
+			 * 
+			 * templateNames.setWidth("11em");
+			 * templateNames.setVisibleItemCount(5);
+			 * 
+			 * table.setWidget(0, 0, containingTagsLabel); table.setWidget(1, 0,
+			 * templateNames);
+			 * 
+			 * InlineHTML availableTemplates = new InlineHTML(
+			 * "Avaialable templates:"); ListBox availableNames = new
+			 * ListBox(true); availableNames.setWidth("11em");
+			 * availableNames.setVisibleItemCount(5);
+			 * 
+			 * 
+			 * table.setWidget(0, 1, availableTemplates); table.setWidget(1, 1,
+			 * availableNames);
+			 */
 
-			templateNames.setWidth("11em");
-			templateNames.setVisibleItemCount(5);
-			
-			table.setWidget(0, 0, containingTagsLabel);
-			table.setWidget(1, 0, templateNames);
-
-			InlineHTML availableTemplates = new InlineHTML(
-					"Avaialable templates:");
-			ListBox availableNames = new ListBox(true);
-			availableNames.setWidth("11em");
-			availableNames.setVisibleItemCount(5);
-			
-
-			table.setWidget(0, 1, availableTemplates);
-			table.setWidget(1, 1, availableNames);
-
-			
 			// ///////
-
 			InlineHTML startDateLabel = new InlineHTML("Start date:");
 			// startDate = new TextBox();
 			startDate = new DateBox();
 			startDate.setValue(new Date());
 			startDate.setWidth("11em");
-			table.setWidget(2, 0, startDateLabel);
-			table.setWidget(3, 0, startDate);
+			table.setWidget(0, 0, startDateLabel);
+			table.setWidget(1, 0, startDate);
 
-			
 			InlineHTML endDateLabel = new InlineHTML("End date:");
 			endDate = new DateBox();
 			endDate.setWidth("11em");
 			endDate.setValue(new Date());
-			table.setWidget(2, 1, endDateLabel);
-			table.setWidget(3, 1, endDate);
+			table.setWidget(0, 1, endDateLabel);
+			table.setWidget(1, 1, endDate);
 			contentPanel.add(table);
 			runningDays = new InlineHTML();
 			runningDays.addStyleName("inline-form-inline-help");
@@ -226,22 +247,35 @@ public class CampaignsConfigurationWidget extends
 
 			contentPanel.add(limitsTable);
 
-			FlexTable maximumTweetsTable = new FlexTable();
+			FlexTable additionalOptionsTable = new FlexTable();
+			limitTweets = new CheckBox("Limit the number of tweets sent?");
+			additionalOptionsTable.setWidget(0, 0, limitTweets);
+
 			InlineHTML maxUsageOfTemplateLabel = new InlineHTML(
 					"Send max of Tweets");
 			maxTweets = new TextBox();
 			maxTweets.setWidth("50px");
 			maxTweets.setValue("10");
 
-			maximumTweetsTable.setWidget(0, 0, maxUsageOfTemplateLabel);
+			additionalOptionsTable.setWidget(1, 0, maxUsageOfTemplateLabel);
 
-			maximumTweetsTable.setWidget(1, 0, maxTweets);
+			additionalOptionsTable.setWidget(2, 0, maxTweets);
 
-			contentPanel.add(maximumTweetsTable);
+			contentPanel.add(additionalOptionsTable);
 
 			this.startDate.setFormat(new DateFormatter());
 			this.endDate.setFormat(new DateFormatter());
+			this.maxTweets.setEnabled(limitTweets.getValue());
+			this.limitTweets
+					.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
+						@Override
+						public void onValueChange(
+								ValueChangeEvent<Boolean> event) {
+							maxTweets.setEnabled(event.getValue());
+						}
+
+					});
 			this.startDate
 					.addValueChangeHandler(new ValueChangeHandler<Date>() {
 
@@ -263,6 +297,19 @@ public class CampaignsConfigurationWidget extends
 
 			});
 
+			/*//Load available template names
+			ArrayList<String> avaItems = new ArrayList<String>();
+			avaItems.add("Item 1");
+			avaItems.add("Item 2");
+			avaItems.add("Item 3");
+*/
+			//this.templateNamesSelect.setAvailableItemsList();
+			loadAvailableTemplatesNames();
+		}
+
+		private void loadAvailableTemplatesNames() {
+			MainController.getInstance().getCurrentPersonaController().loadTemplateNames(this);
+			
 		}
 
 		private void updateRunningDays() {
@@ -325,7 +372,7 @@ public class CampaignsConfigurationWidget extends
 		@Override
 		public void focus() {
 			if (dataObject != null) {
-				//this.filterByTags.setFocus(true);
+				// this.filterByTags.setFocus(true);
 			} else {
 				this.campaignName.setFocus(true);
 			}
@@ -342,14 +389,13 @@ public class CampaignsConfigurationWidget extends
 				isValid = false;
 			}
 
-			/*if (this.filterByTags.getValue().trim().isEmpty()
-			 && this.filterByText.getValue().trim().isEmpty() ) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide some tags so we can find your templates");
-				isValid = false;
-			}*/
+			/*
+			 * if (this.filterByTags.getValue().trim().isEmpty() &&
+			 * this.filterByText.getValue().trim().isEmpty() ) { MainController
+			 * .getInstance() .addError(
+			 * "Please provide some tags so we can find your templates");
+			 * isValid = false; }
+			 */
 			if (this.campaignName.getValue().trim().isEmpty()) {
 				MainController.getInstance().addError(
 						"Please provide a name for the campaign.");
@@ -469,7 +515,7 @@ public class CampaignsConfigurationWidget extends
 				}
 				campaign.setName(this.campaignName.getValue());
 				campaign.setEndDate(this.endDate.getValue());
-				//campaign.setFilterByTemplateTags(this.filterByTags.getValue());
+				// campaign.setFilterByTemplateTags(this.filterByTags.getValue());
 				// campaign.setFilterByTemplateText(this.filterByText.getValue());
 				/*
 				 * campaign.setFilterOperator(FilterOperator
@@ -512,7 +558,7 @@ public class CampaignsConfigurationWidget extends
 			this.startDate.setValue(dataObject.getStartDate());
 			this.timeBetweenTweets.setValue(dataObject.getTimeBetweenTweets()
 					+ "");
-			//this.filterByTags.setValue(dataObject.getFilterByTemplateTags());
+			// this.filterByTags.setValue(dataObject.getFilterByTemplateTags());
 			// this.filterByText.setValue(dataObject.getFilterByTemplateText());
 			this.maxTweets.setValue(dataObject.getMaxTweets() + "");
 
@@ -544,6 +590,18 @@ public class CampaignsConfigurationWidget extends
 		public void onLinksShortened(Map<String, String> result) {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public void onTemplatesNamesListFail(Throwable tr) {
+			MainController.getInstance().addException(tr);
+			
+		}
+
+		@Override
+		public void onTemplatesNamesListLoaded(List<String> list) {
+			this.templateNamesSelect.setAvailableItemsList(list);
+			
 		}
 	}
 

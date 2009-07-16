@@ -251,7 +251,7 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 		contentPanel.insert(editableItemNew, 0);
 		
 		editableItemNew.setNew(true);
-		editableItemNew.setTitle("Create New");
+		
 		searchPanel.setVisible(false);
 		toolBar.setVisible(false);
 

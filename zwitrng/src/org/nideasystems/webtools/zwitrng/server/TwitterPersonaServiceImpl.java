@@ -208,9 +208,9 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	public TemplateListDTO deleteTemplateFragment(PersonaDTO model,
 			TemplateListDTO dataObject) throws Exception {
 		startTransaction(true);
-		TemplateListDTO outTemplateFrag = getBusinessHelper()
-				.getTemplatePojo().deleteTemplateFragment(model.getName(),
-						user.getEmail(), dataObject);
+		TemplateListDTO outTemplateFrag = getBusinessHelper().getTemplatePojo()
+				.deleteTemplateFragment(model.getName(), user.getEmail(),
+						dataObject);
 		endTransaction();
 		return outTemplateFrag;
 	}
@@ -401,7 +401,8 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 
 		AutoFollowRuleDTO retRule = null;
 		try {
-			retRule = getBusinessHelper().getRulesPojo().saveAutoFollowRule(model, rule);
+			retRule = getBusinessHelper().getRulesPojo().saveAutoFollowRule(
+					model, rule);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe(e.getMessage());
@@ -418,10 +419,10 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 			AutoFollowTriggerType on_follow_me) throws Exception {
 		startTransaction(true);
 
-		
 		AutoFollowRuleDTO retRule = null;
 		try {
-			retRule = getBusinessHelper().getRulesPojo().getAutoFollowRule(model,on_follow_me);
+			retRule = getBusinessHelper().getRulesPojo().getAutoFollowRule(
+					model, on_follow_me);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe(e.getMessage());
@@ -431,5 +432,24 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		}
 
 		return retRule;
+	}
+
+	@Override
+	public List<String> getTemplateNames(PersonaDTO model) throws Exception {
+		startTransaction(true);
+
+		List<String> result = null;
+		try {
+			result = getBusinessHelper().getTemplatePojo().getTemplatesNames(
+					model);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} finally {
+			endTransaction();
+		}
+
+		return result;
 	}
 }
