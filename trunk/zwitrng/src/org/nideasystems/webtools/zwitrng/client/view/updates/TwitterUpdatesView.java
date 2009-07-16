@@ -12,7 +12,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
+
 
 public class TwitterUpdatesView extends
 		AbstractVerticalPanelView<TwitterUpdatesController> {
@@ -97,7 +97,7 @@ public class TwitterUpdatesView extends
 
 		
 
-		InlineHTML loadMoreLink = new InlineHTML("More?");
+		InlineHTML loadMoreLink = new InlineHTML("See older tweets?");
 		loadMoreLink.addStyleName("link");
 		
 		loadMoreLink.addClickHandler(new ClickHandler() {
@@ -201,7 +201,7 @@ public class TwitterUpdatesView extends
 		if (currentFilter.getUpdatesType() == UpdatesType.SEARCHES) {
 			searchWidget.refresh();
 		}
-		this.loadMoreLink.setText("Update?");
+		this.loadMoreLink.setVisible(true);
 		updatePaging();
 
 	}
