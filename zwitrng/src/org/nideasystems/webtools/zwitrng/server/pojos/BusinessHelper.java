@@ -6,12 +6,12 @@ import javax.jdo.PersistenceManager;
 
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
-import org.nideasystems.webtools.zwitrng.server.domain.CampaignDAO;
-import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
-import org.nideasystems.webtools.zwitrng.server.domain.PersonaDAO;
-import org.nideasystems.webtools.zwitrng.server.domain.TemplateDAO;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.CampaignDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.FeedSetDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.PersonaDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.TemplateDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 
 public class BusinessHelper {
 

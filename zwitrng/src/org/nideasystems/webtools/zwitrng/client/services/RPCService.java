@@ -8,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -283,6 +284,14 @@ public class RPCService implements IService {
 			AsyncCallback<List<String>> asyncCallback) throws Exception{
 
 		this.personaService.getTemplateNames(model, asyncCallback);
+		
+	}
+
+
+
+	public void setCampaignStatus(PersonaDTO model, String campaignName, CampaignStatus status,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception{
+		this.personaService.setCampaignStatus(model, campaignName,status, asyncCallback);
 		
 	}
 

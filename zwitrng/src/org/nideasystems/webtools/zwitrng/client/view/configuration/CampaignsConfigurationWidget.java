@@ -1,6 +1,5 @@
 package org.nideasystems.webtools.zwitrng.client.view.configuration;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +10,14 @@ import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
+
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -114,7 +117,8 @@ public class CampaignsConfigurationWidget extends
 	 * 
 	 */
 	private class EditableCampaign extends
-			EditableItem<CampaignDTO, CampaignDTOList> implements StringListLoadedCallBack {
+			EditableItem<CampaignDTO, CampaignDTOList> implements
+			StringListLoadedCallBack {
 
 		private TextBox campaignName;
 		// private TextBox filterByTags;<<<<<
@@ -132,6 +136,7 @@ public class CampaignsConfigurationWidget extends
 		private CheckBox repeatTemplates;
 		private CheckBox limitTweets;
 		private CheckBox trackLinks;
+		private InlineHTML status;
 
 		private MultiSelectListWidget templateNamesSelect;
 
@@ -144,7 +149,11 @@ public class CampaignsConfigurationWidget extends
 						.add(new InlineHTML("<h3>Create new Campaign</h3>"));
 			} else {
 				contentPanel.add(new InlineHTML("<h3>Edit Campaign</h3>"));
+				status = new InlineHTML();
+				contentPanel.add(status);
+
 			}
+
 			InlineHTML textLabel = new InlineHTML("Name: ");
 			campaignName = new TextBox();
 			contentPanel.add(textLabel);
@@ -161,30 +170,8 @@ public class CampaignsConfigurationWidget extends
 			trackLinks = new CheckBox(
 					"Track clicks on links sent during this campaign?");
 			contentPanel.add(trackLinks);
-			
 
 			FlexTable table = new FlexTable();
-
-			/*
-			 * InlineHTML containingTagsLabel = new
-			 * InlineHTML("Use templates:"); ListBox templateNames = new
-			 * ListBox(true);
-			 * 
-			 * templateNames.setWidth("11em");
-			 * templateNames.setVisibleItemCount(5);
-			 * 
-			 * table.setWidget(0, 0, containingTagsLabel); table.setWidget(1, 0,
-			 * templateNames);
-			 * 
-			 * InlineHTML availableTemplates = new InlineHTML(
-			 * "Avaialable templates:"); ListBox availableNames = new
-			 * ListBox(true); availableNames.setWidth("11em");
-			 * availableNames.setVisibleItemCount(5);
-			 * 
-			 * 
-			 * table.setWidget(0, 1, availableTemplates); table.setWidget(1, 1,
-			 * availableNames);
-			 */
 
 			// ///////
 			InlineHTML startDateLabel = new InlineHTML("Start date:");
@@ -297,19 +284,19 @@ public class CampaignsConfigurationWidget extends
 
 			});
 
-			/*//Load available template names
-			ArrayList<String> avaItems = new ArrayList<String>();
-			avaItems.add("Item 1");
-			avaItems.add("Item 2");
-			avaItems.add("Item 3");
-*/
-			//this.templateNamesSelect.setAvailableItemsList();
+			/*
+			 * //Load available template names ArrayList<String> avaItems = new
+			 * ArrayList<String>(); avaItems.add("Item 1");
+			 * avaItems.add("Item 2"); avaItems.add("Item 3");
+			 */
+			// this.templateNamesSelect.setAvailableItemsList();
 			loadAvailableTemplatesNames();
 		}
 
 		private void loadAvailableTemplatesNames() {
-			MainController.getInstance().getCurrentPersonaController().loadTemplateNames(this);
-			
+			MainController.getInstance().getCurrentPersonaController()
+					.loadTemplateNames(this);
+
 		}
 
 		private void updateRunningDays() {
@@ -382,25 +369,40 @@ public class CampaignsConfigurationWidget extends
 		@Override
 		protected void save() {
 			boolean isValid = true;
+			CampaignDTO campaign = new CampaignDTO();
+			if (dataObject != null) {
+				campaign.setStatus(dataObject.getStatus());
+			} else {
+				campaign.setStatus(CampaignStatus.NOT_STARTED);
+			}
 
+			// Check Name
 			if (this.campaignName.getValue().trim().isEmpty()) {
 				MainController.getInstance().addError(
 						"Please provide a name for the campaign");
 				isValid = false;
+
+			} else {
+				campaign.setName(this.campaignName.getValue().trim());
 			}
 
-			/*
-			 * if (this.filterByTags.getValue().trim().isEmpty() &&
-			 * this.filterByText.getValue().trim().isEmpty() ) { MainController
-			 * .getInstance() .addError(
-			 * "Please provide some tags so we can find your templates");
-			 * isValid = false; }
-			 */
-			if (this.campaignName.getValue().trim().isEmpty()) {
+			// Check template names
+			if (this.templateNamesSelect.getSelectedItemsList().size() == 0) {
 				MainController.getInstance().addError(
-						"Please provide a name for the campaign.");
+						"Please provide at leat one template to use!");
 				isValid = false;
+
+			} else {
+				campaign.setTemplatesNames(this.templateNamesSelect
+						.getSelectedItemsList());
 			}
+
+			// Add use templates randomly
+			campaign.setUseTemplatesRandomly(this.useTemplatesRandomly
+					.getValue());
+			// Set allowRepeatTemplates
+			campaign.setAllowRepeatTemplates(this.repeatTemplates.getValue());
+			campaign.setTrackClicksOnLinks(this.trackLinks.getValue());
 
 			if (startDate.getValue() == null || endDate.getValue() == null) {
 				MainController
@@ -409,9 +411,7 @@ public class CampaignsConfigurationWidget extends
 								"Please provide a start and end date for the campaign.");
 				isValid = false;
 
-			}
-
-			if (this.startDate.getValue() == null
+			} else if (this.startDate.getValue() == null
 					|| this.endDate.getValue() == null
 					|| this.startDate.getValue().after(this.endDate.getValue())
 					|| (this.startDate.getValue().compareTo(
@@ -419,81 +419,47 @@ public class CampaignsConfigurationWidget extends
 				MainController.getInstance().addError(
 						"Please provide a end date later than the start date.");
 				isValid = false;
-			}
-
-			if (this.timeBetweenTweets.getValue().trim().isEmpty()) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide the time we should wait between your tweets.");
-				isValid = false;
 			} else {
-
-				try {
-					Integer.valueOf(this.maxTweets.getValue());
-				} catch (NumberFormatException e) {
-					MainController
-							.getInstance()
-							.addError(
-									"Please provide a valid number for the time we should wait between tweets!");
-					isValid = false;
-
-				}
-
-			}
-
-			if (this.maxTweets.getValue().trim().isEmpty()) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide the number of times we should reuse each of the templates.");
-				isValid = false;
-			} else {
-
-				try {
-					Integer.valueOf(this.maxTweets.getValue());
-				} catch (NumberFormatException e) {
-					MainController
-							.getInstance()
-							.addError(
-									"Please provide a valid number for the usage of each template!");
-					isValid = false;
-
-				}
-
-				if (isValid) {
-					CampaignDTO campaign = new CampaignDTO();
-					if (dataObject != null) {
-						campaign.setId(dataObject.getId());
-					}
-					campaign.setName(this.campaignName.getValue());
-
-				}
-
+				campaign.setStartDate(this.startDate.getValue());
+				campaign.setEndDate(this.endDate.getValue());
 			}
 
 			if ((this.timeUnits.getValue(this.timeUnits.getSelectedIndex()))
 					.equals(TimeUnits.MINUTES.name())) {
-				// Validate multiple of 10
+				// Validate multiple of 5
 
 				Integer val = 5;
 				try {
 					val = Integer.valueOf(this.timeBetweenTweets.getValue());
+					if ((val % 5) > 0) {
+
+						MainController
+								.getInstance()
+								.addError(
+										"The interval in minutes we use to send tweets is allways multiples of 5.\nProvide a multiple of 5!");
+
+						isValid = false;
+
+					} else {
+						campaign.setTimeBetweenTweets(val);
+					}
 				} catch (NumberFormatException e) {
+					MainController.getInstance().addError(
+							"The interval must be a valid number.");
 
 					// validated before
 					isValid = false;
 
 				}
 
-				if ((val % 5) > 0) {
-
-					MainController
-							.getInstance()
-							.addError(
-									"The interval in minutes we use to send tweets is allways multiples of 5.\nProvide a multiple of 5!");
+			} else {
+				try {
+					campaign.setTimeBetweenTweets(Integer
+							.valueOf(this.timeBetweenTweets.getValue()));
+				} catch (NumberFormatException e) {
+					MainController.getInstance().addError(
+							"The interval must be a valid number.");
 					isValid = false;
-
 				}
 			}
 
@@ -507,38 +473,53 @@ public class CampaignsConfigurationWidget extends
 						.addError(
 								"The start hour of the day is later than the end hour. This Campaign will not run.");
 
-			}
-			if (isValid) {
-				CampaignDTO campaign = new CampaignDTO();
-				if (dataObject != null) {
-					campaign.setId(dataObject.getId());
-				}
-				campaign.setName(this.campaignName.getValue());
-				campaign.setEndDate(this.endDate.getValue());
-				// campaign.setFilterByTemplateTags(this.filterByTags.getValue());
-				// campaign.setFilterByTemplateText(this.filterByText.getValue());
-				/*
-				 * campaign.setFilterOperator(FilterOperator
-				 * .valueOf(this.filterOperator .getValue(this.filterOperator
-				 * .getSelectedIndex())));
-				 */
-				campaign.setMaxTweets(Integer
-						.valueOf(this.maxTweets.getValue()));
-				campaign.setStartDate(this.startDate.getValue());
-				// campaign.setStatus(status)
-				campaign.setTimeBetweenTweets(Integer
-						.valueOf(this.timeBetweenTweets.getValue()));
-				campaign.setTimeUnit(TimeUnits.valueOf(this.timeUnits
-						.getValue(this.timeUnits.getSelectedIndex())));
-
+			} else {
 				campaign.setStartHourOfTheDay(Integer
 						.valueOf(this.startHourOfTheDay
 								.getValue(this.startHourOfTheDay
 										.getSelectedIndex())));
+
 				campaign.setEndHourOfTheDay(Integer
 						.valueOf(this.endHourOfTheDay
 								.getValue(this.endHourOfTheDay
 										.getSelectedIndex())));
+
+			}
+
+			campaign.setTimeUnit(TimeUnits.valueOf(this.timeUnits
+					.getValue(this.timeUnits.getSelectedIndex())));
+
+			campaign.setLimitNumberOfTweetsSent(this.limitTweets.getValue());
+
+			if (campaign.isLimitNumberOfTweetsSent()
+					&& this.maxTweets.getValue().trim().isEmpty()) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide the number of times we should sent a tweet.");
+				isValid = false;
+			} else {
+
+				try {
+
+					campaign.setMaxTweets(Integer.valueOf(this.maxTweets
+							.getValue()));
+				} catch (NumberFormatException e) {
+					MainController
+							.getInstance()
+							.addError(
+									"Please provide a valid number for the times we should send a tweet!");
+					isValid = false;
+
+				}
+
+			}
+
+			if (isValid) {
+
+				if (dataObject != null) {
+					campaign.setId(dataObject.getId());
+				}
 				setUpdating(true);
 				parent.saveObject(campaign);
 
@@ -549,6 +530,10 @@ public class CampaignsConfigurationWidget extends
 		@Override
 		public void refresh() {
 			this.campaignName.setValue(dataObject.getName());
+			if (this.status != null) {
+				this.status.setHTML("Status: <span class=\"label\">"
+						+ dataObject.getStatus().toString() + "</span>");
+			}
 
 			if (dataObject.getId() != -1) {
 				this.campaignName.setEnabled(false);
@@ -582,7 +567,18 @@ public class CampaignsConfigurationWidget extends
 					.getStartHourOfTheDay());
 			this.endHourOfTheDay.setSelectedIndex(dataObject
 					.getEndHourOfTheDay() - 1);
+
+			this.templateNamesSelect.setSelectedItemsList(dataObject
+					.getTemplatesNames());
+			this.useTemplatesRandomly.setValue(dataObject
+					.isUseTemplatesRandomly());
+			this.repeatTemplates.setValue(dataObject.isAllowRepeatTemplates());
+			this.trackLinks.setValue(dataObject.isTrackClicksOnLinks());
+			this.limitTweets.setValue(dataObject.isLimitNumberOfTweetsSent());
+
+			maxTweets.setEnabled(dataObject.isLimitNumberOfTweetsSent());
 			updateRunningDays();
+			this.templateNamesSelect.refreshAvailable();
 
 		}
 
@@ -595,13 +591,14 @@ public class CampaignsConfigurationWidget extends
 		@Override
 		public void onTemplatesNamesListFail(Throwable tr) {
 			MainController.getInstance().addException(tr);
-			
+
 		}
 
 		@Override
 		public void onTemplatesNamesListLoaded(List<String> list) {
 			this.templateNamesSelect.setAvailableItemsList(list);
-			
+			this.templateNamesSelect.refreshAvailable();
+
 		}
 	}
 
@@ -613,11 +610,16 @@ public class CampaignsConfigurationWidget extends
 	private class SelectableCampaign extends
 			SelectableItem<CampaignDTO, CampaignDTOList> {
 
-		private InlineHTML nameText;
-		private InlineHTML filterText;
+		private InlineHTML templatesNames;
 		private InlineHTML scheduleText;
 		private InlineHTML limitsText;
 		private InlineHTML statusText;
+		private HorizontalPanel statusPanel;
+		private InlineHTML startLink;
+		private InlineHTML pauseLink;
+		private InlineHTML stopLink;
+		private InlineHTML resumeLink;
+		private InlineHTML resetLink;
 
 		public SelectableCampaign(
 				CampaignDTO theCampaign,
@@ -625,30 +627,105 @@ public class CampaignsConfigurationWidget extends
 				boolean isEditable) {
 			// Set the parent
 			super(theParent, isEditable, false);
+			
 			setDataObject(theCampaign);
 
-			HorizontalPanel nameLine = new HorizontalPanel();
-			InlineHTML nameLabel = new InlineHTML("Name: ");
-			nameLabel.addStyleName("label");
-			nameLine.add(nameLabel);
-			nameText = new InlineHTML();
-			nameLine.add(nameText);
-			// Filter
+			content
+					.add(new InlineHTML("<h3>" + theCampaign.getName()
+							+ "</h3>"));
 
-			content.add(nameLine);
-			filterText = new InlineHTML();
-			content.add(filterText);
+			templatesNames = new InlineHTML();
+			content.add(templatesNames);
 
 			scheduleText = new InlineHTML();
 			content.add(scheduleText);
 
 			limitsText = new InlineHTML();
 			content.add(limitsText);
+			statusPanel = new HorizontalPanel();
+			statusPanel.setSpacing(4);
 			statusText = new InlineHTML();
-			content.add(statusText);
+			startLink = new InlineHTML("Start");
+			stopLink = new InlineHTML(" Stop ");
+			pauseLink = new InlineHTML(" Pause ");
+			resumeLink = new InlineHTML(" Resume ");
+			resetLink = new InlineHTML(" Reset ");
+
+			startLink.addStyleName("link");
+			stopLink.addStyleName("link");
+			pauseLink.addStyleName("link");
+			resumeLink.addStyleName("link");
+			resetLink.addStyleName("link");
+
+			statusPanel.add(statusText);
+			statusPanel.add(startLink);
+			statusPanel.add(stopLink);
+			statusPanel.add(pauseLink);
+			statusPanel.add(resumeLink);
+			statusPanel.add(resetLink);
+
+			content.add(statusPanel);
+
 			toolBar = createMenuOptions();
 			content.add(toolBar);
+
 			refresh();
+
+			startLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					changeStatus(CampaignStatus.STARTED);
+
+				}
+
+			});
+
+			stopLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					changeStatus(CampaignStatus.STOPPED);
+
+				}
+
+			});
+
+			pauseLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					changeStatus(CampaignStatus.PAUSED);
+
+				}
+
+			});
+
+			resumeLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					changeStatus(CampaignStatus.STARTED);
+
+				}
+
+			});
+			resetLink.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					changeStatus(CampaignStatus.NOT_STARTED);
+
+				}
+
+			});
+
+		}
+
+		private void changeStatus(CampaignStatus status) {
+			setProcessing(true);
+			
+			MainController.getInstance().getCurrentPersonaController().changeCampaignStatus(this, dataObject.getName(), status);
 
 		}
 
@@ -656,19 +733,48 @@ public class CampaignsConfigurationWidget extends
 		public String getSearchableText() {
 
 			return dataObject.getName() + " "
-					+ dataObject.getFilterByTemplateTags() + " "
 					+ dataObject.getStatus().toString();
 		}
 
 		@Override
 		protected void refresh() {
-			this.nameText.setText(dataObject.getName());
-			// this.filterOperator.setText(" "+dataObject.getFilterOperatorAsText()+" ");
-			// this.filterTags.setText(dataObject.getFilterByTemplateTags());
-			this.filterText.setHTML(getCampaignDescriptionText(dataObject));
+			setProcessing(false);
+			this.templatesNames.setHTML(getCampaignDescriptionText(dataObject));
 			this.scheduleText.setHTML(getCampaignScheduleText(dataObject));
 			this.limitsText.setHTML(getCampaignLimitsText(dataObject));
 			this.statusText.setHTML(getCampaignStatusText(dataObject));
+
+			if (dataObject.getStatus().equals(CampaignStatus.NOT_STARTED)) {
+				this.stopLink.setVisible(false);
+				this.pauseLink.setVisible(false);
+				this.startLink.setVisible(true);
+				this.resumeLink.setVisible(false);
+				this.resetLink.setVisible(false);
+			} else if (dataObject.getStatus().equals(CampaignStatus.STARTED)) {
+				this.stopLink.setVisible(true);
+				this.pauseLink.setVisible(true);
+				this.startLink.setVisible(false);
+				this.resumeLink.setVisible(false);
+				this.resetLink.setVisible(false);
+			} else if (dataObject.getStatus().equals(CampaignStatus.PAUSED)) {
+				this.stopLink.setVisible(false);
+				this.pauseLink.setVisible(false);
+				this.startLink.setVisible(false);
+				this.resumeLink.setVisible(true);
+				this.resetLink.setVisible(false);
+			} else if (dataObject.getStatus().equals(CampaignStatus.FINISHED)) {
+				this.stopLink.setVisible(false);
+				this.pauseLink.setVisible(false);
+				this.startLink.setVisible(false);
+				this.resumeLink.setVisible(false);
+				this.resetLink.setVisible(true);
+			} else if (dataObject.getStatus().equals(CampaignStatus.STOPPED)) {
+				this.stopLink.setVisible(false);
+				this.pauseLink.setVisible(false);
+				this.startLink.setVisible(false);
+				this.resumeLink.setVisible(false);
+				this.resetLink.setVisible(true);
+			}
 		}
 
 		private String getCampaignStatusText(CampaignDTO dataObject) {
@@ -678,25 +784,8 @@ public class CampaignsConfigurationWidget extends
 			sb.append(dataObject.getStatus().toString());
 			sb.append("</span>. ");
 
-			if (!dataObject.getStatus().equals(CampaignStatus.NOT_STARTED)) {
-				sb.append(" Sent: ");
-				sb.append("<span class=\"label\">");
-				sb.append(dataObject.getTweetsSent());
-				sb.append("</span> tweets.");
-				DateTimeFormat dtf = DateTimeFormat
-						.getFormat(Constants.DATE_TIME_FORMAT);
-				if (dataObject.getLastRun() != null) {
+			// Add Links
 
-					sb.append(" Last tweet sent at: "
-							+ dtf.format(dataObject.getLastRun()));
-				}
-
-				if (dataObject.getNextRun() != null) {
-					sb.append(" Next tweet will be sent at: "
-							+ dtf.format(dataObject.getNextRun()));
-				}
-
-			}
 			return sb.toString();
 
 		}
@@ -704,27 +793,40 @@ public class CampaignsConfigurationWidget extends
 		private String getCampaignLimitsText(CampaignDTO dataObject) {
 			StringBuffer sb = new StringBuffer();
 
+			sb.append("<div>");
 			sb.append("Wait ");
 			sb.append("<span class=\"label\">");
 			sb.append(dataObject.getTimeBetweenTweets());
 			sb.append(" </span> ");
-			if (dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
-				sb.append("days ");
-			} else if (dataObject.getTimeUnit().equals(TimeUnits.HOURS)) {
-				sb.append("hours ");
+			assert (dataObject != null);
+			if (dataObject.getTimeUnit() != null) {
+				if (dataObject.getTimeUnit().equals(TimeUnits.DAYS)) {
+					sb.append("days ");
+				} else if (dataObject.getTimeUnit().equals(TimeUnits.HOURS)) {
+					sb.append("hours ");
+				} else {
+					sb.append("minutes ");
+				}
 			} else {
-				sb.append("minutes ");
+				sb.append("Invalid ");
 			}
 
 			sb.append(" between tweets. ");
 
-			sb.append(" Don't send more than ");
-			sb.append("<span class=\"label\">");
-			//
+			if (dataObject.isLimitNumberOfTweetsSent()) {
 
-			sb.append(dataObject.getMaxTweets());
+				sb.append(" Don't send more than ");
+				sb.append("<span class=\"label\">");
+				//
 
-			sb.append("</span> tweets.");
+				sb.append(dataObject.getMaxTweets());
+
+				sb.append("</span> tweets.");
+			} else {
+				sb
+						.append("<span class=\"label\"> Don't limit number of tweets sent.");
+				sb.append("</span>");
+			}
 
 			return sb.toString();
 
@@ -732,22 +834,51 @@ public class CampaignsConfigurationWidget extends
 
 		private String getCampaignDescriptionText(CampaignDTO theCampaign) {
 			StringBuffer sb = new StringBuffer();
+			sb.append("Use templates: ");
+			sb.append("<span class=\"label\">");
 
-			if (theCampaign.getFilterByTemplateTags() != null
-					&& !theCampaign.getFilterByTemplateTags().trim().isEmpty()) {
-				sb.append("Use templates containing tags :\"");
-				sb.append("<span class=\"label\">");
+			for (String tName : dataObject.getTemplatesNames()) {
+				sb.append(tName);
+				sb.append(" ");
 
-				sb.append(theCampaign.getFilterByTemplateTags());
-				sb.append("\"</span> ");
-
-				/*
-				 * if (theCampaign.getFilterByTemplateText() != null &&
-				 * !theCampaign.getFilterByTemplateText().trim() .isEmpty()) {
-				 * sb.append(theCampaign.getFilterOperatorAsText()); }
-				 */
 			}
+			sb.append("</span>");
+			sb.append("<div>");
 
+			sb.append("Use templates randomly: ");
+			sb.append("<span class=\"label\">");
+			sb.append(dataObject.isUseTemplatesRandomly() ? "Yes" : "No");
+			sb.append(" </span> ");
+
+			sb.append("Allow repeat templates: ");
+			sb.append("<span class=\"label\">");
+			sb.append(dataObject.isAllowRepeatTemplates() ? "Yes" : "No");
+			sb.append(" </span> ");
+
+			sb.append("<div>");
+			sb.append("Track links sent during this campaign: ");
+			sb.append("<span class=\"label\">");
+			sb.append(dataObject.isTrackClicksOnLinks() ? "Yes" : "No");
+			sb.append(" </span> ");
+
+			sb.append("</div>");
+
+			/*
+			 * if (theCampaign.getFilterByTemplateTags() != null &&
+			 * !theCampaign.getFilterByTemplateTags().trim().isEmpty()) {
+			 * sb.append("Use templates containing tags :\"");
+			 * 
+			 * 
+			 * sb.append(theCampaign.getFilterByTemplateTags());
+			 * 
+			 * 
+			 * 
+			 * if (theCampaign.getFilterByTemplateText() != null &&
+			 * !theCampaign.getFilterByTemplateText().trim() .isEmpty()) {
+			 * sb.append(theCampaign.getFilterOperatorAsText()); }
+			 * 
+			 * }
+			 */
 			/*
 			 * if (theCampaign.getFilterByTemplateText() != null &&
 			 * !theCampaign.getFilterByTemplateText().trim().isEmpty()) {

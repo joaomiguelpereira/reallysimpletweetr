@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -28,8 +29,6 @@ public class CampaignDO implements Serializable {
 	@Persistent
 	private String name;
 	@Persistent
-	private String filterByTemplateTags;
-	@Persistent
 	private Date startDate;
 	@Persistent
 	private Date endDate;
@@ -40,8 +39,6 @@ public class CampaignDO implements Serializable {
 	@Persistent
 	private CampaignStatus status;
 	@Persistent
-	private int tweetsSent;
-	@Persistent
 	private TimeUnits timeUnit;
 	// Parent Persona
 	@Persistent
@@ -49,11 +46,23 @@ public class CampaignDO implements Serializable {
 	@Persistent
 	private Date created;
 	
-	@Persistent 
-	private Date lastRun;
+	@Persistent
+	private CampaignInstanceDO runningInstance;
 	
-	@Persistent 
-	private Date nextRun;
+	
+	@Persistent
+	private List<String> templateNames;
+	
+	@Persistent
+	private Boolean useTemplatesRandomly;
+	@Persistent
+	private Boolean allowRepeatTemplates;
+	@Persistent
+	private Boolean trackClicksOnLinks;
+	@Persistent
+	private Boolean limitNumberOfTweetsSent;
+
+	
 	
 	@Persistent
 	private Date modified;
@@ -61,6 +70,38 @@ public class CampaignDO implements Serializable {
 	@Persistent
 	private Integer startHourOfTheDay=22;
 	
+	public Boolean getUseTemplatesRandomly() {
+		return useTemplatesRandomly;
+	}
+
+	public void setUseTemplatesRandomly(Boolean useTemplatesRandomly) {
+		this.useTemplatesRandomly = useTemplatesRandomly;
+	}
+
+	public Boolean getAllowRepeatTemplates() {
+		return allowRepeatTemplates;
+	}
+
+	public void setAllowRepeatTemplates(Boolean allowRepeatTemplates) {
+		this.allowRepeatTemplates = allowRepeatTemplates;
+	}
+
+	public Boolean getTrackClicksOnLinks() {
+		return trackClicksOnLinks;
+	}
+
+	public void setTrackClicksOnLinks(Boolean trackClicksOnLinks) {
+		this.trackClicksOnLinks = trackClicksOnLinks;
+	}
+
+	public Boolean getLimitNumberOfTweetsSent() {
+		return limitNumberOfTweetsSent;
+	}
+
+	public void setLimitNumberOfTweetsSent(Boolean limitNumberOfTweetsSent) {
+		this.limitNumberOfTweetsSent = limitNumberOfTweetsSent;
+	}
+
 	public Date getCreated() {
 		return created;
 	}
@@ -93,30 +134,7 @@ public class CampaignDO implements Serializable {
 		this.name = name;
 	}
 
-	public String getFilterByTemplateTags() {
-		return filterByTemplateTags;
-	}
-
-	public void setFilterByTemplateTags(String filterByTemplateTags) {
-		this.filterByTemplateTags = filterByTemplateTags;
-	}
-
-	/*public String getFilterByTemplateText() {
-		return filterByTemplateText;
-	}
-
-	public void setFilterByTemplateText(String filterByTemplateText) {
-		this.filterByTemplateText = filterByTemplateText;
-	}
-
-	public FilterOperator getFilterOperator() {
-		return filterOperator;
-	}
-
-	public void setFilterOperator(FilterOperator filterOperator) {
-		this.filterOperator = filterOperator;
-	}*/
-
+	
 	public Date getStartDate() {
 		return startDate;
 	}
@@ -157,14 +175,6 @@ public class CampaignDO implements Serializable {
 		this.status = status;
 	}
 
-	public int getTweetsSent() {
-		return tweetsSent;
-	}
-
-	public void setTweetsSent(int tweetsSent) {
-		this.tweetsSent = tweetsSent;
-	}
-
 	public TimeUnits getTimeUnit() {
 		return timeUnit;
 	}
@@ -199,20 +209,21 @@ public class CampaignDO implements Serializable {
 		return startHourOfTheDay;
 	}
 
-	public void setLastRun(Date lastRun) {
-		this.lastRun = lastRun;
+	
+	public void setTemplateNames(List<String> templateNames) {
+		this.templateNames = templateNames;
 	}
 
-	public Date getLastRun() {
-		return lastRun;
+	public List<String> getTemplateNames() {
+		return templateNames;
 	}
 
-	public void setNextRun(Date nextRun) {
-		this.nextRun = nextRun;
+	public void setRunningInstance(CampaignInstanceDO runningInstance) {
+		this.runningInstance = runningInstance;
 	}
 
-	public Date getNextRun() {
-		return nextRun;
+	public CampaignInstanceDO getRunningInstance() {
+		return runningInstance;
 	}
 
 	

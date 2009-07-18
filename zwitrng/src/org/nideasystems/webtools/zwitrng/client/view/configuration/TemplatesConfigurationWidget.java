@@ -318,7 +318,9 @@ public class TemplatesConfigurationWidget extends
 				AbstractListConfigurationWidget<TemplateDTO, TemplateDTOList> theParent,
 				boolean isEditable) {
 			// Set the parent
+			
 			super(theParent, isEditable, false);
+			
 			setDataObject(theTemplate);
 
 			content

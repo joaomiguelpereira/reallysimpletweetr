@@ -1,8 +1,7 @@
-package org.nideasystems.webtools.zwitrng.server.domain;
+package org.nideasystems.webtools.zwitrng.shared.model;
 
 import java.util.Date;
 
-import org.nideasystems.webtools.zwitrng.shared.model.IDTO;
 
 public class TwitteUserDTO implements IDTO {
 	
