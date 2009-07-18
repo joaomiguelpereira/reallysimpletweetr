@@ -1,5 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -10,6 +11,7 @@ import javax.jdo.Query;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignInstanceDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.RSSItemDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
@@ -67,6 +69,14 @@ public class CampaignDAO extends BaseDAO {
 		CampaignInstanceDO cInstance = new CampaignInstanceDO();
 		dom.setRunningInstance(cInstance);
 		cInstance.setNextTemplateNameIndex(0);
+		cInstance.setTweetsSent(0);
+		cInstance.setRssItems(new ArrayList<RSSItemDO>());
+		cInstance.setUsedFeedTitles(new ArrayList<String>());
+		cInstance.setLastTimeRSSFetched(new Long(0));
+		
+		
+		
+		
 		persona.addCampaign(dom);
 		
 		return dom;
@@ -128,9 +138,41 @@ public class CampaignDAO extends BaseDAO {
 		
 
 		List<CampaignDO> list = (List<CampaignDO>) queryTemplateFrag.execute(
-				status, persona);
+				status, persona);	
 
 		return list ;
+
+	}
+
+	public List<RSSItemDO> findRssItemsToUse(CampaignDO campaign, String url) {
+			log.fine("trying to find a RssItemByFeedURL: "+url);
+	
+			//TODO: Refactor model or this
+			List<RSSItemDO> result = new ArrayList<RSSItemDO>();
+			if ( campaign.getRunningInstance().getRssItems()!=null) {
+				for (RSSItemDO itemDo:campaign.getRunningInstance().getRssItems() ) {
+					if ( itemDo.getFeedUrl().equals(url)) {
+						result.add(itemDo);
+					}
+					
+					
+				}
+
+			}
+			/*
+			Query rssItemQuery = pm.newQuery(RSSItemDO .class);
+			//campaign.getRunningInstance().get
+
+			rssItemQuery
+					.setFilter("feedUrl==theUrl && campaignInstance==theCampaignInstance");
+			rssItemQuery
+					.declareParameters("String theUrl, CampaignInstanceDO theCampaignInstance");
+			
+			
+			List<RSSItemDO> rssItemList = (List<RSSItemDO>) rssItemQuery
+					.execute(url, campaign.getRunningInstance());
+*/
+			return result;
 
 	}
 

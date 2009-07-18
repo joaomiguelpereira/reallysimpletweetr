@@ -13,6 +13,7 @@ import javax.cache.CacheManager;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignInstanceDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.RSSItemDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
@@ -153,7 +154,13 @@ public class CampaignPojo extends AbstractPojo {
 			cInstance.setNextRun(null);
 			cInstance.setTweetTemplates(null);
 			cInstance.setNextTemplateNameIndex(0);
+			cInstance.setTweetsSent(0);
+			cInstance.setLastTimeRSSFetched(new Long(0));
+			cInstance.setUsedFeedTitles(new ArrayList<String>());
+			cInstance.setRssItems(new ArrayList<RSSItemDO>());
+			
 			buildTweetTemplates(campaign);
+			
 
 		}
 		return DataUtils.campaignDtoFromDo(campaign);
@@ -231,7 +238,10 @@ public class CampaignPojo extends AbstractPojo {
 			if (template != null) {
 				String[] strList = template.getText().getValue().split("\\n");
 				for (String tempText : strList) {
-					tweetTemplates.add(tempText);
+					if (tempText.trim().length()>0 ) {
+						tweetTemplates.add(tempText);
+					}
+					
 				}
 			}
 		}

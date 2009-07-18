@@ -221,14 +221,15 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
 	}
 
-	private String selectTemplate(CampaignDO campaign) throws Exception{
+	private String selectTemplate(CampaignDO campaign) throws Exception {
 		if (campaign.getRunningInstance().getTweetTemplates() == null) {
-			//getBusinessHelper().getCampaignPojo().buildTweetTemplates(campaign);
-			
-			//if (campaign.getRunningInstance().getTweetTemplates().size() == 0) {
-				throw new Exception("No templates found. Null");
-			//}
-		} 
+			// getBusinessHelper().getCampaignPojo().buildTweetTemplates(campaign);
+
+			// if (campaign.getRunningInstance().getTweetTemplates().size() ==
+			// 0) {
+			throw new Exception("No templates found. Null");
+			// }
+		}
 
 		if (TESTING) {
 			dumpTweetTemplates(campaign);
@@ -241,10 +242,10 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			int index = getRandomNumber(campaign.getRunningInstance()
 					.getTweetTemplates().size());
 			// get a tweet template
-			tweetTemplate = campaign.getRunningInstance()
-					.getTweetTemplates().get(index);
+			tweetTemplate = campaign.getRunningInstance().getTweetTemplates()
+					.get(index);
 		} else {
-			
+
 			int index = campaign.getRunningInstance()
 					.getNextTemplateNameIndex();
 
@@ -252,33 +253,35 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 					.size()) {
 				tweetTemplate = campaign.getRunningInstance()
 						.getTweetTemplates().get(index);
-				
+
 			} else if (campaign.getAllowRepeatTemplates()) {
 				index = 0;
-				campaign.getRunningInstance().setNextTemplateNameIndex(
-						index);
+				campaign.getRunningInstance().setNextTemplateNameIndex(index);
 				tweetTemplate = campaign.getRunningInstance()
 						.getTweetTemplates().get(index);
 			}
-			if ( campaign.getAllowRepeatTemplates()) {
-				campaign.getRunningInstance().setNextTemplateNameIndex(index+1);
+			if (campaign.getAllowRepeatTemplates()) {
+				campaign.getRunningInstance().setNextTemplateNameIndex(
+						index + 1);
 			}
-			
+
 		}
 
 		if (tweetTemplate != null) {
-			
+
 			if (!campaign.getAllowRepeatTemplates()) {
 				campaign.getRunningInstance().getTweetTemplates().remove(
 						tweetTemplate);
 			}
-			
-			//goto 
+
+			// goto
 
 		}
-		if (campaign.getRunningInstance().getTweetTemplates()==null || campaign.getRunningInstance().getTweetTemplates().size()==0 ) {
-			if ( campaign.getAllowRepeatTemplates() ) {
-				getBusinessHelper().getCampaignPojo().buildTweetTemplates(campaign);
+		if (campaign.getRunningInstance().getTweetTemplates() == null
+				|| campaign.getRunningInstance().getTweetTemplates().size() == 0) {
+			if (campaign.getAllowRepeatTemplates()) {
+				getBusinessHelper().getCampaignPojo().buildTweetTemplates(
+						campaign);
 				campaign.getRunningInstance().setNextTemplateNameIndex(-1);
 			} else {
 				campaign.setStatus(CampaignStatus.FINISHED);
@@ -286,6 +289,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 		}
 		return tweetTemplate;
 	}
+
 	private void run(CampaignDO campaign) throws Exception {
 
 		if (TESTING) {
@@ -300,89 +304,100 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 						+ "</div>");
 
 			}
-			
+
 			String tweetTemplate = selectTemplate(campaign);
-			
+
 			if (TESTING) {
-				outBuffer.append("<h3>TweetTemplate: " + tweetTemplate
+				outBuffer.append("<h3>TweetTemplate Selected: " + tweetTemplate
 						+ "</h3>");
 			}
 			
-			// Check if templatesTweetsList is built
+			//TODO: Move this code to CampaignPojo::buildTweetTemplates
+			
+			
+			String finalStatus = getBusinessHelper().getTemplatePojo().replaceTemplateLists(campaign.getPersona(),tweetTemplate);
+			//Replace random if any
+			finalStatus = StringUtils.randomizeTemplate(finalStatus);
+			
+			//Now deal with the fucking feeds
+			
+			finalStatus = getBusinessHelper().getFeedSetPojo().replaceFeeds(campaign, tweetTemplate);
 
-/*			if (campaign.getRunningInstance().getTweetTemplates() == null) {
-				//getBusinessHelper().getCampaignPojo().buildTweetTemplates(campaign);
-				
-				//if (campaign.getRunningInstance().getTweetTemplates().size() == 0) {
-					throw new Exception("No templates found. Null");
-				//}
-			} 
 
 			if (TESTING) {
-				dumpTweetTemplates(campaign);
+				outBuffer.append("<h3>Sent Tweet: " + finalStatus
+						+ "</h3>");
+			}
+			
+
+			
+			// Final Steps
+			campaign.getRunningInstance().setTweetsSent(
+					campaign.getRunningInstance().getTweetsSent() + 1);
+
+			
+			if (maxTweetsReached(campaign)) {
+				campaign.setStatus(CampaignStatus.FINISHED);
 			}
 
-			String tweetTemplate = null;
-			// Now check if is to run randomly
-			if (campaign.getUseTemplatesRandomly()) {
-				// get some index
-				int index = getRandomNumber(campaign.getRunningInstance()
-						.getTweetTemplates().size());
-				// get a tweet template
-				tweetTemplate = campaign.getRunningInstance()
-						.getTweetTemplates().get(index);
-			} else {
-				
-				int index = campaign.getRunningInstance()
-						.getNextTemplateNameIndex();
+			// Check if templatesTweetsList is built
 
-				if (index < campaign.getRunningInstance().getTweetTemplates()
-						.size()) {
-					tweetTemplate = campaign.getRunningInstance()
-							.getTweetTemplates().get(index);
-					
-				} else if (campaign.getAllowRepeatTemplates()) {
-					index = 0;
-					campaign.getRunningInstance().setNextTemplateNameIndex(
-							index);
-					tweetTemplate = campaign.getRunningInstance()
-							.getTweetTemplates().get(index);
-				}
-				if ( campaign.getAllowRepeatTemplates()) {
-					campaign.getRunningInstance().setNextTemplateNameIndex(index+1);
-				}
-				
-			}
-
-			if (tweetTemplate != null) {
-				if (TESTING) {
-					outBuffer.append("<h3>TweetTemplate: " + tweetTemplate
-							+ "</h3>");
-				}
-				if (!campaign.getAllowRepeatTemplates()) {
-					campaign.getRunningInstance().getTweetTemplates().remove(
-							tweetTemplate);
-				}
-				
-				//goto 
-
-			} else {
-				if (TESTING) {
-					outBuffer.append("<h3>NO MORE TEMPLATES TO USE</h3>");
-				}
-			}
-			if (campaign.getRunningInstance().getTweetTemplates()==null || campaign.getRunningInstance().getTweetTemplates().size()==0 ) {
-				if ( campaign.getAllowRepeatTemplates() ) {
-					getBusinessHelper().getCampaignPojo().buildTweetTemplates(campaign);
-					campaign.getRunningInstance().setNextTemplateNameIndex(-1);
-				} else {
-					campaign.setStatus(CampaignStatus.FINISHED);
-				}
-			}*/
+			/*
+			 * if (campaign.getRunningInstance().getTweetTemplates() == null) {
+			 * /
+			 * /getBusinessHelper().getCampaignPojo().buildTweetTemplates(campaign
+			 * );
+			 * 
+			 * //if (campaign.getRunningInstance().getTweetTemplates().size() ==
+			 * 0) { throw new Exception("No templates found. Null"); //} }
+			 * 
+			 * if (TESTING) { dumpTweetTemplates(campaign); }
+			 * 
+			 * String tweetTemplate = null; // Now check if is to run randomly
+			 * if (campaign.getUseTemplatesRandomly()) { // get some index int
+			 * index = getRandomNumber(campaign.getRunningInstance()
+			 * .getTweetTemplates().size()); // get a tweet template
+			 * tweetTemplate = campaign.getRunningInstance()
+			 * .getTweetTemplates().get(index); } else {
+			 * 
+			 * int index = campaign.getRunningInstance()
+			 * .getNextTemplateNameIndex();
+			 * 
+			 * if (index < campaign.getRunningInstance().getTweetTemplates()
+			 * .size()) { tweetTemplate = campaign.getRunningInstance()
+			 * .getTweetTemplates().get(index);
+			 * 
+			 * } else if (campaign.getAllowRepeatTemplates()) { index = 0;
+			 * campaign.getRunningInstance().setNextTemplateNameIndex( index);
+			 * tweetTemplate = campaign.getRunningInstance()
+			 * .getTweetTemplates().get(index); } if (
+			 * campaign.getAllowRepeatTemplates()) {
+			 * campaign.getRunningInstance().setNextTemplateNameIndex(index+1);
+			 * }
+			 * 
+			 * }
+			 * 
+			 * if (tweetTemplate != null) { if (TESTING) {
+			 * outBuffer.append("<h3>TweetTemplate: " + tweetTemplate +
+			 * "</h3>"); } if (!campaign.getAllowRepeatTemplates()) {
+			 * campaign.getRunningInstance().getTweetTemplates().remove(
+			 * tweetTemplate); }
+			 * 
+			 * //goto
+			 * 
+			 * } else { if (TESTING) {
+			 * outBuffer.append("<h3>NO MORE TEMPLATES TO USE</h3>"); } } if
+			 * (campaign.getRunningInstance().getTweetTemplates()==null ||
+			 * campaign.getRunningInstance().getTweetTemplates().size()==0 ) {
+			 * if ( campaign.getAllowRepeatTemplates() ) {
+			 * getBusinessHelper().getCampaignPojo
+			 * ().buildTweetTemplates(campaign);
+			 * campaign.getRunningInstance().setNextTemplateNameIndex(-1); }
+			 * else { campaign.setStatus(CampaignStatus.FINISHED); } }
+			 */
 
 			// Ok, I can run the campaign
 			// updateCampaignStatus(campaign);
-			
 		} else {
 			if (TESTING) {
 				outBuffer.append("<div>Cannot run the  campaign "
@@ -494,8 +509,6 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			outBuffer.append("<div>" + temp + "</div>");
 		}
 	}
-
-	
 
 	private int getRandomNumber(int size) {
 		int result = 0;
