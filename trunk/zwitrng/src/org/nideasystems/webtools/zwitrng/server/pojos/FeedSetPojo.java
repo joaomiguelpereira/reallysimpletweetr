@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.bitly.BitLyServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignInstanceDO;
 import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
@@ -161,21 +162,29 @@ public class FeedSetPojo extends AbstractPojo {
 					rssItems = refreshRssItems(campaign, url);
 				}
 
-				String newText = "NO CONTENT";
+				String newText = null;
 				if (rssItems != null && rssItems.size() > 0) {
 					// Get one RSS ITEM;
 					RSSItemDO itemDo = campaign.getRunningInstance()
 							.getRssItems().get(0);
 
 					if (itemDo != null) {
-						newText = "[" + itemDo.getTitle() + " content]";
+						
+						newText = createTweetFromFeed(itemDo,feedDom,campaign);
+						
+						
 						campaign.getRunningInstance().getRssItems().remove(0);
 						campaign.getRunningInstance().addUsedFeedTitle(
 								itemDo.getTitle());
 					}
 
 				}
-				result = result.replace("((" + feedName + "))", newText);
+				if ( newText!=null) {
+					result = result.replace("((" + feedName + "))", newText);
+				} else {
+					result = null;
+				}
+				
 
 			} else {
 				throw new Exception("Feed not found: " + feedName);
@@ -183,6 +192,51 @@ public class FeedSetPojo extends AbstractPojo {
 		}
 
 		return result;
+	}
+
+	private String createTweetFromFeed(RSSItemDO itemDo, FeedSetDO feedDom, CampaignDO campaign) {
+		StringBuffer sb =new StringBuffer();
+		String link = "";
+		String title = "";
+		
+		if ( feedDom.getIncludeLink() ) {
+			link = itemDo.getLink();
+			//Let's see if it's to track
+			if (campaign.getTrackClicksOnLinks()) {
+				link = "http://thewebdawn.net/index.php?url="+link+"&red=true&campaignKey="+campaign.getKey().toString();
+			}
+			link = BitLyServiceAdapter.get().shortLink(link);
+			
+		}
+		if ( feedDom.getIncludeTitle() ) {
+			title = itemDo.getTitle();
+		}
+		
+		//
+		if (feedDom.getIncludeTitle() && feedDom.getIncludeLink() ) {
+			title = truncate(title);
+		}
+		
+		
+		
+		if ( feedDom.getUseLinkAtBegining() ) {
+			sb.append(link+" "+title);
+			
+		} else {
+			sb.append(title+" "+link);
+		}
+		return sb.toString();
+		
+	}
+
+	private String truncate(String title) {
+		
+		if (title.length()>118) {
+			return title.substring(0,118)+"...";
+		} else {
+			return title;
+		}
+		
 	}
 
 	private List<RSSItemDO> refreshRssItems(CampaignDO campaignDO, String url)
