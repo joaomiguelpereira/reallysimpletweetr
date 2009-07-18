@@ -34,6 +34,10 @@ public class RunRefreshRSSItems extends AbstractHttpServlet{
 			throws ServletException, IOException {
 		log.info("=============Running Job: Regreshing RSS Items=============");
 		// Check headers
+		//Do nothing
+		if (true) 
+			return;
+		
 
 		if (!TESTING) {
 			if (req.getHeader("X-AppEngine-Cron") == null

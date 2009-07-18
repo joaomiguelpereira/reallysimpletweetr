@@ -1,12 +1,10 @@
 package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
@@ -18,18 +16,10 @@ import org.nideasystems.webtools.zwitrng.server.amazon.AmazonBook;
 import org.nideasystems.webtools.zwitrng.server.amazon.AmazonLocale;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
-import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
-import org.nideasystems.webtools.zwitrng.server.rss.RSS;
-import org.nideasystems.webtools.zwitrng.server.rss.RSSItem;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
-
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
@@ -321,24 +311,29 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 			
 			//Now deal with the fucking feeds
 			
-			finalStatus = getBusinessHelper().getFeedSetPojo().replaceFeeds(campaign, tweetTemplate);
+			finalStatus = getBusinessHelper().getFeedSetPojo().replaceFeeds(campaign, finalStatus);
+			if ( finalStatus != null ) {
+				//Skip this
+				if (TESTING) {
+					outBuffer.append("<h3>Sent Tweet: " + finalStatus
+							+ "</h3>");
+				}
+				
 
+				
+				// Final Steps
+				campaign.getRunningInstance().setTweetsSent(
+						campaign.getRunningInstance().getTweetsSent() + 1);
 
-			if (TESTING) {
-				outBuffer.append("<h3>Sent Tweet: " + finalStatus
-						+ "</h3>");
+				
+				if (maxTweetsReached(campaign)) {
+					campaign.setStatus(CampaignStatus.FINISHED);
+				}
+				
+			} else {
+				//Skip
 			}
-			
 
-			
-			// Final Steps
-			campaign.getRunningInstance().setTweetsSent(
-					campaign.getRunningInstance().getTweetsSent() + 1);
-
-			
-			if (maxTweetsReached(campaign)) {
-				campaign.setStatus(CampaignStatus.FINISHED);
-			}
 
 			// Check if templatesTweetsList is built
 
