@@ -33,8 +33,8 @@ public abstract class EditableItem<T extends IDTO, L extends IDTO> extends
 
 		waitingImg.setVisible(false);
 		this.add(waitingImg);
-		this.addStyleName("list_item");
-		this.addStyleName("list_item_selected");
+		this.addStyleName("list_item_editable");
+		//this.addStyleName("list_item_selected");
 		contentPanel = new VerticalPanel();
 		
 		this.add(contentPanel);

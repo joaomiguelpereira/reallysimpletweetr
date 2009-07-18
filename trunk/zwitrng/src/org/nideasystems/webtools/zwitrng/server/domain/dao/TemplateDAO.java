@@ -1,4 +1,4 @@
-package org.nideasystems.webtools.zwitrng.server.domain;
+package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,6 +7,10 @@ import java.util.logging.Logger;
 
 import javax.jdo.Query;
 
+import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
@@ -159,6 +163,7 @@ public class TemplateDAO extends BaseDAO {
 	public List<TemplateDO> findTemplate(CampaignDO campaign) throws Exception{
 		log.fine("__________________FIND TEMPLATES FOR CAMPAIGN: "+campaign.getName());
 		
+		/*
 		//Get the tags
 		String[] tags = StringUtils.splitText(campaign.getFilterByTemplateTags());
 		log.fine("Tags to find: ");
@@ -209,7 +214,8 @@ public class TemplateDAO extends BaseDAO {
 		//return templates;
 		return retTemplates;
 		//Find the templates for the filter
-		
+		*/
+		throw new Exception("Not implemenbted");
 		
 	}
 

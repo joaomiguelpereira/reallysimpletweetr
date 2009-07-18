@@ -1,7 +1,10 @@
-package org.nideasystems.webtools.zwitrng.server.domain;
+package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import java.util.ArrayList;
 
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.RateLimitsDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
 public class TwitterAccountDAO extends BaseDAO {

@@ -14,7 +14,6 @@ import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitteUserDTO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterUserDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
@@ -27,6 +26,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.RateLimitsDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitteUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTOList;
@@ -391,13 +391,12 @@ public class DataUtils {
 	}
 
 	public static CampaignDTO campaignDtoFromDo(CampaignDO dom) {
+		
 		CampaignDTO  dto = new CampaignDTO();
 		dto.setId(dom.getKey().getId());
 		dto.setCreated(dom.getCreated());
 		dto.setEndDate(dom.getEndDate());
-		dto.setFilterByTemplateTags(dom.getFilterByTemplateTags());
-		//dto.setFilterByTemplateText(dom.getFilterByTemplateText());
-		//dto.setFilterOperator(dom.getFilterOperator());
+		
 		if ( dom.getMaxTweets() != null ) {
 			dto.setMaxTweets(dom.getMaxTweets());
 		}
@@ -408,11 +407,28 @@ public class DataUtils {
 		dto.setTimeBetweenTweets(dom.getTimeBetweenTweets());
 		dto.setTimeUnit(dom.getTimeUnit());
 		dto.setStatus(dom.getStatus());
-		dto.setTweetsSent(dom.getTweetsSent());
-		dto.setNextRun(dom.getNextRun());
-		dto.setLastRun(dom.getLastRun());
+		
+		if ( dom.getRunningInstance()!=null) {
+			dto.setTweetsSent(dom.getRunningInstance().getTweetsSent());
+			dto.setNextRun(dom.getRunningInstance().getNextRun());
+			dto.setLastRun(dom.getRunningInstance().getLastRun());
+			
+		}
+		
 		dto.setStartHourOfTheDay(dom.getStartHourOfTheDay()!=null?dom.getStartHourOfTheDay():0);
 		dto.setEndHourOfTheDay(dom.getEndHourOfTheDay()!=null?dom.getEndHourOfTheDay():22);
+		List<String> nameList = new ArrayList<String>();
+		for (String tName: dom.getTemplateNames()) {
+			nameList.add(tName);
+		}
+		dto.setTemplatesNames(nameList);
+		dto.setAllowRepeatTemplates(dom.getAllowRepeatTemplates());
+		dto.setUseTemplatesRandomly(dom.getUseTemplatesRandomly());
+		dto.setTrackClicksOnLinks(dom.getTrackClicksOnLinks());
+		dto.setLimitNumberOfTweetsSent(dom.getLimitNumberOfTweetsSent());
+		
+		
+		
 
 		
 		

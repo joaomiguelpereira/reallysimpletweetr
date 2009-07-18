@@ -1,10 +1,12 @@
-package org.nideasystems.webtools.zwitrng.server.domain;
+package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import java.util.Date;
 import java.util.logging.Logger;
 
 import javax.jdo.Query;
 
+import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 

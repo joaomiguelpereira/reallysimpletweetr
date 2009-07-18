@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.RateLimitsDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;

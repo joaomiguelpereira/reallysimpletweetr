@@ -39,6 +39,8 @@ public class PersonaDO implements Serializable {
 
 	@Persistent
 	private Date modified;
+	@Persistent
+	private PersonaStatus status;
 
 	@Persistent
 	private TwitterAccountDO twitterAccount;
@@ -203,6 +205,14 @@ public class PersonaDO implements Serializable {
 		}
 
 		this.autoFollowRules.add(rule);
+	}
+
+	public void setStatus(PersonaStatus status) {
+		this.status = status;
+	}
+
+	public PersonaStatus getStatus() {
+		return status;
 	}
 
 }

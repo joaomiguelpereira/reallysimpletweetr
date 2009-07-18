@@ -8,6 +8,7 @@ import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -70,6 +71,8 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<AutoFollowRuleDTO> asyncCallback) throws Exception;
 	void getTemplateNames(PersonaDTO model,
 			AsyncCallback<List<String>> asyncCallback) throws Exception;
+	void setCampaignStatus(PersonaDTO model, String campaignNameId, CampaignStatus status,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
 	
 
 	

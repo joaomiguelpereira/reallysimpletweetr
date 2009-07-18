@@ -1,4 +1,4 @@
-package org.nideasystems.webtools.zwitrng.server.domain;
+package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -7,15 +7,20 @@ import java.util.logging.Logger;
 
 import javax.jdo.Query;
 
-import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
+import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
+import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
+import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
+import org.nideasystems.webtools.zwitrng.server.domain.FilterDO;
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaStatus;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTOList;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-
-import twitter4j.User;
 
 public class PersonaDAO extends BaseDAO {
 
@@ -52,68 +57,7 @@ public class PersonaDAO extends BaseDAO {
 
 	}
 
-	/**
-	 * Get all personas
-	 * 
-	 * @param email
-	 * @return
-	 * @throws Exception
-	 * 
-	 */
-
-	/*
-	 * public PersonaDTOList findAllPersonas(String email) throws Exception {
-	 * 
-	 * PersonaDTOList returnList = new PersonaDTOList(); Query queryPersona =
-	 * pm.newQuery(PersonaDO.class);
-	 * queryPersona.setFilter("userEmail==paramUserEmail");
-	 * queryPersona.declareParameters("String paramUserEmail");
-	 * 
-	 * 
-	 * List<PersonaDO> personas = (List<PersonaDO>) queryPersona
-	 * .execute(email);
-	 * 
-	 * 
-	 * if (personas.iterator().hasNext()) {
-	 * 
-	 * for (PersonaDO persona : personas) {
-	 * 
-	 * 
-	 * // now Try to get twitt user info User twitterUser = null;
-	 * TwitterAccountDTO authorizedTwitterAccount = null;
-	 * 
-	 * 
-	 * if (persona.getTwitterAccount() != null) { //Check if is authenticated
-	 * //Create an TwitterAccountDTO authorizedTwitterAccount =
-	 * DataUtils.twitterAccountDtoFromDo(persona.getTwitterAccount()); //try to
-	 * authenticate the User try { twitterUser =
-	 * TwitterServiceAdapter.get().getExtendedUser(authorizedTwitterAccount); }
-	 * catch (Exception e) { //No prob, just mean that the user has to
-	 * authenticate e.printStackTrace(); }
-	 * 
-	 * }
-	 * 
-	 * 
-	 * 
-	 * if (twitterUser != null ) { authorizedTwitterAccount =
-	 * DataUtils.mergeTwitterAccount(twitterUser, authorizedTwitterAccount);
-	 * authorizedTwitterAccount.setIsOAuthenticated(true); } else {
-	 * authorizedTwitterAccount =
-	 * TwitterServiceAdapter.get().getPreAuthorizedTwitterAccount();
-	 * 
-	 * }
-	 * 
-	 * returnList.addPersona(DataUtils.createPersonaDto(persona,
-	 * authorizedTwitterAccount));
-	 * 
-	 * } }
-	 * 
-	 * 
-	 * return returnList;
-	 * 
-	 * }
-	 */
-
+	
 	public List<PersonaDO> findAllPersonas(String email) throws Exception {
 
 		Query queryPersona = pm.newQuery(PersonaDO.class);
@@ -123,42 +67,6 @@ public class PersonaDAO extends BaseDAO {
 		List<PersonaDO> personas = (List<PersonaDO>) queryPersona
 				.execute(email);
 
-		/*
-		 * if (personas.iterator().hasNext()) {
-		 * 
-		 * for (PersonaDO persona : personas) {
-		 * 
-		 * 
-		 * // now Try to get twitt user info User twitterUser = null;
-		 * TwitterAccountDTO authorizedTwitterAccount = null;
-		 * 
-		 * 
-		 * if (persona.getTwitterAccount() != null) { //Check if is
-		 * authenticated //Create an TwitterAccountDTO authorizedTwitterAccount
-		 * = DataUtils.twitterAccountDtoFromDo(persona.getTwitterAccount());
-		 * //try to authenticate the User try { twitterUser =
-		 * TwitterServiceAdapter
-		 * .get().getExtendedUser(authorizedTwitterAccount); } catch (Exception
-		 * e) { //No prob, just mean that the user has to authenticate
-		 * e.printStackTrace(); }
-		 * 
-		 * }
-		 * 
-		 * 
-		 * 
-		 * if (twitterUser != null ) { authorizedTwitterAccount =
-		 * DataUtils.mergeTwitterAccount(twitterUser, authorizedTwitterAccount);
-		 * authorizedTwitterAccount.setIsOAuthenticated(true); } else {
-		 * authorizedTwitterAccount =
-		 * TwitterServiceAdapter.get().getPreAuthorizedTwitterAccount();
-		 * 
-		 * }
-		 * 
-		 * returnList.addPersona(DataUtils.createPersonaDto(persona,
-		 * authorizedTwitterAccount));
-		 * 
-		 * } }
-		 */
 		return personas;
 
 	}
@@ -221,6 +129,7 @@ public class PersonaDAO extends BaseDAO {
 		personaDom.setTemplateFragments(new ArrayList<TemplateFragmentDO>());
 		personaDom.setTemplates(new ArrayList<TemplateDO>());
 		personaDom.setTwitterAccount(new TwitterAccountDO());
+		personaDom.setStatus(PersonaStatus.ACTIVE);
 		
 		//PersonaDO personaToSave = DataUtils.personaDofromDto(persona, email);
 		// Make the Object Persistent
@@ -312,6 +221,17 @@ public class PersonaDAO extends BaseDAO {
 		AutoFollowRuleDO rule = (AutoFollowRuleDO)autoFollowRule.execute(on_follow_me,parentPersona);
 		
 		return rule;
+	}
+
+	public List<PersonaDO> findAllActivePersonas() {
+		Query queryPersona = pm.newQuery(PersonaDO.class);
+		
+		queryPersona.setFilter("status==theStatus");
+		queryPersona
+		.declareParameters("org.nideasystems.webtools.zwitrng.server.domain.PersonaStatus theStatus");
+		PersonaStatus status = PersonaStatus.ACTIVE;
+		
+		return (List<PersonaDO>)queryPersona.execute(status);
 	}
 
 }

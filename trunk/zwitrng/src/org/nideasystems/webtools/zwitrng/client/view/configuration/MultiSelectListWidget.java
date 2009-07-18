@@ -190,5 +190,16 @@ public class MultiSelectListWidget extends VerticalPanel {
 		return selectedItemsList;
 	}
 
+	public void refreshAvailable() {
+		
+		for ( String str: selectedItemsList) {
+			if (availableItemsList.contains(str)) {
+				availableItemsList.remove(str);
+			}
+		}
+		synchLists();
+		
+	}
+
 	
 }

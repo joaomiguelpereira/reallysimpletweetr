@@ -1,4 +1,4 @@
-package org.nideasystems.webtools.zwitrng.server.domain;
+package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import javax.jdo.PersistenceManager;
 

@@ -20,13 +20,13 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public abstract class SelectableItem<T extends IDTO, L extends IDTO>
-		extends VerticalPanel implements HasMouseOutHandlers,
-		HasMouseOverHandlers, HasDoubleClickHandlers, HasClickHandlers,
-		ConfigurationEditListener<T> {
+public abstract class SelectableItem<T extends IDTO, L extends IDTO> extends
+		VerticalPanel implements HasMouseOutHandlers, HasMouseOverHandlers,
+		HasDoubleClickHandlers, HasClickHandlers, ConfigurationEditListener<T> {
 
 	boolean isEditable = true;
 	boolean isEditing = false;
@@ -37,6 +37,7 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 	protected T dataObject;
 	protected EditableItem<T, L> editableInstance;
 	protected boolean isSelectable = true;
+	protected Image waitingImage = new Image(Constants.WAITING_IMAGE);
 
 	/**
 	 * Constructor
@@ -52,13 +53,19 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		this.setWidth(Constants.MAIN_LIST_ITEM_WIDTH);
 		this.setHeight(Constants.MAIN_LIST_ITEM_MIN_HEIGHT);
 		this.addStyleName("list_item");
+
 		content = new VerticalPanel();
+		waitingImage.setVisible(false);
+		content.add(waitingImage);
 		this.add(content);
 		this.addMouseOverHandler(new MouseOverHandler() {
 
 			@Override
 			public void onMouseOver(MouseOverEvent event) {
-				addStyleName("list_item_over");
+				if (!isEditing && !parent.isCreatingNew) {
+					addStyleName("list_item_over");
+				}
+
 			}
 
 		});
@@ -66,7 +73,9 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 			@Override
 			public void onMouseOut(MouseOutEvent event) {
-				removeStyleName("list_item_over");
+				if (!isEditing && !parent.isCreatingNew) {
+					removeStyleName("list_item_over");
+				}
 
 			}
 
@@ -79,7 +88,6 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 				if (!isEditing) {
 					setEditing(true);
 				}
-				
 
 			}
 
@@ -89,10 +97,8 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 			@Override
 			public void onClick(ClickEvent event) {
-				
-					select(instance);
-				
-				
+
+				select(instance);
 
 			}
 
@@ -114,6 +120,7 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		// panel.setWidth(Constants.EDITABLE_TEMPLATE_WIDTH);
 
 		panel.setSpacing(5);
+
 		// Image edit
 		// Image edit = new Image(Constants.EDIT_ICON);
 		InlineHTML edit = new InlineHTML("Edit");
@@ -133,7 +140,7 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 		panel.add(table);
 
-		//panel.setVisible(false);
+		// panel.setVisible(false);
 
 		// Add handler
 		remove.addClickHandler(new ClickHandler() {
@@ -176,39 +183,36 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		if (isSelectable) {
 			removeStyleName("list_item_selected");
 		}
-		
-		//this.toolBar.setVisible(false);
+
+		// this.toolBar.setVisible(false);
 
 	}
 
 	protected void setEditing(boolean editing) {
-		
-			if (editableInstance == null) {
-				editableInstance = createEditableItem();
-				if ( editableInstance!= null ) {
-					editableInstance.addEditListener(this);
-					this.add(editableInstance);		
-				}
-			}
-			if (editableInstance!=null) {
-				isEditing = editing;
-				editableInstance.setDataObject(this.dataObject);
-				editableInstance.refresh();
-				content.setVisible(!editing);
-				editableInstance.setVisible(editing);
-			
-			}
-			
-	}
 
-	
+		if (editableInstance == null) {
+			editableInstance = createEditableItem();
+			if (editableInstance != null) {
+				editableInstance.addEditListener(this);
+				this.add(editableInstance);
+			}
+		}
+		if (editableInstance != null) {
+			isEditing = editing;
+			editableInstance.setDataObject(this.dataObject);
+			editableInstance.refresh();
+			content.setVisible(!editing);
+			editableInstance.setVisible(editing);
+
+		}
+
+	}
 
 	protected EditableItem<T, L> createEditableItem() {
 		return parent.createEditableItem();
 	}
 
-	
-	//protected abstract EditableItem<T, L> createEditableItem();
+	// protected abstract EditableItem<T, L> createEditableItem();
 
 	@Override
 	public void onEditCancel() {
@@ -224,11 +228,15 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		if (isSelectable) {
 			addStyleName("list_item_selected");
 		}
-		
+
 		// add toolbar
 		if (!isEditing) {
 			this.toolBar.setVisible(true);
 		}
+	}
+
+	public void setProcessing(boolean p) {
+		this.waitingImage.setVisible(p);
 	}
 
 	@Override
@@ -271,16 +279,16 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 
 	@Override
 	public void saveObject(T object) {
-		
+
 	}
 
 	@Override
 	public void onError(Throwable tr) {
-		if (editableInstance!=null) {
+		if (editableInstance != null) {
 			editableInstance.setUpdating(false);
 		}
+		setProcessing(false);
 		MainController.getInstance().addException(tr);
-		
 
 	}
 
@@ -295,7 +303,7 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO>
 		parent.contentPanel.remove(this);
 		parent.isProcessing(false);
 		parent.onSelect(null);
-		
+
 		// this.removeFromParent();
 
 	}

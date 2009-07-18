@@ -1,6 +1,8 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -9,12 +11,14 @@ import javax.cache.CacheException;
 import javax.cache.CacheManager;
 
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
+import org.nideasystems.webtools.zwitrng.server.domain.CampaignInstanceDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
-
+import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
 public class CampaignPojo extends AbstractPojo {
 
@@ -40,12 +44,15 @@ public class CampaignPojo extends AbstractPojo {
 
 		// Check if the campaign name alreadey exists
 		CampaignDO campaignDom = businessHelper.getCampaignDao()
-				.findByPersonaNameAndcampaignName(persona, object.getName());
+				.findByPersonaNameAndCampaignName(persona, object.getName());
 		if (campaignDom != null) {
 			throw new Exception("A Campaign with the same name already exixts");
 		}
 
-		return businessHelper.getCampaignDao().create(persona, object);
+		
+		campaignDom = businessHelper.getCampaignDao().create(persona, object); 
+		buildTweetTemplates(campaignDom);
+		return DataUtils.campaignDtoFromDo(campaignDom);
 
 	}
 
@@ -96,14 +103,60 @@ public class CampaignPojo extends AbstractPojo {
 
 		// Check if the campaign name alreadey exists
 		CampaignDO campaignDom = businessHelper.getCampaignDao()
-				.findByPersonaNameAndcampaignName(persona, object.getName());
+				.findByPersonaNameAndCampaignName(persona, object.getName());
 		if (campaignDom == null) {
 			throw new Exception("The campaign was not found");
 		}
 
-		clearTemplatesInCache(campaignDom);
+		
+		//clearTemplatesInCache(campaignDom);
 		return businessHelper.getCampaignDao().save(persona, object,
 				campaignDom);
+
+	}
+
+	public CampaignDTO setCampainStatus(PersonaDTO model, String campaignName,
+			CampaignStatus status) throws Exception {
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(model.getName(),
+						model.getUserEmail());
+		if (persona == null) {
+			throw new Exception();
+		}
+		CampaignDO campaign = null;
+		try {
+			campaign = businessHelper.getCampaignDao()
+					.findByPersonaNameAndCampaignName(persona, campaignName);
+		} catch (Exception e) {
+			log.severe("Error finding the template");
+			e.printStackTrace();
+			throw e;
+		}
+
+		if (campaign == null) {
+			throw new Exception("Campaign not found");
+		}
+
+		campaign.setStatus(status);
+		// Trigger actions
+		if (status.equals(CampaignStatus.NOT_STARTED)) {
+			// Reset all data associated to campaign
+			log
+					.fine("-------------------------------------------NOT-STARTED------RESET-----------");
+			CampaignInstanceDO cInstance = campaign.getRunningInstance();
+
+			if (cInstance == null) {
+				cInstance = new CampaignInstanceDO();
+				campaign.setRunningInstance(cInstance);
+			}
+			cInstance.setLastRun(null);
+			cInstance.setNextRun(null);
+			cInstance.setTweetTemplates(null);
+			cInstance.setNextTemplateNameIndex(0);
+			buildTweetTemplates(campaign);
+
+		}
+		return DataUtils.campaignDtoFromDo(campaign);
 
 	}
 
@@ -125,7 +178,7 @@ public class CampaignPojo extends AbstractPojo {
 
 		// Check if the campaign name alreadey exists
 		CampaignDO campaignDom = businessHelper.getCampaignDao()
-				.findByPersonaNameAndcampaignName(persona, object.getName());
+				.findByPersonaNameAndCampaignName(persona, object.getName());
 		if (campaignDom == null) {
 			throw new Exception("The campaign was not found");
 		}
@@ -141,10 +194,11 @@ public class CampaignPojo extends AbstractPojo {
 	 * @return
 	 */
 	public List<CampaignDO> getCampaigns(CampaignStatus status) {
-		
-		return businessHelper.getCampaignDao().findCandidateCampaignsToRun(status);
+
+		return businessHelper.getCampaignDao().findCandidateCampaignsToRun(
+				status);
 	}
-	
+
 	/**
 	 * 
 	 * @param campaign
@@ -160,11 +214,30 @@ public class CampaignPojo extends AbstractPojo {
 			e1.printStackTrace();
 		}
 		if (cache != null) {
-			//Possible bug in production
-			//cache.put(campaign.getKey(),null);
+			// Possible bug in production
+			// cache.put(campaign.getKey(),null);
 			cache.remove(campaign.getKey());
 		}
 	}
-	
+
+	public void buildTweetTemplates(CampaignDO campaign) throws Exception {
+
+		log.info("Starting build templates: ");
+		long start = new Date().getTime();
+		List<String> tweetTemplates = new ArrayList<String>();
+		for (String templateName : campaign.getTemplateNames()) {
+			TemplateDO template = businessHelper.getTemplateDao().findTemplate(
+					campaign.getPersona(), templateName);
+			if (template != null) {
+				String[] strList = template.getText().getValue().split("\\n");
+				for (String tempText : strList) {
+					tweetTemplates.add(tempText);
+				}
+			}
+		}
+		campaign.getRunningInstance().setTweetTemplates(tweetTemplates);
+		long end = new Date().getTime();
+		log.info("<p>Templates Built in: " + (end - start) + " ms</p>");
+	}
 
 }

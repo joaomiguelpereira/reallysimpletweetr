@@ -7,12 +7,13 @@ import java.util.logging.Logger;
 import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
-import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+
 import org.nideasystems.webtools.zwitrng.server.utils.DtoAssembler;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -442,6 +443,24 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 		try {
 			result = getBusinessHelper().getTemplatePojo().getTemplatesNames(
 					model);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} finally {
+			endTransaction();
+		}
+
+		return result;
+	}
+
+	@Override
+	public CampaignDTO setCampaignStatus(PersonaDTO model, String campaignName,CampaignStatus status)
+			throws Exception {
+		CampaignDTO result = null;
+		startTransaction(true);
+		try {
+			result = getBusinessHelper().getCampaignPojo().setCampainStatus(model, campaignName, status);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe(e.getMessage());

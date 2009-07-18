@@ -7,6 +7,7 @@ import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
@@ -17,7 +18,6 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -88,4 +88,7 @@ public interface TwitterPersonaService extends RemoteService {
 	AutoFollowRuleDTO loadAutoFollowRule(PersonaDTO model,
 			AutoFollowTriggerType on_follow_me) throws Exception;
 	List<String> getTemplateNames(PersonaDTO model) throws Exception;
+	
+	CampaignDTO setCampaignStatus(PersonaDTO model, String campaignName, CampaignStatus status) throws Exception;
+
 }

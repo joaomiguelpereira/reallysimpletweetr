@@ -19,6 +19,7 @@ import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
+import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.FeedSetDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
@@ -683,6 +684,36 @@ public class PersonaController extends
 			e.printStackTrace();
 		}
 
+		
+	}
+
+	public void changeCampaignStatus(final SelectableItem<CampaignDTO, CampaignDTOList> callback,
+			String campaignName, CampaignStatus status) {
+
+		
+		try {
+			getServiceManager().getRPCService().setCampaignStatus(this.getModel(),campaignName,
+					status, new AsyncCallback<CampaignDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(CampaignDTO result) {
+							callback.onObjectSaved(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+
+			callback.onError(e);
+			e.printStackTrace();
+		}
+		
 		
 	}
 
