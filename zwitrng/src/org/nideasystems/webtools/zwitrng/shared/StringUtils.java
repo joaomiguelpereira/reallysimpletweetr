@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 
-
 public class StringUtils {
 
 	public static String[] splitText(String tags) {
@@ -115,21 +114,20 @@ public class StringUtils {
 	 */
 
 	public static String jsParseText(String templateText) {
-		if (templateText!=null) {
+		if (templateText != null) {
 			return MainController.jsParseText(templateText);
 		} else {
 			return "Ooops! No Updates";
 		}
-		
+
 	}
 
-	public static String randomizeString(String templateText) {
+	public static String randomizeTemplate(String templateText) {
 		// String templateText =
 		// "this is a [smart|very smart|trully smart] tweet :)";
 		String randomizedString = templateText;
 		// find all occurrences like [xxx|xxx|xxx|]
 		int startIndex = templateText.indexOf("[");
-		
 
 		if (startIndex >= 0) {
 			int endIndex = templateText.indexOf("]", startIndex);
@@ -139,17 +137,17 @@ public class StringUtils {
 						endIndex);
 				String otherWord = templateText.substring(startIndex,
 						endIndex + 1);
-				
+
 				String replacement = getOneOf(tmpWord);
-				
+
 				randomizedString = randomizedString.replace(otherWord,
 						replacement);
 
-				randomizedString = randomizeString(randomizedString);
+				randomizedString = randomizeTemplate(randomizedString);
 
 			}
 		}
-		
+
 		return randomizedString;
 
 	}
@@ -158,7 +156,7 @@ public class StringUtils {
 		// one|two|three
 
 		String[] splitedText = tmpWord.split("[|]");
-		
+
 		double rand = Math.random();
 		int index = (int) Math.round(rand * (splitedText.length - 1));
 
@@ -176,28 +174,45 @@ public class StringUtils {
 				String listName = templateText.substring(startIndex + 2,
 						endIndex);
 				returnList.add(listName);
-				returnList.addAll(getFragmentLists(templateText.substring(endIndex+1,templateText.length())));
+				returnList.addAll(getFragmentLists(templateText.substring(
+						endIndex + 1, templateText.length())));
 			}
 		}
 		return returnList;
 	}
 
 	public static String replaceFragmentsLists(String templateText,
-			Map<String, String> result) {
-		for (String key: result.keySet()) {
-			String charSeq = "{{"+key+"}}";
-			
-			templateText = templateText.replace(charSeq, "["+result.get(key)+"]");
+			Map<String, String> mappedListNameText) {
+		
+		String result = templateText;
+		
+		for (String key : mappedListNameText.keySet()) {
+
+			// Now get a random string from the fragment
+			String listText = mappedListNameText.get(key);
+			String[] listTexts = listText.split("\\n");
+
+			int index = 0;
+
+			if (listTexts.length > 0) {
+				double rand = Math.random();
+				index = (int) Math.round(rand * (listTexts.length - 1));
+			}
+			String charSeq = "{{" + key + "}}";
+			// Now choose a random one
+
+			result = templateText.replace(charSeq, listTexts[index]);
 		}
-		return templateText;
+		return result;
 	}
 
-	public static String replaceRSSItem(String templateText, String name, String rssItemText) {
-		return templateText.replace("(("+name+"))", rssItemText);
+	public static String replaceRSSItem(String templateText, String name,
+			String rssItemText) {
+		return templateText.replace("((" + name + "))", rssItemText);
 	}
-	public static List<String> getFeedSetLists(String updateStatus) {
-		
-		
+
+	public static List<String> getFeedNames(String updateStatus) {
+
 		// Find all occurences of {{xxx}} and return xxx
 		int startIndex = updateStatus.indexOf("((");
 		List<String> returnList = new ArrayList<String>();
@@ -207,28 +222,27 @@ public class StringUtils {
 				String listName = updateStatus.substring(startIndex + 2,
 						endIndex);
 				returnList.add(listName);
-				returnList.addAll(getFeedSetLists(updateStatus.substring(endIndex+1,updateStatus.length())));
+				returnList.addAll(getFeedNames(updateStatus.substring(
+						endIndex + 1, updateStatus.length())));
 			}
 		}
 		return returnList;
 	}
 
 	public static String formatPercentage(float number, int i) {
-		
-		String str = (number*100)+"";
-		if ( str.indexOf(".") > 0 && str.substring(str.indexOf("."),str.length()).length()>2 ) {
-			str = str.substring(0,str.indexOf(".")+2)+"%";
+
+		String str = (number * 100) + "";
+		if (str.indexOf(".") > 0
+				&& str.substring(str.indexOf("."), str.length()).length() > 2) {
+			str = str.substring(0, str.indexOf(".") + 2) + "%";
 		} else {
-			str = str+"%";
+			str = str + "%";
 		}
 		return str;
-		/*if ( str.indexOf(".")+i+1 < str.length()) {
-			return str.substring(0,str.indexOf(".")+i+1)+"%";
-		} else {
-			return str+"%";
-		}*/
-		
-		
-		
+		/*
+		 * if ( str.indexOf(".")+i+1 < str.length()) { return
+		 * str.substring(0,str.indexOf(".")+i+1)+"%"; } else { return str+"%"; }
+		 */
+
 	}
 }

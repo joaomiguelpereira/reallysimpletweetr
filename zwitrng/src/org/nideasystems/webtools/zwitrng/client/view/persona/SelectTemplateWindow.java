@@ -136,7 +136,7 @@ public class SelectTemplateWindow extends PopupPanel implements
 
 		// Randomize if needed
 
-		newTemplateText = StringUtils.randomizeString(newTemplateText);
+		newTemplateText = StringUtils.randomizeTemplate(newTemplateText);
 		updateWidget.setTemplateText(newTemplateText);
 		this.hide(true);
 		

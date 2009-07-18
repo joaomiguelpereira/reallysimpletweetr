@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 
+
 public class FeedSetDTO implements IDTO {
 	
 	private long id = -1;
@@ -14,7 +15,29 @@ public class FeedSetDTO implements IDTO {
 	private Date modified;
 	private Date created;
 	
+	private boolean includeLink;
+	private boolean useLinkAtBegining;
+	private boolean includeTitle;
 	
+	
+	public boolean isIncludeLink() {
+		return includeLink;
+	}
+	public void setIncludeLink(boolean includeLink) {
+		this.includeLink = includeLink;
+	}
+	public boolean isUseLinkAtBegining() {
+		return useLinkAtBegining;
+	}
+	public void setUseLinkAtBegining(boolean useLinkAtBegining) {
+		this.useLinkAtBegining = useLinkAtBegining;
+	}
+	public boolean isIncludeTitle() {
+		return includeTitle;
+	}
+	public void setIncludeTitle(boolean includeTitle) {
+		this.includeTitle = includeTitle;
+	}
 	public long getId() {
 		return id;
 	}

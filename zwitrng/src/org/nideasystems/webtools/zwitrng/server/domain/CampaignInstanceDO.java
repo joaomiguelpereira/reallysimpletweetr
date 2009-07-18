@@ -1,10 +1,13 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
+import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -29,10 +32,17 @@ public class CampaignInstanceDO {
 	private Integer lastUsedTemplateNameIndex;
 	@Persistent
 	private List<String> tweetTemplates;
-	
+		
+	@Persistent
+	private List<String> usedFeedTitles;
+	@Persistent
+	private Long lastTimeRSSFetched;
 	
 	@Persistent
 	private int tweetsSent;
+
+	@Persistent
+	private List<RSSItemDO> rssItems;
 
 
 	public Key getKey() {
@@ -93,6 +103,63 @@ public class CampaignInstanceDO {
 	public List<String> getTweetTemplates() {
 		return tweetTemplates;
 	}
+
+
+	public void setUsedFeedTitles(List<String> usedFeedTitles) {
+		this.usedFeedTitles = usedFeedTitles;
+	}
+
+
+	public List<String> getUsedFeedTitles() {
+		return usedFeedTitles;
+	}
+
+
+	public void addUsedFeedTitle(String title) {
+		if (usedFeedTitles==null) {
+			usedFeedTitles = new ArrayList<String>();
+		}
+		usedFeedTitles.add(title);
+		
+	}
+
+	public void addRssItem(RSSItemDO itemDo) {
+		if (getRssItems()==null) {
+			setRssItems(new ArrayList<RSSItemDO>());
+			
+		}
+		
+		getRssItems().add(itemDo);
+		
+	}
+
+
+	public void setRssItems(List<RSSItemDO> rssItems) {
+		this.rssItems = rssItems;
+	}
+
+
+	public List<RSSItemDO> getRssItems() {
+		return rssItems;
+	}
+
+
+	public void setLastTimeRSSFetched(Long lastTimeRSSFetched) {
+		this.lastTimeRSSFetched = lastTimeRSSFetched;
+	}
+
+
+	public Long getLastTimeRSSFetched() {
+		return lastTimeRSSFetched;
+	}
+
+
+	
+
+
+	
+
+	
 	
 	
 

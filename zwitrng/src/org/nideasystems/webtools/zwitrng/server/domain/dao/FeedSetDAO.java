@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import java.util.Date;
+
 import java.util.logging.Logger;
 
 import javax.jdo.Query;
@@ -45,6 +46,10 @@ public class FeedSetDAO extends BaseDAO{
 		
 		feedSetDom.setModified(new Date());
 		feedSetDom.setFeedUrls(object.getFeedUrls());
+		feedSetDom.setIncludeLink(object.isIncludeLink());
+		feedSetDom.setIncludeTitle(object.isIncludeTitle());
+		feedSetDom.setUseLinkAtBegining(object.isUseLinkAtBegining());
+		
 		
 		
 		
@@ -59,6 +64,9 @@ public class FeedSetDAO extends BaseDAO{
 		
 		dom.setName(object.getName());
 		dom.setFeedUrls(object.getFeedUrls());
+		dom.setIncludeLink(object.isIncludeLink());
+		dom.setIncludeTitle(object.isIncludeTitle());
+		dom.setUseLinkAtBegining(object.isUseLinkAtBegining());
 		
 		dom.setPersona(persona);
 		persona.addFeedSet(dom);
@@ -71,5 +79,6 @@ public class FeedSetDAO extends BaseDAO{
 		
 		persona.getFeedSets().remove(feedSetDom);
 	}
+
 
 }

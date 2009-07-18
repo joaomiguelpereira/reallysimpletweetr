@@ -18,6 +18,7 @@ import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateFragmentDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
@@ -261,10 +262,9 @@ public class TemplatePojo extends AbstractPojo {
 		return dataObject;
 	}
 
-	public Map<String, String> getFragmentsLists(String name, String email,
+	public Map<String, String> getFragmentsLists(PersonaDO persona,
 			List<String> lists) throws Exception {
-		PersonaDO persona = businessHelper.getPersonaDao()
-				.findPersonaByNameAndEmail(name, email);
+
 		Map<String, String> ret = new HashMap<String, String>();
 
 		if (persona == null) {
@@ -273,8 +273,10 @@ public class TemplatePojo extends AbstractPojo {
 
 		// Get the templateFrag
 		for (String listName : lists) {
+
 			TemplateFragmentDO tFrag = businessHelper.getTemplateDao()
 					.findTemplateFragmentByName(persona, listName);
+
 			if (tFrag != null) {
 				ret.put(listName, tFrag.getText());
 			} else {
@@ -341,22 +343,60 @@ public class TemplatePojo extends AbstractPojo {
 		return template;
 	}
 
-	public List<String> getTemplatesNames(PersonaDTO model) throws Exception{
+	public List<String> getTemplatesNames(PersonaDTO model) throws Exception {
 
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(model.getName(),
 						model.getUserEmail());
 
-		if (persona==null) {
+		if (persona == null) {
 			throw new Exception("Persona not found");
 		}
 		List<String> result = new ArrayList<String>();
-		if ( persona.getTemplates()!= null) {
-			for (TemplateDO template:persona.getTemplates()) {
+		if (persona.getTemplates() != null) {
+			for (TemplateDO template : persona.getTemplates()) {
 				result.add(template.getName());
 			}
 		}
 		return result;
+	}
+
+	public String replaceTemplateLists(PersonaDO persona, String tweetTemplate)
+			throws Exception {
+
+		String result = tweetTemplate;
+
+		List<String> lists = StringUtils.getFragmentLists(tweetTemplate);
+
+		Map<String, String> mappedValues = null;
+
+		try {
+			mappedValues = businessHelper.getTemplatePojo().getFragmentsLists(
+					persona, lists);
+		} catch (Exception e) {
+			log.warning("Error getting template lists" + e.getMessage());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+
+		if (mappedValues != null) {
+
+			result = StringUtils.replaceFragmentsLists(tweetTemplate,
+					mappedValues);
+
+		}
+		return result;
+	}
+
+	public Map<String, String> getFragmentsLists(String name, String email,
+			List<String> lists) throws Exception {
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(name, email);
+
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
+		return getFragmentsLists(persona, lists);
 	}
 
 }

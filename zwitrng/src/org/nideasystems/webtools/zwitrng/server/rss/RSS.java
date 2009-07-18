@@ -91,8 +91,6 @@ public class RSS {
 				rssItem.setPubDate(XMLUtils.getElementValue(element, "pubDate"));
 				retList.add(rssItem);
 				
-				
-
 			}
 		} catch (MalformedURLException e) {
 			log.severe("MalformedURLException: "+e.getMessage());

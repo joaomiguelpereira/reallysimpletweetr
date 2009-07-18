@@ -40,7 +40,9 @@ import twitter4j.User;
 
 public class DataUtils {
 
-	private final static Logger log = Logger.getLogger(DataUtils.class.getName());
+	private final static Logger log = Logger.getLogger(DataUtils.class
+			.getName());
+
 	public static PersonaDTO createPersonaDto(PersonaDO personaDo,
 			TwitterAccountDTO authorizedTwitterAccount) {
 
@@ -74,28 +76,29 @@ public class DataUtils {
 		twitterUser.setTwitterUpdates(theTwitterUser.getStatusesCount());
 		twitterUser.setTwitterName(theTwitterUser.getName());
 		twitterUser.setTwitterLocation(theTwitterUser.getLocation());
-		twitterUser.setTwitterWeb(theTwitterUser.getURL() != null ? theTwitterUser
-				.getURL().toExternalForm() : "");
+		twitterUser
+				.setTwitterWeb(theTwitterUser.getURL() != null ? theTwitterUser
+						.getURL().toExternalForm() : "");
 		twitterUser.setTwitterStatusText(theTwitterUser.getStatusText());
 		twitterUser.setId(theTwitterUser.getId());
 
 		return twitterUser;
 	}
 
-	/*public static PersonaDO personaDofromDto(PersonaDTO personaDto, String email) {
-		PersonaDO returnPersona = new PersonaDO();
-
-		returnPersona.setCreationDate(new Date());
-		returnPersona.setName(personaDto.getName());
-		returnPersona.setUserEmail(email);
-
-		// Copy the TwitterAccountDTO
-		TwitterAccountDO twitterAccountDo = twitterAccountDofromDto(personaDto
-				.getTwitterAccount());
-		returnPersona.setTwitterAccount(twitterAccountDo);
-		return returnPersona;
-
-	}*/
+	/*
+	 * public static PersonaDO personaDofromDto(PersonaDTO personaDto, String
+	 * email) { PersonaDO returnPersona = new PersonaDO();
+	 * 
+	 * returnPersona.setCreationDate(new Date());
+	 * returnPersona.setName(personaDto.getName());
+	 * returnPersona.setUserEmail(email);
+	 * 
+	 * // Copy the TwitterAccountDTO TwitterAccountDO twitterAccountDo =
+	 * twitterAccountDofromDto(personaDto .getTwitterAccount());
+	 * returnPersona.setTwitterAccount(twitterAccountDo); return returnPersona;
+	 * 
+	 * }
+	 */
 
 	private static TwitterAccountDO twitterAccountDofromDto(
 			TwitterAccountDTO twitterAccount) {
@@ -163,7 +166,7 @@ public class DataUtils {
 		}
 
 		twitterUpdate.setTwitterUser(twitterAccount);
-		//twitterUpdate.setTwitterAccount(twitterAccount);
+		// twitterUpdate.setTwitterAccount(twitterAccount);
 
 		return twitterUpdate;
 
@@ -178,17 +181,16 @@ public class DataUtils {
 		// twitterUpdate.setInReplyToStatusId();
 		twitterUpdate.setInReplyToUserId(status.getToUserId());
 
-		
 		twitterUpdate.setSource(status.getSource());
 		twitterUpdate.setText(status.getText());
 		TwitterUserDTO twitterUserDto = new TwitterAccountDTO();
 		twitterUserDto.setTwitterScreenName(status.getFromUser());
 		twitterUserDto.setId(status.getFromUserId());
 		twitterUserDto.setTwitterImageUrl(status.getProfileImageUrl());
-		//twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
-		
+		// twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
+
 		twitterUpdate.setTwitterUser(twitterUserDto);
-		
+
 		twitterUpdate.setType(UpdatesType.TWEET);
 
 		return twitterUpdate;
@@ -221,31 +223,30 @@ public class DataUtils {
 
 	}
 
-	/*public static PersonaDTO personaDtoFromDo(PersonaDO personaDo) {
+	/*
+	 * public static PersonaDTO personaDtoFromDo(PersonaDO personaDo) {
+	 * 
+	 * // Create new PersonaDTO PersonaDTO returnPersona = new PersonaDTO();
+	 * returnPersona.setCreationDate(personaDo.getCreationDate());
+	 * returnPersona.setName(personaDo.getName());
+	 * returnPersona.setUserEmail(personaDo.getUserEmail());
+	 * 
+	 * // Create associated Twitter Account TwitterAccountDTO twitterAccount =
+	 * twitterAccountDtoFromDo(personaDo .getTwitterAccount());
+	 * 
+	 * returnPersona.setTwitterAccount(twitterAccount);
+	 * 
+	 * return returnPersona; }
+	 */
 
-		// Create new PersonaDTO
-		PersonaDTO returnPersona = new PersonaDTO();
-		returnPersona.setCreationDate(personaDo.getCreationDate());
-		returnPersona.setName(personaDo.getName());
-		returnPersona.setUserEmail(personaDo.getUserEmail());
-
-		// Create associated Twitter Account
-		TwitterAccountDTO twitterAccount = twitterAccountDtoFromDo(personaDo
-				.getTwitterAccount());
-
-		returnPersona.setTwitterAccount(twitterAccount);
-
-		return returnPersona;
-	}*/
-
-	/*public static TwitterAccountDTO twitterAccountDtoFromDo(
-			TwitterAccountDO twitterAccount) {
-		TwitterAccountDTO dto = new TwitterAccountDTO();
-		dto.setOAuthLoginUrl(twitterAccount.getOAuthLoginUrl());
-		dto.setOAuthToken(twitterAccount.getOAuthToken());
-		dto.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret());
-		return dto;
-	}*/
+	/*
+	 * public static TwitterAccountDTO twitterAccountDtoFromDo( TwitterAccountDO
+	 * twitterAccount) { TwitterAccountDTO dto = new TwitterAccountDTO();
+	 * dto.setOAuthLoginUrl(twitterAccount.getOAuthLoginUrl());
+	 * dto.setOAuthToken(twitterAccount.getOAuthToken());
+	 * dto.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret()); return
+	 * dto; }
+	 */
 
 	/**
 	 * Take an authenticated twitter user and merge with the given twitter
@@ -257,11 +258,9 @@ public class DataUtils {
 	 */
 	public static TwitterAccountDTO createAutenticatedTwitterAccountDto(
 			User twitterUser, TwitterAccountDTO twitterAccount) {
-		
-		
+
 		TwitterAccountDTO returnAuthenticatedTwitterAccount = new TwitterAccountDTO();
-		
-		
+
 		returnAuthenticatedTwitterAccount.setIsOAuthenticated(twitterAccount
 				.getIsOAuthenticated());
 		// Copy access info
@@ -271,42 +270,36 @@ public class DataUtils {
 				.getOAuthTokenSecret());
 
 		// Set twitter account details
-		returnAuthenticatedTwitterAccount
-				.setTwitterDescription(twitterUser
-						.getDescription());
-		returnAuthenticatedTwitterAccount
-				.setTwitterFollowers(twitterUser
-						.getFollowersCount());
+		returnAuthenticatedTwitterAccount.setTwitterDescription(twitterUser
+				.getDescription());
+		returnAuthenticatedTwitterAccount.setTwitterFollowers(twitterUser
+				.getFollowersCount());
 		returnAuthenticatedTwitterAccount.setTwitterImageUrl(twitterUser
 				.getProfileImageURL().toExternalForm());
-		returnAuthenticatedTwitterAccount
-				.setTwitterScreenName(twitterUser.getScreenName());
-		returnAuthenticatedTwitterAccount.setTwitterName(twitterUser
-				.getName());
+		returnAuthenticatedTwitterAccount.setTwitterScreenName(twitterUser
+				.getScreenName());
+		returnAuthenticatedTwitterAccount.setTwitterName(twitterUser.getName());
 		returnAuthenticatedTwitterAccount.setId(twitterUser.getId());
 		returnAuthenticatedTwitterAccount.setTwitterLocation(twitterUser
 				.getLocation());
 
-		returnAuthenticatedTwitterAccount
-				.setTwitterFollowers(twitterUser
-						.getFollowersCount());
+		returnAuthenticatedTwitterAccount.setTwitterFollowers(twitterUser
+				.getFollowersCount());
 		returnAuthenticatedTwitterAccount.setTwitterFriends(twitterUser
 				.getFriendsCount());
 		returnAuthenticatedTwitterAccount.setTwitterUpdates(twitterUser
 				.getStatusesCount());
-		if ( twitterUser.getURL()!= null ) {
-			returnAuthenticatedTwitterAccount.setTwitterWeb(twitterUser.getURL().toExternalForm());
+		if (twitterUser.getURL() != null) {
+			returnAuthenticatedTwitterAccount.setTwitterWeb(twitterUser
+					.getURL().toExternalForm());
 		} else {
 			returnAuthenticatedTwitterAccount.setTwitterWeb("");
 		}
-		
-		
-		
+
 		// Set the last status
 		TwitterUpdateDTO twitterUpdateDto = new TwitterUpdateDTO();
 
-		twitterUpdateDto.setCreatedAt(twitterUser
-				.getStatusCreatedAt());
+		twitterUpdateDto.setCreatedAt(twitterUser.getStatusCreatedAt());
 		twitterUpdateDto.setId(twitterUser.getStatusId());
 		twitterUpdateDto.setInReplyToStatusId(twitterUser
 				.getStatusInReplyToStatusId());
@@ -316,21 +309,16 @@ public class DataUtils {
 		twitterUpdateDto.setInReplyToScreenName(twitterUser
 				.getStatusInReplyToScreenName());
 
-		
-		
-		
 		twitterUpdateDto.setSource(twitterUser.getStatusSource());
 		twitterUpdateDto.setText(twitterUser.getStatusText());
 
-		
 		returnAuthenticatedTwitterAccount.setTwitterUpdateDto(twitterUpdateDto);
-		returnAuthenticatedTwitterAccount.setTwitterStatusText(twitterUpdateDto.getText());
-		
+		returnAuthenticatedTwitterAccount.setTwitterStatusText(twitterUpdateDto
+				.getText());
 
 		return returnAuthenticatedTwitterAccount;
 	}
 
-	
 	/**
 	 * 
 	 * @param fullAuthorizeddAccount
@@ -353,14 +341,14 @@ public class DataUtils {
 		templateDto.setCreated(templateDom.getCreated());
 		templateDto.setModified(templateDom.getModified());
 		templateDto.setName(templateDom.getName());
-		
+
 		templateDto.setId(templateDom.getKey().getId());
-		if ( templateDom.getUsedTimes()!= null ) {
+		if (templateDom.getUsedTimes() != null) {
 			templateDto.setUsedTimes(templateDom.getUsedTimes());
-		} else { 
+		} else {
 			templateDto.setUsedTimes(0);
 		}
-		
+
 		return templateDto;
 	}
 
@@ -371,54 +359,56 @@ public class DataUtils {
 		fragDto.setModified(fragDo.getModified());
 		fragDto.setName(fragDo.getName());
 		fragDto.setList(fragDo.getText());
-		
+
 		fragDto.setId(fragDo.getKey().getId());
-		
+
 		return fragDto;
 	}
 
 	public static String encodeString(String str) {
-		
+
 		String encoded = str;
 		try {
 			encoded = URLEncoder.encode(str, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			
+
 			e.printStackTrace();
 		}
-		
+
 		return encoded;
 	}
 
 	public static CampaignDTO campaignDtoFromDo(CampaignDO dom) {
-		
-		CampaignDTO  dto = new CampaignDTO();
+
+		CampaignDTO dto = new CampaignDTO();
 		dto.setId(dom.getKey().getId());
 		dto.setCreated(dom.getCreated());
 		dto.setEndDate(dom.getEndDate());
-		
-		if ( dom.getMaxTweets() != null ) {
+
+		if (dom.getMaxTweets() != null) {
 			dto.setMaxTweets(dom.getMaxTweets());
 		}
-		
+
 		dto.setModified(dom.getModified());
 		dto.setName(dom.getName());
 		dto.setStartDate(dom.getStartDate());
 		dto.setTimeBetweenTweets(dom.getTimeBetweenTweets());
 		dto.setTimeUnit(dom.getTimeUnit());
 		dto.setStatus(dom.getStatus());
-		
-		if ( dom.getRunningInstance()!=null) {
+
+		if (dom.getRunningInstance() != null) {
 			dto.setTweetsSent(dom.getRunningInstance().getTweetsSent());
 			dto.setNextRun(dom.getRunningInstance().getNextRun());
 			dto.setLastRun(dom.getRunningInstance().getLastRun());
-			
+
 		}
-		
-		dto.setStartHourOfTheDay(dom.getStartHourOfTheDay()!=null?dom.getStartHourOfTheDay():0);
-		dto.setEndHourOfTheDay(dom.getEndHourOfTheDay()!=null?dom.getEndHourOfTheDay():22);
+
+		dto.setStartHourOfTheDay(dom.getStartHourOfTheDay() != null ? dom
+				.getStartHourOfTheDay() : 0);
+		dto.setEndHourOfTheDay(dom.getEndHourOfTheDay() != null ? dom
+				.getEndHourOfTheDay() : 22);
 		List<String> nameList = new ArrayList<String>();
-		for (String tName: dom.getTemplateNames()) {
+		for (String tName : dom.getTemplateNames()) {
 			nameList.add(tName);
 		}
 		dto.setTemplatesNames(nameList);
@@ -426,12 +416,7 @@ public class DataUtils {
 		dto.setUseTemplatesRandomly(dom.getUseTemplatesRandomly());
 		dto.setTrackClicksOnLinks(dom.getTrackClicksOnLinks());
 		dto.setLimitNumberOfTweetsSent(dom.getLimitNumberOfTweetsSent());
-		
-		
-		
 
-		
-		
 		return dto;
 	}
 
@@ -439,22 +424,26 @@ public class DataUtils {
 		FeedSetDTO dto = new FeedSetDTO();
 		log.fine("Addign name");
 		dto.setName(dom.getName());
-		
+
 		log.fine("Adding feedsUrls");
-		for (String feed: dom.getFeedUrls()) {
+		for (String feed : dom.getFeedUrls()) {
 			dto.addFeedUrl(feed);
-			
+
 		}
-		
-		
-		
+
 		log.fine("Adding ID");
 		dto.setId(dom.getKey().getId());
-		
+
 		log.fine("Adding modified");
 		dto.setModified(dom.getModified());
 		log.fine("Adding created");
+
 		dto.setCreated(dom.getCreated());
+
+		dto.setIncludeLink(dom.getIncludeLink());
+		dto.setIncludeTitle(dom.getIncludeTitle());
+		dto.setUseLinkAtBegining(dom.getUseLinkAtBegining());
+
 		return dto;
 	}
 
@@ -463,7 +452,7 @@ public class DataUtils {
 			List<TwitterUserDO> followers) {
 
 		List<TwitterUserDO> list = new ArrayList<TwitterUserDO>();
-		for (TwitterUserDO dom: followers ) {
+		for (TwitterUserDO dom : followers) {
 			TwitteUserDTO dto = new TwitteUserDTO();
 			dto.setCreated(dom.getCreated());
 			dto.setFollowersCount(dom.getGollowersCount());
@@ -477,86 +466,77 @@ public class DataUtils {
 			dto.setScreenName(dom.getScreenName());
 			dto.setStatusesCount(dom.getStatusesCount());
 			dto.setUrl(dom.getUrl());
-			
-			
-			
-			
+
 		}
-		
-		
-		
+
 		return null;
 	}
-	
 
 	/**
 	 * From a list of Status, create a list o TwitterUpdates
+	 * 
 	 * @param friendsTimeLine
 	 * @return
 	 */
 	public static TwitterUpdateDTOList createTwitterUpdateDtoListFromStatuses(
 			List<Status> statuses) {
-		
+
 		TwitterUpdateDTOList list = new TwitterUpdateDTOList();
-		
-		for ( Status status: statuses ) {
-			list.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
-					status, true));
-		}	
+
+		for (Status status : statuses) {
+			list.addTwitterUpdate(DataUtils
+					.createTwitterUpdateDto(status, true));
+		}
 		return list;
 	}
 
 	/**
 	 * From a list of Tweets, create a list of Updates
+	 * 
 	 * @param search
 	 * @return
 	 */
 	public static TwitterUpdateDTOList createTwitterUpdateDtoListFromTweets(
 			List<Tweet> search) {
 		TwitterUpdateDTOList list = new TwitterUpdateDTOList();
-		
-		for (Tweet tuit: search) {
-			list.addTwitterUpdate(DataUtils
-					.createTwitterUpdateDto(tuit));
+
+		for (Tweet tuit : search) {
+			list.addTwitterUpdate(DataUtils.createTwitterUpdateDto(tuit));
 		}
 		return list;
-		
-		
+
 	}
 
 	/**
 	 * From a single status, create a list with one element
+	 * 
 	 * @param status
 	 * @return
 	 */
 	public static TwitterUpdateDTOList createTwitterUpdateDtoListFromStatus(
 			Status status) {
 		TwitterUpdateDTOList list = new TwitterUpdateDTOList();
-		list.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
-					status, true));
+		list.addTwitterUpdate(DataUtils.createTwitterUpdateDto(status, true));
 		return list;
 	}
 
 	/**
 	 * From a list of direct messages, create a list of updates
+	 * 
 	 * @param receivedDirectMessages
 	 * @return
 	 */
 	public static TwitterUpdateDTOList createTwitterUpdateDtoListFromDM(
 			List<DirectMessage> dms, UpdatesType type) {
-		
-		
+
 		TwitterUpdateDTOList list = new TwitterUpdateDTOList();
-		
+
 		for (DirectMessage dm : dms) {
-			list.addTwitterUpdate(DataUtils.createTwitterUpdateDto(
-					dm, true, type));
+			list.addTwitterUpdate(DataUtils.createTwitterUpdateDto(dm, true,
+					type));
 		}
 		return list;
 
-		
 	}
-
-	
 
 }

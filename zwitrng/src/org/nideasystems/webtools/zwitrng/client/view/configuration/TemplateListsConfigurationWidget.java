@@ -130,7 +130,7 @@ public class TemplateListsConfigurationWidget extends AbstractListConfigurationW
 			nameText = new TextBox();
 			contentPanel.add(nameLabel);
 			contentPanel.add(nameText);
-			contentPanel.add(new InlineHTML("Template Fragment Text"));
+			contentPanel.add(new InlineHTML("Template Fragment Text. You can use the format [xx|yy] to include random words"));
 			templateFragmentText = new TextArea();
 			templateFragmentText.setWidth(Constants.CONFIGURATION_INPUT_MAX_WIDTH);
 			// update.setHeight("35px");
