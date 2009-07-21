@@ -73,6 +73,10 @@ public class CampaignDAO extends BaseDAO {
 		cInstance.setRssItems(new ArrayList<RSSItemDO>());
 		cInstance.setUsedFeedTitles(new ArrayList<String>());
 		cInstance.setLastTimeRSSFetched(new Long(0));
+		cInstance.setTweetsSent(0);
+		cInstance.setInfo("");
+		
+		
 		
 		
 		

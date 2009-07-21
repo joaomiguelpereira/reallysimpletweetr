@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
@@ -49,7 +50,9 @@ public class TwitterAccountDO implements Serializable{
 	private List<Integer> blockingIds;
 	
 	@Persistent
-
+	private List<Integer> autoFollowBackIdsQueue;
+	
+	@Persistent
 	private Integer id;
 	
 	
@@ -134,6 +137,29 @@ public class TwitterAccountDO implements Serializable{
 	public Integer getId() {
 		return id;
 	}
+
+	public void addFollowingId(Integer integer) {
+		this.followingIds.add(integer);
+		
+	}
+
+	public void setAutoFollowBackIdsQueue(List<Integer> autoFollowBackIdsQueue) {
+		this.autoFollowBackIdsQueue = autoFollowBackIdsQueue;
+	}
+
+	public List<Integer> getAutoFollowBackIdsQueue() {
+		return autoFollowBackIdsQueue;
+	}
+	
+	public void addFollowBackId(Integer id) {
+		if (this.autoFollowBackIdsQueue==null) {
+			autoFollowBackIdsQueue = new ArrayList<Integer>();
+		}
+		this.autoFollowBackIdsQueue.add(id);
+	}
+
+
+	
 
 	
 }

@@ -77,14 +77,11 @@ public class PopupManager {
 	}
 
 	public PopupPanel showSelectTemplateWindow(SendUpdateWidget widget, int left, int top) {
+		
 		SelectTemplateWindow wnd = new SelectTemplateWindow();
-		
 		wnd.setSendTwitterUpdateWidget(widget);
-		
-		
 		wnd.init();
 		wnd.center();
-		
 		wnd.setPopupPosition(wnd.getAbsoluteLeft(), top);
 		wnd.show();
 		wnd.loadTemplates();

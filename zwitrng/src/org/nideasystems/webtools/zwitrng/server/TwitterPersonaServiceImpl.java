@@ -455,12 +455,13 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 	}
 
 	@Override
-	public CampaignDTO setCampaignStatus(PersonaDTO model, String campaignName,CampaignStatus status)
-			throws Exception {
+	public CampaignDTO setCampaignStatus(PersonaDTO model, String campaignName,
+			CampaignStatus status) throws Exception {
 		CampaignDTO result = null;
 		startTransaction(true);
 		try {
-			result = getBusinessHelper().getCampaignPojo().setCampainStatus(model, campaignName, status);
+			result = getBusinessHelper().getCampaignPojo().setCampainStatus(
+					model, campaignName, status);
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.severe(e.getMessage());
@@ -471,4 +472,43 @@ public class TwitterPersonaServiceImpl extends AbstractRemoteServiceServlet
 
 		return result;
 	}
+
+	@Override
+	public CampaignDTO getCampaign(PersonaDTO model, String name)
+			throws Exception {
+		CampaignDTO result = null;
+		startTransaction(true);
+		try {
+			result = getBusinessHelper().getCampaignPojo().getCampainStatus(
+					model, name);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} finally {
+			endTransaction();
+		}
+
+		return result;
+	}
+
+	@Override
+	public String buildTweetFromTemplate(PersonaDTO persona,
+			TemplateDTO template, List<String> userNames) throws Exception {
+		startTransaction(true);
+		String result = "";
+		try {
+			result = getBusinessHelper().getCampaignPojo()
+					.buildTweetFromTemplate(persona, template, userNames);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.severe(e.getMessage());
+			throw new Exception(e);
+		} finally {
+			endTransaction();
+		}
+
+		return result;
+	}
+
 }

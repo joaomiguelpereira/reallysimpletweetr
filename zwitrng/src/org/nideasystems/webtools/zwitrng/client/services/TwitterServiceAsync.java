@@ -86,7 +86,7 @@ public interface TwitterServiceAsync {
 	 * @param asyncCallback
 	 * @throws Exception
 	 */
-	void followUser(PersonaDTO currentPersona, TwitterUserDTO user,
+	void followUser(PersonaDTO currentPersona, TwitterUserDTO user,boolean synch,
 			AsyncCallback<Void> asyncCallback) throws Exception;
 
 	/**

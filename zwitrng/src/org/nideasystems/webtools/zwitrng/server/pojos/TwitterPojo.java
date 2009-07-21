@@ -114,7 +114,7 @@ public class TwitterPojo extends AbstractPojo {
 	private void endTwitterTransaction() {
 
 		long endTime = new Date().getTime();
-		long elapsedTime = endTime-twitterStartTime ;
+		long elapsedTime = endTime - twitterStartTime;
 		log.info("Ending Twitter Transaction for User: "
 				+ this.twitterService.getTwitterAccount()
 						.getTwitterScreenName() + " in " + elapsedTime);
@@ -217,16 +217,19 @@ public class TwitterPojo extends AbstractPojo {
 		if (persona == null) {
 			throw new Exception("Could not find the persona");
 		}
-		
+
 		synchronize(persona, thePersonaDto.getTwitterAccount());
+		if (persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null) {
+			persona.getTwitterAccount().getAutoFollowBackIdsQueue().clear();
+		}
+
 		endTwitterTransaction();
 		updateRateLimist(persona);
-		
 
 	}
 
-	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user)
-			throws Exception {
+	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user,
+			boolean synch) throws Exception {
 		log.fine("Start following user: " + user.getId());
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(currentPersona.getName(),
@@ -248,10 +251,25 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		if ( persona.getTwitterAccount().getFollowingIds() != null ) {
-			persona.getTwitterAccount().getFollowingIds().add(user.getId());
+		if (persona.getTwitterAccount().getFollowingIds() != null) {
+			log.fine(("Adding new FOLLOWER: " + user.getId()));
+			log.fine(("SIZE BEFORE: " + persona.getTwitterAccount()
+					.getFollowingIds().size()));
+
+			persona.getTwitterAccount().addFollowingId(
+					new Integer(user.getId()));
+			log.fine(("SIZE AFTER: " + persona.getTwitterAccount()
+					.getFollowingIds().size()));
 		}
-		
+		// if is to synch
+		if (synch) {
+			if (persona.getTwitterAccount().getFollowersIds() != null) {
+				persona.getTwitterAccount().getFollowersIds().add(
+						new Integer(user.getId()));
+
+			}
+
+		}
 		updateRateLimist(persona);
 
 	}
@@ -261,7 +279,6 @@ public class TwitterPojo extends AbstractPojo {
 		PersonaDO persona = businessHelper.getPersonaDao()
 				.findPersonaByNameAndEmail(currentPersona.getName(),
 						currentPersona.getUserEmail());
-		
 
 		if (persona == null) {
 			throw new Exception("Could not find the persona");
@@ -278,10 +295,10 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		if ( persona.getTwitterAccount().getFollowingIds()!=null) {
+		if (persona.getTwitterAccount().getFollowingIds() != null) {
 			persona.getTwitterAccount().getFollowingIds().remove(user.getId());
 		}
-		
+
 		updateRateLimist(persona);
 	}
 
@@ -308,10 +325,10 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		if (persona.getTwitterAccount().getBlockingIds()!=null) {
-			persona.getTwitterAccount().getBlockingIds().remove(user.getId());
+		if (persona.getTwitterAccount().getBlockingIds() != null) {
+			persona.getTwitterAccount().getBlockingIds().add(user.getId());
 		}
-		
+
 		updateRateLimist(persona);
 
 	}
@@ -339,11 +356,10 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		if ( persona.getTwitterAccount().getBlockingIds()!=null) {
+		if (persona.getTwitterAccount().getBlockingIds() != null) {
 			persona.getTwitterAccount().getBlockingIds().remove(user.getId());
 		}
-		
-		
+
 		updateRateLimist(persona);
 
 	}
@@ -360,7 +376,7 @@ public class TwitterPojo extends AbstractPojo {
 		}
 		startTwitterTransaction(personaDto.getTwitterAccount());
 		Status status = null;
-		
+
 		try {
 			status = twitterService.postUpdate(update);
 		} catch (Exception e) {
@@ -448,13 +464,16 @@ public class TwitterPojo extends AbstractPojo {
 	private void updateRateLimist(PersonaDO personaDo) {
 
 		if (personaDo.getTwitterAccount().getRateLimits() != null) {
-			personaDo.getTwitterAccount().getRateLimits().setRateLimitLimit(
-					twitterService.getRateLimitLimit());
-			personaDo.getTwitterAccount().getRateLimits()
-					.setRateLimitRemaining(
-							twitterService.getRateLimitRemaining());
-			personaDo.getTwitterAccount().getRateLimits().setRateLimitReset(
-					twitterService.getRateLimitReset());
+			if (twitterService.getRateLimitLimit() >= 0) {
+				personaDo.getTwitterAccount().getRateLimits()
+						.setRateLimitLimit(twitterService.getRateLimitLimit());
+				personaDo.getTwitterAccount().getRateLimits()
+						.setRateLimitRemaining(
+								twitterService.getRateLimitRemaining());
+				personaDo.getTwitterAccount().getRateLimits()
+						.setRateLimitReset(twitterService.getRateLimitReset());
+
+			}
 
 		} else {
 			RateLimitsDO limitsDo = new RateLimitsDO();
@@ -633,9 +652,9 @@ public class TwitterPojo extends AbstractPojo {
 	}
 
 	public TwitterUpdateDTO sendDM(PersonaDTO currentPersona,
-			TwitterUpdateDTO dm) throws Exception{
-		
-		startTwitterTransaction(currentPersona.getTwitterAccount() );
+			TwitterUpdateDTO dm) throws Exception {
+
+		startTwitterTransaction(currentPersona.getTwitterAccount());
 		DirectMessage dmessage = null;
 
 		try {
@@ -648,6 +667,47 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		return DataUtils.createTwitterUpdateDto(dmessage, true,UpdatesType.DIRECT_SENT);	}
+		return DataUtils.createTwitterUpdateDto(dmessage, true,
+				UpdatesType.DIRECT_SENT);
+	}
+
+	public void updateFollowBackUsersIdQueue(TwitterAccountDO twitterAccount,
+			TwitterAccountDTO authorizedTwitterAccount) throws Exception {
+		int followers[] = businessHelper.getTwitterPojo().getFollowersIds(
+				authorizedTwitterAccount);
+		// clear auto follow
+		// persona.getTwitterAccount().setAutoFollowBackIdsQueue(new
+		// ArrayList<Integer>());
+		// now get the actual following list
+		List<Integer> actualFollowersLis = twitterAccount.getFollowersIds();
+
+		// Now check if there are any new user following me
+		int newFollowersCount = followers.length - actualFollowersLis.size();
+
+		if (newFollowersCount > 0) {
+			// get the list of new users
+			// is from index 0 to newFollowerCount
+			for (int i = 0; i < newFollowersCount; i++) {
+				log.fine("------Adding user to FollowingBackQueue :"
+						+ followers[followers.length - (1 + i)]);
+
+				if (twitterAccount.getAutoFollowBackIdsQueue() == null) {
+					ArrayList<Integer> list = new ArrayList<Integer>();
+					list
+							.add(new Integer(followers[followers.length
+									- (1 + i)]));
+					twitterAccount.setAutoFollowBackIdsQueue(list);
+				} else if (!twitterAccount.getAutoFollowBackIdsQueue()
+						.contains(
+								new Integer(followers[followers.length
+										- (1 + i)]))) {
+					twitterAccount.getAutoFollowBackIdsQueue().add(
+							new Integer(followers[followers.length - (1 + i)]));
+				}
+
+			}
+		}
+
+	}
 
 }

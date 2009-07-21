@@ -142,7 +142,9 @@ public class PersonaPojo extends AbstractPojo {
 			return -1;
 		}
 		
-		return newCount - persona.getTwitterAccount().getFollowersIds().size();	}
+		return newCount - persona.getTwitterAccount().getFollowersIds().size();	
+		
+	}
 
 	private int getNewBlockingCount(PersonaDO persona,TwitterAccountDTO twAccount) {
 		int newCount = 0;

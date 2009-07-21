@@ -16,6 +16,7 @@ public interface ConfigurationEditListener<T extends IDTO> {
 		public void onObjectSaved(T object);
 		
 		public void onObjectRemoved(T object);
+		public void onObjectLoaded(T object);
 		
 		
 		

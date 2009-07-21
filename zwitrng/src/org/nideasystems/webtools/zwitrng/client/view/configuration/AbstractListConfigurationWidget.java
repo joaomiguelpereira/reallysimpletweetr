@@ -12,7 +12,7 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
-import com.google.gwt.user.client.ui.ScrollPanel;
+
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -325,11 +325,18 @@ public abstract class AbstractListConfigurationWidget<T extends IDTO, L extends 
 	}
 
 	@Override
-	public void onObjectRemoved(T object) {
+	public void onObjectLoaded(T object) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
+	public void onObjectRemoved(T object) {
+		// TODO Auto-generated method stub
+
+	}
+	
+	
 	public boolean isCreatingNew() {
 		return isCreatingNew;
 	}

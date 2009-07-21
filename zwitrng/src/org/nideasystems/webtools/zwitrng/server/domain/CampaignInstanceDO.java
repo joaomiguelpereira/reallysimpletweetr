@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.jdo.annotations.Extension;
+
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
-import javax.jdo.annotations.Order;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
@@ -44,6 +43,8 @@ public class CampaignInstanceDO {
 	@Persistent
 	private List<RSSItemDO> rssItems;
 
+	@Persistent
+	private String info;
 
 	public Key getKey() {
 		return key;
@@ -151,6 +152,16 @@ public class CampaignInstanceDO {
 
 	public Long getLastTimeRSSFetched() {
 		return lastTimeRSSFetched;
+	}
+
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+
+	public String getInfo() {
+		return info;
 	}
 
 

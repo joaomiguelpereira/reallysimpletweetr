@@ -16,10 +16,13 @@ import org.nideasystems.webtools.zwitrng.server.amazon.AmazonBook;
 import org.nideasystems.webtools.zwitrng.server.amazon.AmazonLocale;
 import org.nideasystems.webtools.zwitrng.server.domain.CampaignDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
 import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.TimeUnits;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 public class RunCampaignsJobServlet extends AbstractHttpServlet {
 
@@ -35,7 +38,7 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 	// private StringBuffer outBuffer;
 
 	private int hour = 0;
-	private static boolean TESTING = true;
+	private static boolean TESTING = false;
 	StringBuffer outBuffer = null;
 
 	@Override
@@ -319,13 +322,29 @@ public class RunCampaignsJobServlet extends AbstractHttpServlet {
 							+ "</h3>");
 				}
 				
-
-				
+				if (!TESTING) {
+					
+					try {
+						TwitterAccountDTO accountDto =TwitterAccountDAO.createAuthorizedAccountDto(campaign.getPersona().getTwitterAccount());
+						TwitterUpdateDTO update = new TwitterUpdateDTO();
+						update.setSendingTwitterAccount(accountDto);
+						update.setText(finalStatus);
+						getBusinessHelper().getTwitterPojo().postUpdate(update);
+					} catch (Exception e) {
+						log.severe("Error runnig the campaign:"+ e.getMessage());
+						e.printStackTrace();
+						throw e;
+					}
+				}
+				//
 				// Final Steps
 				campaign.getRunningInstance().setTweetsSent(
 						campaign.getRunningInstance().getTweetsSent() + 1);
 
 				
+				campaign.getRunningInstance().setLastRun(new Date());				
+				campaign.getRunningInstance().setNextRun(new Date(campaign.getRunningInstance().getLastRun().getTime() +(getAllowedElapsedMinutes(campaign) * 60 * 1000)));
+				campaign.getRunningInstance().setInfo("Last Tweet sent:"+finalStatus+" at "+campaign.getRunningInstance().getLastRun());
 				if (maxTweetsReached(campaign)) {
 					campaign.setStatus(CampaignStatus.FINISHED);
 				}

@@ -27,6 +27,7 @@ public class CampaignDTO implements IDTO {
 	private boolean allowRepeatTemplates;
 	private boolean trackClicksOnLinks;
 	private boolean limitNumberOfTweetsSent;
+	private String info; 
 
 	public int getStartHourOfTheDay() {
 		return startHourOfTheDay;
@@ -195,6 +196,14 @@ public class CampaignDTO implements IDTO {
 
 	public boolean isLimitNumberOfTweetsSent() {
 		return limitNumberOfTweetsSent;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public String getInfo() {
+		return info;
 	}
 
 }

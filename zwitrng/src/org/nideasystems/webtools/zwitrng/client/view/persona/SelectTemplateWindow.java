@@ -1,7 +1,8 @@
 package org.nideasystems.webtools.zwitrng.client.view.persona;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
@@ -72,19 +73,62 @@ public class SelectTemplateWindow extends PopupPanel implements
 	@Override
 	public void onItemSelected(TemplateDTO obj) {
 		//check if it contains any list that needs to be loaded
-		List<String> lists = StringUtils.getFragmentLists(obj.getTemplateText());
+
+		//Window.alert(this.updateWidget.getText());
+		String[] userNames = StringUtils.getUserNames(this.updateWidget.getText())  ;
+		//List<String> lists = StringUtils.getFragmentLists(obj.getTemplateText());
+		List<String> userNamesList = new ArrayList<String>();
+		for (String uName: userNames ) {
+			userNamesList.add(uName.trim());
+		}
+		buildTweetFromTemplate(obj,userNamesList);
+		/*
 		if (lists.size()>0) {
-			loadListsContents(obj,lists);
+			
+			buildTweetFromTemplate(obj,lists);
+		
 		} else {
+			Window.alert("Selected");
 			updateTemplateText(obj);
 			
-		}
+		}*/
 		
 	}
 
-	private void loadListsContents(final TemplateDTO obj,List<String> lists) {
+	private void buildTweetFromTemplate(final TemplateDTO template,List<String> userNames) {
 		//call server
 		this.updateWidget.isUpdating(true);
+		try {
+			
+			MainController.getInstance().getCurrentPersonaController().buildTweetFromTemplate(template, userNames, new AsyncCallback<String>() {
+
+				@Override
+				public void onFailure(Throwable caught) {
+					Window.alert("Failed");
+					updateWidget.isUpdating(false);
+					MainController.getInstance().addException(caught);
+					replaceTemplate(template.getTemplateText());
+				}
+
+				@Override
+				public void onSuccess(String result) {
+					updateWidget.isUpdating(false);
+					replaceTemplate(result);
+					
+				}
+
+				
+				
+			});
+		} catch (Exception e) {
+			updateWidget.isUpdating(false);
+			MainController.getInstance().addException(e);
+			replaceTemplate(template.getTemplateText());
+			e.printStackTrace();
+		}
+
+		
+		/*
 		try {
 			MainController.getInstance().getCurrentPersonaController().loadTemplateFragmentsLists(lists, new AsyncCallback<Map<String, String>>() {
 
@@ -111,16 +155,15 @@ public class SelectTemplateWindow extends PopupPanel implements
 			updateTemplateText(obj);
 			e.printStackTrace();
 		}
-		updateTemplateText(obj);
+		*/
+		
 		
 	}
 
-	private void replaceLoadedLists(TemplateDTO obj,
-			Map<String, String> result) {
-		
-		String newvalue = StringUtils.replaceFragmentsLists(obj.getTemplateText(),result);
-		obj.setTemplateText(newvalue);
-		updateTemplateText(obj);
+	private void replaceTemplate(String result) {
+		updateWidget.setTemplateText(result);
+		//updateTemplateText(result);
+		hide(true);
 	}
 	private void updateTemplateText(TemplateDTO obj) {
 		String[] userNames = StringUtils.getUserNames(updateWidget.getText());

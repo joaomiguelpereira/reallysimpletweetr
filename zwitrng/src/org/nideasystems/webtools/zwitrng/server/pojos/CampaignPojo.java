@@ -16,10 +16,12 @@ import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.RSSItemDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
+import org.nideasystems.webtools.zwitrng.shared.StringUtils;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.CampaignStatus;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
+import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTO;
 
 public class CampaignPojo extends AbstractPojo {
 
@@ -50,8 +52,7 @@ public class CampaignPojo extends AbstractPojo {
 			throw new Exception("A Campaign with the same name already exixts");
 		}
 
-		
-		campaignDom = businessHelper.getCampaignDao().create(persona, object); 
+		campaignDom = businessHelper.getCampaignDao().create(persona, object);
 		buildTweetTemplates(campaignDom);
 		return DataUtils.campaignDtoFromDo(campaignDom);
 
@@ -109,8 +110,7 @@ public class CampaignPojo extends AbstractPojo {
 			throw new Exception("The campaign was not found");
 		}
 
-		
-		//clearTemplatesInCache(campaignDom);
+		// clearTemplatesInCache(campaignDom);
 		return businessHelper.getCampaignDao().save(persona, object,
 				campaignDom);
 
@@ -158,9 +158,10 @@ public class CampaignPojo extends AbstractPojo {
 			cInstance.setLastTimeRSSFetched(new Long(0));
 			cInstance.setUsedFeedTitles(new ArrayList<String>());
 			cInstance.setRssItems(new ArrayList<RSSItemDO>());
-			
+			cInstance.setTweetsSent(0);
+			cInstance.setInfo("");
+
 			buildTweetTemplates(campaign);
-			
 
 		}
 		return DataUtils.campaignDtoFromDo(campaign);
@@ -238,16 +239,73 @@ public class CampaignPojo extends AbstractPojo {
 			if (template != null) {
 				String[] strList = template.getText().getValue().split("\\n");
 				for (String tempText : strList) {
-					if (tempText.trim().length()>0 ) {
+					if (tempText.trim().length() > 0) {
 						tweetTemplates.add(tempText);
 					}
-					
+
 				}
 			}
 		}
 		campaign.getRunningInstance().setTweetTemplates(tweetTemplates);
 		long end = new Date().getTime();
 		log.info("<p>Templates Built in: " + (end - start) + " ms</p>");
+	}
+
+	public CampaignDTO getCampainStatus(PersonaDTO model, String name)
+			throws Exception {
+		PersonaDO persona = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(model.getName(),
+						model.getUserEmail());
+		if (persona == null) {
+			throw new Exception();
+		}
+
+		// Check if the campaign name alreadey exists
+		CampaignDO campaignDom = businessHelper.getCampaignDao()
+				.findByPersonaNameAndCampaignName(persona, name);
+		if (campaignDom == null) {
+			throw new Exception("The campaign was not found");
+		}
+		return DataUtils.campaignDtoFromDo(campaignDom);
+	}
+
+	
+	public String buildTweetFromTemplate(PersonaDTO persona,
+			TemplateDTO template, List<String> userNames) throws Exception{
+		PersonaDO personaDom = businessHelper.getPersonaDao()
+				.findPersonaByNameAndEmail(persona.getName(),
+						persona.getUserEmail());
+		if (persona == null) {
+			throw new Exception();
+		}
+		
+		//Find the template
+		//Get a random line from the template
+		String[] lines = template.getTemplateText().split("\\n");
+		int index = 0;
+		if ( lines.length>0) {
+			double rand = Math.random();
+			index = (int) Math.round(rand * (lines.length - 1));
+		}
+		
+		String tweet =lines[index];
+		String finalStatus = businessHelper.getTemplatePojo().replaceTemplateLists(personaDom,tweet);
+		finalStatus = StringUtils.randomizeTemplate(finalStatus);
+		
+		if (userNames.size() > 0) {
+			for (int i = 0; i < userNames.size(); i++) {
+				finalStatus = finalStatus.replace("{username_"
+						+ i + "}", userNames.get(i));
+			}
+
+		}
+
+		//Now deal with the fucking feeds
+		finalStatus = businessHelper.getFeedSetPojo().replaceFeeds(personaDom, finalStatus);
+		
+		finalStatus = finalStatus.trim().replace("\\n", "");
+		
+		return finalStatus;
 	}
 
 }
