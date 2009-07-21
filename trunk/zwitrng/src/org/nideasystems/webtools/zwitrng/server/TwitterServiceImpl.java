@@ -246,12 +246,12 @@ public class TwitterServiceImpl extends AbstractRemoteServiceServlet implements
 	}
 
 	@Override
-	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user)
+	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user, boolean synch)
 			throws Exception {
 		startTransaction(true);
 		
 		try {
-			getBusinessHelper().getTwitterPojo().followUser(currentPersona,user);
+			getBusinessHelper().getTwitterPojo().followUser(currentPersona,user,synch);
 		} catch (Exception e) {
 			
 			log.severe("Error Following User: "+e.getMessage());

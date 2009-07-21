@@ -43,7 +43,7 @@ public class DataUtils {
 	private final static Logger log = Logger.getLogger(DataUtils.class
 			.getName());
 
-	public static PersonaDTO createPersonaDto(PersonaDO personaDo,
+	public static PersonaDTO createPersonaDto(final PersonaDO personaDo,
 			TwitterAccountDTO authorizedTwitterAccount) {
 
 		PersonaDTO returnPersona = new PersonaDTO();
@@ -402,6 +402,12 @@ public class DataUtils {
 			dto.setLastRun(dom.getRunningInstance().getLastRun());
 
 		}
+		if  (dom.getRunningInstance().getInfo()!=null) {
+			dto.setInfo(dom.getRunningInstance().getInfo());
+		} else {
+			dto.setInfo("");
+		}
+
 
 		dto.setStartHourOfTheDay(dom.getStartHourOfTheDay() != null ? dom
 				.getStartHourOfTheDay() : 0);
@@ -416,6 +422,9 @@ public class DataUtils {
 		dto.setUseTemplatesRandomly(dom.getUseTemplatesRandomly());
 		dto.setTrackClicksOnLinks(dom.getTrackClicksOnLinks());
 		dto.setLimitNumberOfTweetsSent(dom.getLimitNumberOfTweetsSent());
+		
+		
+		
 
 		return dto;
 	}

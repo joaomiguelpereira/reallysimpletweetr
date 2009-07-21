@@ -470,7 +470,7 @@ public class TwitterUsersView extends
 
 		protected void startFollowing() {
 			isProcessing(true);
-			view.getController().followUser(user, this);
+			view.getController().followUser(user, true, this);
 
 		}
 

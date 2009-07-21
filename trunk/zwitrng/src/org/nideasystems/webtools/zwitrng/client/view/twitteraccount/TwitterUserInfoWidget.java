@@ -207,7 +207,7 @@ public class TwitterUserInfoWidget extends PopupPanel implements
 								twitterAccount.getId(), instance);	
 					} else {
 						parentController.followUser(
-								twitterAccount.getId(), instance);	
+								twitterAccount.getId(),false, instance);	
 					}
 					
 				}

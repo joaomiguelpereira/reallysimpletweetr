@@ -18,6 +18,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TemplateDTOList;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TemplateListDTOList;
 
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -90,5 +91,12 @@ public interface TwitterPersonaService extends RemoteService {
 	List<String> getTemplateNames(PersonaDTO model) throws Exception;
 	
 	CampaignDTO setCampaignStatus(PersonaDTO model, String campaignName, CampaignStatus status) throws Exception;
+	
+	CampaignDTO getCampaign(PersonaDTO model, String name) throws Exception;
+	
+	String buildTweetFromTemplate(PersonaDTO persona, TemplateDTO template,
+			List<String> userNames) throws Exception;
+	
+
 
 }

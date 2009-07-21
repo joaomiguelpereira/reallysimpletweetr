@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.nideasystems.webtools.zwitrng.client.controller.AbstractController;
 import org.nideasystems.webtools.zwitrng.client.controller.AutoUpdatable;
+import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.controller.twitteraccount.TwitterAccountController;
 import org.nideasystems.webtools.zwitrng.client.controller.updates.TwitterUpdatesListController;
 import org.nideasystems.webtools.zwitrng.client.view.configuration.AbstractListConfigurationWidget;
@@ -714,6 +715,38 @@ public class PersonaController extends
 			e.printStackTrace();
 		}
 		
+		
+	}
+
+	public void getCampaign(final SelectableItem<CampaignDTO, CampaignDTOList> callback, String name) {
+		try {
+			getServiceManager().getRPCService().getCampaign(this.getModel(),name,
+					new AsyncCallback<CampaignDTO>() {
+
+						@Override
+						public void onFailure(Throwable caught) {
+							callback.onError(caught);
+
+						}
+
+						@Override
+						public void onSuccess(CampaignDTO result) {
+							callback.onObjectLoaded(result);
+
+						}
+
+					});
+		} catch (Exception e) {
+
+			callback.onError(e);
+			e.printStackTrace();
+		}
+		
+	}
+
+	public void buildTweetFromTemplate(TemplateDTO template,
+			List<String> userNames, AsyncCallback<String> asyncCallback) throws Exception{
+		getServiceManager().getRPCService().buildTweetFromTemplate(MainController.getInstance().getCurrentPersonaController().getModel(),template, userNames, asyncCallback);
 		
 	}
 

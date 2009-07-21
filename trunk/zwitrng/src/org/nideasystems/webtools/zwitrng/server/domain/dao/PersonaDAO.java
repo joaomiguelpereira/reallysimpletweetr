@@ -224,6 +224,7 @@ public class PersonaDAO extends BaseDAO {
 	}
 
 	public List<PersonaDO> findAllActivePersonas() {
+		
 		Query queryPersona = pm.newQuery(PersonaDO.class);
 		
 		queryPersona.setFilter("status==theStatus");

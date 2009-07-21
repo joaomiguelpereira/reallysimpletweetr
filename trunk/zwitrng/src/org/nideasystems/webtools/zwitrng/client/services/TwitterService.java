@@ -86,7 +86,7 @@ public interface TwitterService extends RemoteService {
 	 * @param user
 	 * @throws Exception
 	 */
-	void followUser(PersonaDTO currentPersona, TwitterUserDTO user) throws Exception;
+	void followUser(PersonaDTO currentPersona, TwitterUserDTO user, boolean synch) throws Exception;
 	
 
 	/**

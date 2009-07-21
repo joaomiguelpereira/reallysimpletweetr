@@ -91,13 +91,13 @@ public class TwitterUsersController extends
 
 	}
 
-	public void followUser(TwitterUserDTO user, final UserListener callback) {
+	public void followUser(TwitterUserDTO user, boolean synch, final UserListener callback) {
 		PersonaDTO currentPersona = MainController.getInstance()
 				.getCurrentPersonaController().getModel();
 
 		try {
 			getServiceManager().getRPCService().followUser(currentPersona,
-					user, new AsyncCallback<Void>() {
+					user, synch, new AsyncCallback<Void>() {
 
 						@Override
 						public void onFailure(Throwable caught) {

@@ -73,6 +73,10 @@ public interface TwitterPersonaServiceAsync {
 			AsyncCallback<List<String>> asyncCallback) throws Exception;
 	void setCampaignStatus(PersonaDTO model, String campaignNameId, CampaignStatus status,
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
+	void getCampaign(PersonaDTO model, String name,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception;
+	void buildTweetFromTemplate(PersonaDTO persona, TemplateDTO template,
+			List<String> userNames, AsyncCallback<String> asyncCallback) throws Exception;
 	
 
 	

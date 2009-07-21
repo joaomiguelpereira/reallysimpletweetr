@@ -297,6 +297,15 @@ public abstract class SelectableItem<T extends IDTO, L extends IDTO> extends
 		// TODO Auto-generated method stub
 
 	}
+	
+	@Override
+	public void onObjectLoaded(T object) {
+		setProcessing(false);
+		this.dataObject = object;
+		refresh();
+		onUnSelected();
+		onSelected();
+	}
 
 	@Override
 	public void onObjectRemoved(T object) {

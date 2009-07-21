@@ -21,7 +21,13 @@ public class TwitterAccountDAO extends BaseDAO {
 		twitterAccountDo.setOAuthTokenSecret(twitterAccount.getOAuthTokenSecret());
 		
 		twitterAccountDo.setTwitterName(twitterAccount.getTwitterScreenName());
-		twitterAccountDo.setRateLimits(new RateLimitsDO());
+		RateLimitsDO rateLimits = new RateLimitsDO();
+		rateLimits.setRateLimitLimit(-1);
+		rateLimits.setRateLimitRemaining(-1);
+		rateLimits.setRateLimitReset(new Long(0));
+		
+		twitterAccountDo.setRateLimits(rateLimits);
+		
 		//twitterAccountDo.setPersona(parentPersona);
 		//parentPersona.setTwitterAccount(twitterAccountDo);
 		

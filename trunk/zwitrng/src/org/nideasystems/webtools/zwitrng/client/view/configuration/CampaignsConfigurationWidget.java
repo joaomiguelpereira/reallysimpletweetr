@@ -17,13 +17,14 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
 
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
 import com.google.gwt.user.datepicker.client.DateBox;
 
@@ -620,6 +621,12 @@ public class CampaignsConfigurationWidget extends
 		private InlineHTML stopLink;
 		private InlineHTML resumeLink;
 		private InlineHTML resetLink;
+		
+		private InlineHTML tweetsSend;
+		private InlineHTML info;
+		private InlineHTML refresh;
+		
+		
 
 		public SelectableCampaign(
 				CampaignDTO theCampaign,
@@ -665,12 +672,39 @@ public class CampaignsConfigurationWidget extends
 			statusPanel.add(resetLink);
 
 			content.add(statusPanel);
+			
 
+			//Create a more Panel
+			VerticalPanel vPanel = new VerticalPanel();
+			tweetsSend = new InlineHTML();
+			info = new InlineHTML();
+			refresh = new InlineHTML("Refresh");
+			refresh.addStyleName("link");
+			vPanel.add(tweetsSend);
+			vPanel.add(info);
+			vPanel.add(refresh);
+			
+			DisclosurePanel dPanel = new DisclosurePanel("More...");
+			dPanel.setContent(vPanel);
+			content.add(dPanel);
+			
+			
 			toolBar = createMenuOptions();
+			
 			content.add(toolBar);
 
 			refresh();
 
+			refresh.addClickHandler(new ClickHandler() {
+
+				@Override
+				public void onClick(ClickEvent event) {
+					reloadData();
+					
+				}
+
+				
+			});
 			startLink.addClickHandler(new ClickHandler() {
 
 				@Override
@@ -722,6 +756,10 @@ public class CampaignsConfigurationWidget extends
 
 		}
 
+		private void reloadData() {
+			setProcessing(true);
+			MainController.getInstance().getCurrentPersonaController().getCampaign(this, dataObject.getName());
+		}
 		private void changeStatus(CampaignStatus status) {
 			setProcessing(true);
 			
@@ -743,6 +781,9 @@ public class CampaignsConfigurationWidget extends
 			this.scheduleText.setHTML(getCampaignScheduleText(dataObject));
 			this.limitsText.setHTML(getCampaignLimitsText(dataObject));
 			this.statusText.setHTML(getCampaignStatusText(dataObject));
+			
+			this.info.setHTML(dataObject.getInfo());
+			this.tweetsSend.setHTML("Tweets sent: "+dataObject.getTweetsSent());
 
 			if (dataObject.getStatus().equals(CampaignStatus.NOT_STARTED)) {
 				this.stopLink.setVisible(false);

@@ -1,6 +1,6 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
-import java.util.ArrayList;
+
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -127,6 +127,18 @@ public class FeedSetPojo extends AbstractPojo {
 
 	}
 
+	public String replaceFeeds(PersonaDO persona, String tweetTemplate)throws Exception {
+		String result = tweetTemplate;
+		List<String> feedSetLists = StringUtils.getFeedNames(tweetTemplate);
+	
+		for (String feedName : feedSetLists) {
+			FeedSetDO feedDom = businessHelper.getFeedSetDao().findByName(
+					persona, feedName);
+			
+		}
+		return result;
+	}
+		
 	public String replaceFeeds(CampaignDO campaign, String tweetTemplate)
 			throws Exception {
 

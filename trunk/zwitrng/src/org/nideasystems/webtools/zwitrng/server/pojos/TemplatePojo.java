@@ -399,4 +399,38 @@ public class TemplatePojo extends AbstractPojo {
 		return getFragmentsLists(persona, lists);
 	}
 
+	public TemplateDO getTemplateFragments(PersonaDO persona,
+			String templateName) throws Exception{
+		
+		return businessHelper.getTemplateDao().findTemplate(persona, templateName);
+	}
+
+	public String buildTweetFromTemplate(String text, PersonaDO persona, List<String> userNames) throws Exception{
+		String[] lines = text.split("\\n");
+		int index = 0;
+		if ( lines.length>0) {
+			double rand = Math.random();
+			index = (int) Math.round(rand * (lines.length - 1));
+		}
+		
+		String tweet =lines[index];
+		String finalStatus = businessHelper.getTemplatePojo().replaceTemplateLists(persona,tweet);
+		finalStatus = StringUtils.randomizeTemplate(finalStatus);
+		
+		if (userNames.size() > 0) {
+			for (int i = 0; i < userNames.size(); i++) {
+				finalStatus = finalStatus.replace("{username_"
+						+ i + "}", userNames.get(i));
+			}
+
+		}
+
+		//Now deal with the fucking feeds
+		finalStatus = businessHelper.getFeedSetPojo().replaceFeeds(persona, finalStatus);
+		
+		finalStatus = finalStatus.trim().replace("\\n", "");
+		
+		return finalStatus;
+	}
+
 }

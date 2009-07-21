@@ -229,7 +229,7 @@ public class TwitterAccountController extends
 	 * @param callback
 	 *            the callback to be notified
 	 */
-	public void followUser(Integer id,
+	public void followUser(Integer id, final boolean synch,
 			final TwitterAccountOperationCallBack callback) {
 		TwitterUserDTO user = new TwitterUserDTO();
 		user.setId(id);
@@ -238,7 +238,7 @@ public class TwitterAccountController extends
 		
 		try {
 			getServiceManager().getRPCService().followUser(currentPersona,
-					user, new AsyncCallback<Void>() {
+					user,synch, new AsyncCallback<Void>() {
 
 						@Override
 						public void onFailure(Throwable caught) {

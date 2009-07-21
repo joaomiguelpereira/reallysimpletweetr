@@ -220,9 +220,9 @@ public class RPCService implements IService {
 		
 	}
 
-	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user,
+	public void followUser(PersonaDTO currentPersona, TwitterUserDTO user,boolean synch,
 			AsyncCallback<Void> asyncCallback) throws Exception{
-		this.twitterService.followUser(currentPersona,user, asyncCallback);
+		this.twitterService.followUser(currentPersona,user, synch,asyncCallback);
 		
 	}
 
@@ -292,6 +292,23 @@ public class RPCService implements IService {
 	public void setCampaignStatus(PersonaDTO model, String campaignName, CampaignStatus status,
 			AsyncCallback<CampaignDTO> asyncCallback) throws Exception{
 		this.personaService.setCampaignStatus(model, campaignName,status, asyncCallback);
+		
+	}
+
+
+
+	public void getCampaign(PersonaDTO model, String name,
+			AsyncCallback<CampaignDTO> asyncCallback) throws Exception{
+		this.personaService.getCampaign(model, name, asyncCallback);
+
+		
+	}
+
+
+
+	public void buildTweetFromTemplate(PersonaDTO persona, TemplateDTO template,
+			List<String> userNames, AsyncCallback<String> asyncCallback) throws Exception{
+		this.personaService.buildTweetFromTemplate(persona,template, userNames, asyncCallback);
 		
 	}
 
