@@ -51,7 +51,10 @@ public class TwitterAccountDO implements Serializable{
 	
 	@Persistent
 	private List<Integer> autoFollowBackIdsQueue;
-	
+
+	@Persistent
+	private List<Integer> ignoreUsersIds;;
+
 	@Persistent
 	private Integer id;
 	
@@ -156,6 +159,14 @@ public class TwitterAccountDO implements Serializable{
 			autoFollowBackIdsQueue = new ArrayList<Integer>();
 		}
 		this.autoFollowBackIdsQueue.add(id);
+	}
+
+	public void setIgnoreUsersIds(List<Integer> ignoreUsersIds) {
+		this.ignoreUsersIds = ignoreUsersIds;
+	}
+
+	public List<Integer> getIgnoreUsersIds() {
+		return ignoreUsersIds;
 	}
 
 

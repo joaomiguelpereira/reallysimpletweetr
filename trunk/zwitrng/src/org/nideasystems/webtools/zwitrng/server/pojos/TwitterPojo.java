@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -157,7 +158,7 @@ public class TwitterPojo extends AbstractPojo {
 
 		List<Integer> followersIds = new ArrayList<Integer>();
 		for (int id : newFollowersIds) {
-			followersIds.add(id);
+			followersIds.add(new Integer(id));
 		}
 		persona.getTwitterAccount().setFollowersIds(followersIds);
 
@@ -179,7 +180,7 @@ public class TwitterPojo extends AbstractPojo {
 
 		List<Integer> followingIds = new ArrayList<Integer>();
 		for (int id : newFollowingIds) {
-			followingIds.add(id);
+			followingIds.add(new Integer(id));
 		}
 		persona.getTwitterAccount().setFollowingIds(followingIds);
 
@@ -201,7 +202,7 @@ public class TwitterPojo extends AbstractPojo {
 
 		List<Integer> blockingIds = new ArrayList<Integer>();
 		for (int id : newBlockingIds) {
-			blockingIds.add(id);
+			blockingIds.add(new Integer(id));
 		}
 		persona.getTwitterAccount().setBlockingIds(blockingIds);
 
@@ -326,7 +327,7 @@ public class TwitterPojo extends AbstractPojo {
 		}
 
 		if (persona.getTwitterAccount().getBlockingIds() != null) {
-			persona.getTwitterAccount().getBlockingIds().add(user.getId());
+			persona.getTwitterAccount().getBlockingIds().add(new Integer(user.getId()));
 		}
 
 		updateRateLimist(persona);
@@ -675,15 +676,52 @@ public class TwitterPojo extends AbstractPojo {
 			TwitterAccountDTO authorizedTwitterAccount) throws Exception {
 		int followers[] = businessHelper.getTwitterPojo().getFollowersIds(
 				authorizedTwitterAccount);
-		// clear auto follow
+		
+
+		int following[] = businessHelper.getTwitterPojo().getFollowingIds(authorizedTwitterAccount);
+		
+		//List<Integer> followersList = new ArrayList<Integer>(followers.length);
+		List<Long> followingList = new ArrayList<Long>(following.length);
+		for ( int follow: following ) {
+			followingList.add(new Long(follow));
+		}
+		
+		for (int followerId:followers ) {
+			//Check if is in the ignore list
+			
+			
+			if ( twitterAccount.getIgnoreUsersIds()!=null &&  twitterAccount.getIgnoreUsersIds().contains(new Long(followerId))) {
+				continue;
+			}	
+			
+			if ( !followingList.contains(new Long(followerId)) ) {
+				Integer lUserId = new Integer(followerId);
+				if ( twitterAccount.getAutoFollowBackIdsQueue() == null ) {
+					twitterAccount.setAutoFollowBackIdsQueue(new ArrayList<Integer>());
+				}
+				if ( !twitterAccount.getAutoFollowBackIdsQueue().contains(lUserId)) {
+					log.info("Adding user: "+followerId);
+					twitterAccount.getAutoFollowBackIdsQueue().add(lUserId);
+				}
+				log.fine("Autofollowback size is: "+twitterAccount.getAutoFollowBackIdsQueue().size());
+				
+				
+			}
+		}
+		
+/*		// clear auto follow
 		// persona.getTwitterAccount().setAutoFollowBackIdsQueue(new
 		// ArrayList<Integer>());
 		// now get the actual following list
-		List<Integer> actualFollowersLis = twitterAccount.getFollowersIds();
+		List<Integer> actualFollowersList = twitterAccount.getFollowersIds();
 
 		// Now check if there are any new user following me
-		int newFollowersCount = followers.length - actualFollowersLis.size();
+		int newFollowersCount = followers.length - actualFollowersList.size();
 
+		
+		//for each of the followers, check if exists in savedFollowers list
+		//if does not exists, then 
+		
 		if (newFollowersCount > 0) {
 			// get the list of new users
 			// is from index 0 to newFollowerCount
@@ -706,7 +744,7 @@ public class TwitterPojo extends AbstractPojo {
 				}
 
 			}
-		}
+		}*/
 
 	}
 

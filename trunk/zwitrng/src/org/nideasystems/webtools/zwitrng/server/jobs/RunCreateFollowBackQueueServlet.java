@@ -21,7 +21,7 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = -4325584492432117102L;
-	private static boolean TESTING = true;
+	private static boolean TESTING = false;
 	StringBuffer outBuffer = null;
 	private static final Logger log = Logger
 			.getLogger(RunCreateFollowBackQueueServlet.class.getName());
@@ -65,7 +65,18 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 				//Synch queu to sync
 				TwitterAccountDO twitterAccount = persona.getTwitterAccount();
 				TwitterAccountDTO authorizedTwitterAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
+				if ( twitterAccount.getAutoFollowBackIdsQueue()!=null) {
+					log.fine("Actual size of Queue:"+twitterAccount.getAutoFollowBackIdsQueue().size());
+				}
+				
+				
 				getBusinessHelper().getTwitterPojo().updateFollowBackUsersIdQueue(twitterAccount, authorizedTwitterAccount);
+			
+				if ( twitterAccount.getAutoFollowBackIdsQueue()!=null) {
+					log.fine("Persona: "+persona.getName());
+					log.fine("Current size of Queue:"+twitterAccount.getAutoFollowBackIdsQueue().size());
+				}
+			
 				/*
 				AutoFollowRuleDO autofollowrule = getBusinessHelper().getPersonaDao().getAutoFollowRule(persona, AutoFollowTriggerType.ON_FOLLOW_ME);
 				

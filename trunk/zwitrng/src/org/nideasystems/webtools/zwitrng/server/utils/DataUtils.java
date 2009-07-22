@@ -80,7 +80,7 @@ public class DataUtils {
 				.setTwitterWeb(theTwitterUser.getURL() != null ? theTwitterUser
 						.getURL().toExternalForm() : "");
 		twitterUser.setTwitterStatusText(theTwitterUser.getStatusText());
-		twitterUser.setId(theTwitterUser.getId());
+		twitterUser.setId(new Integer(theTwitterUser.getId()));
 
 		return twitterUser;
 	}
@@ -149,7 +149,7 @@ public class DataUtils {
 
 		if (type.equals(UpdatesType.DIRECT_SENT)) {
 			twitterAccount.setTwitterScreenName(dm.getRecipientScreenName());
-			twitterAccount.setId(dm.getRecipientId());
+			twitterAccount.setId(new Integer(dm.getRecipientId()));
 			// twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
 
 			twitterAccount.setTwitterImageUrl(dm.getRecipient()
@@ -157,7 +157,7 @@ public class DataUtils {
 
 		} else {
 			twitterAccount.setTwitterScreenName(dm.getSenderScreenName());
-			twitterAccount.setId(dm.getSenderId());
+			twitterAccount.setId(new Integer(dm.getSenderId()));
 			// twitterAccount.setTwitterImageUrl("https://s3.amazonaws.com/twitter_production/profile_images/"+dm.getSenderId()+"/twitter_normal.jpg");
 
 			twitterAccount.setTwitterImageUrl(dm.getSender()
@@ -185,7 +185,7 @@ public class DataUtils {
 		twitterUpdate.setText(status.getText());
 		TwitterUserDTO twitterUserDto = new TwitterAccountDTO();
 		twitterUserDto.setTwitterScreenName(status.getFromUser());
-		twitterUserDto.setId(status.getFromUserId());
+		twitterUserDto.setId(new Integer(status.getFromUserId()));
 		twitterUserDto.setTwitterImageUrl(status.getProfileImageUrl());
 		// twitterUpdate.setInReplyToScreenName(status.getInReplyToScreenName());
 
@@ -279,7 +279,7 @@ public class DataUtils {
 		returnAuthenticatedTwitterAccount.setTwitterScreenName(twitterUser
 				.getScreenName());
 		returnAuthenticatedTwitterAccount.setTwitterName(twitterUser.getName());
-		returnAuthenticatedTwitterAccount.setId(twitterUser.getId());
+		returnAuthenticatedTwitterAccount.setId(new Integer(twitterUser.getId()));
 		returnAuthenticatedTwitterAccount.setTwitterLocation(twitterUser
 				.getLocation());
 

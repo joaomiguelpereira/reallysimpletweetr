@@ -15,6 +15,9 @@ public class TwitterAccountDAO extends BaseDAO {
 		twitterAccountDo.setBlockingIds(new ArrayList<Integer>());
 		twitterAccountDo.setFollowersIds(new ArrayList<Integer>());
 		twitterAccountDo.setFollowingIds(new ArrayList<Integer>());
+		twitterAccountDo.setIgnoreUsersIds(new ArrayList<Integer>());
+		twitterAccountDo.setAutoFollowBackIdsQueue(new ArrayList<Integer>());
+		
 		twitterAccountDo.setId(twitterAccount.getId());
 		twitterAccountDo.setOAuthLoginUrl(twitterAccount.getOAuthLoginUrl());
 		twitterAccountDo.setOAuthToken(twitterAccount.getOAuthToken());
