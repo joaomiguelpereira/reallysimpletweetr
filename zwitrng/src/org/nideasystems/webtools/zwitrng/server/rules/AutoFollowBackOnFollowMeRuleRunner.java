@@ -19,6 +19,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 
+import twitter4j.User;
+
 public class AutoFollowBackOnFollowMeRuleRunner {
 
 	private static final Logger log = Logger
@@ -46,70 +48,75 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 		// get the list of new personas to follow
 		List<Integer> queue = persona.getTwitterAccount()
 				.getAutoFollowBackIdsQueue();
+		log.fine("Follow Back Queue Size: " + queue.size());
 		// per hour
 		int maxAutoFollowPer15Minutes = 10; // =3*10 per hour
 		int counter = 0;
 		// Check if it's null
 		if (queue != null) {
+
 			for (Integer userId : queue) {
+
 				// Check if user is ok according to the rule
-				TwitterUserDTO user = getUserNameToFollowBack(userId);
-				if (user != null) {
-					
-					try {
-						log.fine("Trying to follow user:"
-								+ user.getTwitterScreenName());
-						TwitterAccountDTO authAccount = TwitterAccountDAO
-								.createAuthorizedAccountDto(persona
-										.getTwitterAccount());
-						PersonaDTO personaDto = DataUtils.createPersonaDto(persona,
-								authAccount);
-
-						follow(personaDto, user);
-						// Check if a message is to be sent?
-						if (rule.isSendDirectMessage()) {
-							// Send the message
-							// Create a personaDTO
-
-							sendDirectMessage(personaDto, rule.getTemplateName(),
-									user, userId);
-
-						}
-					} catch (Exception e) {
-						log.warning("Could not follow the user: "+e.getMessage());
-						//continue
-						//log ignored user
-						e.printStackTrace();
-					}
-					
-					// queue.remove(userId);
-
-				} else if (persona.getTwitterAccount().getFollowersIds() != null) {
-					persona.getTwitterAccount().getFollowersIds().add(
-							new Integer(userId));
-
+				counter++;
+				if (counter > maxAutoFollowPer15Minutes) {
+					break;
 				}
-
-				// even if it's not to follow, synh with followers list
 
 				persona.getTwitterAccount().getAutoFollowBackIdsQueue().remove(
 						userId);
-				counter++;
-				if (counter >= maxAutoFollowPer15Minutes) {
-					break;
+				
+				if ( !processUser(userId)) {
+					if (persona.getTwitterAccount().getIgnoreUsersIds()==null) {
+						persona.getTwitterAccount().setIgnoreUsersIds(new ArrayList<Integer>());
+					}
+					persona.getTwitterAccount().getIgnoreUsersIds().add(userId);
 				}
+
+			}
+		}
+	}
+
+	private boolean processUser(Integer userId) {
+		boolean followed = true;
+		
+		try {
+
+			User  user = getUserToFollowBack(userId);
+
+			if (canFollow(user)) {
+				log
+						.fine("Trying to follow user:"
+								+ user.getScreenName());
+				TwitterAccountDTO authAccount = TwitterAccountDAO
+						.createAuthorizedAccountDto(persona.getTwitterAccount());
+				PersonaDTO personaDto = DataUtils.createPersonaDto(persona,
+						authAccount);
+
+				follow(personaDto, user);
+				// Check if a message is to be sent?
+				if (rule.isSendDirectMessage()) {
+					sendDirectMessage(personaDto, rule.getTemplateName(), user);
+				}
+			} else {
+				followed = false;
 			}
 
+		} catch (Exception e) {
+			log.warning("Could not get the user: " + userId);
+			followed = false;
 		}
+
+		return followed;
 
 	}
 
-	private void follow(PersonaDTO personaDto, TwitterUserDTO user)
+	private void follow(PersonaDTO personaDto, User user)
 			throws Exception {
 		// getBusinessHelper().getTwitterPojo().followUser(persona, user);
 		// Create an auth Account
 
-		log.fine("Following User: " + user.getTwitterScreenName());
+		log.fine("Following User: " + user.getScreenName());
 		TwitterServiceAdapter twitterService = TwitterServiceAdapter
 				.get(personaDto.getTwitterAccount());
 		try {
@@ -125,8 +132,7 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 			log.fine(("SIZE BEFORE: " + persona.getTwitterAccount()
 					.getFollowingIds().size()));
 
-			persona.getTwitterAccount().addFollowingId(
-					new Integer(user.getId()));
+			persona.getTwitterAccount().addFollowingId(new Integer(user.getId()));
 			log.fine(("SIZE AFTER: " + persona.getTwitterAccount()
 					.getFollowingIds().size()));
 		}
@@ -164,7 +170,7 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 	}
 
 	private void sendDirectMessage(PersonaDTO personaDto, String templateName,
-			TwitterUserDTO user, Integer userId) throws Exception {
+			User user) throws Exception {
 		// Get the template
 		TemplateDO templateDO = getBusinessHelper().getTemplatePojo()
 				.getTemplateFragments(persona, templateName);
@@ -174,45 +180,29 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 		}
 		log.info("Template text is:" + templateDO);
 		List<String> userNames = new ArrayList<String>(1);
-		userNames.add(user.getTwitterScreenName());
+		userNames.add(user.getScreenName());
 		String message = getBusinessHelper().getTemplatePojo()
 				.buildTweetFromTemplate(templateDO.getText().getValue(),
 						persona, userNames);
 		log.fine("Sending message: " + message);
 		// Send the direct message
 		TwitterUpdateDTO update = new TwitterUpdateDTO();
-		update.setInReplyToUserId(userId);
+		update.setInReplyToUserId(user.getId());
 		update.setText(message);
 
 		getBusinessHelper().getTwitterPojo().sendDM(personaDto, update);
 
 	}
 
-	private TwitterUserDTO getUserNameToFollowBack(Integer userId)
-			throws Exception {
-		log.fine("canFollowBack:" + userId);
-
-		TwitterAccountDTO authAccount = TwitterAccountDAO
-				.createAuthorizedAccountDto(persona.getTwitterAccount());
-		PersonaDTO personaDto = DataUtils.createPersonaDto(this.persona,
-				authAccount);
-		// Get the use
-		TwitterUserDTO twitterUser = businessHelper.getTwitterPojo()
-				.getUserInfo(personaDto, String.valueOf(userId));
-
-		log.fine("Cheching user: " + twitterUser.getTwitterScreenName());
-		log
-				.fine("Check number of updates..."
-						+ twitterUser.getTwitterUpdates());
-		log
-				.fine("Check number of friends..."
-						+ twitterUser.getTwitterFriends());
-		log.fine("Check number of followers..."
-				+ twitterUser.getTwitterFollowers());
+	private boolean canFollow(User user) {
+		log.fine("Cheching user: " + user.getScreenName());
+		log.fine("Check number of updates..." + user.getStatusesCount());
+		log.fine("Check number of friends..." + user.getFriendsCount());
+		log.fine("Check number of followers..." + user.getFollowersCount());
 
 		// Get the rule ratio
-		double currentRatio = Double.valueOf(twitterUser.getTwitterFriends())
-				/ Double.valueOf(twitterUser.getTwitterFollowers());
+		double currentRatio = Double.valueOf(user.getFriendsCount())
+				/ Double.valueOf(user.getFollowersCount());
 
 		double ratio = currentRatio * 100;
 
@@ -222,7 +212,7 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 			ok = false;
 		}
 
-		if (twitterUser.getTwitterUpdates() < rule.getMinUpdates()) {
+		if (user.getStatusesCount() < rule.getMinUpdates()) {
 			log.fine("Updates is nOK");
 			ok = false;
 		}
@@ -231,7 +221,7 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 		if (rule.getExcludedWordsInNames() != null) {
 
 			for (String excludeWord : rule.getExcludedWordsInNames()) {
-				if (twitterUser.getTwitterScreenName().contains(excludeWord)) {
+				if (user.getScreenName().contains(excludeWord)) {
 					ok = false;
 					break;
 				}
@@ -239,12 +229,24 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 			}
 		}
 		log.fine("User can be followed back? " + ok);
-		if (ok) {
-			return twitterUser;
-		} else {
+		return ok;
 
-		}
-		return null;
+	}
+
+	private User getUserToFollowBack(Integer userId) throws Exception {
+		log.fine("canFollowBack:" + userId);
+
+		TwitterAccountDTO authAccount = TwitterAccountDAO
+				.createAuthorizedAccountDto(persona.getTwitterAccount());
+		PersonaDTO personaDto = DataUtils.createPersonaDto(this.persona,
+				authAccount);
+		// Get the use
+		
+		TwitterServiceAdapter twitterService = TwitterServiceAdapter.get(personaDto.getTwitterAccount());
+		
+		User user = twitterService.getUserInfo(userId.toString());
+		
+		return user;
 
 	}
 
