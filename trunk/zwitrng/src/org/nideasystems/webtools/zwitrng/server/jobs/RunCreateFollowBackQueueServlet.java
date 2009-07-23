@@ -54,7 +54,7 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 		//get the personas in active state
 		List<PersonaDO> personas = getBusinessHelper().getPersonaDao().findAllActivePersonas();
 		
-		log.fine("Goig to check "+personas.size()+" persona");
+		log.fine("Goig to check "+personas.size()+" personas");
 		
 		//For each persona
 		for (PersonaDO persona: personas) {
@@ -68,6 +68,7 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 				if ( twitterAccount.getAutoFollowBackIdsQueue()!=null) {
 					log.fine("Actual size of Queue:"+twitterAccount.getAutoFollowBackIdsQueue().size());
 				}
+				
 				
 				
 				getBusinessHelper().getTwitterPojo().updateFollowBackUsersIdQueue(twitterAccount, authorizedTwitterAccount);

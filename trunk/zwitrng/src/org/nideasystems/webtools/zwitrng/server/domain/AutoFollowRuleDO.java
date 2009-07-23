@@ -34,7 +34,6 @@ public class AutoFollowRuleDO {
 	private AutoFollowTriggerType triggerType;
 	@Persistent
 	private PersonaDO persona;
-
 	@Persistent
 	private Date created;
 	@Persistent
@@ -42,6 +41,10 @@ public class AutoFollowRuleDO {
 	@Persistent
 	private String templateName;
 
+	@Persistent
+	private Boolean sendDirectMessageOnIgnore;
+	@Persistent
+	private String ignoreTemplate;
 	
 	public PersonaDO getPersona() {
 		return persona;
@@ -109,6 +112,19 @@ public class AutoFollowRuleDO {
 	}
 	public String getTemplateName() {
 		return templateName;
+	}
+	
+	public void setIgnoreTemplate(String ignoreTemplate) {
+		this.ignoreTemplate = ignoreTemplate;
+	}
+	public String getIgnoreTemplate() {
+		return ignoreTemplate;
+	}
+	public void setSendDirectMessageOnIgnore(Boolean sendDirectMessageOnIgnore) {
+		this.sendDirectMessageOnIgnore = sendDirectMessageOnIgnore;
+	}
+	public Boolean getSendDirectMessageOnIgnore() {
+		return sendDirectMessageOnIgnore;
 	}
 	
 }

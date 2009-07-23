@@ -18,9 +18,10 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.DisclosurePanel;
 import com.google.gwt.user.client.ui.FlexTable;
-import com.google.gwt.user.client.ui.HasHorizontalAlignment;
+
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
@@ -44,6 +45,7 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 	private InlineHTML localtionLine;
 	private InlineHTML homePageLine;
 	private DefaultHomeView parentView;
+	private InlineHTML autoFollowerActivity;
 
 	public EditableTwitterAccountItem(PersonaDTO persona,
 			DefaultHomeView parentView) {
@@ -61,7 +63,7 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 
 		table.setWidget(0, 0, userImg);
 		formatter.setWidth(0, 0, "50px");
-		
+
 		VerticalPanel userInfo1 = new VerticalPanel();
 		userLine = new InlineHTML(TwitterUsersHtmlUtils
 				.buildUserLineHtml(persona.getTwitterAccount()));
@@ -101,6 +103,8 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 				.buildUserRateLimitPanel(persona.getTwitterAccount()));
 		// this.add(userRateLimitsPanel);
 
+		autoFollowerActivity = new InlineHTML(TwitterUsersHtmlUtils
+				.buildAutoFollowerActivity(persona.getTwitterAccount()));
 		DisclosurePanel disPanel = new DisclosurePanel("More...");
 		disPanel.setAnimationEnabled(true);
 		VerticalPanel moreOptions = new VerticalPanel();
@@ -110,10 +114,10 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 		moreOptions.add(this.popularityPanel);
 		moreOptions.add(this.userActivity);
 		moreOptions.add(this.userActivity);
+		moreOptions.add(this.autoFollowerActivity);
 		moreOptions.add(this.userRateLimitsPanel);
 		moreOptions.add(toolsPanel);
-		
-		
+
 		disPanel.setContent(moreOptions);
 		this.add(disPanel);
 
@@ -168,6 +172,8 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 				.getTwitterAccount()));
 		homePageLine.setHTML(TwitterUsersHtmlUtils
 				.buildUserHomePageHtml(persona.getTwitterAccount()));
+		autoFollowerActivity.setHTML(TwitterUsersHtmlUtils
+				.buildAutoFollowerActivity(persona.getTwitterAccount()));
 
 	}
 
@@ -209,7 +215,10 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 
 			@Override
 			public void onClick(ClickEvent event) {
-				synchronize();
+				if (Window.confirm("This will clear the ignore list. Are you sure?") ) {
+					synchronize();	
+				}
+				
 
 			}
 

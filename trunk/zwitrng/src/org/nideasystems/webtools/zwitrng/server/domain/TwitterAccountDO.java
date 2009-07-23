@@ -3,6 +3,7 @@ package org.nideasystems.webtools.zwitrng.server.domain;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -41,22 +42,25 @@ public class TwitterAccountDO implements Serializable{
 	private RateLimitsDO rateLimits;
 	
 	@Persistent
-	private List<Integer> followersIds;
+	private Set<Integer> followersIds;
 
 	@Persistent
-	private List<Integer> followingIds;
+	private Set<Integer> followingIds;
 
 	@Persistent
-	private List<Integer> blockingIds;
+	private Set<Integer> blockingIds;
 	
 	@Persistent
 	private List<Integer> autoFollowBackIdsQueue;
 
 	@Persistent
-	private List<Integer> ignoreUsersIds;;
+	private Set<Integer> ignoreUsersIds;;
 
 	@Persistent
 	private Integer id;
+
+	@Persistent
+	private Integer autoFollowedCount;
 	
 	
 	public void setTwitterName(String twitterName) {
@@ -107,27 +111,27 @@ public class TwitterAccountDO implements Serializable{
 		return rateLimits;
 	}
 
-	public void setFollowersIds(List<Integer> followersIds) {
+	public void setFollowersIds(Set<Integer> followersIds) {
 		this.followersIds = followersIds;
 	}
 
-	public List<Integer> getFollowersIds() {
+	public Set<Integer> getFollowersIds() {
 		return followersIds;
 	}
 
-	public void setFollowingIds(List<Integer> followingIds) {
+	public void setFollowingIds(Set<Integer> followingIds) {
 		this.followingIds = followingIds;
 	}
 
-	public List<Integer> getFollowingIds() {
+	public Set<Integer> getFollowingIds() {
 		return followingIds;
 	}
 
-	public void setBlockingIds(List<Integer> blockingIds) {
+	public void setBlockingIds(Set<Integer> blockingIds) {
 		this.blockingIds = blockingIds;
 	}
 
-	public List<Integer> getBlockingIds() {
+	public Set<Integer> getBlockingIds() {
 		return blockingIds;
 	}
 
@@ -161,14 +165,23 @@ public class TwitterAccountDO implements Serializable{
 		this.autoFollowBackIdsQueue.add(id);
 	}
 
-	public void setIgnoreUsersIds(List<Integer> ignoreUsersIds) {
+	public void setIgnoreUsersIds(Set<Integer> ignoreUsersIds) {
 		this.ignoreUsersIds = ignoreUsersIds;
 	}
 
-	public List<Integer> getIgnoreUsersIds() {
+	public Set<Integer> getIgnoreUsersIds() {
 		return ignoreUsersIds;
 	}
 
+	public void setAutoFollowedCount(Integer autoFollowedCount) {
+		this.autoFollowedCount = autoFollowedCount;
+	}
+
+	public Integer getAutoFollowedCount() {
+		return autoFollowedCount;
+	}
+
+	
 
 	
 

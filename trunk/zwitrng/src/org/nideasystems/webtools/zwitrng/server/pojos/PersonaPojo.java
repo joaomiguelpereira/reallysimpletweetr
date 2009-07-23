@@ -89,6 +89,13 @@ public class PersonaPojo extends AbstractPojo {
 					authorizedTwitterAccount.setNewFriends(getNewFriendsCount(persona,authorizedTwitterAccount));
 					authorizedTwitterAccount.setNewBlocking(getNewBlockingCount(persona,authorizedTwitterAccount));
 					
+					authorizedTwitterAccount.setAutoFollowedUsersSize(persona.getTwitterAccount().getAutoFollowedCount()!=null?persona.getTwitterAccount().getAutoFollowedCount():0);
+					
+					authorizedTwitterAccount.setFollowBackQueueSize(persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null?persona.getTwitterAccount().getAutoFollowBackIdsQueue().size():0);
+					authorizedTwitterAccount.setIgnoreUsersListSize(persona.getTwitterAccount().getIgnoreUsersIds()!=null?persona.getTwitterAccount().getIgnoreUsersIds().size():0);
+					
+					
+					
 					
 					
 				} else {
@@ -224,6 +231,10 @@ public class PersonaPojo extends AbstractPojo {
 			authorizedTwitterAccount.setNewFriends(getNewFriendsCount(persona,authorizedTwitterAccount));
 			authorizedTwitterAccount.setNewBlocking(getNewBlockingCount(persona,authorizedTwitterAccount));
 			
+			authorizedTwitterAccount.setAutoFollowedUsersSize(persona.getTwitterAccount().getAutoFollowedCount()!=null?persona.getTwitterAccount().getAutoFollowedCount():0);
+			
+			authorizedTwitterAccount.setFollowBackQueueSize(persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null?persona.getTwitterAccount().getAutoFollowBackIdsQueue().size():0);
+			authorizedTwitterAccount.setIgnoreUsersListSize(persona.getTwitterAccount().getIgnoreUsersIds()!=null?persona.getTwitterAccount().getIgnoreUsersIds().size():0);
 			
 			
 		} else {

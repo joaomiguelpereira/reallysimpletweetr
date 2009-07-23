@@ -57,6 +57,8 @@ public class DtoAssembler {
 		outRule.setSendDirectMessage(inDom.isSendDirectMessage());
 		outRule.setTriggerType(inDom.getTriggerType());
 		outRule.setTemplateName(inDom.getTemplateName());
+		outRule.setIgnoreTemplate(inDom.getIgnoreTemplate()!=null?inDom.getIgnoreTemplate():"");
+		outRule.setSendDirectMessageOnIgnore(inDom.getSendDirectMessageOnIgnore()!=null?inDom.getSendDirectMessageOnIgnore():false);
 		return outRule;
 
 	}

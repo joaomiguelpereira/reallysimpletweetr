@@ -61,7 +61,9 @@ public class RulesPojo extends AbstractPojo {
 				dom.setSendDirectMessage(rule.isSendDirectMessage());
 				dom.setTriggerType(rule.getTriggerType());
 				dom.setTemplateName(rule.getTemplateName());
-
+				
+				dom.setSendDirectMessageOnIgnore(rule.isSendDirectMessageOnIgnore());
+				dom.setIgnoreTemplate(rule.getIgnoreTemplate());
 				dom.setPersona(persona);
 				persona.addAutoFollowRule(dom);
 			} else {
@@ -73,6 +75,8 @@ public class RulesPojo extends AbstractPojo {
 				dom.setSendDirectMessage(rule.isSendDirectMessage());
 				dom.setTriggerType(rule.getTriggerType());
 				dom.setTemplateName(rule.getTemplateName());
+				dom.setSendDirectMessageOnIgnore(rule.isSendDirectMessageOnIgnore());
+				dom.setIgnoreTemplate(rule.getIgnoreTemplate());
 			}
 		}
 
@@ -106,7 +110,8 @@ public class RulesPojo extends AbstractPojo {
 			dom.setSendDirectMessage(false);
 			dom.setTriggerType(AutoFollowTriggerType.ON_FOLLOW_ME);
 			dom.setTemplateName("");
-
+			dom.setSendDirectMessageOnIgnore(false);
+			dom.setIgnoreTemplate("");
 			dom.setPersona(persona);
 			persona.addAutoFollowRule(dom);
 		}

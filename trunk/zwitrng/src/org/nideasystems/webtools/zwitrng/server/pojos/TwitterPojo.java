@@ -3,7 +3,9 @@ package org.nideasystems.webtools.zwitrng.server.pojos;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
@@ -156,9 +158,9 @@ public class TwitterPojo extends AbstractPojo {
 
 		}
 
-		List<Integer> followersIds = new ArrayList<Integer>();
+		Set<Integer> followersIds = new HashSet<Integer>();
 		for (int id : newFollowersIds) {
-			followersIds.add(new Integer(id));
+			followersIds.add(id);
 		}
 		persona.getTwitterAccount().setFollowersIds(followersIds);
 
@@ -178,9 +180,9 @@ public class TwitterPojo extends AbstractPojo {
 
 		}
 
-		List<Integer> followingIds = new ArrayList<Integer>();
+		Set<Integer> followingIds = new HashSet<Integer>();
 		for (int id : newFollowingIds) {
-			followingIds.add(new Integer(id));
+			followingIds.add(id);
 		}
 		persona.getTwitterAccount().setFollowingIds(followingIds);
 
@@ -200,7 +202,7 @@ public class TwitterPojo extends AbstractPojo {
 			persona.getTwitterAccount().getBlockingIds().clear();
 		}
 
-		List<Integer> blockingIds = new ArrayList<Integer>();
+		Set<Integer> blockingIds = new HashSet<Integer>();
 		for (int id : newBlockingIds) {
 			blockingIds.add(new Integer(id));
 		}
@@ -222,6 +224,10 @@ public class TwitterPojo extends AbstractPojo {
 		synchronize(persona, thePersonaDto.getTwitterAccount());
 		if (persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null) {
 			persona.getTwitterAccount().getAutoFollowBackIdsQueue().clear();
+		}
+		
+		if (persona.getTwitterAccount().getIgnoreUsersIds() != null) {
+			persona.getTwitterAccount().getIgnoreUsersIds().clear();
 		}
 
 		endTwitterTransaction();
@@ -677,74 +683,40 @@ public class TwitterPojo extends AbstractPojo {
 		int followers[] = businessHelper.getTwitterPojo().getFollowersIds(
 				authorizedTwitterAccount);
 		
-
 		int following[] = businessHelper.getTwitterPojo().getFollowingIds(authorizedTwitterAccount);
 		
-		//List<Integer> followersList = new ArrayList<Integer>(followers.length);
-		List<Long> followingList = new ArrayList<Long>(following.length);
-		for ( int follow: following ) {
-			followingList.add(new Long(follow));
+		//Get the ignore list
+		Set<Integer> ignoreList = twitterAccount.getIgnoreUsersIds();
+		if ( ignoreList == null ) {
+			ignoreList = new HashSet<Integer>();
 		}
 		
-		for (int followerId:followers ) {
+		List<Integer> followBackUserIdList = new ArrayList<Integer>();
+		//Create a reverse list of myFriends
+		List<Integer> followingList = new ArrayList<Integer>(following.length);
+		for ( int i=following.length-1; i>=0; i--) {
+			followingList.add(following[i]);
+		}
+		
+		
+		//For each of my followers, check if I'm following
+		for (int i=followers.length-1; i>=0; i-- ) {
 			//Check if is in the ignore list
 			
-			
-			if ( twitterAccount.getIgnoreUsersIds()!=null &&  twitterAccount.getIgnoreUsersIds().contains(new Long(followerId))) {
+			//if the followers is in the ignore list, don't bother
+			if ( ignoreList.contains(followers[i])) {
 				continue;
-			}	
-			
-			if ( !followingList.contains(new Long(followerId)) ) {
-				Integer lUserId = new Integer(followerId);
-				if ( twitterAccount.getAutoFollowBackIdsQueue() == null ) {
-					twitterAccount.setAutoFollowBackIdsQueue(new ArrayList<Integer>());
-				}
-				if ( !twitterAccount.getAutoFollowBackIdsQueue().contains(lUserId)) {
-					log.info("Adding user: "+followerId);
-					twitterAccount.getAutoFollowBackIdsQueue().add(lUserId);
-				}
-				log.fine("Autofollowback size is: "+twitterAccount.getAutoFollowBackIdsQueue().size());
-				
-				
+			}
+			//If I'm not following, then add to the followback list
+			if ( !followingList.contains(followers[i])) {
+				followBackUserIdList.add(followers[i]);
 			}
 		}
 		
-/*		// clear auto follow
-		// persona.getTwitterAccount().setAutoFollowBackIdsQueue(new
-		// ArrayList<Integer>());
-		// now get the actual following list
-		List<Integer> actualFollowersList = twitterAccount.getFollowersIds();
-
-		// Now check if there are any new user following me
-		int newFollowersCount = followers.length - actualFollowersList.size();
-
+		log.fine("FollowBackSize: "+followBackUserIdList.size());
+		twitterAccount.setAutoFollowBackIdsQueue(followBackUserIdList);
 		
-		//for each of the followers, check if exists in savedFollowers list
-		//if does not exists, then 
 		
-		if (newFollowersCount > 0) {
-			// get the list of new users
-			// is from index 0 to newFollowerCount
-			for (int i = 0; i < newFollowersCount; i++) {
-				log.fine("------Adding user to FollowingBackQueue :"
-						+ followers[followers.length - (1 + i)]);
-
-				if (twitterAccount.getAutoFollowBackIdsQueue() == null) {
-					ArrayList<Integer> list = new ArrayList<Integer>();
-					list
-							.add(new Integer(followers[followers.length
-									- (1 + i)]));
-					twitterAccount.setAutoFollowBackIdsQueue(list);
-				} else if (!twitterAccount.getAutoFollowBackIdsQueue()
-						.contains(
-								new Integer(followers[followers.length
-										- (1 + i)]))) {
-					twitterAccount.getAutoFollowBackIdsQueue().add(
-							new Integer(followers[followers.length - (1 + i)]));
-				}
-
-			}
-		}*/
 
 	}
 
