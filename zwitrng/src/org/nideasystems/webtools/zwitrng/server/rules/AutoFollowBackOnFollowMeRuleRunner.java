@@ -90,10 +90,11 @@ public class AutoFollowBackOnFollowMeRuleRunner {
 
 				}
 			}
+			for (int i=0; i< maxAutoFollow;i++) {
+				queue.remove(i);
+			}
 		}
-		for (int i=0; i< maxAutoFollow;i++) {
-			queue.remove(i);
-		}
+		
 		persona.getTwitterAccount().setAutoFollowedCount(autoFollowCount);
 		persona.getTwitterAccount().setFollowersIds(followersIds);
 		persona.getTwitterAccount().setFollowingIds(followingIds);
