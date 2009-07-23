@@ -63,7 +63,19 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 		//For each persona
 		for (PersonaDO persona: personas) {
 			//Get the autoFollowRule
+			
+			int followingSize = persona.getTwitterAccount().getFollowingIds()!=null?persona.getTwitterAccount().getFollowingIds().size():0;
+			int followersSize = persona.getTwitterAccount().getFollowersIds()!=null?persona.getTwitterAccount().getFollowersIds().size():0;
+			int backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null?persona.getTwitterAccount().getAutoFollowBackIdsQueue().size():0;
+			int ignoreSize = persona.getTwitterAccount().getIgnoreUsersIds()!=null?persona.getTwitterAccount().getIgnoreUsersIds().size():0;
+			log.fine("FollowBack list Size:"+backSize);
+			log.fine("Ignore list Size:"+ignoreSize);
+			log.fine("Friends: "+followingSize);
+			log.fine("Followers: "+followersSize);
+			
+			
 			try {
+				
 				//Test
 				
 				//Synch queu to sync
@@ -76,7 +88,7 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 				AutoFollowBackOnFollowMeRuleRunner ruleEx = new AutoFollowBackOnFollowMeRuleRunner(persona,autofollowrule);
 				
 				ruleEx.setBusinessHelper(getBusinessHelper());
-				if ( autofollowrule != null && autofollowrule.isEnabled() ) {
+				if ( autofollowrule != null && autofollowrule.isEnabled() && persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null) {
 					ruleEx.execute();
 				}
 				
@@ -87,10 +99,21 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 				log.severe("Error running autofollowback rule for persona: "+persona.getName()+" Useremail: "+persona.getUserEmail());
+				log.severe("Exception"+e.getMessage());
 				e.printStackTrace();
 				outBuffer.append("<div>Could not get the autofollow rule for persona: "+persona.getName()+" Useremail: "+persona.getUserEmail()+"</div>");
 				//Continue
 			}
+
+			followingSize = persona.getTwitterAccount().getFollowingIds()!=null?persona.getTwitterAccount().getFollowingIds().size():0;
+			followersSize = persona.getTwitterAccount().getFollowersIds()!=null?persona.getTwitterAccount().getFollowersIds().size():0;
+			backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null?persona.getTwitterAccount().getAutoFollowBackIdsQueue().size():0;
+			ignoreSize = persona.getTwitterAccount().getIgnoreUsersIds()!=null?persona.getTwitterAccount().getIgnoreUsersIds().size():0;
+			log.fine("FollowBack list Size:"+backSize);
+			log.fine("Ignore list Size:"+ignoreSize);
+			log.fine("Friends: "+followingSize);
+			log.fine("Followers: "+followersSize);
+		
 			
 		}
 		

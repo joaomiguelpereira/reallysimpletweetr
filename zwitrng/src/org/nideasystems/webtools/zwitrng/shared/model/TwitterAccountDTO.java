@@ -13,6 +13,9 @@ public class TwitterAccountDTO extends TwitterUserDTO {
 	private String oAuthToken;
 	private String oAuthTokenSecret;
 	private String oAuthLoginUrl;
+	private int followBackQueueSize;
+	private int ignoreUsersListSize;
+	private int autoFollowedUsersSize;
 	private int newFollowers;
 	private int newFriends;
 	private int newBlocking;
@@ -79,6 +82,24 @@ public class TwitterAccountDTO extends TwitterUserDTO {
 	}
 	public RateLimitsDTO getRateLimits() {
 		return rateLimits;
+	}
+	public void setFollowBackQueueSize(int followBackQueueSize) {
+		this.followBackQueueSize = followBackQueueSize;
+	}
+	public int getFollowBackQueueSize() {
+		return followBackQueueSize;
+	}
+	public void setIgnoreUsersListSize(int ignoreUsersListSize) {
+		this.ignoreUsersListSize = ignoreUsersListSize;
+	}
+	public int getIgnoreUsersListSize() {
+		return ignoreUsersListSize;
+	}
+	public void setAutoFollowedUsersSize(int autoFollowedUsersSize) {
+		this.autoFollowedUsersSize = autoFollowedUsersSize;
+	}
+	public int getAutoFollowedUsersSize() {
+		return autoFollowedUsersSize;
 	}
 	
 	

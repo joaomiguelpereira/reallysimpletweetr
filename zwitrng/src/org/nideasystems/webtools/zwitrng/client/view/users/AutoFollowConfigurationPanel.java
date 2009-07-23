@@ -8,7 +8,6 @@ import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -34,6 +33,9 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 	TextArea excludeUserNames;
 	CheckBox enableAutoFollow;
 	Button saveBt;
+	CheckBox sendDmOnIgnore;
+	TextBox ignoreTemplateName;
+
 	private AutoFollowRuleDTO autoFollowRule;
 	Image waitingImg = new Image(Constants.WAITING_IMAGE);
 
@@ -69,9 +71,24 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 		this.add(excludeUserLabel);
 		this.add(excludeUserNames);
 
+		sendDmOnIgnore = new CheckBox("Send Direct Message on ignore?");
+		ignoreTemplateName = new TextBox();
+
+		this.add(sendDmOnIgnore);
+		this.add(ignoreTemplateName);
+
 		summary = new InlineHTML(createSummary());
 		this.add(summary);
+		sendDmOnIgnore.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
+			@Override
+			public void onValueChange(ValueChangeEvent<Boolean> event) {
+				ignoreTemplateName.setEnabled(event.getValue());
+				refreshSummary();
+
+			}
+
+		});
 		enableAutoFollow
 				.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
 
@@ -158,6 +175,8 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 		this.sendDm.setEnabled(value);
 		this.templateName.setEnabled(value);
 		this.updatesInput.setEnabled(value);
+		this.sendDmOnIgnore.setEnabled(value);
+		this.ignoreTemplateName.setEnabled(value);
 
 	}
 
@@ -218,6 +237,14 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 							"Please provide a name of a template to use in the Direct Message.");
 			hasErrors = true;
 		}
+		if (sendDmOnIgnore.getValue()
+				&& this.ignoreTemplateName.getValue().trim().length() == 0) {
+			MainController
+					.getInstance()
+					.addError(
+							"Please provide a name of a template to use in the Direct Message when a user is ignored.");
+			hasErrors = true;
+		}
 
 		if (!hasErrors) {
 
@@ -240,6 +267,8 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 			}
 			rule.setExcludedWordsInNames(excludedNames);
 			rule.setTriggerType(AutoFollowTriggerType.ON_FOLLOW_ME);
+			rule.setSendDirectMessageOnIgnore(this.sendDmOnIgnore.getValue());
+			rule.setIgnoreTemplate(this.ignoreTemplateName.getValue());
 			waitingImg.setVisible(true);
 			MainController.getInstance().getCurrentPersonaController()
 					.saveAutofollowRule(rule, this);
@@ -253,16 +282,14 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 	}
 
 	private String[] getLines(TextArea excludeUserNames) {
-		//String[] exStrings = excludeUserNames.getValue().split("\\n");
+		// String[] exStrings = excludeUserNames.getValue().split("\\n");
 		return HTMLHelper.getLines(excludeUserNames.getValue());
-		//return exStrings;
-		
+		// return exStrings;
 
 	}
 
 	private void adjustLines(TextArea excludeUserNames, int lines) {
-		HTMLHelper.adjustLines(excludeUserNames,lines,3,10);
-		
+		HTMLHelper.adjustLines(excludeUserNames, lines, 3, 10);
 
 	}
 
@@ -292,7 +319,13 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 			}
 			adjustLines(this.excludeUserNames, excludedNames.length);
 		}
+		if (sendDmOnIgnore.getValue()) {
+			sb.append("Send Direct Message ");
+			sb.append("using template ");
+			sb.append(ignoreTemplateName.getValue());
 
+			sb.append("when ignore a user");
+		}
 		return sb.toString();
 
 	}
@@ -302,7 +335,7 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 		this.autoFollowRule = rule;
 		refresh();
 		refreshSummary();
-		
+
 	}
 
 	private void refresh() {
@@ -312,6 +345,11 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 		this.sendDm.setValue(autoFollowRule.isSendDirectMessage());
 		this.templateName.setValue(autoFollowRule.getTemplateName());
 		this.updatesInput.setValue(autoFollowRule.getMinUpdates() + "");
+		this.sendDmOnIgnore.setValue(autoFollowRule
+				.isSendDirectMessageOnIgnore());
+		this.ignoreTemplateName.setValue(autoFollowRule.getIgnoreTemplate());
+		this.ignoreTemplateName.setEnabled(autoFollowRule
+		.isSendDirectMessageOnIgnore());
 		StringBuffer sb = new StringBuffer();
 
 		for (String str : autoFollowRule.getExcludedWordsInNames()) {
@@ -320,6 +358,7 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 		}
 		this.excludeUserNames.setValue(sb.toString());
 		setFieldsLock(autoFollowRule.isEnabled());
+
 	}
 
 	@Override
@@ -330,11 +369,11 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 	}
 
 	public void loadRule() {
-		if (this.autoFollowRule==null) {
+		if (this.autoFollowRule == null) {
 			waitingImg.setVisible(true);
-			MainController.getInstance().getCurrentPersonaController().loadRule(
-					AutoFollowTriggerType.ON_FOLLOW_ME, this);
-			
+			MainController.getInstance().getCurrentPersonaController()
+					.loadRule(AutoFollowTriggerType.ON_FOLLOW_ME, this);
+
 		}
 	}
 

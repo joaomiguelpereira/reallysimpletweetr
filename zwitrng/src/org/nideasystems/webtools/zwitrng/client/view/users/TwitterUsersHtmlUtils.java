@@ -160,6 +160,22 @@ public class TwitterUsersHtmlUtils {
 		return htmlB.toString();
 	}
 
+	public static String buildAutoFollowerActivity(TwitterAccountDTO account) {
+		StringBuffer htmlB = new StringBuffer();
+		htmlB
+		.append("<span class=\"followBackQueueSize\">Follow Back Queue Size:<span class=\"bolder\">"
+				+ account.getFollowBackQueueSize()
+				+ "</span></span> ");
+		htmlB
+		.append("<span class=\"autofollowedBackUserCount\">Users Auto followed back:<span class=\"bolder\">"
+				+ account.getAutoFollowedUsersSize()
+				+ "</span></span> ");
+		htmlB
+		.append("<span class=\"ignoreUsersSize\">Followers ignored:<span class=\"bolder\">"
+				+ account.getIgnoreUsersListSize()
+				+ "</span></span> ");
+		return htmlB.toString();
+	}
 	public static String buildUserRateLimitPanel(TwitterAccountDTO account) {
 		StringBuffer htmlB = new StringBuffer();
 		if (account.getRateLimits() == null

@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain.dao;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.RateLimitsDO;
@@ -12,10 +13,10 @@ public class TwitterAccountDAO extends BaseDAO {
 	public void populateTwitterAccount(PersonaDO parentPersona,
 			TwitterAccountDTO twitterAccount) {
 		TwitterAccountDO twitterAccountDo = parentPersona.getTwitterAccount();
-		twitterAccountDo.setBlockingIds(new ArrayList<Integer>());
-		twitterAccountDo.setFollowersIds(new ArrayList<Integer>());
-		twitterAccountDo.setFollowingIds(new ArrayList<Integer>());
-		twitterAccountDo.setIgnoreUsersIds(new ArrayList<Integer>());
+		twitterAccountDo.setBlockingIds(new HashSet<Integer>());
+		twitterAccountDo.setFollowersIds(new HashSet<Integer>());
+		twitterAccountDo.setFollowingIds(new HashSet<Integer>());
+		twitterAccountDo.setIgnoreUsersIds(new HashSet<Integer>());
 		twitterAccountDo.setAutoFollowBackIdsQueue(new ArrayList<Integer>());
 		
 		twitterAccountDo.setId(twitterAccount.getId());
