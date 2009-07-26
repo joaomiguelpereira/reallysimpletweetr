@@ -160,6 +160,17 @@ public class TwitterUsersHtmlUtils {
 		return htmlB.toString();
 	}
 
+	public static String buildAutoUnFollowerActivity(
+			TwitterAccountDTO twitterAccount) {
+		StringBuffer htmlB = new StringBuffer();
+		htmlB
+		.append("<span class=\"followBackQueueSize\">Un follow Back Queue Size:<span class=\"bolder\">"
+				+ twitterAccount.getAutoUnfollowQueueSize()
+				+ "</span></span> ");
+	
+		return htmlB.toString();
+	}
+	
 	public static String buildAutoFollowerActivity(TwitterAccountDTO account) {
 		StringBuffer htmlB = new StringBuffer();
 		htmlB
@@ -205,4 +216,6 @@ public class TwitterUsersHtmlUtils {
 		// InlineHTML html = new InlineHTML(htmlB.toString());
 		return htmlB.toString();
 	}
+
+	
 }

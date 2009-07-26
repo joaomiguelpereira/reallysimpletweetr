@@ -46,6 +46,7 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 	private InlineHTML homePageLine;
 	private DefaultHomeView parentView;
 	private InlineHTML autoFollowerActivity;
+	private InlineHTML autoUnFollowerActivity;
 
 	public EditableTwitterAccountItem(PersonaDTO persona,
 			DefaultHomeView parentView) {
@@ -105,6 +106,10 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 
 		autoFollowerActivity = new InlineHTML(TwitterUsersHtmlUtils
 				.buildAutoFollowerActivity(persona.getTwitterAccount()));
+		
+		autoUnFollowerActivity = new InlineHTML(TwitterUsersHtmlUtils
+				.buildAutoUnFollowerActivity(persona.getTwitterAccount()));
+		
 		DisclosurePanel disPanel = new DisclosurePanel("More...");
 		disPanel.setAnimationEnabled(true);
 		VerticalPanel moreOptions = new VerticalPanel();
@@ -115,7 +120,10 @@ public class EditableTwitterAccountItem extends VerticalPanel implements
 		moreOptions.add(this.userActivity);
 		moreOptions.add(this.userActivity);
 		moreOptions.add(this.autoFollowerActivity);
+		moreOptions.add(this.autoUnFollowerActivity);
 		moreOptions.add(this.userRateLimitsPanel);
+		
+		
 		moreOptions.add(toolsPanel);
 
 		disPanel.setContent(moreOptions);

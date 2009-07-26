@@ -8,7 +8,6 @@ import org.nideasystems.webtools.zwitrng.client.view.AbstractVerticalPanelView;
 import org.nideasystems.webtools.zwitrng.client.view.twitteraccount.SendPrivateMessageWindow;
 import org.nideasystems.webtools.zwitrng.client.view.updates.SendUpdateWidget;
 
-import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserType;
@@ -56,10 +55,10 @@ public class TwitterUsersView extends
 		waitingImg.setVisible(false);
 		this.add(waitingImg);
 		final AutoFollowConfigurationPanel autoFollowPanel = new AutoFollowConfigurationPanel();
-		DisclosurePanel optionsPanel = new DisclosurePanel("Configure auto follower");
-		optionsPanel.setAnimationEnabled(true);
-		optionsPanel.setContent(autoFollowPanel);
-		optionsPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+		DisclosurePanel autoFollowbackPanel = new DisclosurePanel("Configure auto follower");
+		autoFollowbackPanel.setAnimationEnabled(true);
+		autoFollowbackPanel.setContent(autoFollowPanel);
+		autoFollowbackPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
@@ -69,7 +68,23 @@ public class TwitterUsersView extends
 			
 		});
 		
-		this.add(optionsPanel);
+		this.add(autoFollowbackPanel);
+		
+		final AutoUnfollowConfigurationPanel autoUnfollowConfPanel = new AutoUnfollowConfigurationPanel();
+		DisclosurePanel autoUnfollowBackPanel = new DisclosurePanel("Configure auto unfollower");
+		autoUnfollowBackPanel.setAnimationEnabled(true);
+		autoUnfollowBackPanel.setContent(autoUnfollowConfPanel);
+		autoUnfollowBackPanel.addOpenHandler(new OpenHandler<DisclosurePanel> () {
+
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				autoUnfollowConfPanel.loadRule();
+				
+			}
+			
+		});
+		this.add(autoUnfollowBackPanel);
+		
 		this.add(new TwitterUsersViewToolBar(this));
 		HorizontalPanel filterPanel = new HorizontalPanel();
 		filterPanel.setSpacing(5);

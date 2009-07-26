@@ -21,7 +21,7 @@ public class RunCreateUnFollowBackQueueServlet extends AbstractHttpServlet {
 	 */
 	private static final long serialVersionUID = 1286943776778534172L;
 	
-	private static boolean TESTING = true;
+	private static boolean TESTING = false;
 	StringBuffer outBuffer = null;
 	private static final Logger log = Logger
 			.getLogger(RunCreateFollowBackQueueServlet.class.getName());
