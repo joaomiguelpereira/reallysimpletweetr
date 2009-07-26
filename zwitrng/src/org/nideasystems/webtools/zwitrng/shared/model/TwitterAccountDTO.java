@@ -19,6 +19,8 @@ public class TwitterAccountDTO extends TwitterUserDTO {
 	private int newFollowers;
 	private int newFriends;
 	private int newBlocking;
+	private int autoUnfollowQueueSize;
+	
 	
 	private RateLimitsDTO rateLimits;
 		
@@ -100,6 +102,12 @@ public class TwitterAccountDTO extends TwitterUserDTO {
 	}
 	public int getAutoFollowedUsersSize() {
 		return autoFollowedUsersSize;
+	}
+	public void setAutoUnfollowQueueSize(int autoUnfollowQueueSize) {
+		this.autoUnfollowQueueSize = autoUnfollowQueueSize;
+	}
+	public int getAutoUnfollowQueueSize() {
+		return autoUnfollowQueueSize;
 	}
 	
 	

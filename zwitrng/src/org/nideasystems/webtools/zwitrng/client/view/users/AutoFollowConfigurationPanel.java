@@ -42,6 +42,7 @@ public class AutoFollowConfigurationPanel extends VerticalPanel implements
 	public AutoFollowConfigurationPanel() {
 		waitingImg.setVisible(false);
 		this.add(waitingImg);
+		this.add(new InlineHTML("<h2>Configure Auto Follow Back</h2>"));
 		enableAutoFollow = new CheckBox("Enabled");
 		this.add(enableAutoFollow);
 		InlineHTML ffRatio = new InlineHTML(

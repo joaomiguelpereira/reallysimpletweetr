@@ -42,11 +42,11 @@ public class RulesPojo extends AbstractPojo {
 		}
 		AutoFollowRuleDO dom = null;
 		// Get the rule
-		if (rule.getTriggerType().equals(AutoFollowTriggerType.ON_FOLLOW_ME)) {
+		//if (rule.getTriggerType().equals(AutoFollowTriggerType.ON_FOLLOW_ME)) {
 			// Get the
 
 			dom = businessHelper.getPersonaDao().getAutoFollowRule(persona,
-					AutoFollowTriggerType.ON_FOLLOW_ME);
+					rule.getTriggerType());
 
 			if (dom == null) {
 				// To allow upgrade
@@ -78,7 +78,7 @@ public class RulesPojo extends AbstractPojo {
 				dom.setSendDirectMessageOnIgnore(rule.isSendDirectMessageOnIgnore());
 				dom.setIgnoreTemplate(rule.getIgnoreTemplate());
 			}
-		}
+		//}
 
 		return DtoAssembler.assemble(dom);
 	}
@@ -96,7 +96,7 @@ public class RulesPojo extends AbstractPojo {
 		AutoFollowRuleDO dom = null;
 
 		dom = businessHelper.getPersonaDao().getAutoFollowRule(persona,
-				AutoFollowTriggerType.ON_FOLLOW_ME);
+				on_follow_me);
 
 		if (dom == null) {
 			// To allow upgrade
@@ -108,7 +108,7 @@ public class RulesPojo extends AbstractPojo {
 			dom.setMinUpdates(150);
 			dom.setModified(new Date());
 			dom.setSendDirectMessage(false);
-			dom.setTriggerType(AutoFollowTriggerType.ON_FOLLOW_ME);
+			dom.setTriggerType(on_follow_me);
 			dom.setTemplateName("");
 			dom.setSendDirectMessageOnIgnore(false);
 			dom.setIgnoreTemplate("");

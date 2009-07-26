@@ -720,4 +720,38 @@ public class TwitterPojo extends AbstractPojo {
 
 	}
 
+	public void updateUnFollowBackUsersIdQueue(TwitterAccountDO twitterAccount,
+			TwitterAccountDTO authorizedTwitterAccount) throws Exception{
+		
+		int followers[] = businessHelper.getTwitterPojo().getFollowersIds(
+				authorizedTwitterAccount);
+		
+		int following[] = businessHelper.getTwitterPojo().getFollowingIds(authorizedTwitterAccount);
+		
+		log.fine("Following Size: "+following.length);
+		log.fine("Followers Size: "+followers.length);
+		
+		List<Integer> unfollowBackUserIdList = new ArrayList<Integer>();
+		//Create a reverse list of myFriends
+		List<Integer> followersList = new ArrayList<Integer>(followers.length);
+		for ( int i=followers.length-1; i>=0; i--) {
+			followersList.add(followers[i]);
+		}
+		
+		
+		//For each of my friends, check if he's following
+		for (int i=following.length-1; i>=0; i-- ) {
+			//Check if is in the ignore list
+			
+			if (!followersList.contains(following[i])) {
+				unfollowBackUserIdList.add(following[i]);
+			}
+			
+		}
+		
+		log.fine("FollowBackSize: "+unfollowBackUserIdList.size());
+		twitterAccount.setAutoUnFollowBackIdsQueue(unfollowBackUserIdList);
+		
+	}
+
 }
