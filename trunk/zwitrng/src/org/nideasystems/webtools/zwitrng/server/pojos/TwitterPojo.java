@@ -730,7 +730,7 @@ public class TwitterPojo extends AbstractPojo {
 		
 		log.fine("Following Size: "+following.length);
 		log.fine("Followers Size: "+followers.length);
-		
+		Set<Integer> unfollowedIds = twitterAccount.getAutoUnfollowedIds()!=null?twitterAccount.getAutoUnfollowedIds():new HashSet<Integer>();
 		List<Integer> unfollowBackUserIdList = new ArrayList<Integer>();
 		//Create a reverse list of myFriends
 		List<Integer> followersList = new ArrayList<Integer>(followers.length);
@@ -743,6 +743,10 @@ public class TwitterPojo extends AbstractPojo {
 		for (int i=following.length-1; i>=0; i-- ) {
 			//Check if is in the ignore list
 			
+			//if is in the unfollowed list, then ignore
+			if ( unfollowedIds.contains(following[i])) {
+				continue;
+			}
 			if (!followersList.contains(following[i])) {
 				unfollowBackUserIdList.add(following[i]);
 			}

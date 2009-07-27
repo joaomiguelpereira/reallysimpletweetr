@@ -1,5 +1,7 @@
 package org.nideasystems.webtools.zwitrng.shared.model;
 
+import java.util.List;
+
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 
 public class AutoFollowRuleDTO implements IDTO {
@@ -13,6 +15,13 @@ public class AutoFollowRuleDTO implements IDTO {
 	private String templateName;
 	private boolean sendDirectMessageOnIgnore;
 	private String ignoreTemplate;
+	
+	private int keepRatio;
+	private List<String> exludeClientsWithWords;
+	private boolean donFollowWhoIUnfollowed;
+	private boolean sendTeaserTweet;
+	private String searchTerm;
+	
 
 	public boolean isEnabled() {
 		return enabled;
@@ -87,4 +96,46 @@ public class AutoFollowRuleDTO implements IDTO {
 		return ignoreTemplate;
 	}
 
+	public void setKeepRatio(int keepRatio) {
+		this.keepRatio = keepRatio;
+	}
+
+	public int getKeepRatio() {
+		return keepRatio;
+	}
+
+	public void setExludeClientsWithWords(List<String> exludeClientsWithWords) {
+		this.exludeClientsWithWords = exludeClientsWithWords;
+	}
+
+	public List<String> getExludeClientsWithWords() {
+		return exludeClientsWithWords;
+	}
+
+	public void setDontFollowWhoIUnfollowed(boolean donFollowWhoIUnfollowed) {
+		this.donFollowWhoIUnfollowed = donFollowWhoIUnfollowed;
+	}
+
+	public boolean isDonFollowWhoIUnfollowed() {
+		return donFollowWhoIUnfollowed;
+	}
+
+	public void setSendTeaserTweet(boolean sendTeaserTweet) {
+		this.sendTeaserTweet = sendTeaserTweet;
+	}
+
+	public boolean isSendTeaserTweet() {
+		return sendTeaserTweet;
+	}
+
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
+
+	public String getSearchTerm() {
+		return searchTerm;
+	}
+
+	
+	
 }

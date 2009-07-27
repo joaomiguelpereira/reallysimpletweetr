@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.IdentityType;
@@ -40,12 +41,57 @@ public class AutoFollowRuleDO {
 	private Date modified;
 	@Persistent
 	private String templateName;
-
 	@Persistent
 	private Boolean sendDirectMessageOnIgnore;
 	@Persistent
 	private String ignoreTemplate;
 	
+	
+	//New
+	@Persistent
+	private String searchTerm;
+	@Persistent
+	private List<String> excludeWordsInClients;
+	@Persistent
+	private Integer keepRatioBellow;
+	@Persistent
+	private Boolean sendTeaserTweet;
+	@Persistent
+	private Boolean dontFollowUnfollowed;
+	
+	
+	
+	
+	public String getSearchTerm() {
+		return searchTerm;
+	}
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
+	public List<String> getExcludeWordsInClients() {
+		return excludeWordsInClients;
+	}
+	public void setExcludeWordsInClients(List<String> excludeWordsInClients) {
+		this.excludeWordsInClients = excludeWordsInClients;
+	}
+	public Integer getKeepRatioBellow() {
+		return keepRatioBellow;
+	}
+	public void setKeepRatioBellow(Integer keepRatioBellow) {
+		this.keepRatioBellow = keepRatioBellow;
+	}
+	public Boolean getSendTeaserTweet() {
+		return sendTeaserTweet;
+	}
+	public void setSendTeaserTweet(Boolean sendTeaserTweet) {
+		this.sendTeaserTweet = sendTeaserTweet;
+	}
+	public Boolean getDontFollowUnfollowed() {
+		return dontFollowUnfollowed;
+	}
+	public void setDontFollowUnfollowed(Boolean dontFollowUnfollowed) {
+		this.dontFollowUnfollowed = dontFollowUnfollowed;
+	}
 	public PersonaDO getPersona() {
 		return persona;
 	}

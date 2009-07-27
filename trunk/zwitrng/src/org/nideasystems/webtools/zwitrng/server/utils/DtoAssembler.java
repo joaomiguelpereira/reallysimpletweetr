@@ -1,7 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.utils;
 
 import java.util.ArrayList;
-import java.util.Date;
+
 import java.util.List;
 
 import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
@@ -59,6 +59,22 @@ public class DtoAssembler {
 		outRule.setTemplateName(inDom.getTemplateName());
 		outRule.setIgnoreTemplate(inDom.getIgnoreTemplate()!=null?inDom.getIgnoreTemplate():"");
 		outRule.setSendDirectMessageOnIgnore(inDom.getSendDirectMessageOnIgnore()!=null?inDom.getSendDirectMessageOnIgnore():false);
+		
+		
+		outRule.setDontFollowWhoIUnfollowed(inDom.getDontFollowUnfollowed()!=null?inDom.getDontFollowUnfollowed():false);
+		List<String> excludedWordsInClientNames = new ArrayList<String>();
+
+		if (inDom.getExcludeWordsInClients() != null) {
+			for (String str : inDom.getExcludeWordsInClients()) {
+				excludedWordsInClientNames.add(str);
+			}
+		}
+		
+		
+		outRule.setExludeClientsWithWords(excludedWordsInClientNames);
+		outRule.setKeepRatio(inDom.getKeepRatioBellow()!=null?inDom.getKeepRatioBellow():150);
+		outRule.setSearchTerm(inDom.getSearchTerm()!=null?inDom.getSearchTerm():"");
+		outRule.setSendTeaserTweet(inDom.getSendTeaserTweet()!=null?inDom.getSendTeaserTweet():false);
 		return outRule;
 
 	}

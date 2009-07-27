@@ -2,23 +2,14 @@ package org.nideasystems.webtools.zwitrng.server.pojos;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
-import org.nideasystems.webtools.zwitrng.server.domain.TwitterUserDO;
-import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
-import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.server.utils.DtoAssembler;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
-import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
-
-import sun.security.action.GetBooleanAction;
-import sun.text.normalizer.CharTrie.FriendAgent;
 
 public class RulesPojo extends AbstractPojo {
 
@@ -61,9 +52,20 @@ public class RulesPojo extends AbstractPojo {
 				dom.setSendDirectMessage(rule.isSendDirectMessage());
 				dom.setTriggerType(rule.getTriggerType());
 				dom.setTemplateName(rule.getTemplateName());
-				
 				dom.setSendDirectMessageOnIgnore(rule.isSendDirectMessageOnIgnore());
 				dom.setIgnoreTemplate(rule.getIgnoreTemplate());
+				
+				
+				//5 new
+				dom.setDontFollowUnfollowed(rule.isDonFollowWhoIUnfollowed());
+				dom.setExcludeWordsInClients(rule.getExludeClientsWithWords());
+				dom.setKeepRatioBellow(rule.getKeepRatio());
+				dom.setSearchTerm(rule.getSearchTerm());
+				dom.setSendTeaserTweet(rule.isSendTeaserTweet());
+
+				
+				
+				
 				dom.setPersona(persona);
 				persona.addAutoFollowRule(dom);
 			} else {
@@ -76,7 +78,14 @@ public class RulesPojo extends AbstractPojo {
 				dom.setTriggerType(rule.getTriggerType());
 				dom.setTemplateName(rule.getTemplateName());
 				dom.setSendDirectMessageOnIgnore(rule.isSendDirectMessageOnIgnore());
-				dom.setIgnoreTemplate(rule.getIgnoreTemplate());
+				dom.setIgnoreTemplate(rule.getIgnoreTemplate());				
+				//5 new
+				dom.setDontFollowUnfollowed(rule.isDonFollowWhoIUnfollowed());
+				dom.setExcludeWordsInClients(rule.getExludeClientsWithWords());
+				dom.setKeepRatioBellow(rule.getKeepRatio());
+				dom.setSearchTerm(rule.getSearchTerm());
+				dom.setSendTeaserTweet(rule.isSendTeaserTweet());
+
 			}
 		//}
 
@@ -113,6 +122,14 @@ public class RulesPojo extends AbstractPojo {
 			dom.setSendDirectMessageOnIgnore(false);
 			dom.setIgnoreTemplate("");
 			dom.setPersona(persona);
+			//5 new
+			dom.setDontFollowUnfollowed(true);
+			dom.setExcludeWordsInClients(new ArrayList<String>());
+			dom.setKeepRatioBellow(130);
+			dom.setSearchTerm("");
+			dom.setSendTeaserTweet(false);
+			
+			
 			persona.addAutoFollowRule(dom);
 		}
 		return DtoAssembler.assemble(dom);

@@ -54,11 +54,26 @@ public class TwitterUsersView extends
 
 		waitingImg.setVisible(false);
 		this.add(waitingImg);
-		final AutoFollowConfigurationPanel autoFollowPanel = new AutoFollowConfigurationPanel();
-		DisclosurePanel autoFollowbackPanel = new DisclosurePanel("Configure auto follower");
+		final AutoFollowBackConfigurationPanel autoFollowBackPanel = new AutoFollowBackConfigurationPanel();
+		DisclosurePanel autoFollowbackPanel = new DisclosurePanel("Configure auto follower back");
 		autoFollowbackPanel.setAnimationEnabled(true);
-		autoFollowbackPanel.setContent(autoFollowPanel);
+		autoFollowbackPanel.setContent(autoFollowBackPanel);
 		autoFollowbackPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
+
+			@Override
+			public void onOpen(OpenEvent<DisclosurePanel> event) {
+				autoFollowBackPanel.loadRule();
+				
+			}
+			
+		});
+		
+
+		final AutoFollowConfigurationPanel autoFollowPanel = new AutoFollowConfigurationPanel();
+		DisclosurePanel autoFollowSearchPanel = new DisclosurePanel("Configure auto follower based on search");
+		autoFollowSearchPanel.setAnimationEnabled(true);
+		autoFollowSearchPanel.setContent(autoFollowPanel);
+		autoFollowSearchPanel.addOpenHandler(new OpenHandler<DisclosurePanel>() {
 
 			@Override
 			public void onOpen(OpenEvent<DisclosurePanel> event) {
@@ -69,9 +84,10 @@ public class TwitterUsersView extends
 		});
 		
 		this.add(autoFollowbackPanel);
+		this.add(autoFollowSearchPanel);
 		
 		final AutoUnfollowConfigurationPanel autoUnfollowConfPanel = new AutoUnfollowConfigurationPanel();
-		DisclosurePanel autoUnfollowBackPanel = new DisclosurePanel("Configure auto unfollower");
+		DisclosurePanel autoUnfollowBackPanel = new DisclosurePanel("Configure auto unfollower back");
 		autoUnfollowBackPanel.setAnimationEnabled(true);
 		autoUnfollowBackPanel.setContent(autoUnfollowConfPanel);
 		autoUnfollowBackPanel.addOpenHandler(new OpenHandler<DisclosurePanel> () {

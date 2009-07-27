@@ -213,6 +213,10 @@ public class PersonaPojo extends AbstractPojo {
 							.getAutoUnFollowBackIdsQueue() != null ? persona
 							.getTwitterAccount().getAutoUnFollowBackIdsQueue()
 							.size() : 0);
+			authorizedTwitterAccount.setAutoUnfollowedBackCount(persona.getTwitterAccount()
+							.getAutoUnfollowedIds() != null ? persona
+							.getTwitterAccount().getAutoUnfollowedIds().size()
+							 : 0);
 
 		} else {
 			authorizedTwitterAccount = TwitterServiceAdapter
