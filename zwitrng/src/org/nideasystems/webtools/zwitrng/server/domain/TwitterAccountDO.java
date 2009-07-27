@@ -59,6 +59,8 @@ public class TwitterAccountDO implements Serializable{
 
 	@Persistent
 	private Set<Integer> ignoreUsersIds;;
+	@Persistent
+	private Set<Integer> autoUnfollowedIds;
 	
 	
 
@@ -67,9 +69,6 @@ public class TwitterAccountDO implements Serializable{
 
 	@Persistent
 	private Integer autoFollowedCount;
-
-	@Persistent
-	private Integer autoUnFollowedCount;
 
 	
 	public void setTwitterName(String twitterName) {
@@ -198,12 +197,13 @@ public class TwitterAccountDO implements Serializable{
 		return autoUnFollowBackIdsQueue;
 	}
 
-	public void setAutoUnFollowedCount(Integer autoUnFollowedCount) {
-		this.autoUnFollowedCount = autoUnFollowedCount;
+
+	public void setAutoUnfollowedIds(Set<Integer> autoUnfollowedIds) {
+		this.autoUnfollowedIds = autoUnfollowedIds;
 	}
 
-	public Integer getAutoUnFollowedCount() {
-		return autoUnFollowedCount;
+	public Set<Integer> getAutoUnfollowedIds() {
+		return autoUnfollowedIds;
 	}
 
 	

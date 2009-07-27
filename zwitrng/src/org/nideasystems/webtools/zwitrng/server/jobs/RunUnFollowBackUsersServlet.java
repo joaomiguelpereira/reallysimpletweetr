@@ -35,7 +35,7 @@ public class RunUnFollowBackUsersServlet extends AbstractHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		log.info("=============Running Job: Auto follow=============");
+		log.info("=============Running Job: Auto unfollow=============");
 		// Check headers
 		outBuffer = new StringBuffer();
 

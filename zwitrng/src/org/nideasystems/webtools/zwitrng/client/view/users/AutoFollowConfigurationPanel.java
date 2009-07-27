@@ -2,386 +2,230 @@ package org.nideasystems.webtools.zwitrng.client.view.users;
 
 import java.util.ArrayList;
 
-import org.nideasystems.webtools.zwitrng.client.Constants;
 import org.nideasystems.webtools.zwitrng.client.controller.MainController;
 import org.nideasystems.webtools.zwitrng.client.view.utils.HTMLHelper;
 import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.AutoFollowRuleDTO;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.dom.client.KeyUpEvent;
-import com.google.gwt.event.dom.client.KeyUpHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
-import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.InlineHTML;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
-import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class AutoFollowConfigurationPanel extends VerticalPanel implements
-		AutoFollowRuleCallback {
-	InlineHTML summary;
-	TextBox updatesInput;
-	TextBox ffRatioInput;
-	TextBox templateName;
-	CheckBox sendDm;
-	TextArea excludeUserNames;
-	CheckBox enableAutoFollow;
-	Button saveBt;
-	CheckBox sendDmOnIgnore;
-	TextBox ignoreTemplateName;
+public class AutoFollowConfigurationPanel extends AbstractRuleConfiguration {
 
-	private AutoFollowRuleDTO autoFollowRule;
-	Image waitingImg = new Image(Constants.WAITING_IMAGE);
+	private TextBox keepMyRatioUnderLimit;
+	private TextBox searchTerm;
+	private CheckBox ignoreUsersIUnfollowed;
+	private TextBox minUpdates;
+	private TextBox maxRatio;
+	private TextArea excludeUserNames;
+	private CheckBox retweetTeaser;
+	private InlineHTML summary;
+	private TextArea exludeSource;
 
 	public AutoFollowConfigurationPanel() {
-		waitingImg.setVisible(false);
-		this.add(waitingImg);
-		this.add(new InlineHTML("<h2>Configure Auto Follow Back</h2>"));
-		enableAutoFollow = new CheckBox("Enabled");
-		this.add(enableAutoFollow);
-		InlineHTML ffRatio = new InlineHTML(
-				"Follow users with a Following/Followers ratio less than");
-		ffRatioInput = new TextBox();
-		ffRatioInput.setValue("140%");
-		this.add(ffRatio);
-		this.add(ffRatioInput);
+		super(AutoFollowTriggerType.SEARCH, "Auto follow based on Tweet Search");
 
-		InlineHTML updates = new InlineHTML(
-				"Follow users with updates greater than:");
-		updatesInput = new TextBox();
-		updatesInput.setValue("130");
-		this.add(updates);
-		this.add(updatesInput);
+		this.add(new InlineHTML("Keep my Following/Followers ratio under:"));
+		keepMyRatioUnderLimit = new TextBox();
+		this.add(keepMyRatioUnderLimit);
 
-		sendDm = new CheckBox("Send Direct message on follow?");
-		templateName = new TextBox();
-		this.add(sendDm);
-		this.add(templateName);
+		this.add(new InlineHTML("Follow users based on search term"));
+		searchTerm = new TextBox();
+		this.add(searchTerm);
 
-		InlineHTML excludeUserLabel = new InlineHTML(
-				"Exclude Users with usernames that contains (one word per line):");
-		excludeUserNames = new TextArea();
+		ignoreUsersIUnfollowed = new CheckBox(
+				"Dont follow people I have unfollowed");
+		this.add(ignoreUsersIUnfollowed);
+
+		this.add(new InlineHTML(
+				"Follow people with a following/followers ratio under "));
+		this.maxRatio = new TextBox();
+		this.add(maxRatio);
+
+		this.add(new InlineHTML("Follow people with a a minimum of updates:"));
+		this.minUpdates = new TextBox();
+		this.add(minUpdates);
+
+		this
+				.add(new InlineHTML(
+						"Don't follow people with usernames containing the following words"));
+		this.excludeUserNames = new TextArea();
 		excludeUserNames.setVisibleLines(3);
 		excludeUserNames.setWidth("150px");
-		this.add(excludeUserLabel);
 		this.add(excludeUserNames);
 
-		sendDmOnIgnore = new CheckBox("Send Direct Message on ignore?");
-		ignoreTemplateName = new TextBox();
+		this
+				.add(new InlineHTML(
+						"Don't follow people tweeting from clients containing the following words:"));
+		this.exludeSource = new TextArea();
+		this.exludeSource.setVisibleLines(3);
+		this.exludeSource.setWidth("150px");
+		this.add(this.exludeSource);
 
-		this.add(sendDmOnIgnore);
-		this.add(ignoreTemplateName);
+		retweetTeaser = new CheckBox("Retweet before following as a teaser");
+		this.add(retweetTeaser);
 
-		summary = new InlineHTML(createSummary());
+		summary = new InlineHTML();
 		this.add(summary);
-		sendDmOnIgnore.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				ignoreTemplateName.setEnabled(event.getValue());
-				refreshSummary();
-
-			}
-
-		});
-		enableAutoFollow
-				.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-					@Override
-					public void onValueChange(ValueChangeEvent<Boolean> event) {
-						setFieldsLock(event.getValue());
-
-					}
-
-				});
-		excludeUserNames.addKeyUpHandler(new KeyUpHandler() {
-
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				refreshSummary();
-
-			}
-
-		});
-		sendDm.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
-			@Override
-			public void onValueChange(ValueChangeEvent<Boolean> event) {
-				refreshSummary();
-				setTemplateNameLock(event.getValue());
-			}
-
-		});
-		templateName.addKeyUpHandler(new KeyUpHandler() {
-
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				refreshSummary();
-
-			}
-
-		});
-		ffRatioInput.addKeyUpHandler(new KeyUpHandler() {
-
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				refreshSummary();
-
-			}
-
-		});
-
-		updatesInput.addKeyUpHandler(new KeyUpHandler() {
-
-			@Override
-			public void onKeyUp(KeyUpEvent event) {
-				refreshSummary();
-
-			}
-
-		});
-		saveBt = new Button("Save");
-		saveBt.addClickHandler(new ClickHandler() {
-
-			@Override
-			public void onClick(ClickEvent event) {
-				saveAutoFollowRule();
-
-			}
-
-		});
-		this.add(saveBt);
-
-	}
-
-	protected void setTemplateNameLock(Boolean value) {
-		this.templateName.setEnabled(value);
-
-	}
-
-	public void loadRule(AutoFollowRuleDTO rule) {
-		this.autoFollowRule = rule;
-
-	}
-
-	private void setFieldsLock(Boolean value) {
-		this.excludeUserNames.setEnabled(value);
-		this.ffRatioInput.setEnabled(value);
-		this.sendDm.setEnabled(value);
-		this.templateName.setEnabled(value);
-		this.updatesInput.setEnabled(value);
-		this.sendDmOnIgnore.setEnabled(value);
-		this.ignoreTemplateName.setEnabled(value);
-
-	}
-
-	private void saveAutoFollowRule() {
-		// Validate
-
-		boolean hasErrors = false;
-		Integer followingFollowRation = 0;
-		Integer updates = 0;
-		// check ratio
-		if (this.ffRatioInput.getValue().trim().length() == 0
-				|| this.ffRatioInput.getValue().indexOf("%") < 1) {
-			MainController
-					.getInstance()
-					.addError(
-							"Please provide a value for Following/Followers ratio. Use format xxx%.");
-			hasErrors = true;
-		} else {
-			// Try to conver it
-			try {
-				followingFollowRation = Integer
-						.valueOf(this.ffRatioInput.getValue().trim()
-								.substring(
-										0,
-										this.ffRatioInput.getValue().trim()
-												.length() - 1));
-			} catch (NumberFormatException e) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide a value for Following/Followers ratio. Use format xxx%.");
-				hasErrors = true;
-			}
-		}
-
-		if (this.updatesInput.getValue().trim().length() == 0) {
-			MainController.getInstance().addError(
-					"Please provide a value for the updates.");
-			hasErrors = true;
-		} else {
-
-			try {
-				updates = Integer.valueOf(this.updatesInput.getValue().trim());
-			} catch (NumberFormatException e) {
-				MainController
-						.getInstance()
-						.addError(
-								"Please provide a value for Following/Followers ratio. Use format xxx%.");
-				hasErrors = true;
-			}
-		}
-
-		if (sendDm.getValue()
-				&& this.templateName.getValue().trim().length() == 0) {
-			MainController
-					.getInstance()
-					.addError(
-							"Please provide a name of a template to use in the Direct Message.");
-			hasErrors = true;
-		}
-		if (sendDmOnIgnore.getValue()
-				&& this.ignoreTemplateName.getValue().trim().length() == 0) {
-			MainController
-					.getInstance()
-					.addError(
-							"Please provide a name of a template to use in the Direct Message when a user is ignored.");
-			hasErrors = true;
-		}
-
-		if (!hasErrors) {
-
-			// create a dto
-			AutoFollowRuleDTO rule = new AutoFollowRuleDTO();
-
-			rule.setEnabled(this.enableAutoFollow.getValue());
-			rule.setMaxRatio(followingFollowRation);
-			rule.setMinUpdates(updates);
-			rule.setSendDirectMessage(this.sendDm.getValue());
-			java.util.List<String> excludedNames = new ArrayList<String>();
-			rule.setTemplateName(this.templateName.getValue());
-			String[] lines = getLines(this.excludeUserNames);
-			if (lines.length > 0) {
-				for (String str : lines) {
-					if (str.trim().length() > 0) {
-						excludedNames.add(str);
-					}
-				}
-			}
-			rule.setExcludedWordsInNames(excludedNames);
-			rule.setTriggerType(AutoFollowTriggerType.ON_FOLLOW_ME);
-			rule.setSendDirectMessageOnIgnore(this.sendDmOnIgnore.getValue());
-			rule.setIgnoreTemplate(this.ignoreTemplateName.getValue());
-			waitingImg.setVisible(true);
-			MainController.getInstance().getCurrentPersonaController()
-					.saveAutofollowRule(rule, this);
-
-		}
-
-	}
-
-	private void refreshSummary() {
-		this.summary.setHTML(createSummary());
-	}
-
-	private String[] getLines(TextArea excludeUserNames) {
-		// String[] exStrings = excludeUserNames.getValue().split("\\n");
-		return HTMLHelper.getLines(excludeUserNames.getValue());
-		// return exStrings;
-
-	}
-
-	private void adjustLines(TextArea excludeUserNames, int lines) {
-		HTMLHelper.adjustLines(excludeUserNames, lines, 3, 10);
-
-	}
-
-	private String createSummary() {
-
-		StringBuffer sb = new StringBuffer();
-		sb.append("<span class=\"bolder\">Summary:</span>");
-		sb
-				.append("Follow all users that follow me and have a Following/Followers ration below ");
-		sb.append(this.ffRatioInput.getValue());
-		sb.append(" and have more than ");
-		sb.append(this.updatesInput.getValue());
-		sb.append(" updates.");
-		if (sendDm.getValue()) {
-			sb
-					.append(" Send a Direct Message before following using the template ");
-			sb.append(this.templateName.getValue() + ".");
-		}
-
-		String[] excludedNames = getLines(this.excludeUserNames);
-		if (excludedNames != null && excludedNames.length > 0) {
-			sb
-					.append("Exclude users that have in the user name the following words: ");
-			for (String str : excludedNames) {
-				sb.append(str);
-				sb.append(",");
-			}
-			adjustLines(this.excludeUserNames, excludedNames.length);
-		}
-		if (sendDmOnIgnore.getValue()) {
-			sb.append("Send Direct Message ");
-			sb.append("using template ");
-			sb.append(ignoreTemplateName.getValue());
-
-			sb.append("when ignore a user");
-		}
-		return sb.toString();
+		this.add(save);
 
 	}
 
 	@Override
-	public void onAutoFollowRuleChanged(AutoFollowRuleDTO rule) {
-		this.autoFollowRule = rule;
-		refresh();
-		refreshSummary();
-
-	}
-
-	private void refresh() {
-		waitingImg.setVisible(false);
-		this.enableAutoFollow.setValue(autoFollowRule.isEnabled());
-		this.ffRatioInput.setValue(autoFollowRule.getMaxRatio() + "%");
-		this.sendDm.setValue(autoFollowRule.isSendDirectMessage());
-		this.templateName.setValue(autoFollowRule.getTemplateName());
-		this.updatesInput.setValue(autoFollowRule.getMinUpdates() + "");
-		this.sendDmOnIgnore.setValue(autoFollowRule
-				.isSendDirectMessageOnIgnore());
-		this.ignoreTemplateName.setValue(autoFollowRule.getIgnoreTemplate());
-		this.ignoreTemplateName.setEnabled(autoFollowRule
-		.isSendDirectMessageOnIgnore());
+	public void refresh() {
+		this.enabled.setValue(rule.isEnabled());
+		this.ignoreUsersIUnfollowed.setValue(rule.isDonFollowWhoIUnfollowed());
+		this.keepMyRatioUnderLimit.setValue(rule.getKeepRatio()+"");
+		this.maxRatio.setValue(rule.getMaxRatio()+"");
+		this.minUpdates.setValue(rule.getMinUpdates()+"");
+		this.retweetTeaser.setValue(rule.isSendTeaserTweet());
+		this.searchTerm.setValue(rule.getSearchTerm());
 		StringBuffer sb = new StringBuffer();
-
-		for (String str : autoFollowRule.getExcludedWordsInNames()) {
+		for (String str: rule.getExcludedWordsInNames() ) {
+			sb.append(str);
+			sb.append("\n");
+			
+		}
+		this.excludeUserNames.setValue(sb.toString());
+		sb = new StringBuffer();
+		for (String str: rule.getExludeClientsWithWords() ) {
 			sb.append(str);
 			sb.append("\n");
 		}
-		this.excludeUserNames.setValue(sb.toString());
-		setFieldsLock(autoFollowRule.isEnabled());
+		this.exludeSource.setValue(sb.toString());
+		waitingImg.setVisible(false);
 
 	}
 
 	@Override
-	public void onError(Throwable tr) {
-		waitingImg.setVisible(false);
-		MainController.getInstance().addException(tr);
+	public void refreshSummary() {
+		// TODO Auto-generated method stub
 
 	}
 
-	public void loadRule() {
-		if (this.autoFollowRule == null) {
+	@Override
+	public void saveAutoFollowRule() {
+		
+
+		// check if is valid
+		boolean isValid = true;
+		AutoFollowRuleDTO rule = new AutoFollowRuleDTO();
+
+		// Enabled
+		rule.setEnabled(this.enabled.getValue());
+		// if (this.enabled.getValue()) {
+
+		if (this.keepMyRatioUnderLimit.getValue().trim().length() == 0) {
+			MainController
+					.getInstance()
+					.addError(
+							"Please provide a valid number for you following/follower ratio.");
+			isValid = false;
+		} else {
+			try {
+				// KeepRation
+				rule.setKeepRatio(Integer.valueOf(this.keepMyRatioUnderLimit
+						.getValue().trim().substring(
+								0,
+								this.keepMyRatioUnderLimit.getValue().trim()
+										.length())));
+			} catch (NumberFormatException e) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide a valid number for you following/follower ratio.");
+				isValid = false;
+			}
+		}
+
+		if (this.searchTerm.getValue().trim().length() == 0) {
+			MainController.getInstance().addError(
+					"Please provide a valid search term");
+			isValid = false;
+		} else {
+			// search term
+			rule.setSearchTerm(this.searchTerm.getValue().trim());
+		}
+
+		if (this.maxRatio.getValue().trim().length() == 0) {
+			MainController
+					.getInstance()
+					.addError(
+							"Please provide a valid number for max following/follower ratio of users to follow.");
+			isValid = false;
+		} else {
+			try {
+				// Ration
+				rule.setMaxRatio(Integer.valueOf(this.maxRatio.getValue()
+						.trim().substring(0,
+								this.maxRatio.getValue().trim().length())));
+			} catch (NumberFormatException e) {
+				MainController
+						.getInstance()
+						.addError(
+								"Please provide a valid number for max following/follower ratio of users to follow.");
+				isValid = false;
+			}
+		}
+
+		if (this.minUpdates.getValue().trim().length() == 0) {
+			MainController.getInstance().addError(
+					"Please provide a valid number for minimum updates.");
+			isValid = false;
+		} else {
+			try {
+				rule
+						.setMinUpdates(Integer.valueOf(this.minUpdates
+								.getValue().trim().substring(
+										0,
+										this.minUpdates.getValue().trim()
+												.length())));
+			} catch (NumberFormatException e) {
+				MainController.getInstance().addError(
+						"Please provide a valid number for minimum updates.");
+				isValid = false;
+			}
+		}
+
+		java.util.List<String> excludedNames = new ArrayList<String>();
+
+		String[] lines = HTMLHelper.getLines(this.excludeUserNames.getValue());
+		if (lines.length > 0) {
+			for (String str : lines) {
+				if (str.trim().length() > 0) {
+					excludedNames.add(str);
+				}
+			}
+		}
+		rule.setExcludedWordsInNames(excludedNames);
+
+		java.util.List<String> excludedClients = new ArrayList<String>();
+
+		lines = HTMLHelper.getLines(this.exludeSource.getValue());
+		if (lines.length > 0) {
+			for (String str : lines) {
+				if (str.trim().length() > 0) {
+					excludedClients.add(str);
+				}
+			}
+		}
+		rule.setExludeClientsWithWords(excludedClients);
+		rule
+				.setDontFollowWhoIUnfollowed(this.ignoreUsersIUnfollowed
+						.getValue());
+		rule.setSendTeaserTweet(this.retweetTeaser.getValue());
+		
+		rule.setTriggerType(AutoFollowTriggerType.SEARCH);
+
+		// } //end if isEnabled
+		if (isValid) {
 			waitingImg.setVisible(true);
 			MainController.getInstance().getCurrentPersonaController()
-					.loadRule(AutoFollowTriggerType.ON_FOLLOW_ME, this);
-
+					.saveAutofollowRule(rule, this);
 		}
+
 	}
 
-	@Override
-	public void onAutoFollowRuleLoaded(AutoFollowRuleDTO rule) {
-		this.autoFollowRule = rule;
-		refresh();
-		refreshSummary();
-	}
 }

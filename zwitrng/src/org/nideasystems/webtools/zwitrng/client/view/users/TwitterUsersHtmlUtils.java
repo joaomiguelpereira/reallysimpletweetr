@@ -168,6 +168,12 @@ public class TwitterUsersHtmlUtils {
 				+ twitterAccount.getAutoUnfollowQueueSize()
 				+ "</span></span> ");
 	
+		htmlB
+		.append("<span class=\"followBackQueueSize\">Auto Unfollowed Back:<span class=\"bolder\">"
+				+ twitterAccount.getAutoUnfollowedBackCount()
+				+ "</span></span> ");
+	
+	
 		return htmlB.toString();
 	}
 	

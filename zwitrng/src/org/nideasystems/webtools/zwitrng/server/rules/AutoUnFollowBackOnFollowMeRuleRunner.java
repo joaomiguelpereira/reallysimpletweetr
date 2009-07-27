@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.rules;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -35,10 +36,12 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 		List<Integer> queue = persona.getTwitterAccount()
 				.getAutoUnFollowBackIdsQueue();
+		Set<Integer> unfollowedIds = persona.getTwitterAccount().getAutoUnfollowedIds();
 
-		int autoUnFollowCount = persona.getTwitterAccount()
-				.getAutoUnFollowedCount() != null ? persona.getTwitterAccount()
-				.getAutoUnFollowedCount() : 0;
+		if (unfollowedIds==null) {
+			unfollowedIds = new HashSet<Integer>();
+		}
+		
 		Set<Integer> followingIds = persona.getTwitterAccount()
 				.getFollowingIds();
 
@@ -54,10 +57,10 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 				// queue.remove(i);
 				removeList.add(userId);
 				// followingIds.remove(userId);
-
+				unfollowedIds.add(userId);
+				
 				if (processUser(userId)) {
 					log.fine("User unfollowed" + userId);
-					autoUnFollowCount++;
 					followingIds.remove(userId);
 				} else {
 					log.fine("Could not unfollow User" + userId);
@@ -71,7 +74,7 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 		}
 
 		persona.getTwitterAccount().setAutoUnFollowBackIdsQueue(queue);
-		persona.getTwitterAccount().setAutoUnFollowedCount(autoUnFollowCount);
+		persona.getTwitterAccount().setAutoUnfollowedIds(unfollowedIds);
 		persona.getTwitterAccount().setFollowingIds(followingIds);
 
 	}
@@ -90,11 +93,12 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 			log.info("Unfollowing user: " + user.getScreenName());
 			// Try to send a message
+			unfollow(personaDto, user);
 			if (rule.isSendDirectMessage()) {
 				sendReplyToUser(personaDto, rule.getTemplateName(), user);
 			}
 
-			unfollow(personaDto, user);
+			
 
 		} catch (Exception e) {
 			log.warning("Error unfollowing following user: " + e.getMessage());
