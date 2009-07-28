@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.RateLimitsDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.DataUtils;
 import org.nideasystems.webtools.zwitrng.shared.UpdatesType;
@@ -27,6 +29,7 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
 
 import twitter4j.DirectMessage;
 import twitter4j.Status;
+import twitter4j.Tweet;
 import twitter4j.User;
 
 public class TwitterPojo extends AbstractPojo {
@@ -757,5 +760,104 @@ public class TwitterPojo extends AbstractPojo {
 		twitterAccount.setAutoUnFollowBackIdsQueue(unfollowBackUserIdList);
 		
 	}
+
+	public void updateFollowUsersScreenNamesQueue(TwitterAccountDO twitterAccount,
+			AutoFollowRuleDO autofollowrule,
+			TwitterAccountDTO authorizedTwitterAccount) throws Exception {
+		//Get the list of current queu
+		Set<String> followedUsers = twitterAccount.getAutoFollowedScreenNames();
+		if ( followedUsers == null ){
+			followedUsers = new HashSet<String>();
+		}
+		List<String> queue = twitterAccount.getAutoFollowScreenNamesQueue();
+		if (queue==null) {
+			queue = new ArrayList<String>();
+		}//Execute the search
+		TwitterAccountDTO authorizedAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
+		
+		startTwitterTransaction( authorizedAccount );
+		
+		List<Tweet> tweets = twitterService.search(autofollowrule.getSearchTerm());
+		endTwitterTransaction();
+		//Get last retweet Timestamo
+		Long lastRtTimeStamp = twitterAccount.getLastRTTimeStamp();
+		if (lastRtTimeStamp == null) {
+			lastRtTimeStamp = new Date().getTime();
+		}
+		int minMinutesBetweenRts = 5;
+
+		for ( Tweet tweet: tweets ) {
+			log.fine("Cheching user to follow: "+tweet.getFromUser());
+			//Add the user to the queue
+			//Check first if exists
+			if ( !queue.contains(tweet.getFromUser()) && !followedUsers.contains(tweet.getFromUser())) {
+				
+				
+				//Ignore the ones that com from an excluded source
+				boolean add = true;
+				
+				if ( autofollowrule.getExcludeWordsInClients()!= null) {
+					//Check if last status is from a exlcuded source
+					for ( String name: autofollowrule.getExcludeWordsInClients() ) {
+						log.fine("Cheching source: "+tweet.getSource());
+						if (tweet.getSource().toLowerCase().contains(name.toLowerCase().trim())) {
+							add = false;
+							break;
+										
+						}
+					}
+						
+				}
+				
+				if (autofollowrule.getExcludedWordsInNames() != null) {
+					//Check if last status is from a exlcuded source
+					for ( String str: autofollowrule.getExcludedWordsInNames() ) {
+						log.fine("Cheching Name: "+tweet.getFromUser());
+						if (tweet.getFromUser().toLowerCase().contains(str.toLowerCase())) {
+							add = false;
+							break;
+										
+						}
+					}
+						
+				}
+				
+				if ( add ) {
+					//Check if is to send a rt as a teaser
+					
+					if (autofollowrule.getSendTeaserTweet()!=null && autofollowrule.getSendTeaserTweet() ) {
+						long now = new Date().getTime();
+						if ( now-lastRtTimeStamp > minMinutesBetweenRts*1000*60) {
+							
+							lastRtTimeStamp = now;
+							TwitterUpdateDTO update = new TwitterUpdateDTO();
+							update.setInReplyToScreenName(tweet.getFromUser());
+							update.setInReplyToStatusId(tweet.getId());
+							update.setText("RT @"+tweet.getFromUser()+":"+tweet.getText());
+							log.fine("Sending: "+update.getText());
+							
+							try {
+								twitterService.postUpdate(update);
+							} catch (Exception e) {
+								log.severe("Could not do the RT "+e.getMessage());
+								e.printStackTrace();
+							}	
+						}
+						
+					}
+					log.fine("Adding user to follow to the queue: "+tweet.getFromUser());
+					queue.add(tweet.getFromUser());	
+				} else {
+					log.fine("Ignoring user: "+tweet.getFromUser());
+				}
+				
+			}
+		}
+		twitterAccount.setLastRTTimeStamp(lastRtTimeStamp);
+		twitterAccount.setAutoFollowScreenNamesQueue(queue);
+	}
+	
+	
+	
 
 }

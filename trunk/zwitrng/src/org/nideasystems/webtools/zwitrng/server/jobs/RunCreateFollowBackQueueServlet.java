@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -22,6 +23,7 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 	 */
 	private static final long serialVersionUID = -4325584492432117102L;
 	private static boolean TESTING = false;
+	private static final int INTERVAL = 60;
 	StringBuffer outBuffer = null;
 	private static final Logger log = Logger
 			.getLogger(RunCreateFollowBackQueueServlet.class.getName());
@@ -64,6 +66,17 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 				
 				//Synch queu to sync
 				TwitterAccountDO twitterAccount = persona.getTwitterAccount();
+				//run only if the last time it ran was 60 minutes ago
+				if ( twitterAccount.getLastCreateAutoFollowBackQueueTime()!= null  ) {
+					
+					Date now = new Date();
+					
+					if ( now.getTime() - twitterAccount.getLastCreateAutoFollowBackQueueTime().longValue() < 1000*60*INTERVAL ) { //1 hour
+						continue;
+					}
+					
+				}
+
 				TwitterAccountDTO authorizedTwitterAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
 				if ( twitterAccount.getAutoFollowBackIdsQueue()!=null) {
 					log.fine("Actual size of Queue:"+twitterAccount.getAutoFollowBackIdsQueue().size());
@@ -77,6 +90,7 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 					log.fine("Persona: "+persona.getName());
 					log.fine("Current size of Queue:"+twitterAccount.getAutoFollowBackIdsQueue().size());
 				}
+				twitterAccount.setLastCreateAutoFollowBackQueueTime(new Date().getTime());
 			
 				/*
 				AutoFollowRuleDO autofollowrule = getBusinessHelper().getPersonaDao().getAutoFollowRule(persona, AutoFollowTriggerType.ON_FOLLOW_ME);
@@ -96,6 +110,7 @@ public class RunCreateFollowBackQueueServlet extends AbstractHttpServlet {
 				outBuffer.append("<div>Could not get the autofollow rule for persona: "+persona.getName()+" Useremail: "+persona.getUserEmail()+"</div>");
 				//Continue
 			}
+			break;
 			
 		}
 		

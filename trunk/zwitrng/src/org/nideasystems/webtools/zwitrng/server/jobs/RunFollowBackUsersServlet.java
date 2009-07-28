@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -26,6 +27,7 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 	 */
 	
 	private static boolean TESTING = false;
+	private static final int INTERVAL = 25;
 	StringBuffer outBuffer = null;
 	private static final Logger log = Logger
 			.getLogger(RunCreateFollowBackQueueServlet.class.getName());
@@ -62,6 +64,18 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 		
 		//For each persona
 		for (PersonaDO persona: personas) {
+			
+			//run only if the last time it ran was 60 minutes ago
+			if ( persona.getTwitterAccount().getLastAutoFollowBackTime()!= null  ) {
+				
+				Date now = new Date();
+				
+				if ( now.getTime() - persona.getTwitterAccount().getLastAutoFollowBackTime().longValue() < 1000*60*INTERVAL ) { //13 minutes
+					continue;
+				}
+				
+			}
+
 			//Get the autoFollowRule
 			
 			int followingSize = persona.getTwitterAccount().getFollowingIds()!=null?persona.getTwitterAccount().getFollowingIds().size():0;
@@ -91,6 +105,8 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 				if ( autofollowrule != null && autofollowrule.isEnabled() && persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null) {
 					ruleEx.execute();
 				}
+				persona.getTwitterAccount().setLastAutoFollowBackTime(new Date().getTime());
+				
 				
 				
 				//getBusinessHelper().getTwitterPojo().updateFollowBackUsersIdQueue(twitterAccount,authorizedTwitterAccount);
@@ -113,6 +129,7 @@ public class RunFollowBackUsersServlet extends AbstractHttpServlet {
 			log.fine("Ignore list Size:"+ignoreSize);
 			log.fine("Friends: "+followingSize);
 			log.fine("Followers: "+followersSize);
+			break;
 		
 			
 		}

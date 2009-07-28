@@ -9,21 +9,24 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TwitterAccountDO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
+import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
-public class RunCreateUnFollowBackQueueServlet extends AbstractHttpServlet {
+public class RunCreateAutoFollowQueueServlet extends AbstractHttpServlet {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1286943776778534172L;
+	private static final long serialVersionUID = 3383475522265905879L;
+
 	
 	private static boolean TESTING = false;
-	private static final int INTERVAL = 60*24; //one day
+	private static int INTERVAL = 20;
 	StringBuffer outBuffer = null;
 	private static final Logger log = Logger
 			.getLogger(RunCreateFollowBackQueueServlet.class.getName());
@@ -31,7 +34,7 @@ public class RunCreateUnFollowBackQueueServlet extends AbstractHttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		log.info("=============Running Job: Create Auto Un Follow Back Queue=============");
+		log.info("=============Running Job: Create Auto  Follow Queue=============");
 		// Check headers
 		outBuffer = new StringBuffer();
 
@@ -60,47 +63,53 @@ public class RunCreateUnFollowBackQueueServlet extends AbstractHttpServlet {
 		for (PersonaDO persona: personas) {
 			try {
 				//Test
-
-				
+				log.fine("Creating Follow Queue for Persona: "+persona.getName());
 				//Synch queu to sync
 				TwitterAccountDO twitterAccount = persona.getTwitterAccount();
-				
 				//run only if the last time it ran was 60 minutes ago
-				if ( twitterAccount.getLastCreateAutoUnfollowQueueTime()!= null  ) {
+				
+				if ( twitterAccount.getLastCreateAutoFollowQueueTime()!= null  && !TESTING) {
 					
 					Date now = new Date();
 					
-					if ( now.getTime() - twitterAccount.getLastCreateAutoUnfollowQueueTime().longValue() < 1000*60*INTERVAL ) { //1 day
+					if ( now.getTime() - twitterAccount.getLastCreateAutoFollowQueueTime().longValue() < 1000*60*INTERVAL ) { //20 minutes
 						continue;
 					}
 					
 				}
 
 				TwitterAccountDTO authorizedTwitterAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
-				if ( twitterAccount.getAutoUnFollowBackIdsQueue()!=null) {
-					log.fine("Actual size of Unbfollow Queue:"+twitterAccount.getAutoUnFollowBackIdsQueue().size());
+				
+				if ( twitterAccount.getAutoFollowScreenNamesQueue()!=null) {
+					log.fine("Actual size of follow Queue:"+twitterAccount.getAutoFollowScreenNamesQueue().size());
 				}
 				
+				//need the rule here
 				
+				AutoFollowRuleDO autofollowrule = getBusinessHelper().getPersonaDao().getAutoFollowRule(persona, AutoFollowTriggerType.SEARCH);
+				if ( autofollowrule != null &&  autofollowrule.isEnabled()) {
+					getBusinessHelper().getTwitterPojo().updateFollowUsersScreenNamesQueue(twitterAccount,autofollowrule, authorizedTwitterAccount);
+				}
 				
-				getBusinessHelper().getTwitterPojo().updateUnFollowBackUsersIdQueue(twitterAccount, authorizedTwitterAccount);
-				
-				twitterAccount.setLastCreateAutoUnfollowQueueTime(new Date().getTime());
-				
-				if ( twitterAccount.getAutoUnFollowBackIdsQueue()!=null) {
+			
+				twitterAccount.setLastCreateAutoFollowQueueTime(new Date().getTime());
+				if ( twitterAccount.getAutoFollowScreenNamesQueue()!=null) {
 					log.fine("Persona: "+persona.getName());
-					log.fine("Current size of unfollow Queue:"+twitterAccount.getAutoUnFollowBackIdsQueue().size());
+					log.fine("Current size of follow Queue:"+twitterAccount.getAutoFollowScreenNamesQueue().size());
 				}
-				
+			
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				log.severe("Error running autounfollowback rule for persona: "+persona.getName()+" User Email: "+persona.getUserEmail());
+				log.severe("Error running autofollowback rule for persona: "+persona.getName()+" User Email: "+persona.getUserEmail());
 				e.printStackTrace();
-				outBuffer.append("<div>Could not get the autounfollow rule for persona: "+persona.getName()+" User Email: "+persona.getUserEmail()+"</div>");
+				outBuffer.append("<div>Could not get the autofollow rule for persona: "+persona.getName()+" User Email: "+persona.getUserEmail()+"</div>");
 				//Continue
 			}
-			break;
+			if ( !TESTING ) {
+				break;
+			}
+			
 		}
 		
 		endTransaction();
