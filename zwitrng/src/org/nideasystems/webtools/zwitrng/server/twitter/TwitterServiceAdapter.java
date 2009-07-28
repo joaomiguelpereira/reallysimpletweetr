@@ -311,6 +311,35 @@ public class TwitterServiceAdapter {
 		return dms;
 
 	}
+	
+	public List<Tweet> search(String searchTerm) throws Exception {
+		Query query = new Query();
+		query.setQuery(searchTerm);
+		List<Tweet> tweets = null;
+		try {
+			QueryResult result = twitter.search(query);
+			log.fine("Search performend in "+ result.getCompletedIn()+" ms");
+			log.fine("Query: "+ result.getQuery());
+			
+			log.fine("Rate Limit Limit: "+ result.getRateLimitLimit());
+			log.fine("Rate Limit Remaining: "+ result.getRateLimitRemaining());
+			log.fine("Rate Limit Reset: "+ result.getRateLimitReset());
+			
+			this.rateLimitLimit = result.getRateLimitLimit();
+			this.rateLimitRemaining = result.getRateLimitRemaining();
+			this.rateLimitReset = result.getRateLimitReset();
+			
+			tweets = result.getTweets();
+			
+		} catch (Exception e) {
+			log.severe("Error Performing search: "+searchTerm);
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		return tweets;
+		
+		
+	}
 
 	/*
 	 * public TwitterUpdateDTOList getUpdates( TwitterAccountDTO twitterAccount,
@@ -907,5 +936,7 @@ public class TwitterServiceAdapter {
 	public long getRateLimitReset() {
 		return rateLimitReset;
 	}
+
+	
 
 }

@@ -197,52 +197,7 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 
 	}
 
-	private boolean canFollow(User user) {
-		log.fine("Cheching user: " + user.getScreenName());
-		log.fine("Check number of updates..." + user.getStatusesCount());
-		log.fine("Check number of friends..." + user.getFriendsCount());
-		log.fine("Check number of followers..." + user.getFollowersCount());
-
-		boolean ok = true;
-
-		if (user.getFollowersCount() != 0) {
-			// Get the rule ratio
-			double currentRatio = Double.valueOf(user.getFriendsCount())
-					/ Double.valueOf(user.getFollowersCount());
-
-			double ratio = currentRatio * 100;
-
-			if (ratio > rule.getMaxRatio()) {
-				log.fine("Ratio is nOk");
-				ok = false;
-			}
-
-		} else {
-			ok = false;
-			log.fine("No followers");
-		}
-
-		if (user.getStatusesCount() < rule.getMinUpdates()) {
-			log.fine("Updates is nOK");
-			ok = false;
-		}
-
-		// Chech Username
-		if (rule.getExcludedWordsInNames() != null) {
-
-			for (String excludeWord : rule.getExcludedWordsInNames()) {
-				if (user.getScreenName().contains(excludeWord)) {
-					ok = false;
-					break;
-				}
-
-			}
-		}
-		log.fine("User can be followed back? " + ok);
-		return ok;
-
-	}
-
+	
 	
 
 }

@@ -33,7 +33,7 @@ public abstract class AbstractRuleRunner {
 	public abstract void execute() throws Exception;
 	
 	protected User getTwitterUser(Integer userId) throws Exception {
-		log.fine("canFollowBack:" + userId);
+		log.fine("Getting User:" + userId);
 
 		TwitterAccountDTO authAccount = TwitterAccountDAO
 				.createAuthorizedAccountDto(persona.getTwitterAccount());
@@ -50,6 +50,23 @@ public abstract class AbstractRuleRunner {
 
 	}
 
+	protected User getTwitterUser(String screenName) throws Exception {
+		log.fine("Getting User:" + screenName);
+
+		TwitterAccountDTO authAccount = TwitterAccountDAO
+				.createAuthorizedAccountDto(persona.getTwitterAccount());
+		PersonaDTO personaDto = DataUtils.createPersonaDto(this.persona,
+				authAccount);
+		// Get the use
+
+		TwitterServiceAdapter twitterService = TwitterServiceAdapter
+				.get(personaDto.getTwitterAccount());
+
+		User user = twitterService.getUserInfo(screenName);
+
+		return user;
+
+	}
 
 	
 	protected void updateRateLimist(TwitterServiceAdapter twService) {
@@ -73,6 +90,53 @@ public abstract class AbstractRuleRunner {
 		}
 
 	}
+	
+	protected boolean canFollow(User user) {
+		log.fine("Cheching user: " + user.getScreenName());
+		log.fine("Check number of updates..." + user.getStatusesCount());
+		log.fine("Check number of friends..." + user.getFriendsCount());
+		log.fine("Check number of followers..." + user.getFollowersCount());
+
+		boolean ok = true;
+
+		if (user.getFollowersCount() != 0) {
+			// Get the rule ratio
+			double currentRatio = Double.valueOf(user.getFriendsCount())
+					/ Double.valueOf(user.getFollowersCount());
+
+			double ratio = currentRatio * 100;
+
+			if (ratio > rule.getMaxRatio()) {
+				log.fine("Ratio is nOk");
+				ok = false;
+			}
+
+		} else {
+			ok = false;
+			log.fine("No followers");
+		}
+
+		if (user.getStatusesCount() < rule.getMinUpdates()) {
+			log.fine("Updates is nOK");
+			ok = false;
+		}
+
+		// Chech Username
+		if (rule.getExcludedWordsInNames() != null) {
+
+			for (String excludeWord : rule.getExcludedWordsInNames()) {
+				if (user.getScreenName().contains(excludeWord)) {
+					ok = false;
+					break;
+				}
+
+			}
+		}
+		log.fine("User can be followed back? " + ok);
+		return ok;
+
+	}
+
 
 	public void setRule(AutoFollowRuleDO rule) {
 		this.rule = rule;

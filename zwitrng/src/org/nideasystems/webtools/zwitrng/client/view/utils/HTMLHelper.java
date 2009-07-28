@@ -171,6 +171,11 @@ public class HTMLHelper {
 
 	public static String[] getLines(String excludeUserNames) {
 		String[] exStrings = excludeUserNames.split("\\n");
+		for (int i=0; i<exStrings.length; i++ ) {
+			GWT.log("String: "+exStrings[i], null);
+			exStrings[i] = exStrings[i].trim();
+			GWT.log("String: "+exStrings[i], null);
+		}
 		// return HTMLWidgetUtils.getLines(excludeUserNames);
 		return exStrings;
 	}

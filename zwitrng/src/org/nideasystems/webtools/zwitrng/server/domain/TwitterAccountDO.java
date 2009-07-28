@@ -2,6 +2,7 @@ package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -14,9 +15,8 @@ import javax.jdo.annotations.PrimaryKey;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
-public class TwitterAccountDO implements Serializable{
+public class TwitterAccountDO implements Serializable {
 
-	
 	/**
 	 * 
 	 */
@@ -28,19 +28,19 @@ public class TwitterAccountDO implements Serializable{
 
 	@Persistent
 	private String twitterName;
-	
+
 	@Persistent
 	private String oAuthToken;
-	
+
 	@Persistent
 	private String oAuthTokenSecret;
 
 	@Persistent
 	private String oAuthLoginUrl;
 
-	@Persistent 
+	@Persistent
 	private RateLimitsDO rateLimits;
-	
+
 	@Persistent
 	private Set<Integer> followersIds;
 
@@ -49,20 +49,94 @@ public class TwitterAccountDO implements Serializable{
 
 	@Persistent
 	private Set<Integer> blockingIds;
-	
+
 	@Persistent
 	private List<Integer> autoFollowBackIdsQueue;
 
 	@Persistent
 	private List<Integer> autoUnFollowBackIdsQueue;
 
+	@Persistent
+	private List<String> autoFollowScreenNamesQueue;
 
 	@Persistent
 	private Set<Integer> ignoreUsersIds;;
 	@Persistent
 	private Set<Integer> autoUnfollowedIds;
-	
-	
+
+	@Persistent
+	private Long lastCreateAutoUnfollowQueueTime;
+
+	@Persistent
+	private Long lastCreateAutoFollowQueueTime;
+
+	@Persistent
+	private Long lastCreateAutoFollowBackQueueTime;
+
+	@Persistent
+	private Long lastAutoFollowBackTime;
+
+	@Persistent
+	private Long lastAutoFollowTime;
+
+	@Persistent
+	private Long lastAutoUnFollowBackTime;
+
+	@Persistent
+	private Long lastRTTimeStamp;
+	@Persistent
+	private Set<String> autoFollowedScreenNames;
+
+	public Long getLastCreateAutoUnfollowQueueTime() {
+		return lastCreateAutoUnfollowQueueTime;
+	}
+
+	public void setLastCreateAutoUnfollowQueueTime(
+			Long lastCreateAutoUnfollowQueueTime) {
+		this.lastCreateAutoUnfollowQueueTime = lastCreateAutoUnfollowQueueTime;
+	}
+
+	public Long getLastCreateAutoFollowQueueTime() {
+		return lastCreateAutoFollowQueueTime;
+	}
+
+	public void setLastCreateAutoFollowQueueTime(
+			Long lastCreateAutoFollowQueueTime) {
+		this.lastCreateAutoFollowQueueTime = lastCreateAutoFollowQueueTime;
+	}
+
+	public Long getLastCreateAutoFollowBackQueueTime() {
+		return lastCreateAutoFollowBackQueueTime;
+	}
+
+	public void setLastCreateAutoFollowBackQueueTime(
+			Long lastCreateAutoFollowBackQueueTime) {
+		this.lastCreateAutoFollowBackQueueTime = lastCreateAutoFollowBackQueueTime;
+	}
+
+	public Long getLastAutoFollowBackTime() {
+		return lastAutoFollowBackTime;
+	}
+
+	public void setLastAutoFollowBackTime(Long lastAutoFollowBackTime) {
+		this.lastAutoFollowBackTime = lastAutoFollowBackTime;
+	}
+
+	public Long getLastAutoFollowTime() {
+		return lastAutoFollowTime;
+	}
+
+	public void setLastAutoFollowTime(Long lastAutoFollowTime) {
+		this.lastAutoFollowTime = lastAutoFollowTime;
+	}
+
+	public Long getLastAutoUnFollowBackTime() {
+		return lastAutoUnFollowBackTime;
+	}
+
+	public void setLastAutoUnFollowBackTime(Long lastAutoUnFollowBackTime) {
+		this.lastAutoUnFollowBackTime = lastAutoUnFollowBackTime;
+	}
 
 	@Persistent
 	private Integer id;
@@ -70,7 +144,6 @@ public class TwitterAccountDO implements Serializable{
 	@Persistent
 	private Integer autoFollowedCount;
 
-	
 	public void setTwitterName(String twitterName) {
 		this.twitterName = twitterName;
 	}
@@ -143,8 +216,6 @@ public class TwitterAccountDO implements Serializable{
 		return blockingIds;
 	}
 
-
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
@@ -155,7 +226,7 @@ public class TwitterAccountDO implements Serializable{
 
 	public void addFollowingId(Integer integer) {
 		this.followingIds.add(integer);
-		
+
 	}
 
 	public void setAutoFollowBackIdsQueue(List<Integer> autoFollowBackIdsQueue) {
@@ -165,9 +236,9 @@ public class TwitterAccountDO implements Serializable{
 	public List<Integer> getAutoFollowBackIdsQueue() {
 		return autoFollowBackIdsQueue;
 	}
-	
+
 	public void addFollowBackId(Integer id) {
-		if (this.autoFollowBackIdsQueue==null) {
+		if (this.autoFollowBackIdsQueue == null) {
 			autoFollowBackIdsQueue = new ArrayList<Integer>();
 		}
 		this.autoFollowBackIdsQueue.add(id);
@@ -189,14 +260,14 @@ public class TwitterAccountDO implements Serializable{
 		return autoFollowedCount;
 	}
 
-	public void setAutoUnFollowBackIdsQueue(List<Integer> autoUnFollowBackIdsQueue) {
+	public void setAutoUnFollowBackIdsQueue(
+			List<Integer> autoUnFollowBackIdsQueue) {
 		this.autoUnFollowBackIdsQueue = autoUnFollowBackIdsQueue;
 	}
 
 	public List<Integer> getAutoUnFollowBackIdsQueue() {
 		return autoUnFollowBackIdsQueue;
 	}
-
 
 	public void setAutoUnfollowedIds(Set<Integer> autoUnfollowedIds) {
 		this.autoUnfollowedIds = autoUnfollowedIds;
@@ -206,9 +277,28 @@ public class TwitterAccountDO implements Serializable{
 		return autoUnfollowedIds;
 	}
 
-	
+	public void setAutoFollowScreenNamesQueue(List<String> autoFollowIdsQueue) {
+		this.autoFollowScreenNamesQueue = autoFollowIdsQueue;
+	}
 
-	
+	public List<String> getAutoFollowScreenNamesQueue() {
+		return autoFollowScreenNamesQueue;
+	}
 
-	
+	public void setAutoFollowedScreenNames(Set<String> autoFollowedScreenNames) {
+		this.autoFollowedScreenNames = autoFollowedScreenNames;
+	}
+
+	public Set<String> getAutoFollowedScreenNames() {
+		return autoFollowedScreenNames;
+	}
+
+	public void setLastRTTimeStamp(Long lastRTTimeStamp) {
+		this.lastRTTimeStamp = lastRTTimeStamp;
+	}
+
+	public Long getLastRTTimeStamp() {
+		return lastRTTimeStamp;
+	}
+
 }
