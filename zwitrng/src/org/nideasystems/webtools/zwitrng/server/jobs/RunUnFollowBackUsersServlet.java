@@ -51,7 +51,7 @@ public class RunUnFollowBackUsersServlet extends AbstractHttpServlet {
 			}
 		}
 		
-		try {
+		/*try {
 			startTransaction(true);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -97,9 +97,9 @@ public class RunUnFollowBackUsersServlet extends AbstractHttpServlet {
 				//Test
 				
 				//Synch queu to sync
-				/*TwitterAccountDO twitterAccount = persona.getTwitterAccount();
+				TwitterAccountDO twitterAccount = persona.getTwitterAccount();
 				TwitterAccountDTO authorizedTwitterAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
-				getBusinessHelper().getTwitterPojo().updateFollowBackUsersIdQueue(twitterAccount, authorizedTwitterAccount);*/
+				getBusinessHelper().getTwitterPojo().updateFollowBackUsersIdQueue(twitterAccount, authorizedTwitterAccount);
 				
 				AutoFollowRuleDO rule = getBusinessHelper().getPersonaDao().getAutoFollowRule(persona, AutoFollowTriggerType.UNFOLLOW);
 				
@@ -138,7 +138,7 @@ public class RunUnFollowBackUsersServlet extends AbstractHttpServlet {
 		}
 		
 		endTransaction();
-		
+		*/
 
 		resp.setContentType("text/html");
 		if (TESTING) {

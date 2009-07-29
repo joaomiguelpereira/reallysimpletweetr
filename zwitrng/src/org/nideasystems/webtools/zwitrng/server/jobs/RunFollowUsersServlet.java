@@ -44,7 +44,7 @@ public class RunFollowUsersServlet extends AbstractHttpServlet {
 			}
 		}
 
-		try {
+		/*try {
 			startTransaction(true);
 		} catch (Exception e1) {
 			// TODO Auto-generated catch block
@@ -190,7 +190,7 @@ public class RunFollowUsersServlet extends AbstractHttpServlet {
 		}
 
 		endTransaction();
-
+*/
 		resp.setContentType("text/html");
 		if (TESTING) {
 			resp.getWriter().println(outBuffer.toString());

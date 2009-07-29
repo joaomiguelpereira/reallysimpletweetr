@@ -2,7 +2,6 @@ package org.nideasystems.webtools.zwitrng.server.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -63,7 +62,7 @@ public class TwitterAccountDO implements Serializable {
 	private Set<Integer> ignoreUsersIds;;
 	@Persistent
 	private Set<Integer> autoUnfollowedIds;
-
+/*
 	@Persistent
 	private Long lastCreateAutoUnfollowQueueTime;
 
@@ -81,13 +80,19 @@ public class TwitterAccountDO implements Serializable {
 
 	@Persistent
 	private Long lastAutoUnFollowBackTime;
-
+*/
 	@Persistent
 	private Long lastRTTimeStamp;
 	@Persistent
+	
 	private Set<String> autoFollowedScreenNames;
+	@Persistent
+	private List<Integer> historicalFollowing;
+	@Persistent
+	private List<Integer> historicalFollowers;
+	
 
-	public Long getLastCreateAutoUnfollowQueueTime() {
+	/*public Long getLastCreateAutoUnfollowQueueTime() {
 		return lastCreateAutoUnfollowQueueTime;
 	}
 
@@ -136,7 +141,7 @@ public class TwitterAccountDO implements Serializable {
 
 	public void setLastAutoUnFollowBackTime(Long lastAutoUnFollowBackTime) {
 		this.lastAutoUnFollowBackTime = lastAutoUnFollowBackTime;
-	}
+	}*/
 
 	@Persistent
 	private Integer id;
@@ -301,4 +306,19 @@ public class TwitterAccountDO implements Serializable {
 		return lastRTTimeStamp;
 	}
 
+	public void setHistoricalFollowing(List<Integer> historicalFollowing) {
+		this.historicalFollowing = historicalFollowing;
+	}
+
+	public List<Integer> getHistoricalFollowing() {
+		return historicalFollowing;
+	}
+
+	public void setHistoricalFollowers(List<Integer> historicalFollowers) {
+		this.historicalFollowers = historicalFollowers;
+	}
+
+	public List<Integer> getHistoricalFollowers() {
+		return historicalFollowers;
+	}
 }

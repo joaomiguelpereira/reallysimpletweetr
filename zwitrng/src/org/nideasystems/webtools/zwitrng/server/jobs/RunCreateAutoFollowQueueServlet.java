@@ -35,7 +35,7 @@ public class RunCreateAutoFollowQueueServlet extends AbstractHttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		log.info("=============Running Job: Create Auto  Follow Queue=============");
-		// Check headers
+	/*	// Check headers
 		outBuffer = new StringBuffer();
 
 		if (!TESTING) {
@@ -114,7 +114,7 @@ public class RunCreateAutoFollowQueueServlet extends AbstractHttpServlet {
 		
 		endTransaction();
 		
-
+*/
 		resp.setContentType("text/html");
 		if (TESTING) {
 			resp.getWriter().println(outBuffer.toString());

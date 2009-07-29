@@ -36,6 +36,8 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 			autoFollowedUsersScreenNames = new HashSet<String>();
 		}
 
+		//Keep my ratio low, please
+		
 		if (queue != null) {
 			int maxFollowing = 5;
 			List<String> removeList = new ArrayList<String>();
