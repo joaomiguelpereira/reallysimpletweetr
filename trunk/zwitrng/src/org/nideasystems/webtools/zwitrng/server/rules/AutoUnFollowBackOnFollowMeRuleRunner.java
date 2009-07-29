@@ -92,6 +92,7 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 					authAccount);
 
 			log.info("Unfollowing user: " + user.getScreenName());
+			//check if the user is really not following me
 			// Try to send a message
 			unfollow(personaDto, user);
 			if (rule.isSendDirectMessage()) {

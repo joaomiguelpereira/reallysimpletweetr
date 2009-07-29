@@ -311,75 +311,7 @@ public class PersonaPojo extends AbstractPojo {
 			throw new Exception("Persona Not found");
 		}
 
-		/*
-		 * User twitterUser = null; TwitterAccountDTO authorizedTwitterAccount =
-		 * null;
-		 * 
-		 * if (persona.getTwitterAccount() != null) { //Check if is
-		 * authenticated //Create an TwitterAccountDTO
-		 * 
-		 * authorizedTwitterAccount =
-		 * TwitterAccountDAO.createAuthorizedAccountDto
-		 * (persona.getTwitterAccount());
-		 * 
-		 * //authorizedTwitterAccount =
-		 * DataUtils.twitterAccountDtoFromDo(persona.getTwitterAccount()); //try
-		 * to authenticate the User try { twitterUser =
-		 * businessHelper.getTwitterPojo
-		 * ().getAuthenticatedUser(authorizedTwitterAccount); //twitterUser =
-		 * TwitterServiceAdapter.get().getUserInfo(authorizedTwitterAccount); }
-		 * catch (Exception e) { //Nothing to do here }
-		 * 
-		 * }
-		 * 
-		 * if (twitterUser != null ) { //authorizedTwitterAccount =
-		 * DataUtils.createAuthenticatedTwitterAccount();
-		 * authorizedTwitterAccount =
-		 * DataUtils.createAutenticatedTwitterAccountDto(twitterUser,
-		 * authorizedTwitterAccount);
-		 * authorizedTwitterAccount.setIsOAuthenticated(true);
-		 * 
-		 * 
-		 * RateLimitsDO rateLimisDo =
-		 * persona.getTwitterAccount().getRateLimits(); RateLimitsDTO
-		 * rateLimitsDto = new RateLimitsDTO(); if ( rateLimisDo!= null) {
-		 * rateLimitsDto.setRateLimitLimit(rateLimisDo.getRateLimitLimit());
-		 * rateLimitsDto
-		 * .setRateLimitRemaining(rateLimisDo.getRateLimitRemaining());
-		 * rateLimitsDto.setRateLimitReset(rateLimisDo.getRateLimitReset()); }
-		 * authorizedTwitterAccount.setRateLimits(rateLimitsDto);
-		 * 
-		 * 
-		 * authorizedTwitterAccount.setNewFollowers(getNewFollowersCount(persona,
-		 * authorizedTwitterAccount));
-		 * authorizedTwitterAccount.setNewFriends(getNewFriendsCount
-		 * (persona,authorizedTwitterAccount));
-		 * authorizedTwitterAccount.setNewBlocking
-		 * (getNewBlockingCount(persona,authorizedTwitterAccount));
-		 * 
-		 * authorizedTwitterAccount.setAutoFollowedUsersSize(persona.
-		 * getTwitterAccount
-		 * ().getAutoFollowedCount()!=null?persona.getTwitterAccount
-		 * 
-		 * 
-		 * authorizedTwitterAccount.setFollowBackQueueSize(persona.getTwitterAccount
-		 * ().getAutoFollowBackIdsQueue()!=null?persona.getTwitterAccount().
-		 * getAutoFollowBackIdsQueue().size():0);
-		 * authorizedTwitterAccount.setIgnoreUsersListSize
-		 * (persona.getTwitterAccount
-		 * ().getIgnoreUsersIds()!=null?persona.getTwitterAccount
-		 * ().getIgnoreUsersIds().size():0);
-		 * authorizedTwitterAccount.setAutoUnfollowQueueSize
-		 * (persona.getTwitterAccount
-		 * ().getAutoUnFollowBackIdsQueue()!=null?persona
-		 * .getTwitterAccount().getAutoUnFollowBackIdsQueue().size():0);
-		 * 
-		 * 
-		 * } else { authorizedTwitterAccount =
-		 * TwitterServiceAdapter.createPreAuthorizedTwitterAccount(); }
-		 * 
-		 * return DataUtils.createPersonaDto(persona, authorizedTwitterAccount);
-		 */return getPersonaDto(persona);
+		return getPersonaDto(persona);
 	}
 
 }

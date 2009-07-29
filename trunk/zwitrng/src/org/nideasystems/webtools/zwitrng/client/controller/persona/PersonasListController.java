@@ -29,8 +29,6 @@ public class PersonasListController extends
 	private PersonaController currentPersonaController = null;
 	private Map<String, PersonaController> personaControllers = new HashMap<String, PersonaController>();
 
-	
-
 	// private DefaultHomeView homeView;
 
 	/**
@@ -156,9 +154,10 @@ public class PersonasListController extends
 		}
 
 		personaControllers.put(persona.getName(), personaController);
-		
-		MainController.getInstance().addPersonaTabTitle(persona.getName(), tabTitle);
-		
+
+		MainController.getInstance().addPersonaTabTitle(persona.getName(),
+				tabTitle);
+
 		MainController.getInstance().getHomeView().addPersona(persona);
 	}
 
@@ -175,7 +174,7 @@ public class PersonasListController extends
 			this.personaViews.remove(personaName);
 			personaControllers.remove(personaName);
 		}
-		//Get the Home view and remove it also
+		// Get the Home view and remove it also
 		MainController.getInstance().getHomeView().removePersona(personaName);
 
 	}
@@ -187,7 +186,9 @@ public class PersonasListController extends
 	 */
 	public void deletePersona(PersonaDTO persona) {
 
-		if (Window.confirm("Are you sure you want to remove the account "+persona.getTwitterAccount().getTwitterScreenName()+" from the system?")) {
+		if (Window.confirm("Are you sure you want to remove the account "
+				+ persona.getTwitterAccount().getTwitterScreenName()
+				+ " from the system?")) {
 			// make the server call
 			startProcessing();
 			try {
@@ -279,8 +280,12 @@ public class PersonasListController extends
 			String userScreenName) {
 		for (PersonaController pController : this.personaControllers.values()) {
 			if (pController.getTwitterAccountController().getModel()
-					.getTwitterScreenName().endsWith(userScreenName)) {
-				return pController.getTwitterAccountController();
+					.getTwitterScreenName() != null) {
+				if (pController.getTwitterAccountController().getModel()
+						.getTwitterScreenName().endsWith(userScreenName)) {
+					return pController.getTwitterAccountController();
+				}
+
 			}
 		}
 
@@ -319,8 +324,8 @@ public class PersonasListController extends
 			final EditableTwitterAccountItem callback) {
 		try {
 
-			getServiceManager().getRPCService().synchronizeTwitterAccount (persona,
-					new AsyncCallback<Void>() {
+			getServiceManager().getRPCService().synchronizeTwitterAccount(
+					persona, new AsyncCallback<Void>() {
 
 						@Override
 						public void onFailure(Throwable caught) {

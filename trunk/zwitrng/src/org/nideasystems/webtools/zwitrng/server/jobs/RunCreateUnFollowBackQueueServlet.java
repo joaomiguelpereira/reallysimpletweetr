@@ -45,7 +45,7 @@ public class RunCreateUnFollowBackQueueServlet extends AbstractHttpServlet {
 			}
 		}
 		
-		try {
+	/*	try {
 			startTransaction(true);
 		} catch (Exception e1) {
 			log.severe("Error Starting transaction");
@@ -103,7 +103,7 @@ public class RunCreateUnFollowBackQueueServlet extends AbstractHttpServlet {
 			break;
 		}
 		
-		endTransaction();
+		endTransaction();*/
 		
 
 		resp.setContentType("text/html");

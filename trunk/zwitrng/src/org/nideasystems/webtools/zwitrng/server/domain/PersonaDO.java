@@ -14,6 +14,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+
+
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -67,6 +69,9 @@ public class PersonaDO implements Serializable {
 	@Persistent(mappedBy = "persona", defaultFetchGroup = "true")
 	@Order(extensions = @Extension(vendorName = "datanucleus", key = "list-ordering", value = "created desc"))
 	private List<AutoFollowRuleDO> autoFollowRules;
+	
+	@Persistent
+	private List<PersonaJobDefDO> jobDefs;
 
 	public void setName(String name) {
 		this.name = name;
@@ -214,6 +219,17 @@ public class PersonaDO implements Serializable {
 	public PersonaStatus getStatus() {
 		return status;
 	}
+
+	public void setJobDefs(List<PersonaJobDefDO> jobDefs) {
+		this.jobDefs = jobDefs;
+	}
+
+	public List<PersonaJobDefDO> getJobDefs() {
+		return jobDefs;
+	}
+
+	
+	
 
 	
 

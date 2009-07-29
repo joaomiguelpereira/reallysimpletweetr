@@ -518,7 +518,7 @@ public class TwitterPojo extends AbstractPojo {
 		 * persona.setTwitterAccount(twitterAccount); }
 		 */
 		twitterAccount.setOAuthToken(authorizedTwitterAccount.getOAuthToken());
-		twitterAccount.setOAuthToken(authorizedTwitterAccount.getOAuthToken());
+		twitterAccount.setOAuthTokenSecret(authorizedTwitterAccount.getOAuthTokenSecret());
 		twitterAccount.setId(authorizedTwitterAccount.getId());
 
 	}
