@@ -11,7 +11,7 @@ public class CreateAutoFollowQueueJob  extends  AbstractJob {
 
 	@Override
 	public void execute() throws Exception {
-		log.fine("Executing Job: "+this.getClass().getName());
+		log.fine("> > Persona:"+persona.getName()+" executing Job : "+this.getClass().getSimpleName());
 		TwitterAccountDO twitterAccount = persona.getTwitterAccount();
 		TwitterAccountDTO authorizedTwitterAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
 		
@@ -30,7 +30,7 @@ public class CreateAutoFollowQueueJob  extends  AbstractJob {
 			log.fine("Persona: "+persona.getName());
 			log.fine("Current size of follow Queue:"+twitterAccount.getAutoFollowScreenNamesQueue().size());
 		}
-
+		log.fine("> > END Persona:"+persona.getName()+" executing Job : "+this.getClass().getSimpleName());
 	}
 
 }

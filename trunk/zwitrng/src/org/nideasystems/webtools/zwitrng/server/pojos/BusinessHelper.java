@@ -4,11 +4,9 @@ import java.util.logging.Logger;
 
 import javax.jdo.PersistenceManager;
 
-import org.nideasystems.webtools.zwitrng.client.services.TwitterPersonaService;
-import org.nideasystems.webtools.zwitrng.client.services.TwitterService;
-import org.nideasystems.webtools.zwitrng.server.domain.FeedSetDO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.CampaignDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.FeedSetDAO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.JobsQueueDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.PersonaDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.TemplateDAO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
@@ -18,6 +16,15 @@ public class BusinessHelper {
 	private static final Logger log = Logger.getLogger(BusinessHelper.class
 			.getName());
 	private PersistenceManager pm = null;
+
+	// Twitter Pojos
+	private ThreadLocal<JobsQueueuPojo> jobsQueuePojo = new ThreadLocal<JobsQueueuPojo>() {
+		@Override
+		protected JobsQueueuPojo initialValue() {
+			return new JobsQueueuPojo();
+		}
+
+	};
 
 	// Twitter Pojos
 	private ThreadLocal<TwitterPojo> twitterPojo = new ThreadLocal<TwitterPojo>() {
@@ -67,12 +74,21 @@ public class BusinessHelper {
 
 	};
 
+	
 	// Persona DAO
-
 	private ThreadLocal<PersonaDAO> personaDao = new ThreadLocal<PersonaDAO>() {
 		@Override
 		protected PersonaDAO initialValue() {
 			return new PersonaDAO();
+		}
+	};
+
+	
+	// jobsQueue DAO
+	private ThreadLocal<JobsQueueDAO> jobsQueueDao= new ThreadLocal<JobsQueueDAO>() {
+		@Override
+		protected JobsQueueDAO initialValue() {
+			return new JobsQueueDAO();
 		}
 	};
 
@@ -200,6 +216,12 @@ public class BusinessHelper {
 		return dao;
 	}
 
+	public JobsQueueDAO getJobsQueueDao() {
+		JobsQueueDAO dao = jobsQueueDao.get();
+		dao.setPm(pm);
+		log.fine("Returning DAO " + dao.hashCode());
+		return dao;
+	}
 	public TwitterPojo getTwitterPojo() {
 		TwitterPojo pojo = twitterPojo.get();
 		pojo.setBusinessHelper(this);
@@ -215,6 +237,12 @@ public class BusinessHelper {
 
 	public RulesPojo getRulesPojo() {
 		RulesPojo pojo = rulesPojo .get();
+		pojo.setBusinessHelper(this);
+		return pojo;
+	}
+
+	public JobsQueueuPojo getJobsQueuePojo() {
+		JobsQueueuPojo pojo = jobsQueuePojo.get();
 		pojo.setBusinessHelper(this);
 		return pojo;
 	}

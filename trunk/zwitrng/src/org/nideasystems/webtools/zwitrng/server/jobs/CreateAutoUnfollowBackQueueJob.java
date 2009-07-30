@@ -9,7 +9,7 @@ public class CreateAutoUnfollowBackQueueJob extends AbstractJob {
 
 	@Override
 	public void execute() throws Exception {
-		log.fine("Executing Job: " + this.getClass().getName());
+		log.fine("> > Persona:"+persona.getName()+" executing Job : "+this.getClass().getSimpleName());
 
 		// Synch queu to sync
 		TwitterAccountDO twitterAccount = persona.getTwitterAccount();
@@ -28,7 +28,7 @@ public class CreateAutoUnfollowBackQueueJob extends AbstractJob {
 			log.fine("Current size of unfollow Queue:"
 					+ twitterAccount.getAutoUnFollowBackIdsQueue().size());
 		}
-
+		log.fine("> > END Persona:"+persona.getName()+" executing Job : "+this.getClass().getSimpleName());
 	}
 
 }

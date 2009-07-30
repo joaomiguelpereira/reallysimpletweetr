@@ -92,10 +92,10 @@ public abstract class AbstractRuleRunner {
 	}
 	
 	protected boolean canFollow(User user) {
-		log.fine("Cheching user: " + user.getScreenName());
-		log.fine("Check number of updates..." + user.getStatusesCount());
-		log.fine("Check number of friends..." + user.getFriendsCount());
-		log.fine("Check number of followers..." + user.getFollowersCount());
+		log.fine("Persona: "+persona.getName()+" Cheching user: " + user.getScreenName());
+		log.fine("Persona: "+persona.getName()+" Check number of updates..." + user.getStatusesCount());
+		log.fine("Persona: "+persona.getName()+" Check number of friends..." + user.getFriendsCount());
+		log.fine("Persona: "+persona.getName()+" Check number of followers..." + user.getFollowersCount());
 
 		boolean ok = true;
 
@@ -107,17 +107,17 @@ public abstract class AbstractRuleRunner {
 			double ratio = currentRatio * 100;
 
 			if (ratio > rule.getMaxRatio()) {
-				log.fine("Ratio is nOk");
+				log.fine("Persona: "+persona.getName()+" Ratio is nOk for user "+ user.getScreenName());
 				ok = false;
 			}
 
 		} else {
 			ok = false;
-			log.fine("No followers");
+			log.fine("Persona: "+persona.getName()+" No followers for user "+ user.getScreenName());
 		}
 
 		if (user.getStatusesCount() < rule.getMinUpdates()) {
-			log.fine("Updates is nOK");
+			log.fine("Persona: "+persona.getName()+" Updates is nOK for user "+ user.getScreenName());
 			ok = false;
 		}
 
@@ -132,7 +132,7 @@ public abstract class AbstractRuleRunner {
 
 			}
 		}
-		log.fine("User can be followed back? " + ok);
+		log.fine("Persona: "+persona.getName()+" User can be followed back?  for user "+ user.getScreenName()+": " + ok);
 		return ok;
 
 	}

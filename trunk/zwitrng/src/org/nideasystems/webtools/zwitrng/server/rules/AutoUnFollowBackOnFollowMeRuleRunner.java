@@ -32,18 +32,18 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 	public void execute() throws Exception {
 
-		// get the unfollow back queue
-
+		log.fine("> > Persona: "+persona.getName()+" executing AutoUnfollowBack Users");
 		List<Integer> queue = persona.getTwitterAccount()
 				.getAutoUnFollowBackIdsQueue();
+		
 		Set<Integer> unfollowedIds = persona.getTwitterAccount().getAutoUnfollowedIds();
 
 		if (unfollowedIds==null) {
 			unfollowedIds = new HashSet<Integer>();
 		}
 		
-		Set<Integer> followingIds = persona.getTwitterAccount()
-				.getFollowingIds();
+		/*Set<Integer> followingIds = persona.getTwitterAccount()
+				.getFollowingIds();*/
 
 		int maxAutoUnFollow = 5; // =5*10 per hour
 
@@ -54,18 +54,24 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 			for (int i = 0; i < maxAutoUnFollow; i++) {
 				int userId = queue.get(i);
-				// queue.remove(i);
+				log.fine("> > Persona:" +persona.getName()+" will try to unfollow user id: "+userId );
 				removeList.add(userId);
 				// followingIds.remove(userId);
 				unfollowedIds.add(userId);
+				//check if are friends 
 				
-				if (processUser(userId)) {
-					log.fine("User unfollowed" + userId);
-					followingIds.remove(userId);
+				if (persona.getTwitterAccount().getFollowingIds().contains(userId)) {
+					if (processUser(userId)) {
+						log.fine("> > Persona:"+persona.getName()+" unfollowed user " + userId);
+						//followingIds.remove(userId);
+					} else {
+						log.fine("> > Persona:"+persona.getName()+" could NOT unfollow user " + userId);
+					}
+					
 				} else {
-					log.fine("Could not unfollow User" + userId);
-
+					log.fine("> > Persona:"+persona.getName()+" do not have the user in friends list");
 				}
+
 			}
 			for (Integer remId : removeList) {
 				queue.remove(remId);
@@ -75,7 +81,7 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 		persona.getTwitterAccount().setAutoUnFollowBackIdsQueue(queue);
 		persona.getTwitterAccount().setAutoUnfollowedIds(unfollowedIds);
-		persona.getTwitterAccount().setFollowingIds(followingIds);
+		//persona.getTwitterAccount().setFollowingIds(followingIds);
 
 	}
 

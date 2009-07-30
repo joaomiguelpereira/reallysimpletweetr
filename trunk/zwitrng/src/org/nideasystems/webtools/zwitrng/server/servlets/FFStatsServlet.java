@@ -48,12 +48,17 @@ public class FFStatsServlet extends AbstractHttpServlet {
 					historicalFollowing = new ArrayList<Integer>();
 				}
 
-				outBuffer.append("<h1>" + persona.getName() + "</h1>");
-				outBuffer.append("<div>Following:" + historicalFollowing.size()
-						+ "</div>");
-				outBuffer
-						.append("<table><tr><td>period</td><td>elements</td></tr>");
-
+				outBuffer.append("<h1> Stats for " + persona.getName() + "</h1>");
+				outBuffer.append("<div>Followers: "+persona.getTwitterAccount().getFollowersIds().size()+"</div>");
+				outBuffer.append("<div>Following: "+persona.getTwitterAccount().getFollowingIds().size()+"</div>");
+				outBuffer.append("<div>Auto Followed Count: "+persona.getTwitterAccount().getAutoFollowedScreenNames()!=null?persona.getTwitterAccount().getAutoFollowedScreenNames().size():"Not Set"+"</div>");
+				outBuffer.append("<div>Auto Follow Back: "+persona.getTwitterAccount().getAutoFollowedCount()!=null?persona.getTwitterAccount().getAutoFollowedCount():"Not Set"+"</div>");
+				outBuffer.append("<div>Auto Unfollow Back: "+persona.getTwitterAccount().getAutoUnfollowedIds()!=null?persona.getTwitterAccount().getAutoUnfollowedIds().size():"Not Set"+"</div>");
+				
+				outBuffer.append("<div>Auto Follow Back Queue Size : "+persona.getTwitterAccount().getAutoFollowBackIdsQueue()!=null?persona.getTwitterAccount().getAutoFollowBackIdsQueue().size():"Not Set"+"</div>");
+				outBuffer.append("<div>Auto UnFollow Back Queue Size : "+persona.getTwitterAccount().getAutoUnFollowBackIdsQueue()!=null?persona.getTwitterAccount().getAutoUnFollowBackIdsQueue().size():"Not Set"+"</div>");
+				outBuffer.append("<div>Auto Follow Queue Size : "+persona.getTwitterAccount().getAutoFollowScreenNamesQueue()!=null?persona.getTwitterAccount().getAutoFollowScreenNamesQueue().size():"Not Set"+"</div>");
+				
 				//get the min of both
 				
 				int minFollowing = 999999999;
@@ -78,18 +83,12 @@ public class FFStatsServlet extends AbstractHttpServlet {
 							following.append(",");
 						}	
 					}
-					
-					outBuffer.append("<tr><td>" + i + "</td><td>"
-							+ historicalFollowing.get(i) + "</td></tr>");
 				}
 				
 
-				outBuffer.append("</table>");
 
 				outBuffer.append("<div>Followers:" + historicalFollowers.size()
 						+ "</div>");
-				outBuffer
-						.append("<table><tr><td>period</td><td>elements</td></tr>");
 
 				for (int i = 0; i < historicalFollowers.size(); i++) {
 
@@ -107,10 +106,7 @@ public class FFStatsServlet extends AbstractHttpServlet {
 						}
 							
 					}
-					outBuffer.append("<tr><td>" + i + "</td><td>"
-							+ historicalFollowers.get(i) + "</td></tr>");
 				}
-				outBuffer.append("</table>");
 				int slop = 0;
 				int start = 0;
 				if ( maxFollowers>maxFollowing) {

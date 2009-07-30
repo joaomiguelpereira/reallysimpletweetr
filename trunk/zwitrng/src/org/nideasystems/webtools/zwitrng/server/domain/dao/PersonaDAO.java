@@ -22,6 +22,9 @@ import org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType;
 import org.nideasystems.webtools.zwitrng.shared.model.FilterCriteriaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 
+import com.google.appengine.api.datastore.Key;
+import com.google.appengine.api.datastore.KeyFactory;
+
 public class PersonaDAO extends BaseDAO {
 
 	public PersonaDAO() {
@@ -57,7 +60,6 @@ public class PersonaDAO extends BaseDAO {
 
 	}
 
-	
 	public List<PersonaDO> findAllPersonas(String email) throws Exception {
 
 		Query queryPersona = pm.newQuery(PersonaDO.class);
@@ -116,13 +118,13 @@ public class PersonaDAO extends BaseDAO {
 
 		// Create a PersonaDO from a DTO
 		PersonaDO personaDom = new PersonaDO();
-		
+
 		personaDom.setCreated(new Date());
 		personaDom.setModified(new Date());
-		
+
 		personaDom.setName(personaDto.getName());
 		personaDom.setUserEmail(email);
-		//No campaigns
+		// No campaigns
 		personaDom.setCampaigns(new ArrayList<CampaignDO>());
 		personaDom.setFeedSets(new ArrayList<FeedSetDO>());
 		personaDom.setFilters(new ArrayList<FilterDO>());
@@ -130,8 +132,8 @@ public class PersonaDAO extends BaseDAO {
 		personaDom.setTemplates(new ArrayList<TemplateDO>());
 		personaDom.setTwitterAccount(new TwitterAccountDO());
 		personaDom.setStatus(PersonaStatus.ACTIVE);
-		
-		//PersonaDO personaToSave = DataUtils.personaDofromDto(persona, email);
+
+		// PersonaDO personaToSave = DataUtils.personaDofromDto(persona, email);
 		// Make the Object Persistent
 		try {
 			pm.makePersistent(personaDom);
@@ -144,7 +146,6 @@ public class PersonaDAO extends BaseDAO {
 		return personaDom;
 
 	}
-
 
 	/**
 	 * @deprecated
@@ -210,29 +211,41 @@ public class PersonaDAO extends BaseDAO {
 
 	}
 
-	public AutoFollowRuleDO getAutoFollowRule(PersonaDO parentPersona, AutoFollowTriggerType on_follow_me) throws Exception {
-		
+	public AutoFollowRuleDO getAutoFollowRule(PersonaDO parentPersona,
+			AutoFollowTriggerType on_follow_me) throws Exception {
+
 		Query autoFollowRule = pm.newQuery(AutoFollowRuleDO.class);
-		autoFollowRule.setFilter("triggerType==theTriggerType && persona==parentPersona");
-		
-		autoFollowRule.declareParameters("org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType theTriggerType, PersonaDO parentPersona");
+		autoFollowRule
+				.setFilter("triggerType==theTriggerType && persona==parentPersona");
+
+		autoFollowRule
+				.declareParameters("org.nideasystems.webtools.zwitrng.shared.AutoFollowTriggerType theTriggerType, PersonaDO parentPersona");
 		autoFollowRule.setUnique(true);
-		
-		AutoFollowRuleDO rule = (AutoFollowRuleDO)autoFollowRule.execute(on_follow_me,parentPersona);
-		
+
+		AutoFollowRuleDO rule = (AutoFollowRuleDO) autoFollowRule.execute(
+				on_follow_me, parentPersona);
+
 		return rule;
 	}
 
 	public List<PersonaDO> findAllActivePersonas() {
-		
+
 		Query queryPersona = pm.newQuery(PersonaDO.class);
-		
+
 		queryPersona.setFilter("status==theStatus");
 		queryPersona
-		.declareParameters("org.nideasystems.webtools.zwitrng.server.domain.PersonaStatus theStatus");
+				.declareParameters("org.nideasystems.webtools.zwitrng.server.domain.PersonaStatus theStatus");
 		PersonaStatus status = PersonaStatus.ACTIVE;
-		
-		return (List<PersonaDO>)queryPersona.execute(status);
+
+		return (List<PersonaDO>) queryPersona.execute(status);
+	}
+
+	public PersonaDO findPersona(Key personaKey) {
+		Key key = KeyFactory.createKey(personaKey.getKind(), personaKey.getId());
+		PersonaDO persona = pm.getObjectById(PersonaDO.class,key);
+
+		return persona;
+
 	}
 
 }

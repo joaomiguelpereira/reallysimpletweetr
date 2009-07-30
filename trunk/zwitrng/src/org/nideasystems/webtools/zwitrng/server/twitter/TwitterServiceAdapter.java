@@ -558,6 +558,7 @@ public class TwitterServiceAdapter {
 	public void followUser(/* TwitterAccountDTO account, */boolean follow,
 			Integer userId) throws Exception {
 
+		
 		User user = null;
 		try {
 			if (follow) {
