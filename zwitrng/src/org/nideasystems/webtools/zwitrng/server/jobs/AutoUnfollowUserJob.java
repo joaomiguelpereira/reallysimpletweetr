@@ -9,7 +9,7 @@ public class AutoUnfollowUserJob extends AbstractJob {
 
 	@Override
 	public void execute() throws Exception {
-		log.fine("Executing Job: " + this.getClass().getName());
+		log.fine("> > Persona: "+persona.getName()+" Executing Job: " + this.getClass().getSimpleName());
 		int followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
 				.getTwitterAccount().getFollowingIds().size()
 				: 0;
@@ -26,34 +26,27 @@ public class AutoUnfollowUserJob extends AbstractJob {
 				.getAutoUnFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoUnFollowBackIdsQueue().size() : 0;
 
-		log.fine("FollowBack list Size:" + backSize);
-		log.fine("Ignore list Size:" + ignoreSize);
-		log.fine("Friends: " + followingSize);
-		log.fine("Followers: " + followersSize);
-		log.fine("Unfollow Back Followers: " + unfollowSize);
+		log.fine("> > Persona: "+persona.getName()+" FollowBack list Size:" + backSize);
+		log.fine("> > Persona: "+persona.getName()+" Ignore list Size:" + ignoreSize);
+		log.fine("> > Persona: "+persona.getName()+" Friends: " + followingSize);
+		log.fine("> > Persona: "+persona.getName()+" Followers: " + followersSize);
+		log.fine("> > Persona: "+persona.getName()+" Unfollow Back Followers: " + unfollowSize);
 
-		// Test
-
-		// Synch queu to sync
-		/*
-		 * TwitterAccountDO twitterAccount = persona.getTwitterAccount();
-		 * TwitterAccountDTO authorizedTwitterAccount =
-		 * TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
-		 * getBusinessHelper
-		 * ().getTwitterPojo().updateFollowBackUsersIdQueue(twitterAccount,
-		 * authorizedTwitterAccount);
-		 */
 
 		AutoFollowRuleDO rule = getBusinessHelper().getPersonaDao()
 				.getAutoFollowRule(persona, AutoFollowTriggerType.UNFOLLOW);
 
 		AutoUnFollowBackOnFollowMeRuleRunner ruleEx = new AutoUnFollowBackOnFollowMeRuleRunner(
 				persona, rule);
-
+		log.fine("> > Is Rule null?: "+rule!=null?"NO":"YES");
+		log.fine("> > Is Enabled: "+(rule!=null?rule.isEnabled():"null rule"));
+		log.fine("> > Unfollow Ids Size: "+unfollowSize);
+		
 		ruleEx.setBusinessHelper(getBusinessHelper());
 		if (rule != null
 				&& rule.isEnabled()
 				&& persona.getTwitterAccount().getAutoUnFollowBackIdsQueue() != null) {
+			
 			ruleEx.execute();
 		}
 		followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
@@ -71,11 +64,11 @@ public class AutoUnfollowUserJob extends AbstractJob {
 		unfollowSize = persona.getTwitterAccount()
 				.getAutoUnFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoUnFollowBackIdsQueue().size() : 0;
-		log.fine("FollowBack list Size:" + backSize);
-		log.fine("Ignore list Size:" + ignoreSize);
-		log.fine("Friends: " + followingSize);
-		log.fine("Followers: " + followersSize);
-		log.fine("Unfollow Back Followers: " + unfollowSize);
+		log.fine("> > Persona: "+persona.getName()+" FollowBack list Size:" + backSize);
+		log.fine("> > Persona: "+persona.getName()+" Ignore list Size:" + ignoreSize);
+		log.fine("> > Persona: "+persona.getName()+" Friends: " + followingSize);
+		log.fine("> > Persona: "+persona.getName()+" Followers: " + followersSize);
+		log.fine("> > Persona: "+persona.getName()+" Unfollow Back Followers: " + unfollowSize);
 
 	}
 

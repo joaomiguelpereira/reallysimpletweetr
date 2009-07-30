@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,24 +17,22 @@ import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaJobDefDO;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
 
-public class CreateJobsServlet extends AbstractHttpServlet {
+public class RunJobsServlet extends AbstractHttpServlet {
 
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -5946090469465219700L;
+	private static final long serialVersionUID = -6248867066738776402L;
 	private static final boolean TESTING = false;
-	private StringBuffer outBuffer;
-	private static final Logger log = Logger.getLogger(CreateJobsServlet.class
+	private static final Logger log = Logger.getLogger(RunJobsServlet.class
 			.getName());
 
-	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+
 		log
-				.info("= = = = = = = = = = = = =   C R E A T I N G    J O B S   = = = = = = = = = = = = =");
+				.info("= = = = = = = = = = = = =   R U N N I N G    J O B S   = = = = = = = = = = = = =");
 		// Check headers
-		outBuffer = new StringBuffer();
 
 		if (!TESTING) {
 			if (req.getHeader("X-AppEngine-Cron") == null
@@ -56,76 +55,59 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 
 		List<PersonaDO> personas = getBusinessHelper().getPersonaDao()
 				.findAllActivePersonas();
-		log.fine("Going to run jobs for " + personas.size() + " personas");
+		JobsQueueDO jobsQueueDO = getBusinessHelper().getJobsQueuePojo()
+				.getQueue();
+		Integer lastUsedPersona = jobsQueueDO.getLastPersonaUsedIndex();
+		if (lastUsedPersona == null) {
+			lastUsedPersona = 0;
+		}
 
-		for (PersonaDO persona : personas) {
+		PersonaDO personaDO = personas.get(lastUsedPersona);
+		// Get job defs
+		List<PersonaJobDefDO> jobDefs = personaDO.getJobDefs();
+		if (jobDefs == null) {
+			initializePersonaJobs(personaDO);
+		}
+		jobDefs = personaDO.getJobDefs();
+		boolean executed = false;
+		log.fine("-- Going to run jobs for persona: "+personaDO.getName());
+		for (PersonaJobDefDO job : jobDefs) {
+
 			long now = new Date().getTime();
-			// Check if the last execution of this persona was less than 2
-			// minutes ago
+			log.fine("**Going to check job: " + job.getName());
+			log.fine("**Last Run: " + job.getLastRun());
+			log.fine("**Class: " + job.getJobClass());
+			log.fine("**Wait Time: " + job.getWaitTime());
+			
+			long elapsedTime = now - job.getLastRun();
+			log.fine("**Elapsed Time: " + elapsedTime);
+			if (elapsedTime >= job.getWaitTime()) {
+				try {
 
-			log.fine("==C r e a t i n g   J o b s   f o r   P e r s o n a "
-					+ persona.getName() + "===");
-			List<PersonaJobDefDO> jobs = persona.getJobDefs();
+					execute(job, personaDO);
+					executed = true;
+					job.setLastRun(now);
 
-			if (jobs == null || jobs.size() == 0) {
-				initializePersonaJobs(persona);
-				jobs = persona.getJobDefs();
-			}
-
-			// Get the jobs
-
-			for (PersonaJobDefDO job : jobs) {
-
-				log.fine("**Going to check job: " + job.getName());
-				log.fine("**Last Run: " + job.getLastRun());
-				log.fine("**Class: " + job.getJobClass());
-				log.fine("**Wait Time: " + job.getWaitTime());
-				log.fine("**Elapsed Time: " + job.getWaitTime());
-				long elapsedTime = now - job.getLastRun();
-				if (elapsedTime >= job.getWaitTime()) {
-					try {
-						
-						enqueuJob(job, persona);
-
-					} catch (Exception e) {
-						log.warning("Could not execute the job:"
-								+ job.getName());
-						e.printStackTrace();
-					}
+				} catch (Exception e) {
+					log.warning("Could not execute the job:" + job.getName());
+					e.printStackTrace();
 				}
 			}
-
-			log.fine("==End C r e a t i n g   J o b s   f o r   P e r s o n a "
-					+ persona.getName() + "===");
+			
+			if (executed) {
+				break;
+			}
 		}
 
+		//Go to next persona
+		lastUsedPersona++;
+		if (lastUsedPersona>=personas.size()) {
+			lastUsedPersona=0;
+		}
+		jobsQueueDO.setLastPersonaUsedIndex(lastUsedPersona);
 		endTransaction();
 		resp.setContentType("text/html");
-		if (TESTING) {
-			resp.getWriter().println(outBuffer.toString());
-		} else {
-			resp.getWriter().println("200 OK");
-		}
-	}
-
-	private void enqueuJob(PersonaJobDefDO job, PersonaDO persona)
-			throws Exception {
-
-		log.fine(" = = = = = Enqueueing job ---"
-				+ job.getName() + "--- for persona: " + persona.getName());
-		// Create the class instance
-		// Get the JobsQueueDo
-		JobsQueueDO jobsQueue = getBusinessHelper().getJobsQueuePojo()
-				.getQueue();
-
-		if (jobsQueue.getJobs() == null) {
-			jobsQueue.setJobs(new ArrayList<JobDO>());
-		}
-		JobDO jobDo = new JobDO();
-		jobDo.setJobClassName(job.getJobClass());
-		jobDo.setPersonaKey(persona.getKey());
-		jobsQueue.getJobs().add(jobDo);
-		job.setLastRun(new Date().getTime());
+		resp.getWriter().println("200 OK");
 
 	}
 
@@ -148,7 +130,8 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		jobDefs.add(autoFollowJob);
 
 		PersonaJobDefDO createAutoFollowBackUserJob = new PersonaJobDefDO();
-		createAutoFollowBackUserJob.setName("Create Auto Follow Back User Queue");
+		createAutoFollowBackUserJob
+				.setName("Create Auto Follow Back User Queue");
 		createAutoFollowBackUserJob.setLastRun(0);
 		createAutoFollowBackUserJob.setWaitTime(1000 * 60 * 30);// 30 min
 		createAutoFollowBackUserJob
@@ -165,7 +148,7 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		PersonaJobDefDO createAutoUnFollowBackQueueJob = new PersonaJobDefDO();
 		createAutoUnFollowBackQueueJob
 				.setName("Create Auto unfollow User queue");
-		createAutoUnFollowBackQueueJob.setWaitTime(1000 * 60 * 60*24);// 1 day 
+		createAutoUnFollowBackQueueJob.setWaitTime(1000 * 60 * 60 * 24);// 1 day
 		createAutoUnFollowBackQueueJob.setLastRun(0);
 		createAutoUnFollowBackQueueJob
 				.setJobClass(CreateAutoUnfollowBackQueueJob.class.getName());
@@ -187,4 +170,53 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		persona.setJobDefs(jobDefs);
 
 	}
+
+	private void execute(PersonaJobDefDO jobDef, PersonaDO persona)
+			throws Exception {
+
+		log.fine("** Start executing job for Persona: " + persona.getName());
+		Class<?> jobClass = null;
+		try {
+			jobClass = Class.forName(jobDef.getJobClass());
+		} catch (ClassNotFoundException e) {
+			log.severe("Could not instantiate the class:"
+					+ jobDef.getJobClass());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		IJob jobInstance = (IJob) jobClass.newInstance();
+		jobInstance.setBusinessHelper(getBusinessHelper());
+		jobInstance.setPersona(persona);
+		jobInstance.execute();
+		log.fine("** Ending executing job for Persona: " + persona.getName());
+
+	}
+
+	private void execute(JobDO job) throws Exception {
+		PersonaDO persona = getBusinessHelper().getPersonaDao().findPersona(
+				job.getPersonaKey());
+
+		if (persona == null) {
+			throw new Exception("Persona not found");
+		}
+		log.fine("** Start executing job for Persona: " + persona.getName());
+		Class<?> jobClass = null;
+		try {
+			jobClass = Class.forName(job.getJobClassName());
+		} catch (ClassNotFoundException e) {
+			log.severe("Could not instantiate the class:"
+					+ job.getJobClassName());
+			e.printStackTrace();
+			throw new Exception(e);
+		}
+		IJob jobInstance = (IJob) jobClass.newInstance();
+
+		jobInstance.setBusinessHelper(getBusinessHelper());
+		jobInstance.setPersona(persona);
+
+		jobInstance.execute();
+		log.fine("** Ending executing job for Persona: " + persona.getName());
+
+	}
+
 }

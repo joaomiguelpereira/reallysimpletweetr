@@ -10,8 +10,9 @@ public class AutoFollowUserJob extends AbstractJob {
 
 	@Override
 	public void execute() throws Exception {
-		log.fine("Executing Job: " + this.getClass().getName());
-
+		log.fine("> > Executing Job: " + this.getClass().getSimpleName()+" < <");
+		log.fine("> > Persona: "+persona.getName());
+		
 		int followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
 				.getTwitterAccount().getFollowingIds().size()
 				: 0;
@@ -35,14 +36,13 @@ public class AutoFollowUserJob extends AbstractJob {
 				.getAutoFollowedScreenNames() != null ? persona
 				.getTwitterAccount().getAutoFollowedScreenNames().size() : 0;
 
-		log.fine("FollowBack list Size:" + backSize);
-		log.fine("Ignore list Size:" + ignoreSize);
-		log.fine("Friends: " + followingSize);
-		log.fine("Followers: " + followersSize);
-		log.fine("Unfollow Back Followers: " + unfollowSize);
-		log.fine("Follow Queue: " + followSize);
-
-		log.fine("Followed Size: " + autoFollowedSize);
+		log.fine("> > FollowBack list Size:" + backSize);
+		log.fine("> > Ignore list Size:" + ignoreSize);
+		log.fine("> > Friends: " + followingSize);
+		log.fine("> > Followers: " + followersSize);
+		log.fine("> > Unfollow Back Followers: " + unfollowSize);
+		log.fine("> > Follow Queue: " + followSize);
+		log.fine("> > Followed Size: " + autoFollowedSize);
 
 		AutoFollowRuleDO rule = getBusinessHelper().getPersonaDao()
 				.getAutoFollowRule(persona, AutoFollowTriggerType.SEARCH);
@@ -51,11 +51,17 @@ public class AutoFollowUserJob extends AbstractJob {
 				persona, rule);
 
 		ruleEx.setBusinessHelper(getBusinessHelper());
+		log.fine("> > Is Rule null?: "+(rule!=null?"NO":"YES"));
+		log.fine("> > Is Enabled: "+(rule!=null?rule.isEnabled():"null rule"));
+		log.fine("> > Following Screen Names Size: "+followSize);
+		
 		if (rule != null
+
 				&& rule.isEnabled()
 				&& persona.getTwitterAccount().getAutoFollowScreenNamesQueue() != null) {
+			
 			ruleEx.execute();
-		}
+		} 
 
 		followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
 				.getTwitterAccount().getFollowingIds().size()
