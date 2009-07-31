@@ -1,12 +1,14 @@
 package org.nideasystems.webtools.zwitrng.server.rules;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.Configuration;
 import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
@@ -19,21 +21,22 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
 import twitter4j.User;
 
-public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
+public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 	private static final Logger log = Logger
 			.getLogger(AutoFollowBackOnFollowMeRuleRunner.class.getName());
-	/*private PersonaDO persona;
-	private AutoFollowRuleDO rule;
-	private BusinessHelper businessHelper;*/
+
+	/*
+	 * private PersonaDO persona; private AutoFollowRuleDO rule; private
+	 * BusinessHelper businessHelper;
+	 */
 
 	public AutoFollowBackOnFollowMeRuleRunner(PersonaDO persona,
 			AutoFollowRuleDO autofollowrule) {
-		super(persona,autofollowrule);
-		
+		super(persona, autofollowrule);
+
 	}
 
-	
 	public void execute() throws Exception {
 
 		// get the list of new personas to follow
@@ -43,7 +46,7 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 				.getFollowingIds();
 		Set<Integer> followersIds = persona.getTwitterAccount()
 				.getFollowersIds();
-		
+
 		int autoFollowCount = persona.getTwitterAccount()
 				.getAutoFollowedCount() != null ? persona.getTwitterAccount()
 				.getAutoFollowedCount() : 0;
@@ -57,7 +60,7 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 
 		log.fine("Follow Back Queue Size: " + queue.size());
 		// per hour
-		int maxAutoFollow = 5; // =5*10 per hour
+		int maxAutoFollow = Configuration.MAX_FOLLOW_JOB;
 		Set<Integer> ignoreList = persona.getTwitterAccount()
 				.getIgnoreUsersIds();
 		if (ignoreList == null) {
@@ -67,10 +70,11 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 
 		if (queue != null) {
 			List<Integer> removeList = new ArrayList<Integer>();
-			maxAutoFollow = queue.size() > maxAutoFollow ? maxAutoFollow : queue.size();
+			maxAutoFollow = queue.size() > maxAutoFollow ? maxAutoFollow
+					: queue.size();
 			for (int i = 0; i < maxAutoFollow; i++) {
 				int userId = queue.get(i);
-				//queue.remove(i);
+				// queue.remove(i);
 				removeList.add(userId);
 				followersIds.add(userId);
 
@@ -82,12 +86,19 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 					followingIds.add(userId);
 
 				}
+				
+				long now = new Date().getTime();
+				
+				if (now - getBusinessHelper().getStartTime() > Configuration.MAX_JOB_RUN_TIME) {
+					log.fine("-----> Ending Job because time elapsed. Users Processed:"+i);
+					break;
+				}
 			}
-			for (Integer remId: removeList) {
+			for (Integer remId : removeList) {
 				queue.remove(remId);
 			}
 		}
-		
+
 		persona.getTwitterAccount().setAutoFollowedCount(autoFollowCount);
 		persona.getTwitterAccount().setFollowersIds(followersIds);
 		persona.getTwitterAccount().setFollowingIds(followingIds);
@@ -171,7 +182,6 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 
 	}
 
-
 	private void sendDirectMessage(PersonaDTO personaDto, String templateName,
 			User user) throws Exception {
 		// Get the template
@@ -196,8 +206,5 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner{
 		getBusinessHelper().getTwitterPojo().sendDM(personaDto, update);
 
 	}
-
-	
-	
 
 }

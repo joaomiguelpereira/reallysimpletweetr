@@ -1,11 +1,13 @@
 package org.nideasystems.webtools.zwitrng.server.rules;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.Configuration;
 import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
@@ -53,7 +55,7 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 		 
 		
 		if (queue != null && currentRatio<allowedRation) {
-			int maxFollowing = 5;
+			int maxFollowing = Configuration.MAX_FOLLOW_JOB;
 			List<String> removeList = new ArrayList<String>();
 			
 			maxFollowing = queue.size() > maxFollowing ? maxFollowing : queue
@@ -68,7 +70,7 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 				
 				try {
 					if ( process(queue.get(i)) ) {
-						log.fine("$$ Persona: "+persona.getName()+" Could  unfollowed user :"+queue.get(i));
+						log.fine("$$ Persona: "+persona.getName()+" is now following user:"+queue.get(i));
 						autoFollowedUsersScreenNames.add(queue.get(i));
 					} else {
 						log.fine("$$Persona "+persona.getName()+" Could not follow user :"+queue.get(i));
@@ -79,8 +81,12 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+				long now = new Date().getTime();
+				if (now - getBusinessHelper().getStartTime() > Configuration.MAX_JOB_RUN_TIME) {
+					log.fine("-----> Ending Job because time elapsed. Users Processed:"+i);
+					break;
+				}
 
-				log.fine("$$Persona "+persona.getName()+" Followed Successfully user:"+queue.get(i));
 			}
 
 			// Remove the ones already followed

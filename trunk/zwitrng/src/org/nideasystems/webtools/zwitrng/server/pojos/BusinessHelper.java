@@ -17,6 +17,14 @@ public class BusinessHelper {
 			.getName());
 	private PersistenceManager pm = null;
 
+	private ThreadLocal<Long> startTime = new ThreadLocal<Long>() {
+		@Override
+		protected Long initialValue() {
+			// TODO Auto-generated method stub
+			return new Long(0);
+		}
+		
+	};
 	// Twitter Pojos
 	private ThreadLocal<JobsQueueuPojo> jobsQueuePojo = new ThreadLocal<JobsQueueuPojo>() {
 		@Override
@@ -245,6 +253,14 @@ public class BusinessHelper {
 		JobsQueueuPojo pojo = jobsQueuePojo.get();
 		pojo.setBusinessHelper(this);
 		return pojo;
+	}
+
+	public void setStartTime(Long startTime) {
+		this.startTime.set(startTime);
+	}
+
+	public Long getStartTime() {
+		return this.startTime.get();
 	}
 
 }

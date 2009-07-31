@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import javax.jdo.Query;
 
-import org.nideasystems.webtools.zwitrng.server.domain.JobDO;
 import org.nideasystems.webtools.zwitrng.server.domain.JobsQueueDO;
+import org.nideasystems.webtools.zwitrng.server.jobs.Job;
 
 public class JobsQueueDAO extends BaseDAO {
 
@@ -19,7 +19,7 @@ public class JobsQueueDAO extends BaseDAO {
 
 	public JobsQueueDO creatJobsQueue() {
 		JobsQueueDO queue = new JobsQueueDO();
-		queue.setJobs(new ArrayList<JobDO>());
+		queue.setJobs(new ArrayList<Job>());
 		pm.makePersistent(queue);
 		return queue;
 	}

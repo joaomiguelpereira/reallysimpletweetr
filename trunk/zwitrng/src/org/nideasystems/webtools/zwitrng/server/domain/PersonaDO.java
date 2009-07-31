@@ -73,6 +73,8 @@ public class PersonaDO implements Serializable {
 	@Persistent
 	private List<PersonaJobDefDO> jobDefs;
 
+	@Persistent
+	private Integer lastJobIndex;
 	
 	public void setName(String name) {
 		this.name = name;
@@ -228,6 +230,15 @@ public class PersonaDO implements Serializable {
 	public List<PersonaJobDefDO> getJobDefs() {
 		return jobDefs;
 	}
+
+	public void setLastJobIndex(Integer lastJobIndex) {
+		this.lastJobIndex = lastJobIndex;
+	}
+
+	public Integer getLastJobIndex() {
+		return lastJobIndex;
+	}
+
 
 	
 

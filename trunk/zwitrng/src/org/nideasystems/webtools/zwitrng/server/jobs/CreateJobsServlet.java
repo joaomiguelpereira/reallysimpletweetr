@@ -2,16 +2,20 @@ package org.nideasystems.webtools.zwitrng.server.jobs;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nideasystems.webtools.zwitrng.server.domain.JobDO;
-import org.nideasystems.webtools.zwitrng.server.domain.JobsQueueDO;
+
+import org.nideasystems.webtools.zwitrng.server.Configuration;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaJobDefDO;
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
@@ -80,8 +84,9 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 				log.fine("**Last Run: " + job.getLastRun());
 				log.fine("**Class: " + job.getJobClass());
 				log.fine("**Wait Time: " + job.getWaitTime());
-				log.fine("**Elapsed Time: " + job.getWaitTime());
+				
 				long elapsedTime = now - job.getLastRun();
+				log.fine("**Elapsed Time: " + elapsedTime);
 				if (elapsedTime >= job.getWaitTime()) {
 					try {
 						
@@ -111,20 +116,35 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 	private void enqueuJob(PersonaJobDefDO job, PersonaDO persona)
 			throws Exception {
 
+		
 		log.fine(" = = = = = Enqueueing job ---"
 				+ job.getName() + "--- for persona: " + persona.getName());
 		// Create the class instance
 		// Get the JobsQueueDo
-		JobsQueueDO jobsQueue = getBusinessHelper().getJobsQueuePojo()
-				.getQueue();
-
-		if (jobsQueue.getJobs() == null) {
-			jobsQueue.setJobs(new ArrayList<JobDO>());
-		}
-		JobDO jobDo = new JobDO();
+		
+		
+		
+				
+		Job jobDo = new Job();
 		jobDo.setJobClassName(job.getJobClass());
 		jobDo.setPersonaKey(persona.getKey());
-		jobsQueue.getJobs().add(jobDo);
+		
+		
+		//Add it to cache
+		Cache cache = null;
+		try {
+            cache = CacheManager.getInstance().getCacheFactory().createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            throw new Exception(e);
+        }
+        //Try to get the list from cahc
+        List<Job> jobList = (List<Job>)cache.get("jobs");
+        
+        if ( jobList == null) {
+        	jobList = new ArrayList<Job>();
+        }
+        jobList.add(jobDo);
+        cache.put("jobs", jobList);
 		job.setLastRun(new Date().getTime());
 
 	}
@@ -135,7 +155,7 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		PersonaJobDefDO createAutoFollowJob = new PersonaJobDefDO();
 		createAutoFollowJob.setLastRun(0);
 		createAutoFollowJob.setName("Create Auto Follow Queue");
-		createAutoFollowJob.setWaitTime(1000 * 60 * 30);// 30 min
+		createAutoFollowJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_FOLLOW_QUEUE_INTERVAL);// 30 min
 		createAutoFollowJob.setJobClass(CreateAutoFollowQueueJob.class
 				.getName());
 		jobDefs.add(createAutoFollowJob);
@@ -143,21 +163,21 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		PersonaJobDefDO autoFollowJob = new PersonaJobDefDO();
 		autoFollowJob.setLastRun(0);
 		autoFollowJob.setName("Auto Follow User");
-		autoFollowJob.setWaitTime(1000 * 60 * 5);// 5 minutes
+		autoFollowJob.setWaitTime(1000 * 60 * Configuration.FOLLOW_UNFOLLOW_JOB_INTERVAL);// 10 minutes
 		autoFollowJob.setJobClass(AutoFollowUserJob.class.getName());
 		jobDefs.add(autoFollowJob);
 
 		PersonaJobDefDO createAutoFollowBackUserJob = new PersonaJobDefDO();
 		createAutoFollowBackUserJob.setName("Create Auto Follow Back User Queue");
 		createAutoFollowBackUserJob.setLastRun(0);
-		createAutoFollowBackUserJob.setWaitTime(1000 * 60 * 30);// 30 min
+		createAutoFollowBackUserJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_FOLLOW_QUEUE_INTERVAL);// 30 min
 		createAutoFollowBackUserJob
 				.setJobClass(CreateAutoFollowBackQueueJob.class.getName());
 		jobDefs.add(createAutoFollowBackUserJob);
 
 		PersonaJobDefDO autoFollowBackUser = new PersonaJobDefDO();
 		autoFollowBackUser.setName("Auto Follow Back User");
-		autoFollowBackUser.setWaitTime(1000 * 60 * 5);// 5 minutes
+		autoFollowBackUser.setWaitTime(1000 * 60 * Configuration.FOLLOW_UNFOLLOW_JOB_INTERVAL);// 10 minutes
 		autoFollowBackUser.setLastRun(0);
 		autoFollowBackUser.setJobClass(AutoFollowBackUserJob.class.getName());
 		jobDefs.add(autoFollowBackUser);
@@ -165,7 +185,7 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		PersonaJobDefDO createAutoUnFollowBackQueueJob = new PersonaJobDefDO();
 		createAutoUnFollowBackQueueJob
 				.setName("Create Auto unfollow User queue");
-		createAutoUnFollowBackQueueJob.setWaitTime(1000 * 60 * 60*24);// 1 day 
+		createAutoUnFollowBackQueueJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_UNFOLLOW_QUEUE_INTERVAL);// 1 day 
 		createAutoUnFollowBackQueueJob.setLastRun(0);
 		createAutoUnFollowBackQueueJob
 				.setJobClass(CreateAutoUnfollowBackQueueJob.class.getName());
@@ -174,14 +194,14 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		PersonaJobDefDO autoUnfollowUserJob = new PersonaJobDefDO();
 		autoUnfollowUserJob.setName("Auto unfollow User");
 		autoUnfollowUserJob.setLastRun(0);
-		autoUnfollowUserJob.setWaitTime(1000 * 60 * 5);// 5 minutes
+		autoUnfollowUserJob.setWaitTime(1000 * 60 * Configuration.FOLLOW_UNFOLLOW_JOB_INTERVAL);// 5 minutes
 		autoUnfollowUserJob.setJobClass(AutoUnfollowUserJob.class.getName());
 		jobDefs.add(autoUnfollowUserJob);
 
 		PersonaJobDefDO synchUsersInfoJob = new PersonaJobDefDO();
 		synchUsersInfoJob.setName("Synchronize Users Information");
 		synchUsersInfoJob.setLastRun(0);
-		synchUsersInfoJob.setWaitTime(1000 * 60 * 10);// 10 minutes
+		synchUsersInfoJob.setWaitTime(1000 * 60 * Configuration.SYNCH_INTERVAL);// 10 minutes
 		synchUsersInfoJob.setJobClass(SynchUsersInfoJob.class.getName());
 		jobDefs.add(synchUsersInfoJob);
 		persona.setJobDefs(jobDefs);

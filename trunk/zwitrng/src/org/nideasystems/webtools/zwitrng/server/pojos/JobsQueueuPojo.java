@@ -20,6 +20,7 @@ public class JobsQueueuPojo extends AbstractPojo {
 		//List<JobDO> jobs = queue.getJobs();		
 		queue.setLastUsedJobIndex(0);
 		
+		
 	}
 
 }
