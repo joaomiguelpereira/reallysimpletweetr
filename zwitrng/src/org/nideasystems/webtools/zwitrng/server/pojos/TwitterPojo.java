@@ -225,6 +225,7 @@ public class TwitterPojo extends AbstractPojo {
 		}
 
 		synchronize(persona, thePersonaDto.getTwitterAccount());
+		
 		if (persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null) {
 			persona.getTwitterAccount().getAutoFollowBackIdsQueue().clear();
 		}
@@ -232,6 +233,13 @@ public class TwitterPojo extends AbstractPojo {
 		if (persona.getTwitterAccount().getIgnoreUsersIds() != null) {
 			persona.getTwitterAccount().getIgnoreUsersIds().clear();
 		}
+		if (persona.getTwitterAccount().getAutoFollowScreenNamesQueue() != null ) {
+			persona.getTwitterAccount().getAutoFollowScreenNamesQueue().clear();
+		}
+		if (persona.getTwitterAccount().getAutoUnFollowBackIdsQueue() != null ) {
+			persona.getTwitterAccount().getAutoUnFollowBackIdsQueue().clear();
+		}
+		
 
 		endTwitterTransaction();
 		updateRateLimist(persona);

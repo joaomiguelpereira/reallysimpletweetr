@@ -8,6 +8,8 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import org.nideasystems.webtools.zwitrng.server.jobs.Job;
+
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -23,7 +25,7 @@ public class JobsQueueDO {
 	@Persistent
 	private Integer lastPersonaUsedIndex;
 	@Persistent
-	private List<JobDO> jobs;
+	private List<Job> jobs;
 
 
 	public void setKey(Key key) {
@@ -36,12 +38,12 @@ public class JobsQueueDO {
 	}
 
 
-	public void setJobs(List<JobDO> jobs) {
+	public void setJobs(List<Job> jobs) {
 		this.jobs = jobs;
 	}
 
 
-	public List<JobDO> getJobs() {
+	public List<Job> getJobs() {
 		return jobs;
 	}
 

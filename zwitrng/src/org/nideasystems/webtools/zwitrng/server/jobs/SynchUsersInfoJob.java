@@ -18,12 +18,18 @@ public class SynchUsersInfoJob extends AbstractJob {
 		TwitterAccountDTO authorizedAccount = TwitterAccountDAO
 				.createAuthorizedAccountDto(twitterAccount);
 		// Update follwers list
+		log.fine("$$ Following size: "+persona.getTwitterAccount().getFollowingIds().size());
+		log.fine("$$ Followers size: "+persona.getTwitterAccount().getFollowersIds().size());
+		
 		Set<Integer> followersIds = getFollowersIds(authorizedAccount);
-		twitterAccount.setFollowersIds(followersIds);
+		persona.getTwitterAccount().setFollowersIds(followersIds);
 
 		//Update following list
 		Set<Integer> followingIds = getFollowingIds(authorizedAccount);
-		twitterAccount.setFollowingIds(followingIds);
+		persona.getTwitterAccount().setFollowingIds(followingIds);
+		log.fine("$$ Following size now: "+persona.getTwitterAccount().getFollowingIds().size());
+		log.fine("$$ Followers size now: "+persona.getTwitterAccount().getFollowersIds().size());
+		
 	}
 
 	private Set<Integer> getFollowingIds(TwitterAccountDTO authorizedAccount)

@@ -2,11 +2,19 @@ package org.nideasystems.webtools.zwitrng.server.servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.jobs.Job;
 
 
 
@@ -50,8 +58,17 @@ public class ResetJobs extends AbstractHttpServlet {
 					.append(createDiv("Logged User: " + loggedUser.getEmail()));
 			
 			
-			getBusinessHelper().getJobsQueuePojo().clearJobs();
+			//getBusinessHelper().getJobsQueuePojo().clearJobs();
 			
+			outBuffer.append(createDiv("Clearing job defs..."));
+			List<PersonaDO> personas = getBusinessHelper().getPersonaDao().findAllActivePersonas();
+			
+			for ( PersonaDO persona: personas ) {
+				outBuffer.append(createDiv("Clear Jobs Defs for Persona: "+persona.getName()));
+				if (persona.getJobDefs()!= null) {
+					persona.getJobDefs().clear();
+				}
+			}
 			//queue.setJobs(jobs);
 			
 			
@@ -63,6 +80,17 @@ public class ResetJobs extends AbstractHttpServlet {
 			endTransaction();
 		}
 
+		//Add it to cache
+		Cache cache = null;
+		try {
+            cache = CacheManager.getInstance().getCacheFactory().createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            throw new ServletException(e);
+        }
+        //Try to get the list from cahc
+        outBuffer.append(createDiv("Reseting jobs Queuue"));
+        List<Job> jobList = (List<Job>)cache.put("jobs", new ArrayList<Job>());
+        
 		outBuffer.append(createDiv("Job done! Jobs are now reseted!"));
 		resp.setContentType("text/html");
 

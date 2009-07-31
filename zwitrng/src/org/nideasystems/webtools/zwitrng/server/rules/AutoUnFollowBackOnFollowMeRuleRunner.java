@@ -1,11 +1,13 @@
 package org.nideasystems.webtools.zwitrng.server.rules;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.Configuration;
 import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.TemplateDO;
@@ -32,45 +34,64 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 	public void execute() throws Exception {
 
-		log.fine("> > Persona: "+persona.getName()+" executing AutoUnfollowBack Users");
+		log.fine("> > Persona: " + persona.getName()
+				+ " executing AutoUnfollowBack Users");
 		List<Integer> queue = persona.getTwitterAccount()
 				.getAutoUnFollowBackIdsQueue();
-		
-		Set<Integer> unfollowedIds = persona.getTwitterAccount().getAutoUnfollowedIds();
 
-		if (unfollowedIds==null) {
+		Set<Integer> unfollowedIds = persona.getTwitterAccount()
+				.getAutoUnfollowedIds();
+
+		if (unfollowedIds == null) {
 			unfollowedIds = new HashSet<Integer>();
 		}
-		
-		/*Set<Integer> followingIds = persona.getTwitterAccount()
-				.getFollowingIds();*/
 
-		int maxAutoUnFollow = 5; // =5*10 per hour
+		/*
+		 * Set<Integer> followingIds = persona.getTwitterAccount()
+		 * .getFollowingIds();
+		 */
+
+		int maxAutoUnFollow = Configuration.MAX_FOLLOW_JOB; 
 
 		if (queue != null) {
 			maxAutoUnFollow = queue.size() > maxAutoUnFollow ? maxAutoUnFollow
 					: queue.size();
 			List<Integer> removeList = new ArrayList<Integer>();
-
+			
 			for (int i = 0; i < maxAutoUnFollow; i++) {
 				int userId = queue.get(i);
-				log.fine("> > Persona:" +persona.getName()+" will try to unfollow user id: "+userId );
+				log.fine("> > Persona:" + persona.getName()
+						+ " will try to unfollow user id: " + userId);
 				removeList.add(userId);
 				// followingIds.remove(userId);
 				unfollowedIds.add(userId);
-				//check if are friends 
-				
-				if (persona.getTwitterAccount().getFollowingIds().contains(userId)) {
+				// check if are friends
+
+				if (persona.getTwitterAccount().getFollowingIds().contains(
+						userId)
+						&& !persona.getTwitterAccount().getFollowersIds()
+								.contains(userId)) {
 					if (processUser(userId)) {
-						log.fine("> > Persona:"+persona.getName()+" unfollowed user " + userId);
-						//followingIds.remove(userId);
+						log.fine("> > Persona:" + persona.getName()
+								+ " unfollowed user " + userId);
+						// followingIds.remove(userId);
 					} else {
-						log.fine("> > Persona:"+persona.getName()+" could NOT unfollow user " + userId);
+						log.fine("> > Persona:" + persona.getName()
+								+ " could NOT unfollow user " + userId);
 					}
-					
+
 				} else {
-					log.fine("> > Persona:"+persona.getName()+" do not have the user in friends list");
+					log
+							.fine("> > Persona:"
+									+ persona.getName()
+									+ " do not have the user in friends list or they are mutal friends");
 				}
+				long now = new Date().getTime();
+				if (now - getBusinessHelper().getStartTime() > Configuration.MAX_JOB_RUN_TIME) {
+					log.fine("-----> Ending Job because time elapsed. Users Processed:"+i);
+					break;
+				}
+
 
 			}
 			for (Integer remId : removeList) {
@@ -81,7 +102,7 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 		persona.getTwitterAccount().setAutoUnFollowBackIdsQueue(queue);
 		persona.getTwitterAccount().setAutoUnfollowedIds(unfollowedIds);
-		//persona.getTwitterAccount().setFollowingIds(followingIds);
+		// persona.getTwitterAccount().setFollowingIds(followingIds);
 
 	}
 
@@ -98,14 +119,12 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 					authAccount);
 
 			log.info("Unfollowing user: " + user.getScreenName());
-			//check if the user is really not following me
+			// check if the user is really not following me
 			// Try to send a message
 			unfollow(personaDto, user);
 			if (rule.isSendDirectMessage()) {
 				sendReplyToUser(personaDto, rule.getTemplateName(), user);
 			}
-
-			
 
 		} catch (Exception e) {
 			log.warning("Error unfollowing following user: " + e.getMessage());
@@ -135,7 +154,7 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 	}
 
 	private void sendReplyToUser(PersonaDTO personaDto, String templateName,
-			User user) throws Exception{
+			User user) throws Exception {
 
 		TemplateDO templateDO = getBusinessHelper().getTemplatePojo()
 				.getTemplateFragments(persona, templateName);
@@ -145,7 +164,7 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 		}
 		log.info("Template text is:" + templateDO);
 		List<String> userNames = new ArrayList<String>(1);
-		userNames.add("@"+user.getScreenName());
+		userNames.add("@" + user.getScreenName());
 		String message = getBusinessHelper().getTemplatePojo()
 				.buildTweetFromTemplate(templateDO.getText().getValue(),
 						persona, userNames);
@@ -154,10 +173,11 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 		TwitterUpdateDTO update = new TwitterUpdateDTO();
 		update.setInReplyToUserId(user.getId());
 		update.setText(message);
-		
-		TwitterServiceAdapter twitterService = TwitterServiceAdapter.get(personaDto.getTwitterAccount());
+
+		TwitterServiceAdapter twitterService = TwitterServiceAdapter
+				.get(personaDto.getTwitterAccount());
 		twitterService.postUpdate(update);
-		//getBusinessHelper().getTwitterPojo().postUpdate(personaDto, update);
+		// getBusinessHelper().getTwitterPojo().postUpdate(personaDto, update);
 		updateRateLimist(twitterService);
 	}
 

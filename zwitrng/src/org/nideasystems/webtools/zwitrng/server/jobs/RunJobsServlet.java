@@ -3,19 +3,25 @@ package org.nideasystems.webtools.zwitrng.server.jobs;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.cache.Cache;
+import javax.cache.CacheException;
+import javax.cache.CacheManager;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nideasystems.webtools.zwitrng.server.domain.JobDO;
-import org.nideasystems.webtools.zwitrng.server.domain.JobsQueueDO;
+import org.nideasystems.webtools.zwitrng.server.Configuration;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
-import org.nideasystems.webtools.zwitrng.server.domain.PersonaJobDefDO;
+
 import org.nideasystems.webtools.zwitrng.server.servlets.AbstractHttpServlet;
+
+
 
 public class RunJobsServlet extends AbstractHttpServlet {
 
@@ -44,7 +50,9 @@ public class RunJobsServlet extends AbstractHttpServlet {
 			}
 
 		}
-
+		
+		
+		
 		try {
 			startTransaction(true);
 		} catch (Exception e1) {
@@ -52,66 +60,71 @@ public class RunJobsServlet extends AbstractHttpServlet {
 			throw new ServletException(e1);
 
 		}
+		getBusinessHelper().setStartTime(new Date().getTime());
+		//Get the cache
+		Cache cache = null;
+		try {
+            cache = CacheManager.getInstance().getCacheFactory().createCache(Collections.emptyMap());
+        } catch (CacheException e) {
+            throw new ServletException(e);
+        }
+        //Try to get the list from cahce
+        List<Job> jobList = (List<Job>)cache.get("jobs");
+        
+        
+        //go thorugh all jobs and executin until theres time
+        
+        
+        
+        if ( jobList != null) {
+        	
+        	log.fine("---- Jobs cache size is "+jobList.size());
+        	
+        	List<Job> executedJobs = new ArrayList<Job>();
+        	for (int i=0;i<jobList.size();i++) {
+            
+        		Job job = jobList.get(i);
+            	//jobList.remove(0);
+            	//cache.put("jobs", jobList);
+            	
+            	if (job!=null) {
+            		executedJobs.add(job);
+            		try {
+    					execute(job);
+    				} catch (Exception e) {
+    					// TODO Auto-generated catch block
+    					e.printStackTrace();
+    				}
+            	}
+            	long now = new Date().getTime();
+            	log.fine("###Now:"+now);
+            	log.fine("###Started:"+getBusinessHelper().getStartTime());
+            	
+            	if ( now - getBusinessHelper().getStartTime() >= Configuration.MAX_JOB_RUN_TIME ) {
+            		log.fine("#############Time Elapsed. Will not try to run any more job. Jobs Executed:"+i+1);
+            		break;
+            	}
+            
+            }
+            
+        	for (Job job:executedJobs) {
+        		jobList.remove(job);
+        	}
+        	
+        	cache.put("jobs", jobList);
+        	log.fine("---- Jobs cache size is now "+jobList.size());
+        }
+        
+        endTransaction();
+                
+        
 
-		List<PersonaDO> personas = getBusinessHelper().getPersonaDao()
-				.findAllActivePersonas();
-		JobsQueueDO jobsQueueDO = getBusinessHelper().getJobsQueuePojo()
-				.getQueue();
-		Integer lastUsedPersona = jobsQueueDO.getLastPersonaUsedIndex();
-		if (lastUsedPersona == null) {
-			lastUsedPersona = 0;
-		}
-
-		PersonaDO personaDO = personas.get(lastUsedPersona);
-		// Get job defs
-		List<PersonaJobDefDO> jobDefs = personaDO.getJobDefs();
-		if (jobDefs == null) {
-			initializePersonaJobs(personaDO);
-		}
-		jobDefs = personaDO.getJobDefs();
-		boolean executed = false;
-		log.fine("-- Going to run jobs for persona: "+personaDO.getName());
-		for (PersonaJobDefDO job : jobDefs) {
-
-			long now = new Date().getTime();
-			log.fine("**Going to check job: " + job.getName());
-			log.fine("**Last Run: " + job.getLastRun());
-			log.fine("**Class: " + job.getJobClass());
-			log.fine("**Wait Time: " + job.getWaitTime());
-			
-			long elapsedTime = now - job.getLastRun();
-			log.fine("**Elapsed Time: " + elapsedTime);
-			if (elapsedTime >= job.getWaitTime()) {
-				try {
-
-					execute(job, personaDO);
-					executed = true;
-					job.setLastRun(now);
-
-				} catch (Exception e) {
-					log.warning("Could not execute the job:" + job.getName());
-					e.printStackTrace();
-				}
-			}
-			
-			if (executed) {
-				break;
-			}
-		}
-
-		//Go to next persona
-		lastUsedPersona++;
-		if (lastUsedPersona>=personas.size()) {
-			lastUsedPersona=0;
-		}
-		jobsQueueDO.setLastPersonaUsedIndex(lastUsedPersona);
-		endTransaction();
 		resp.setContentType("text/html");
 		resp.getWriter().println("200 OK");
 
 	}
 
-	private void initializePersonaJobs(PersonaDO persona) {
+	/*private void initializePersonaJobs(PersonaDO persona) {
 		List<PersonaJobDefDO> jobDefs = new ArrayList<PersonaJobDefDO>();
 
 		PersonaJobDefDO createAutoFollowJob = new PersonaJobDefDO();
@@ -191,8 +204,8 @@ public class RunJobsServlet extends AbstractHttpServlet {
 		log.fine("** Ending executing job for Persona: " + persona.getName());
 
 	}
-
-	private void execute(JobDO job) throws Exception {
+*/
+	private void execute(Job job) throws Exception {
 		PersonaDO persona = getBusinessHelper().getPersonaDao().findPersona(
 				job.getPersonaKey());
 
