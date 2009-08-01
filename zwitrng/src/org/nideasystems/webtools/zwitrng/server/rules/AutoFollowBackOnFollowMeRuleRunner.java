@@ -19,6 +19,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.PersonaDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUpdateDTO;
 
+import com.google.appengine.api.datastore.Blob;
+
 import twitter4j.User;
 
 public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
@@ -42,10 +44,11 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 		// get the list of new personas to follow
 		List<Integer> queue = persona.getTwitterAccount()
 				.getAutoFollowBackIdsQueue();
-		Set<Integer> followingIds = persona.getTwitterAccount()
-				.getFollowingIds();
-		Set<Integer> followersIds = persona.getTwitterAccount()
-				.getFollowersIds();
+		Set<Integer> followingIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
+				.getFollowingIdsBlob());
+		
+		Set<Integer> followersIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
+				.getFollowersIdsBlob());
 
 		int autoFollowCount = persona.getTwitterAccount()
 				.getAutoFollowedCount() != null ? persona.getTwitterAccount()
@@ -100,8 +103,8 @@ public class AutoFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 		}
 
 		persona.getTwitterAccount().setAutoFollowedCount(autoFollowCount);
-		persona.getTwitterAccount().setFollowersIds(followersIds);
-		persona.getTwitterAccount().setFollowingIds(followingIds);
+		persona.getTwitterAccount().setFollowersIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followersIds)));
+		persona.getTwitterAccount().setFollowingIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followingIds)));
 		persona.getTwitterAccount().setAutoFollowBackIdsQueue(queue);
 		persona.getTwitterAccount().setIgnoreUsersIds(ignoreList);
 

@@ -22,7 +22,7 @@
 	<!-- We can also have source shared amongst client and server   -->
 	<source path="shared" />
 
-	<inherits name='org.restlet.GWT' />
+	<!-- <inherits name='org.restlet.GWT' /> -->
 	
 	<stylesheet src="../Zwitrng.css"/> 
 	<!-- Specify the app entry point class.                         -->

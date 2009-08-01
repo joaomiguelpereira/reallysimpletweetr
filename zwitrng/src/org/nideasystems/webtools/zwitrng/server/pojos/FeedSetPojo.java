@@ -215,7 +215,8 @@ public class FeedSetPojo extends AbstractPojo {
 			link = itemDo.getLink();
 			//Let's see if it's to track
 			if (campaign.getTrackClicksOnLinks()) {
-				link = "http://thewebdawn.net/index.php?url="+link+"&red=true&campaignKey="+campaign.getKey().toString();
+				
+				link = "http://thewebdawn.net/v2.php?url="+link+"&red=true&campaignKey="+campaign.getKey().toString();
 			}
 			link = BitLyServiceAdapter.get().shortLink(link);
 			

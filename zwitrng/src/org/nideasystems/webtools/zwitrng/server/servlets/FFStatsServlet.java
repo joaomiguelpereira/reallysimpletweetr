@@ -3,8 +3,9 @@ package org.nideasystems.webtools.zwitrng.server.servlets;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 import static com.googlecode.charts4j.Color.*;
 
 import javax.cache.Cache;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.nideasystems.webtools.zwitrng.server.AuthorizationManager;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
+import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.jobs.Job;
 
 import com.google.appengine.api.users.User;
@@ -33,6 +35,7 @@ import com.googlecode.charts4j.Line;
 import com.googlecode.charts4j.LineChart;
 import com.googlecode.charts4j.LineStyle;
 import com.googlecode.charts4j.LinearGradientFill;
+import com.googlecode.charts4j.LinearStripesFill;
 import com.googlecode.charts4j.Plots;
 
 
@@ -90,30 +93,36 @@ public class FFStatsServlet extends AbstractHttpServlet {
         }
         //Try to get the list from cahc
         List<Job> jobList = (List<Job>)cache.get("jobs");
-        
+        List<Job> tweetJobsList = (List<Job>)cache.get("tweetjobs");
         int size = jobList!=null?jobList.size():-1;
-		outBuffer.append("<h1> Jobs Queue Size>" + size+ "</h1>");
+        int sizeTweetsJobs = tweetJobsList!=null?tweetJobsList.size():-1;
+		
+        outBuffer.append(createPageHeader("Jobs Queue Size:" + size));
+        outBuffer.append(createPageHeader("Tweet jobs Queue Size:" + sizeTweetsJobs));
+        
+		
 		for (PersonaDO persona : personas) {
 			try {
-				// update following count for the period
-				/*
-				 * List<Integer> historicalFollowing =
-				 * persona.getTwitterAccount() .getHistoricalFollowing();
-				 * List<Integer> historicalFollowers =
-				 * persona.getTwitterAccount() .getHistoricalFollowers();
-				 * 
-				 * 
-				 * if (historicalFollowers == null) { historicalFollowers = new
-				 * ArrayList<Integer>(); } if (historicalFollowing == null) {
-				 * historicalFollowing = new ArrayList<Integer>(); }
-				 */
 
 				int autoFollowedCount = 0;
 				int autoUnfollowedCount = 0;
 				int followBackQueueSize = 0;
 				int followSearchQueueSize = 0;
 				int unfollowBackQueueSize = 0;
+				int ignored = 0;
+				
+				Set<Integer> followersIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowersIdsBlob());
+				
+				Set<Integer> followingIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowingIdsBlob());
+				
+				
 				float ratio = 0;
+
+				if (persona.getTwitterAccount().getIgnoreUsersIds() != null) {
+					ignored = persona.getTwitterAccount()
+							.getIgnoreUsersIds().size();
+				}
+
 				if (persona.getTwitterAccount().getAutoFollowedScreenNames() != null) {
 					autoFollowedCount = persona.getTwitterAccount()
 							.getAutoFollowedScreenNames().size();
@@ -132,35 +141,30 @@ public class FFStatsServlet extends AbstractHttpServlet {
 							.getAutoFollowScreenNamesQueue().size();
 				}
 
-				ratio = new Float(persona.getTwitterAccount().getFollowingIds()
-						.size())
-						/ new Float(persona.getTwitterAccount()
-								.getFollowersIds().size());
-
-				outBuffer.append("<h1> Stats for " + persona.getName()
-						+ "</h1>");
-				outBuffer.append("<div>Followers: "
-						+ persona.getTwitterAccount().getFollowersIds().size()
-						+ "</div>");
-				outBuffer.append("<div>Following: "
-						+ persona.getTwitterAccount().getFollowingIds().size()
-						+ "</div>");
-				outBuffer.append("<div>Ratio " + ratio + "</div>");
-
-				outBuffer.append("<div>Auto Followed Count: "
-						+ autoFollowedCount + "</div>");
-				outBuffer.append("<div>Auto Follow Back Queue size: "
-						+ followBackQueueSize + "</div>");
-				outBuffer.append("<div>Auto Follow on Search Queue size: "
-						+ followSearchQueueSize + "</div>");
-
-				outBuffer.append("<div>Auto Unfollowed Count: "
-						+ autoUnfollowedCount + "</div>");
-				outBuffer.append("<div>Auto Unfollow Queue Size: "
-						+ unfollowBackQueueSize + "</div>");
+				if (persona.getTwitterAccount().getAutoUnfollowedIds()!= null ) {
+					autoUnfollowedCount = persona.getTwitterAccount().getAutoUnfollowedIds().size(); 
+				}
+				if ( followingIds!= null && followersIds!=null ) {
+					ratio = new Float(followingIds.size())
+							/ new Float(followersIds.size());		
+				}
+			
+				outBuffer.append(createPageHeader2("Stats for " + persona.getName()));
+				outBuffer.append(createIntegerValue("Followers:",(followersIds!=null?followersIds.size():0)));
+				
+				outBuffer.append(createIntegerValue("Following:",(followingIds!=null?followingIds.size():0)));
+				
+				
+				outBuffer.append(createFloatValue("Ratio:",ratio));
+				outBuffer.append(createIntegerValue("Auto Follow Back Queue size:",followBackQueueSize));
+				outBuffer.append(createIntegerValue("Auto Follow on Search Queue size:",followSearchQueueSize));
+				outBuffer.append(createIntegerValue("Auto Unfollow Queue Size::",unfollowBackQueueSize));
+				outBuffer.append(createIntegerValue("Auto Followed Count:",autoFollowedCount));
+				outBuffer.append(createIntegerValue("Auto Unfollowed Count:",autoUnfollowedCount));
+				outBuffer.append(createIntegerValue("Ignored:",ignored));
 
 				// get the min of both
-
+				outBuffer.append(createPageHeader3("Chart"));
 				// create chart
 				outBuffer.append(renderChart(persona));
 
@@ -179,6 +183,27 @@ public class FFStatsServlet extends AbstractHttpServlet {
 
 	}
 
+	private String createIntegerValue(String string, int value) {
+		// TODO Auto-generated method stub
+		return "<div><span class=\"label\">"+string+"</span><span class=\"value\">"+value+"</span></div>";
+	}
+
+	private String createFloatValue(String string, float value) {
+		// TODO Auto-generated method stub
+		return "<div><span class=\"label\">"+string+"</span><span class=\"value\">"+value+"</span></div>";
+	}
+
+	private Object createPageHeader3(String string) {
+		return "<h2>"+string+"</h2>";	}
+
+
+	private Object createPageHeader2(String string) {
+		return "<h2>"+string+"</h2>";	}
+
+	private Object createPageHeader(String string) {
+			return "<h1>"+string+"</h1>";
+	}
+
 	private String renderChart(PersonaDO persona) {
 		StringBuffer sb = new StringBuffer();
 
@@ -187,6 +212,9 @@ public class FFStatsServlet extends AbstractHttpServlet {
 		List<Integer> followers = persona.getTwitterAccount()
 				.getHistoricalFollowers();
 
+		if (following==null || followers==null || following.size() == 0 || followers.size() == 0 ) {
+			return "NO DATA";
+		}
 		MAX_POINTS = following.size() < following.size() ? followers.size()
 				: followers.size();
 
@@ -199,7 +227,7 @@ public class FFStatsServlet extends AbstractHttpServlet {
 		}
 
 		List<Float> followingSeries = getSeries(following);
-		List<Float> followersSeries = getSeries(followers);
+		List<Float> followersSeries 	= getSeries(followers);
 		float maxFollowers = getMax(followersSeries);
 		float maxFollowing = getMax(followingSeries);
 		float minFollowing = getMin(followingSeries);
@@ -222,45 +250,44 @@ public class FFStatsServlet extends AbstractHttpServlet {
 		for (int i = 0; i < MAX_POINTS; i++) {
 			// competition[i] = 100-(Math.cos(30*i*Math.PI/180)*10 + 50)*i/20;
 			// mywebsite[i] = (Math.cos(30*i*Math.PI/180)*10 + 50)*i/20;
-			followingChart[i] = (followingSeries.get(MAX_POINTS - 1 - i) / max) * 100;
-			followerChart[i] = (followersSeries.get(MAX_POINTS - 1 - i) / max) * 100;
+			followingChart[i] = (followingSeries.get(MAX_POINTS - 1 - i) / (max+100+(max/2))) * 100;
+			followerChart[i] = (followersSeries.get(MAX_POINTS - 1 - i) / (max+100+(max/2))) * 100;
 		}
-		Line line1 = Plots.newLine(Data.newData(followingChart), Color
-				.newColor("CA3D05"), "Following");
+		Line followingLine = Plots.newLine(Data.newData(followingChart), Color.BROWN, "Following");
 		// Line line1 = Plots.newLine(Data.newData(100,200,300,400),
 		// Color.newColor("CA3D05"), "My Website.com");
-		line1.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
+		followingLine.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 		//line1.addShapeMarkers(Shape.DIAMOND, Color.newColor("CA3D05"), 12);
 		//line1.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
-		Line line2 = Plots.newLine(Data.newData(followerChart), SKYBLUE,
+		Line followersLine = Plots.newLine(Data.newData(followerChart), Color.GREEN,
 				"Followers");
 		// Line line2 = Plots.newLine(Data.newData(20,323,44,555), SKYBLUE,
 		// "Competition.com");
-		line2.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
+		followersLine.setLineStyle(LineStyle.newLineStyle(3, 1, 0));
 		//line2.addShapeMarkers(Shape.DIAMOND, SKYBLUE, 12);
 		//line2.addShapeMarkers(Shape.DIAMOND, Color.WHITE, 8);
 
 		// Defining chart.
-		LineChart chart = GCharts.newLineChart(line1, line2);
+		LineChart chart = GCharts.newLineChart(followingLine, followersLine);
 		chart.setSize(600, 450);
-		chart.setTitle("Following/Followers", WHITE, 14);
-		chart.addHorizontalRangeMarker(40, 60, Color.newColor(RED, 30));
-		chart.addVerticalRangeMarker(70, 90, Color.newColor(GREEN, 30));
-		chart.setGrid(25, 25, 3, 2);
+		chart.setTitle("Following/Followers", BLACK, 16);
+		//chart.addHorizontalRangeMarker(40, 60, Color.newColor(RED, 30));
+		//chart.addVerticalRangeMarker(70, 90, Color.newColor(GREEN, 30));
+		//chart.setGrid(25, 25, 3, 2);
 
 		// Defining axis info and styles
-		AxisStyle axisStyle = AxisStyle.newAxisStyle(WHITE, 12,
+		AxisStyle axisStyle = AxisStyle.newAxisStyle(BLACK, 12,
 				AxisTextAlignment.CENTER);
-		AxisLabels xAxis = AxisLabelsFactory.newAxisLabels("P1", "P2", "P3",
-				"P4", "P5");
+		AxisLabels xAxis = AxisLabelsFactory.newAxisLabels("1", "2", "3","4", "5", "6", "7");
 		xAxis.setAxisStyle(axisStyle);
+		
 				AxisLabels yAxis = AxisLabelsFactory.newAxisLabels(createYAxis(min, max));
 		AxisLabels xAxis3 = AxisLabelsFactory.newAxisLabels("Period", 50.0);
-		xAxis3.setAxisStyle(AxisStyle.newAxisStyle(WHITE, 14,
+		xAxis3.setAxisStyle(AxisStyle.newAxisStyle(BLACK, 14,
 				AxisTextAlignment.CENTER));
 		yAxis.setAxisStyle(axisStyle);
-		AxisLabels yAxis2 = AxisLabelsFactory.newAxisLabels("Tweeters", 50.0);
-		yAxis2.setAxisStyle(AxisStyle.newAxisStyle(WHITE, 14,
+		AxisLabels yAxis2 = AxisLabelsFactory.newAxisLabels("Users", 50.0);
+		yAxis2.setAxisStyle(AxisStyle.newAxisStyle(BLACK, 14,
 				AxisTextAlignment.CENTER));
 		yAxis2.setAxisStyle(axisStyle);
 
@@ -271,10 +298,11 @@ public class FFStatsServlet extends AbstractHttpServlet {
 		chart.addYAxisLabels(yAxis2);
 
 		// Defining background and chart fills.
-		chart.setBackgroundFill(Fills.newSolidFill(Color.newColor("1F1D1D")));
-		LinearGradientFill fill = Fills.newLinearGradientFill(0, Color
-				.newColor("363433"), 100);
-		fill.addColorAndOffset(Color.newColor("2E2B2A"), 0);
+		chart.setBackgroundFill(Fills.newSolidFill(Color.WHITE));
+		LinearStripesFill fill1 = Fills.newLinearStripesFill(45, Color.WHITESMOKE, 2);
+		LinearGradientFill fill = Fills.newLinearGradientFill(90, Color.WHITESMOKE, 50);
+		fill.addColorAndOffset(Color.BEIGE, 0);
+		
 		chart.setAreaFill(fill);
 		String url = chart.toURLString();
 

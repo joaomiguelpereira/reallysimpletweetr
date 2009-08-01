@@ -17,7 +17,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.nideasystems.webtools.zwitrng.server.bitly.BitLyServiceAdapter;
 import org.nideasystems.webtools.zwitrng.server.utils.XMLUtils;
-import org.w3c.dom.CharacterData;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -77,9 +77,10 @@ public class RSS {
 		try {
 			URL url = new URL(randUrl);
 			
-			DocumentBuilder builder = DocumentBuilderFactory.newInstance()
-					.newDocumentBuilder();
+			DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			
 			Document doc = builder.parse(url.openStream());
+			
 			NodeList nList = doc.getElementsByTagName("item");
 			
 			for (int i = 0; i < nList.getLength(); i++) {

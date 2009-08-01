@@ -37,15 +37,34 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 		Set<String> autoFollowedUsersScreenNames = persona.getTwitterAccount()
 				.getAutoFollowedScreenNames();
 		
+		Set<Integer> ignoreSet = persona.getTwitterAccount().getIgnoreUsersIds();
+		
+		Set<Integer> followersIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
+				.getFollowersIdsBlob());
+		
+		
+		Set<Integer> followingIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
+				.getFollowingIdsBlob());
+		
+
+		
+		if ( ignoreSet == null) {
+			ignoreSet = new HashSet<Integer>();
+		}
 		if (autoFollowedUsersScreenNames == null) {
 			autoFollowedUsersScreenNames = new HashSet<String>();
 		}
 
+		
 		log.fine(" $ $ Executing Follow Back On Search");
 		//Keep my ratio low, please
 		//My Ration
 		
-		float currentRatio = new Float(persona.getTwitterAccount().getFollowingIds().size())/new Float(persona.getTwitterAccount().getFollowersIds().size());
+		float currentRatio = 0;
+		if ( followersIds != null ) {
+			currentRatio = new Float(followingIds.size())/new Float(followersIds.size());
+		}
+		
 		
 		log.fine("$$ My Ration i: "+currentRatio);
 		
@@ -67,13 +86,14 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 				removeList.add(queue.get(i));
 
 				//check if they are not friends yet
-				
+				int userId = 0;
 				try {
-					if ( process(queue.get(i)) ) {
-						log.fine("$$ Persona: "+persona.getName()+" is now following user:"+queue.get(i));
+					if ( (userId = process(queue.get(i))) > 0) {
+						log.fine("$$ Persona: "+persona.getName()+" is now following user:"+queue.get(i)+" with id:"+userId);
 						autoFollowedUsersScreenNames.add(queue.get(i));
+						ignoreSet.add(userId);
 					} else {
-						log.fine("$$Persona "+persona.getName()+" Could not follow user :"+queue.get(i));
+						log.fine("$$Persona "+persona.getName()+" Could not follow user :"+queue.get(i)+" Ignoring.");
 					}
 					
 				} catch (Exception e) {
@@ -93,6 +113,7 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 			for (String str : removeList) {
 				queue.remove(str);
 			}
+			persona.getTwitterAccount().setIgnoreUsersIds(ignoreSet);
 			persona.getTwitterAccount().setAutoFollowScreenNamesQueue(queue);
 			persona.getTwitterAccount().setAutoFollowedScreenNames(
 					autoFollowedUsersScreenNames);
@@ -101,11 +122,14 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 
 	}
 
-	private boolean process(String screenName) throws Exception {
+	private int process(String screenName) throws Exception {
 
 		boolean followed = true;
+		int userId = 0;
 		User user = getTwitterUser(screenName);
+		userId = user.getId();
 		if (canFollow(user)) {
+			
 			log.fine("Persona: "+persona.getName()+ ", following User: "+screenName);
 			TwitterAccountDTO authAccount = TwitterAccountDAO
 					.createAuthorizedAccountDto(persona.getTwitterAccount());
@@ -122,7 +146,7 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 			followed = false;
 		}
 		// Now check preconditions
-		return followed;
+		return userId;
 	}
 
 }

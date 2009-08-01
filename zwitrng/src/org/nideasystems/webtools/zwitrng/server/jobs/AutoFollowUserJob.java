@@ -13,13 +13,8 @@ public class AutoFollowUserJob extends AbstractJob {
 		log.fine("> > Executing Job: " + this.getClass().getSimpleName()+" < <");
 		log.fine("> > Persona: "+persona.getName());
 		
-		int followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
-				.getTwitterAccount().getFollowingIds().size()
-				: 0;
-		int followersSize = persona.getTwitterAccount().getFollowersIds() != null ? persona
-				.getTwitterAccount().getFollowersIds().size()
-				: 0;
-		int backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null ? persona
+				
+				int backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoFollowBackIdsQueue().size()
 				: 0;
 		int ignoreSize = persona.getTwitterAccount().getIgnoreUsersIds() != null ? persona
@@ -38,8 +33,7 @@ public class AutoFollowUserJob extends AbstractJob {
 
 		log.fine("> > FollowBack list Size:" + backSize);
 		log.fine("> > Ignore list Size:" + ignoreSize);
-		log.fine("> > Friends: " + followingSize);
-		log.fine("> > Followers: " + followersSize);
+		
 		log.fine("> > Unfollow Back Followers: " + unfollowSize);
 		log.fine("> > Follow Queue: " + followSize);
 		log.fine("> > Followed Size: " + autoFollowedSize);
@@ -63,12 +57,7 @@ public class AutoFollowUserJob extends AbstractJob {
 			ruleEx.execute();
 		} 
 
-		followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
-				.getTwitterAccount().getFollowingIds().size()
-				: 0;
-		followersSize = persona.getTwitterAccount().getFollowersIds() != null ? persona
-				.getTwitterAccount().getFollowersIds().size()
-				: 0;
+		
 		backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoFollowBackIdsQueue().size()
 				: 0;
@@ -88,8 +77,6 @@ public class AutoFollowUserJob extends AbstractJob {
 
 		log.fine("FollowBack list Size:" + backSize);
 		log.fine("Ignore list Size:" + ignoreSize);
-		log.fine("Friends: " + followingSize);
-		log.fine("Followers: " + followersSize);
 		log.fine("Unfollow Back Followers: " + unfollowSize);
 		log.fine("Follow Queue: " + followSize);
 	}
