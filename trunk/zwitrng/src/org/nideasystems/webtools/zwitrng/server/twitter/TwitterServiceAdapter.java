@@ -308,8 +308,10 @@ public class TwitterServiceAdapter {
 
 	}
 
-	public List<Tweet> search(String searchTerm) throws Exception {
+	public List<Tweet> search(String searchTerm, int pageSize) throws Exception {
 		Query query = new Query();
+		query.setRpp(pageSize);
+		
 		query.setQuery(searchTerm);
 		List<Tweet> tweets = null;
 		try {

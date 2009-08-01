@@ -8,6 +8,8 @@ import org.nideasystems.webtools.zwitrng.server.domain.dao.TwitterAccountDAO;
 import org.nideasystems.webtools.zwitrng.server.twitter.TwitterServiceAdapter;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterAccountDTO;
 
+import com.google.appengine.api.datastore.Blob;
+
 public class SynchUsersInfoJob extends AbstractJob {
 
 	@Override
@@ -18,18 +20,16 @@ public class SynchUsersInfoJob extends AbstractJob {
 		TwitterAccountDTO authorizedAccount = TwitterAccountDAO
 				.createAuthorizedAccountDto(twitterAccount);
 		// Update follwers list
-		log.fine("$$ Following size: "+persona.getTwitterAccount().getFollowingIds().size());
-		log.fine("$$ Followers size: "+persona.getTwitterAccount().getFollowersIds().size());
 		
 		Set<Integer> followersIds = getFollowersIds(authorizedAccount);
-		persona.getTwitterAccount().setFollowersIds(followersIds);
+		
+		persona.getTwitterAccount().setFollowersIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followersIds)));
 
 		//Update following list
 		Set<Integer> followingIds = getFollowingIds(authorizedAccount);
-		persona.getTwitterAccount().setFollowingIds(followingIds);
-		log.fine("$$ Following size now: "+persona.getTwitterAccount().getFollowingIds().size());
-		log.fine("$$ Followers size now: "+persona.getTwitterAccount().getFollowersIds().size());
 		
+		persona.getTwitterAccount().setFollowingIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followingIds)));
+				
 	}
 
 	private Set<Integer> getFollowingIds(TwitterAccountDTO authorizedAccount)

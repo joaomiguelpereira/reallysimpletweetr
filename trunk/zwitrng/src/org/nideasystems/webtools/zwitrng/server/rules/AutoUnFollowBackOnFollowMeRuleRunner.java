@@ -42,6 +42,12 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 		Set<Integer> unfollowedIds = persona.getTwitterAccount()
 				.getAutoUnfollowedIds();
 
+		Set<Integer> followersIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
+				.getFollowersIdsBlob());
+
+		Set<Integer> followingIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
+				.getFollowingIdsBlob());
+
 		if (unfollowedIds == null) {
 			unfollowedIds = new HashSet<Integer>();
 		}
@@ -67,9 +73,9 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 				unfollowedIds.add(userId);
 				// check if are friends
 
-				if (persona.getTwitterAccount().getFollowingIds().contains(
+				if (followingIds.contains(
 						userId)
-						&& !persona.getTwitterAccount().getFollowersIds()
+						&& !followersIds
 								.contains(userId)) {
 					if (processUser(userId)) {
 						log.fine("> > Persona:" + persona.getName()

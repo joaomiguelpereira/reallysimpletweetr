@@ -10,12 +10,7 @@ public class AutoUnfollowUserJob extends AbstractJob {
 	@Override
 	public void execute() throws Exception {
 		log.fine("> > Persona: "+persona.getName()+" Executing Job: " + this.getClass().getSimpleName());
-		int followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
-				.getTwitterAccount().getFollowingIds().size()
-				: 0;
-		int followersSize = persona.getTwitterAccount().getFollowersIds() != null ? persona
-				.getTwitterAccount().getFollowersIds().size()
-				: 0;
+		
 		int backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoFollowBackIdsQueue().size()
 				: 0;
@@ -28,8 +23,7 @@ public class AutoUnfollowUserJob extends AbstractJob {
 
 		log.fine("> > Persona: "+persona.getName()+" FollowBack list Size:" + backSize);
 		log.fine("> > Persona: "+persona.getName()+" Ignore list Size:" + ignoreSize);
-		log.fine("> > Persona: "+persona.getName()+" Friends: " + followingSize);
-		log.fine("> > Persona: "+persona.getName()+" Followers: " + followersSize);
+		
 		log.fine("> > Persona: "+persona.getName()+" Unfollow Back Followers: " + unfollowSize);
 
 
@@ -49,12 +43,6 @@ public class AutoUnfollowUserJob extends AbstractJob {
 			
 			ruleEx.execute();
 		}
-		followingSize = persona.getTwitterAccount().getFollowingIds() != null ? persona
-				.getTwitterAccount().getFollowingIds().size()
-				: 0;
-		followersSize = persona.getTwitterAccount().getFollowersIds() != null ? persona
-				.getTwitterAccount().getFollowersIds().size()
-				: 0;
 		backSize = persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoFollowBackIdsQueue().size()
 				: 0;
@@ -66,8 +54,7 @@ public class AutoUnfollowUserJob extends AbstractJob {
 				.getTwitterAccount().getAutoUnFollowBackIdsQueue().size() : 0;
 		log.fine("> > Persona: "+persona.getName()+" FollowBack list Size:" + backSize);
 		log.fine("> > Persona: "+persona.getName()+" Ignore list Size:" + ignoreSize);
-		log.fine("> > Persona: "+persona.getName()+" Friends: " + followingSize);
-		log.fine("> > Persona: "+persona.getName()+" Followers: " + followersSize);
+		
 		log.fine("> > Persona: "+persona.getName()+" Unfollow Back Followers: " + unfollowSize);
 
 	}

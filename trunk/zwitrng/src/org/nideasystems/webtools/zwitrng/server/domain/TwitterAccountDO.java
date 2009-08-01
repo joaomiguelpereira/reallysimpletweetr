@@ -11,6 +11,7 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
+import com.google.appengine.api.datastore.Blob;
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType = IdentityType.APPLICATION)
@@ -41,10 +42,16 @@ public class TwitterAccountDO implements Serializable {
 	private RateLimitsDO rateLimits;
 
 	@Persistent
-	private Set<Integer> followersIds;
+	private Blob followersIdsBlob;
+	
+	
+	//private Set<Integer> followersIds;
 
 	@Persistent
-	private Set<Integer> followingIds;
+	private Blob followingIdsBlob;
+	
+	//@Persistent
+	//private Set<Integer> followingIds;
 
 	@Persistent
 	private Set<Integer> blockingIds;
@@ -197,21 +204,21 @@ public class TwitterAccountDO implements Serializable {
 		return rateLimits;
 	}
 
-	public void setFollowersIds(Set<Integer> followersIds) {
+	/*public void setFollowersIds(Set<Integer> followersIds) {
 		this.followersIds = followersIds;
 	}
 
 	public Set<Integer> getFollowersIds() {
 		return followersIds;
 	}
-
-	public void setFollowingIds(Set<Integer> followingIds) {
+*/
+	/*public void setFollowingIds(Set<Integer> followingIds) {
 		this.followingIds = followingIds;
 	}
 
 	public Set<Integer> getFollowingIds() {
 		return followingIds;
-	}
+	}*/
 
 	public void setBlockingIds(Set<Integer> blockingIds) {
 		this.blockingIds = blockingIds;
@@ -229,10 +236,10 @@ public class TwitterAccountDO implements Serializable {
 		return id;
 	}
 
-	public void addFollowingId(Integer integer) {
+	/*public void addFollowingId(Integer integer) {
 		this.followingIds.add(integer);
 
-	}
+	}*/
 
 	public void setAutoFollowBackIdsQueue(List<Integer> autoFollowBackIdsQueue) {
 		this.autoFollowBackIdsQueue = autoFollowBackIdsQueue;
@@ -320,5 +327,22 @@ public class TwitterAccountDO implements Serializable {
 
 	public List<Integer> getHistoricalFollowers() {
 		return historicalFollowers;
+	}
+
+	public void setFollowersIdsBlob(Blob followersIds) {
+		this.followersIdsBlob = followersIds;
+	}
+
+	public Blob getFollowersIdsBlob() {
+		return followersIdsBlob;
+	}
+
+	public void setFollowingIdsBlob(Blob followingIds) {
+		this.followingIdsBlob = followingIds;
+	}
+
+	
+	public Blob getFollowingIdsBlob() {
+		return followingIdsBlob;
 	}
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.nideasystems.webtools.zwitrng.server.Configuration;
 import org.nideasystems.webtools.zwitrng.server.domain.AutoFollowRuleDO;
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.RateLimitsDO;
@@ -26,6 +27,8 @@ import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTO;
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserDTOList;
 
 import org.nideasystems.webtools.zwitrng.shared.model.TwitterUserFilterDTO;
+
+import com.google.appengine.api.datastore.Blob;
 
 import twitter4j.DirectMessage;
 import twitter4j.Status;
@@ -64,9 +67,9 @@ public class TwitterPojo extends AbstractPojo {
 
 		startTwitterTransaction(thePersonaDto.getTwitterAccount());
 
-		if (persona.getTwitterAccount().getFollowersIds() == null
+		if (persona.getTwitterAccount().getFollowersIdsBlob() == null
 				|| persona.getTwitterAccount().getBlockingIds() == null
-				|| persona.getTwitterAccount().getFollowingIds() == null) {
+				|| persona.getTwitterAccount().getFollowingIdsBlob() == null) {
 
 			synchronize(persona, thePersonaDto.getTwitterAccount());
 		}
@@ -81,15 +84,17 @@ public class TwitterPojo extends AbstractPojo {
 		TwitterUserDTOList ret = new TwitterUserDTOList();
 		ret.setFilter(currentFilter);
 
+		Set<Integer> followers = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowersIdsBlob());
+		Set<Integer> followings = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowingIdsBlob());
+		
 		for (User twitterUser : twitterUserList) {
 
 			TwitterUserDTO twitterAccount = DataUtils
 					.createTwitterAccountDto(twitterUser);
 			// Create extension
 			// Set is new
-			boolean isNew = !persona.getTwitterAccount().getFollowersIds()
-					.contains(new Integer(twitterAccount.getId()))
-					&& !persona.getTwitterAccount().getFollowingIds().contains(
+			boolean isNew = !followers.contains(new Integer(twitterAccount.getId()))
+					&& !followings.contains(
 							new Integer(twitterAccount.getId()));
 			twitterAccount.setNew(isNew);
 
@@ -99,11 +104,10 @@ public class TwitterPojo extends AbstractPojo {
 			twitterAccount.setImBlocking(persona.getTwitterAccount()
 					.getBlockingIds().contains(
 							new Integer(twitterAccount.getId())));
-			twitterAccount.setImFollowing(persona.getTwitterAccount()
-					.getFollowingIds().contains(
+			twitterAccount.setImFollowing(followings.contains(
 							new Integer(twitterAccount.getId())));
 			twitterAccount.setMutualFriendShip(twitterAccount.isImFollowing()
-					&& persona.getTwitterAccount().getFollowersIds().contains(
+					&& followers.contains(
 							new Integer(twitterAccount.getId())));
 
 			ret.add(twitterAccount);
@@ -155,17 +159,18 @@ public class TwitterPojo extends AbstractPojo {
 			throw e;
 		}
 
-		if (persona.getTwitterAccount().getFollowersIds() != null) {
+		/*if (persona.getTwitterAccount().getFollowersIds() != null) {
 			// Clear current array
-			persona.getTwitterAccount().getFollowersIds().clear();
+			persona.getTwitterAccount().setFollowersIds(new Blob(new byte[0]));
 
-		}
+		}*/
 
 		Set<Integer> followersIds = new HashSet<Integer>();
 		for (int id : newFollowersIds) {
 			followersIds.add(id);
 		}
-		persona.getTwitterAccount().setFollowersIds(followersIds);
+		
+		persona.getTwitterAccount().setFollowersIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followersIds)));
 
 		// Get the following
 		int[] newFollowingIds;
@@ -177,17 +182,19 @@ public class TwitterPojo extends AbstractPojo {
 			throw e;
 		}
 
-		if (persona.getTwitterAccount().getFollowingIds() != null) {
+		
+		/*if (persona.getTwitterAccount().getFollowingIds() != null) {
 			// Clear current array
 			persona.getTwitterAccount().getFollowingIds().clear();
 
-		}
+		}*/
 
 		Set<Integer> followingIds = new HashSet<Integer>();
 		for (int id : newFollowingIds) {
 			followingIds.add(id);
 		}
-		persona.getTwitterAccount().setFollowingIds(followingIds);
+		persona.getTwitterAccount().setFollowingIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followingIds)));
+		//persona.getTwitterAccount().setFollowingIds(followingIds);
 
 		// Get the blocinkg ids
 
@@ -255,6 +262,8 @@ public class TwitterPojo extends AbstractPojo {
 
 		startTwitterTransaction(currentPersona.getTwitterAccount());
 
+		Set<Integer> followings = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowingIdsBlob());
+		
 		if (persona == null) {
 			throw new Exception("Could not find the persona");
 		}
@@ -269,25 +278,23 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		if (persona.getTwitterAccount().getFollowingIds() != null) {
-			log.fine(("Adding new FOLLOWER: " + user.getId()));
-			log.fine(("SIZE BEFORE: " + persona.getTwitterAccount()
-					.getFollowingIds().size()));
-
-			persona.getTwitterAccount().addFollowingId(
+		if (followings != null) {
+						followings.add(
 					new Integer(user.getId()));
-			log.fine(("SIZE AFTER: " + persona.getTwitterAccount()
-					.getFollowingIds().size()));
+			
+			
 		}
+		
+		persona.getTwitterAccount().setFollowersIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followings)));
+		
+		Set<Integer> followers = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowersIdsBlob());
 		// if is to synch
 		if (synch) {
-			if (persona.getTwitterAccount().getFollowersIds() != null) {
-				persona.getTwitterAccount().getFollowersIds().add(
-						new Integer(user.getId()));
-
+			if (followers != null) {
+				followers.add(new Integer(user.getId()));
 			}
-
 		}
+		persona.getTwitterAccount().setFollowersIdsBlob(new Blob(TwitterAccountDAO.toByteArray(followers)));
 		updateRateLimist(persona);
 
 	}
@@ -313,8 +320,9 @@ public class TwitterPojo extends AbstractPojo {
 			endTwitterTransaction();
 		}
 
-		if (persona.getTwitterAccount().getFollowingIds() != null) {
-			persona.getTwitterAccount().getFollowingIds().remove(user.getId());
+		Set<Integer> followings = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowingIdsBlob());
+		if ( followings != null) {
+			followings.remove(user.getId());
 		}
 
 		updateRateLimist(persona);
@@ -544,6 +552,9 @@ public class TwitterPojo extends AbstractPojo {
 			throw new Exception("Persona not found");
 		}
 
+		Set<Integer> followers = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowersIdsBlob());
+		Set<Integer> followings = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowingIdsBlob());
+		
 		startTwitterTransaction(personaDto.getTwitterAccount());
 
 		User user = twitterService.getUserInfo(userIdOrScreenName);
@@ -561,16 +572,16 @@ public class TwitterPojo extends AbstractPojo {
 			dto.setImBlocking(false);
 		}
 
-		if (persona.getTwitterAccount().getFollowingIds() != null
-				&& persona.getTwitterAccount().getFollowingIds().contains(
+		if (followings != null
+				&& followings.contains(
 						dto.getId())) {
 			dto.setImFollowing(true);
 		} else {
 			dto.setImFollowing(false);
 		}
 
-		if (persona.getTwitterAccount().getFollowersIds() != null
-				&& persona.getTwitterAccount().getFollowersIds().contains(
+		if (followers != null
+				&& followers.contains(
 						dto.getId()) && dto.isImFollowing()) {
 			dto.setMutualFriendShip(true);
 
@@ -785,7 +796,7 @@ public class TwitterPojo extends AbstractPojo {
 		
 		startTwitterTransaction( authorizedAccount );
 		
-		List<Tweet> tweets = twitterService.search(autofollowrule.getSearchTerm());
+		List<Tweet> tweets = twitterService.search(autofollowrule.getSearchTerm(),Configuration.MAX_TWEETS_ON_SEARCH_FOLLOW);
 		endTwitterTransaction();
 		//Get last retweet Timestamo
 		Long lastRtTimeStamp = twitterAccount.getLastRTTimeStamp();

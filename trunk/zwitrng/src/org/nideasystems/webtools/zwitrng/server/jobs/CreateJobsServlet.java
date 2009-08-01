@@ -58,6 +58,7 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 
 		}
 
+		getBusinessHelper().setStartTime(new Date().getTime());
 		List<PersonaDO> personas = getBusinessHelper().getPersonaDao()
 				.findAllActivePersonas();
 		log.fine("Going to run jobs for " + personas.size() + " personas");
@@ -102,6 +103,12 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 
 			log.fine("==End C r e a t i n g   J o b s   f o r   P e r s o n a "
 					+ persona.getName() + "===");
+			
+			now = new Date().getTime();
+			if (getBusinessHelper().getStartTime()-now >= Configuration.MAX_JOB_RUN_TIME ){
+				log.fine("********Time allowed per job elapsed");
+				break;
+			}
 		}
 
 		endTransaction();
@@ -154,8 +161,8 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 
 		PersonaJobDefDO createAutoFollowJob = new PersonaJobDefDO();
 		createAutoFollowJob.setLastRun(0);
-		createAutoFollowJob.setName("Create Auto Follow Queue");
-		createAutoFollowJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_FOLLOW_QUEUE_INTERVAL);// 30 min
+		createAutoFollowJob.setName("Create Auto Follow on Search Queue");
+		createAutoFollowJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_FOLLOW_ON_SEARCH_QUEUE_PERIOD);// 5
 		createAutoFollowJob.setJobClass(CreateAutoFollowQueueJob.class
 				.getName());
 		jobDefs.add(createAutoFollowJob);
@@ -170,7 +177,7 @@ public class CreateJobsServlet extends AbstractHttpServlet {
 		PersonaJobDefDO createAutoFollowBackUserJob = new PersonaJobDefDO();
 		createAutoFollowBackUserJob.setName("Create Auto Follow Back User Queue");
 		createAutoFollowBackUserJob.setLastRun(0);
-		createAutoFollowBackUserJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_FOLLOW_QUEUE_INTERVAL);// 30 min
+		createAutoFollowBackUserJob.setWaitTime(1000 * 60 * Configuration.CREATE_AUTO_FOLLOW_BACK_QUEUE_PERIOD);// 30 min
 		createAutoFollowBackUserJob
 				.setJobClass(CreateAutoFollowBackQueueJob.class.getName());
 		jobDefs.add(createAutoFollowBackUserJob);

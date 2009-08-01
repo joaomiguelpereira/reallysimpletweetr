@@ -1,6 +1,7 @@
 package org.nideasystems.webtools.zwitrng.server.pojos;
 
 import java.util.List;
+import java.util.Set;
 
 import org.nideasystems.webtools.zwitrng.server.domain.PersonaDO;
 import org.nideasystems.webtools.zwitrng.server.domain.RateLimitsDO;
@@ -143,13 +144,19 @@ public class PersonaPojo extends AbstractPojo {
 
 	private int getNewFriendsCount(PersonaDO persona) {
 
+		Set<Integer> following = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowingIdsBlob());
 		
-		return persona.getTwitterAccount().getFollowingIds()!=null?persona.getTwitterAccount().getFollowingIds().size():-1;
+		return following!=null?following.size():-1;
+
+		
+		
 	}
 
 	private int getNewFollowersCount(PersonaDO persona) {
 		
-		return persona.getTwitterAccount().getFollowersIds()!=null?persona.getTwitterAccount().getFollowersIds().size():-1;
+		Set<Integer> followers = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount().getFollowersIdsBlob());
+		
+		return followers!=null?followers.size():-1;
 		
 
 	}
