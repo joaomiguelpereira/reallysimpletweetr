@@ -50,7 +50,10 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 		if (unfollowedIds == null) {
 			unfollowedIds = new HashSet<Integer>();
+		} else if (unfollowedIds.size()>200) {
+			unfollowedIds.clear();
 		}
+		
 
 		/*
 		 * Set<Integer> followingIds = persona.getTwitterAccount()
@@ -100,12 +103,13 @@ public class AutoUnFollowBackOnFollowMeRuleRunner extends AbstractRuleRunner {
 
 
 			}
-			for (Integer remId : removeList) {
-				queue.remove(remId);
+			
+			if (queue.size()>200) {
+				queue.clear();
 			}
-
 		}
-
+		
+		
 		persona.getTwitterAccount().setAutoUnFollowBackIdsQueue(queue);
 		persona.getTwitterAccount().setAutoUnfollowedIds(unfollowedIds);
 		// persona.getTwitterAccount().setFollowingIds(followingIds);

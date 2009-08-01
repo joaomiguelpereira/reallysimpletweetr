@@ -54,13 +54,7 @@ public abstract class AbstractJobRunnerServlet extends AbstractHttpServlet {
 		
 		
 		
-		try {
-			startTransaction(true);
-		} catch (Exception e1) {
-			// TODO Auto-generated catch block
-			throw new ServletException(e1);
-
-		}
+		
 		getBusinessHelper().setStartTime(new Date().getTime());
 		//Get the cache
 		Cache cache = null;
@@ -120,7 +114,7 @@ public abstract class AbstractJobRunnerServlet extends AbstractHttpServlet {
         	log.fine("---- Jobs cache size is now "+jobList.size());
         }
         
-        endTransaction();
+      
                 
         
 
@@ -129,6 +123,13 @@ public abstract class AbstractJobRunnerServlet extends AbstractHttpServlet {
 
 	}
 	private void execute(Job job) throws Exception {
+		try {
+			startTransaction(true);
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			throw new ServletException(e1);
+
+		}
 		PersonaDO persona = getBusinessHelper().getPersonaDao().findPersona(
 				job.getPersonaKey());
 
@@ -154,6 +155,7 @@ public abstract class AbstractJobRunnerServlet extends AbstractHttpServlet {
 
 		jobInstance.execute();
 		log.fine("** Ending executing job for Persona: " + persona.getName());
+		  endTransaction();
 
 	}
 

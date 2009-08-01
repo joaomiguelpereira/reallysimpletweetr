@@ -21,6 +21,7 @@ public class AutoUnfollowUserJob extends AbstractJob {
 				.getAutoUnFollowBackIdsQueue() != null ? persona
 				.getTwitterAccount().getAutoUnFollowBackIdsQueue().size() : 0;
 
+		
 		log.fine("> > Persona: "+persona.getName()+" FollowBack list Size:" + backSize);
 		log.fine("> > Persona: "+persona.getName()+" Ignore list Size:" + ignoreSize);
 		
