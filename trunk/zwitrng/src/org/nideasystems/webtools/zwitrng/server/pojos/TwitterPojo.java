@@ -756,6 +756,7 @@ public class TwitterPojo extends AbstractPojo {
 		List<Integer> unfollowBackUserIdList = new ArrayList<Integer>();
 		//Create a reverse list of myFriends
 		List<Integer> followersList = new ArrayList<Integer>(followers.length);
+		
 		for ( int i=followers.length-1; i>=0; i--) {
 			followersList.add(followers[i]);
 		}
@@ -792,6 +793,10 @@ public class TwitterPojo extends AbstractPojo {
 		if (queue==null) {
 			queue = new ArrayList<String>();
 		}//Execute the search
+		
+		if (queue.size()>150) {
+			queue.clear();
+		}
 		TwitterAccountDTO authorizedAccount = TwitterAccountDAO.createAuthorizedAccountDto(twitterAccount);
 		
 		startTwitterTransaction( authorizedAccount );

@@ -123,17 +123,13 @@ public class FFStatsServlet extends AbstractHttpServlet {
 							.getIgnoreUsersIds().size();
 				}
 
-				if (persona.getTwitterAccount().getAutoFollowedScreenNames() != null) {
-					autoFollowedCount = persona.getTwitterAccount()
-							.getAutoFollowedScreenNames().size();
-				}
+				
 				if (persona.getTwitterAccount().getAutoFollowBackIdsQueue() != null) {
 					followBackQueueSize = persona.getTwitterAccount()
 							.getAutoFollowBackIdsQueue().size();
 				}
 				if (persona.getTwitterAccount().getAutoFollowedCount() != null) {
-					autoFollowedCount = autoFollowedCount
-							+ persona.getTwitterAccount()
+					autoFollowedCount = persona.getTwitterAccount()
 									.getAutoFollowedCount();
 				}
 				if (persona.getTwitterAccount().getAutoFollowScreenNamesQueue() != null) {

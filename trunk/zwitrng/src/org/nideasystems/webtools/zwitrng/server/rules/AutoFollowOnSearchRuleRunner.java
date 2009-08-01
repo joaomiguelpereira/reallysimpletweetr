@@ -45,15 +45,20 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 		
 		Set<Integer> followingIds = TwitterAccountDAO.toIntegerSet(persona.getTwitterAccount()
 				.getFollowingIdsBlob());
-		
+		Integer autoFollowedCount = persona.getTwitterAccount().getAutoFollowedCount();
 
+		if (autoFollowedCount==null) {
+			autoFollowedCount = new Integer(0);
+		}
 		
 		if ( ignoreSet == null) {
 			ignoreSet = new HashSet<Integer>();
+		} else if (ignoreSet.size()>200) {
+			ignoreSet.clear();
 		}
 		if (autoFollowedUsersScreenNames == null) {
 			autoFollowedUsersScreenNames = new HashSet<String>();
-		}
+		} 
 
 		
 		log.fine(" $ $ Executing Follow Back On Search");
@@ -90,6 +95,7 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 				try {
 					if ( (userId = process(queue.get(i))) > 0) {
 						log.fine("$$ Persona: "+persona.getName()+" is now following user:"+queue.get(i)+" with id:"+userId);
+						autoFollowedCount++;
 						autoFollowedUsersScreenNames.add(queue.get(i));
 						ignoreSet.add(userId);
 					} else {
@@ -99,6 +105,10 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 				} catch (Exception e) {
 					log.fine("$$Persona "+persona.getName()+"Could not follow user:"+queue.get(i) +" Exception: "+ e.getMessage());
 					// TODO Auto-generated catch block
+					if ( e.getMessage().contains(" You are unable to follow more people at this time")) {
+						log.fine("%%%%%%%%%%%%%%%Wil not try again%%%%%%%%%%%%%");
+						break;
+					}
 					e.printStackTrace();
 				}
 				long now = new Date().getTime();
@@ -107,12 +117,15 @@ public class AutoFollowOnSearchRuleRunner extends AbstractRuleRunner {
 					break;
 				}
 
+				
 			}
 
 			// Remove the ones already followed
 			for (String str : removeList) {
 				queue.remove(str);
 			}
+			
+			persona.getTwitterAccount().setAutoFollowedCount(autoFollowedCount);
 			persona.getTwitterAccount().setIgnoreUsersIds(ignoreSet);
 			persona.getTwitterAccount().setAutoFollowScreenNamesQueue(queue);
 			persona.getTwitterAccount().setAutoFollowedScreenNames(
