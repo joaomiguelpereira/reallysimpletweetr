@@ -164,7 +164,7 @@ blockquote {
 	margin:0 auto;
 	margin-top:15px;
 	padding:0px 10px;
-	text-transform:uppercase;
+	/*text-transform:uppercase;*/
 	background:#2c2c2c url(images/navbar.png);
 }
 
@@ -291,7 +291,7 @@ blockquote {
 }
 
 .with-featured {
-	width:590px;
+	width:690px;
   }
 
 .no-featured {
@@ -299,7 +299,7 @@ blockquote {
 }
 
 #featured {
-	width:300px;
+	width:200px;
 	background:#fff;
 	float:right;
 	padding:10px 10px 9px 10px;
@@ -354,7 +354,7 @@ blockquote {
 }
 
 .with-sidebar {
-  width:590px;
+  width:720px;
 }
 
 .no-sidebar {
@@ -467,22 +467,23 @@ blockquote {
 
 /* Sidebar */
 #sidebar {
-	width:320px;
-	float:right;
-	margin:0px 0px 0px 0px;
+	width:190px;
+	float:left;
+	margin:0px 5px 0px 0px;
 }
 
 #sidebar h3 {
 	font:1.5em Arial;
 	font-weight:bold;
-	background:#333;
-	color:#fff;
-	margin:10px 0px 5px 0px;
-	padding:3px 10px;
+	/*background:#3979A5;*/
+	color:#666666;
+	border-bottom: solid 1px #666666;
+	margin:0px 0px 0px 0px;
+	padding:3px 0px;
 }
 
 #sidebar .odd h3 {
-  background:#3c78a7;
+  /*background:#3c78a7;*/
 }
 
 #sidebar h3 a{
@@ -499,9 +500,9 @@ blockquote {
 }
 
 #sidebar .block{
-	width:300px;
+	width:180px;
 	float:right;
-	padding:0px 10px 10px 10px;
+	padding:0px 5px 5px 5px;
 	background:#fff;
   margin-bottom:10px;
 }
@@ -513,21 +514,27 @@ blockquote {
 
 #sidebar li {
 	list-style:none;
-	border-bottom:1px dotted #ccc;
+	/*border-bottom:1px dotted #ccc;*/
+	
 	display:block;
 	padding:2px 0px 2px 13px;
-  margin:0px;
+  	margin:0px;
 	background:url(images/sub.png) no-repeat 0 0px;
 }
 
 #sidebar li ul li:last-child{
 	list-style:none;
-	border-bottom:0px dotted #ccc;
+	/*border-bottom:0px dotted #ccc;*/
 	display:block;
 	padding:2px 0px 0px 13px;
 	background:url(images/sub.png) no-repeat 0 0px;
 }
 
+
+#sidebar li a.active {
+  color: #000;
+  font-weight: bold;
+}
 .poll .title {
   margin-bottom:10px;
   font-weight:bold;
@@ -614,6 +621,7 @@ blockquote {
 	background:#2c2c2c url(images/bottombar.png) bottom no-repeat;
 	margin: 0 auto;
 	padding:10px;
+	background-color: #EFEFEF;
 }
 
 #footer-left, #footer-middle {
@@ -741,3 +749,4 @@ blockquote {
 .block .pager li {
   float:left;
 }
+
