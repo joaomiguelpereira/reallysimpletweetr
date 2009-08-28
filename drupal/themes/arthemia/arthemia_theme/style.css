@@ -166,11 +166,12 @@ blockquote {
 	padding:0px 10px;
 	/*text-transform:uppercase;*/
 	background:#2c2c2c url(images/navbar.png);
+	
 }
 
 #page-bar ul {
 	list-style: none;
-  z-index:10;
+  	z-index:10;
 }
 
 #page-bar li {
@@ -183,6 +184,8 @@ blockquote {
 
 #page-bar li:hover, #page-bar li a:hover {
 	background: #3c78a7;
+	
+	
 }
 
 #page-bar a, #page-bar a:visited {
@@ -215,7 +218,9 @@ blockquote {
 }
 	
 #page-bar li li a, #page-bar li li a:link, #page-bar li li a:visited {
-	background: #2B2B2B;
+	background: #3c0000;
+	
+	
 	width: 122px;
 	float: none;
 	margin: 0px;
@@ -621,7 +626,8 @@ blockquote {
 	background:#2c2c2c url(images/bottombar.png) bottom no-repeat;
 	margin: 0 auto;
 	padding:10px;
-	background-color: #EFEFEF;
+	background-color: #BEBEBE;
+	border-top: solid 1px #BEBEBE;
 }
 
 #footer-left, #footer-middle {
