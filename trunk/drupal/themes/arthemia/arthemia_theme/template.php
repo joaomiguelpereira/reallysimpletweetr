@@ -5,8 +5,8 @@
  * Modify page variables.
  */
 function arthemia_preprocess_page(&$variables) {
-  $variables['footer_message'] = empty($variables['footer_message'])? '' : $variables['footer_message'] . ' | ';
-  $variables['footer_message'] .= '<a href="http://drupal.org/project/arthemia">Arthemia</a> is based on the original design by <a href="http://michaelhutagalung.com">Michael Hutagalung</a>.';
+  $variables['footer_message'] = empty($variables['footer_message'])? '' : $variables['footer_message'];
+ /* $variables['footer_message'] .= '<a href="http://drupal.org/project/arthemia">Arthemia</a> is based on the original design by <a href="http://michaelhutagalung.com">Michael Hutagalung</a>.';*/
 }
 
 /**
